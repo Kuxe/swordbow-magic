@@ -40,8 +40,6 @@ unsigned long long int* EntityManager::createPlayer() {
 }
 
 void EntityManager::removePlayer(unsigned long long int* id) {
-	//TODO(Kuxe): Figure out how to implement
-
 	//1. Remove from systemManager (remove, soon to be, dangling pointers to componenets)
 	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->remove(id);
 	static_cast<MoveSystem*>(systemManager->getSystem("MoveSystem"))->remove(id);
