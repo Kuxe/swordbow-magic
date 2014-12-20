@@ -7,7 +7,7 @@ CC = g++
 CFLAGS = $(FLAGS) $(INCLUDE)
 BUILD_RELEASE = -o ./build/release/swordbow-magic
 BUILD_DEBUG = -g -o ./build/debug/swordbow-magic
-BUILD_TEST = -o ./test/runtests
+BUILD_TEST = -o -g ./test/runtests
 RUN_RELEASE = ./build/release/swordbow-magic
 RUN_DEBUG = ./build/debug/swordbow-magic
 
