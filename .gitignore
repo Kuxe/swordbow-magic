@@ -31,3 +31,8 @@
 *.sublime-workspace
 *.sublime-project
 
+# Builds
+/build/
+
+# runtests
+/test/runtests

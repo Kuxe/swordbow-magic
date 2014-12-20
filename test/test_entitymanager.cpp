@@ -1,19 +1,12 @@
-#include <iostream>
+#include "catch.hpp"
 #include "componentmanager.h"
 #include "systemmanager.h"
 #include "idmanager.h"
 #include "entitymanager.h"
 #include "movesystem.h"
 #include "rendersystem.h"
-#include "movecomponent.h"
-#include "rendercomponent.h"
-#include "player.h"
 
-using namespace std;
-
-int main(int argc, char** argv) {
-	bool running = true;
-
+TEST_CASE("Entitymanager test") {
 	SystemManager systemManager;
 	ComponentManager componentManager;
 	IdManager idManager;
@@ -27,15 +20,13 @@ int main(int argc, char** argv) {
 	systemManager.add(&renderSystem);
 
 	/* TESTING: Make sure a player can be created, updated, removed without breaking the systems */
-	unsigned long long int* playerId = entityManager.createPlayer();
-	for(int i = 0; i < 20; i++) {
-		systemManager.update();
-	}
-	entityManager.removePlayer(playerId);
-	for(int i = 0; i < 20; i++) {
-		systemManager.update();
-	}
-	/* End of TESTING */
+	unsigned long long int* playerId = 0;
 
-	return 0;
+	SECTION("Adding player") {
+		playerId = entityManager.createPlayer();
+	}
+
+	SECTION("Removing player") {
+		entityManager.removePlayer(playerId);
+	}
 }
