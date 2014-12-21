@@ -3,11 +3,10 @@
 
 #include "isystem.h"
 #include <unordered_map>
+#include <string>
+#include <SDL2/SDL.h>
 
 using namespace std;
-
-class SDL_Window;
-class SDL_Surface;
 
 class RenderComponent;
 class MoveComponent;
@@ -20,12 +19,11 @@ struct RenderData {
 class RenderSystem : public ISystem {
  private:
 	unordered_map<unsigned long long int*, RenderData> renderDatas;
-
-	const ushort SCREEN_WIDTH = 640;
-	const ushort SCREEN_HEIGHT = 480;
+	static constexpr ushort SCREEN_WIDTH = 640;
+	static constexpr ushort SCREEN_HEIGHT = 480;
 	SDL_Window* window = nullptr;
 	SDL_Surface* screenSurface = nullptr;
-
+	unordered_map<string, SDL_Surface*> surfaces;
  public:
  	RenderSystem();
  	~RenderSystem();
@@ -33,7 +31,7 @@ class RenderSystem : public ISystem {
 	void remove(unsigned long long int* id);
 	void update();
 	unsigned int count() const;
-	void render(RenderData data);
+	void render(const RenderData& data) const;
 	const string getIdentifier() const;
 };
 

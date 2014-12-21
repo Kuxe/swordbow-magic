@@ -26,6 +26,8 @@ int main(int argc, char** argv) {
 	systemManager.add(&moveSystem);
 	systemManager.add(&renderSystem);
 
+	entityManager.createPlayer();
+
 	while(running) {
 		systemManager.update();
 	}

@@ -25,12 +25,12 @@ unsigned long long int* EntityManager::createPlayer() {
 	auto id = idManager->getId();
 
 	//Create components from componentmanager
-	MoveComponent* moveComponent = componentManager->createMoveComponent(id);
-	componentManager->createRenderComponent(id);
+	componentManager->createMoveComponent(id);
+	RenderComponent* renderComponent = componentManager->createRenderComponent(id);
 
 	//If you'd like to change default initialization-data in a component
 	//Just save a pointer to the component like above and modify it like bellow
-	//moveComponent->xpos = 0;
+	renderComponent->imagePath = "./resources/images/HelloWorld.bmp";
 
 	//Tell the entity what systems belongs to
 	entities.insert(
