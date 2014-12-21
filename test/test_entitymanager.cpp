@@ -22,11 +22,15 @@ TEST_CASE("Entitymanager test") {
 	/* TESTING: Make sure a player can be created, updated, removed without breaking the systems */
 	unsigned long long int* playerId = 0;
 
-	SECTION("Adding player") {
+	SECTION("Adding and removing a player") {
+		//Ensure player is within the expected systems
 		playerId = entityManager.createPlayer();
-	}
+		REQUIRE(moveSystem.count() == 1);
+		REQUIRE(renderSystem.count() == 1);
 
-	SECTION("Removing player") {
+		//player should no longer exist within systems
 		entityManager.removePlayer(playerId);
+		REQUIRE(moveSystem.count() == 0);
+		REQUIRE(renderSystem.count() == 0);
 	}
 }
