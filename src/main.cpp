@@ -26,16 +26,5 @@ int main(int argc, char** argv) {
 	systemManager.add(&moveSystem);
 	systemManager.add(&renderSystem);
 
-	/* TESTING: Make sure a player can be created, updated, removed without breaking the systems */
-	unsigned long long int* playerId = entityManager.createPlayer();
-	for(int i = 0; i < 20; i++) {
-		systemManager.update();
-	}
-	entityManager.removePlayer(playerId);
-	for(int i = 0; i < 20; i++) {
-		systemManager.update();
-	}
-	/* End of TESTING */
-
 	return 0;
 }
