@@ -23,6 +23,10 @@ void MoveSystem::update() {
 	}
 }
 
+unsigned int MoveSystem::count() const {
+	return moveDatas.size();
+}
+
 const string MoveSystem::getIdentifier() const {
 	return "MoveSystem";
 }

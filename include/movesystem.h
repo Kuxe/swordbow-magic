@@ -19,6 +19,7 @@ class MoveSystem : public ISystem {
 	void add(unsigned long long int* id, MoveData data);
 	void remove(unsigned long long int* id);
 	void update();
+	unsigned int count() const;
 	const string getIdentifier() const;
 };
 

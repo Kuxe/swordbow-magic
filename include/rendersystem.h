@@ -23,6 +23,7 @@ class RenderSystem : public ISystem {
 	void add(unsigned long long int* id, RenderData data);
 	void remove(unsigned long long int* id);
 	void update();
+	unsigned int count() const;
 	void render(RenderData data);
 	const string getIdentifier() const;
 };
