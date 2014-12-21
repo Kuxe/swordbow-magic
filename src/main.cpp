@@ -26,5 +26,9 @@ int main(int argc, char** argv) {
 	systemManager.add(&moveSystem);
 	systemManager.add(&renderSystem);
 
+	while(running) {
+		systemManager.update();
+	}
+
 	return 0;
 }

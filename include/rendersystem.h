@@ -6,6 +6,9 @@
 
 using namespace std;
 
+class SDL_Window;
+class SDL_Surface;
+
 class ComponentManager;
 class RenderComponent;
 class MoveComponent;
@@ -19,7 +22,14 @@ class RenderSystem : public ISystem {
  private:
 	unordered_map<unsigned long long int*, RenderData> renderDatas;
 
+	const ushort SCREEN_WIDTH = 640;
+	const ushort SCREEN_HEIGHT = 480;
+	SDL_Window* window = nullptr;
+	SDL_Surface* screenSurface = nullptr;
+
  public:
+ 	RenderSystem();
+ 	~RenderSystem();
 	void add(unsigned long long int* id, RenderData data);
 	void remove(unsigned long long int* id);
 	void update();
