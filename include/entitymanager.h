@@ -4,6 +4,7 @@
 #include <time.h>
 #include <unordered_map>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -15,9 +16,11 @@ using namespace std;
 class SystemManager;
 class ComponentManager;
 class IdManager;
+class ISystem;
 
 class EntityManager {
  public:
+ 	unordered_map<unsigned long long int*, vector<ISystem*> > entities;
 
 	SystemManager* systemManager;
 	ComponentManager* componentManager;
@@ -25,7 +28,7 @@ class EntityManager {
 
 	EntityManager(SystemManager* systemManager, ComponentManager* componentManager, IdManager* idManager);
 	unsigned long long int* createPlayer();
-	void removePlayer(unsigned long long int*);
+	void remove(unsigned long long int*);
 };
 
 #endif //ENTITYMANAGER_H

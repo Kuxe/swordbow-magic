@@ -35,14 +35,22 @@ unsigned long long int* EntityManager::createPlayer() {
 	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->add(id, {renderComponent, moveComponent});
 	static_cast<MoveSystem*>(systemManager->getSystem("MoveSystem"))->add(id, {moveComponent});
 
+	entities.insert(make_pair(
+		id,
+		vector<ISystem*> {
+			systemManager->getSystem("RenderSystem"),
+			systemManager->getSystem("MoveSystem")
+	}));
+
 	cout << "\ndone creating player" << endl;
 	return id;
 }
 
-void EntityManager::removePlayer(unsigned long long int* id) {
-	//1. Remove from systemManager (remove, soon to be, dangling pointers to componenets)
-	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->remove(id);
-	static_cast<MoveSystem*>(systemManager->getSystem("MoveSystem"))->remove(id);
+void EntityManager::remove(unsigned long long int* id) {
+	//1. Remove from systemManager
+	for(auto a : entities.at(id)) {
+		a->remove(id);
+	}
 
 	//2. Remove from componentManager (deallocate components)
 	componentManager->removeAllComponents(id);

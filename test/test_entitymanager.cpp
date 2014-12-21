@@ -29,7 +29,7 @@ TEST_CASE("Entitymanager test") {
 		REQUIRE(renderSystem.count() == 1);
 
 		//player should no longer exist within systems
-		entityManager.removePlayer(playerId);
+		entityManager.remove(playerId);
 		REQUIRE(moveSystem.count() == 0);
 		REQUIRE(renderSystem.count() == 0);
 	}
