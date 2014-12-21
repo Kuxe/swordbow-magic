@@ -14,8 +14,8 @@ using namespace std;
 int main(int argc, char** argv) {
 	bool running = true;
 
-	SystemManager systemManager;
 	ComponentManager componentManager;
+	SystemManager systemManager(&componentManager);
 	IdManager idManager;
 
 	EntityManager entityManager(&systemManager, &componentManager, &idManager);

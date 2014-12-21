@@ -1,4 +1,5 @@
 #include "rendersystem.h"
+#include "componentmanager.h"
 #include <iostream>
 #include <SDL2/SDL.h>
 
@@ -41,8 +42,16 @@ RenderSystem::~RenderSystem() {
     SDL_Quit();
 }
 
-void RenderSystem::add(unsigned long long int* id, RenderData data) {
-	renderDatas.insert(make_pair(id, data));
+void RenderSystem::add(unsigned long long int* id) {
+	renderDatas.insert(
+        make_pair(
+            id,
+            RenderData{
+                componentManager->renderComponents.at(id),
+                componentManager->moveComponents.at(id)
+            }
+        )
+    );
 }
 
 void RenderSystem::remove(unsigned long long int* id) {

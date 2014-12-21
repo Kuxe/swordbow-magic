@@ -7,8 +7,15 @@
 
 using namespace std;
 
-void MoveSystem::add(unsigned long long int* id, MoveData data) {
-	moveDatas.insert(make_pair(id, data));
+void MoveSystem::add(unsigned long long int* id) {
+	moveDatas.insert(
+		make_pair(
+			id,
+			MoveData{
+				componentManager->moveComponents.at(id)
+			}
+		)
+	);
 }
 
 void MoveSystem::remove(unsigned long long int* id) {

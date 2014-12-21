@@ -23,24 +23,32 @@ EntityManager::EntityManager(
 unsigned long long int* EntityManager::createPlayer() {
 	cout << "\ncreating player..." << endl;
 
-
 	//Get unique ID
 	auto id = idManager->getId();
 
-	//Get components from componentmanager
+	//Create components from componentmanager
 	MoveComponent* moveComponent = componentManager->createMoveComponent(id);
-	RenderComponent* renderComponent = componentManager->createRenderComponent(id);
+	componentManager->createRenderComponent(id);
 
-	//Add components to some systems via systemamanger
-	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->add(id, {renderComponent, moveComponent});
-	static_cast<MoveSystem*>(systemManager->getSystem("MoveSystem"))->add(id, {moveComponent});
+	//If you'd like to change default initialization-data in a component
+	//Just save a pointer to the component like above and modify it like bellow
+	//moveComponent->xpos = 0;
 
-	entities.insert(make_pair(
-		id,
-		vector<ISystem*> {
-			systemManager->getSystem("RenderSystem"),
-			systemManager->getSystem("MoveSystem")
-	}));
+	//Tell the entity what systems belongs to
+	entities.insert(
+		make_pair(
+			id,
+			vector<ISystem*> {
+				systemManager->getSystem("RenderSystem"),
+				systemManager->getSystem("MoveSystem")
+			}
+		)
+	);
+
+	//Insert this entity into the systems
+	for(auto a : entities.at(id)) {
+		a->add(id);
+	} 
 
 	cout << "\ndone creating player" << endl;
 	return id;
@@ -54,5 +62,6 @@ void EntityManager::remove(unsigned long long int* id) {
 
 	//2. Remove from componentManager (deallocate components)
 	componentManager->removeAllComponents(id);
+	entities.erase(id);
 	delete id;
 }

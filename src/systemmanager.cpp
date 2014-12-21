@@ -4,9 +4,14 @@
 
 using namespace std;
 
+SystemManager::SystemManager(ComponentManager* componentManager) :
+	componentManager(componentManager) {
+
+}
 
 void SystemManager::add(ISystem* system) {
 	systems.push_front(system);
+	system->componentManager = componentManager;
 	systemByIdentifiers.insert(std::make_pair(system->getIdentifier(), system));
 }
 void SystemManager::remove(ISystem* system) {

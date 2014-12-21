@@ -9,7 +9,6 @@ using namespace std;
 class SDL_Window;
 class SDL_Surface;
 
-class ComponentManager;
 class RenderComponent;
 class MoveComponent;
 
@@ -30,7 +29,7 @@ class RenderSystem : public ISystem {
  public:
  	RenderSystem();
  	~RenderSystem();
-	void add(unsigned long long int* id, RenderData data);
+	void add(unsigned long long int* id);
 	void remove(unsigned long long int* id);
 	void update();
 	unsigned int count() const;

@@ -16,7 +16,7 @@ class MoveSystem : public ISystem {
  private:
 	unordered_map<unsigned long long int*, MoveData> moveDatas;
  public:
-	void add(unsigned long long int* id, MoveData data);
+	void add(unsigned long long int* id);
 	void remove(unsigned long long int* id);
 	void update();
 	unsigned int count() const;

@@ -20,6 +20,12 @@ class ISystem;
 
 class EntityManager {
  public:
+ 	/*	Map an ID to some systems. This unordered_map is used when adding an ID to systems
+		or when removing ID from systems. Without this list, there would be no way
+		of knowing what systems should erase an ID when the ID is removed
+		(except for looping through all systems and searching for ID, removing it
+		if it exits, but that's a slow bruteforce-approach)
+	*/
  	unordered_map<unsigned long long int*, vector<ISystem*> > entities;
 
 	SystemManager* systemManager;

@@ -7,8 +7,8 @@
 #include "rendersystem.h"
 
 TEST_CASE("Entitymanager test") {
-	SystemManager systemManager;
 	ComponentManager componentManager;
+	SystemManager systemManager(&componentManager);
 	IdManager idManager;
 
 	EntityManager entityManager(&systemManager, &componentManager, &idManager);
@@ -25,11 +25,13 @@ TEST_CASE("Entitymanager test") {
 	SECTION("Adding and removing a player") {
 		//Ensure player is within the expected systems
 		playerId = entityManager.createPlayer();
+		REQUIRE(entityManager.entities.size() == 1);
 		REQUIRE(moveSystem.count() == 1);
 		REQUIRE(renderSystem.count() == 1);
 
 		//player should no longer exist within systems
 		entityManager.remove(playerId);
+		REQUIRE(entityManager.entities.size() == 0);
 		REQUIRE(moveSystem.count() == 0);
 		REQUIRE(renderSystem.count() == 0);
 	}
