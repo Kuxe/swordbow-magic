@@ -21,8 +21,6 @@ EntityManager::EntityManager(
 }
 
 unsigned long long int* EntityManager::createPlayer() {
-	cout << "\ncreating player..." << endl;
-
 	//Get unique ID
 	auto id = idManager->getId();
 
@@ -49,8 +47,6 @@ unsigned long long int* EntityManager::createPlayer() {
 	for(auto a : entities.at(id)) {
 		a->add(id);
 	} 
-
-	cout << "\ndone creating player" << endl;
 	return id;
 }
 
