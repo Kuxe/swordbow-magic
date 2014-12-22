@@ -1,4 +1,5 @@
 #include <iostream>
+#include "eventmanager.h"
 #include "componentmanager.h"
 #include "systemmanager.h"
 #include "idmanager.h"
@@ -13,6 +14,8 @@ using namespace std;
 
 int main(int argc, char** argv) {
 	bool running = true;
+
+	EventManager eventManager(&running);
 
 	ComponentManager componentManager;
 	SystemManager systemManager(&componentManager);
@@ -30,6 +33,7 @@ int main(int argc, char** argv) {
 
 	while(running) {
 		systemManager.update();
+		eventManager.process();
 	}
 
 	return 0;
