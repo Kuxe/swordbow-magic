@@ -100,8 +100,6 @@ unsigned int RenderSystem::count() const {
 }
 
 void RenderSystem::render(const RenderData& data) const {
-    cout << "rendering" << endl;
-
     SDL_Rect pos{
         (int)(data.moveComponent->xpos + data.renderComponent->xoffset),
         (int)(data.moveComponent->ypos + data.renderComponent->yoffset)
