@@ -6,7 +6,7 @@
 #include "movesystem.h"
 #include "rendersystem.h"
 
-TEST_CASE("Entitymanager test") {
+TEST_CASE("EntityManager") {
 	ComponentManager componentManager;
 	SystemManager systemManager(&componentManager);
 	IdManager idManager;

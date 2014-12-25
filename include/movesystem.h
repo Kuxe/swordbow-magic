@@ -7,9 +7,11 @@
 using namespace std;
 
 class MoveComponent;
+class InputComponent;
 
 struct MoveData {
 	MoveComponent* moveComponent;
+	InputComponent* inputComponent;
 };
 
 class MoveSystem : public ISystem {

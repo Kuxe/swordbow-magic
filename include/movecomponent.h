@@ -3,17 +3,17 @@
 
 class MoveComponent {
  public:
-	float xpos = 0;
-	float ypos = 0;
+	float xpos;
+	float ypos;
 
-	float xspeed = 0;
-	float yspeed = 0; 
+	float xspeed;
+	float yspeed; 
 
 	MoveComponent(
 		const float& xpos = 0,
 		const float& ypos = 0,
-		const float& xspeed = 0,
-		const float& yspeed = 0);
+		const float& xspeed = 1,
+		const float& yspeed = 1);
 	virtual ~MoveComponent();
 
 	void virtual move();

@@ -26,6 +26,7 @@ unsigned long long int* EntityManager::createPlayer() {
 
 	//Create components from componentmanager
 	componentManager->createMoveComponent(id);
+	componentManager->createInputComponent(id);
 	RenderComponent* renderComponent = componentManager->createRenderComponent(id);
 
 	//If you'd like to change default initialization-data in a component
@@ -38,10 +39,12 @@ unsigned long long int* EntityManager::createPlayer() {
 			id,
 			vector<ISystem*> {
 				systemManager->getSystem("RenderSystem"),
-				systemManager->getSystem("MoveSystem")
+				systemManager->getSystem("MoveSystem"),
 			}
 		)
 	);
+
+
 
 	//Insert this entity into the systems
 	for(auto a : entities.at(id)) {

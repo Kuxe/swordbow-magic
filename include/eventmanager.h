@@ -3,11 +3,14 @@
 
 #include <SDL2/SDL.h>
 
+class InputComponent;
+
 class EventManager {
  private:
  	SDL_Event event;
  	bool* runningPtr;
  public:
+ 	InputComponent* userInputComponent;
  	EventManager(bool* runningPtr);
 	void process();
 };
