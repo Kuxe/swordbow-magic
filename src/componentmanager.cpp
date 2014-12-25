@@ -39,6 +39,6 @@ void ComponentManager::removeAllComponents(unsigned long long int* id) {
 	try {
 		delete inputComponents.at(id);
 	} catch (const std::out_of_range& oor) {
-		cout << "id has no renderComponents" << endl;
+		cout << "id has no inputComponents" << endl;
 	}
 }
