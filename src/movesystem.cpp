@@ -2,9 +2,11 @@
 
 #include "movesystem.h"
 #include <iostream>
+#include "deltatime.h"
 #include "componentmanager.h"
 #include "movecomponent.h"
 #include "inputcomponent.h"
+#include "deltatime.h"
 
 using namespace std;
 
@@ -30,8 +32,8 @@ void MoveSystem::update() {
 	for(auto idMoveData : moveDatas) {
 		MoveComponent* mc = get<1>(idMoveData).moveComponent;
 		InputComponent* ic = get<1>(idMoveData).inputComponent;
-		mc->xpos += (ic->d * mc->xspeed) - (ic->a * mc->xspeed);
-		mc->ypos += (ic->s * mc->yspeed) - (ic->w * mc->yspeed);		
+		mc->xpos += ((ic->d * mc->xspeed) - (ic->a * mc->xspeed)) * deltaTime->delta();
+		mc->ypos += ((ic->s * mc->yspeed) - (ic->w * mc->yspeed)) * deltaTime->delta();		
 	}
 }
 

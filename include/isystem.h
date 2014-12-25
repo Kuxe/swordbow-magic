@@ -6,9 +6,12 @@
 using namespace std;
 
 class ComponentManager;
+class DeltaTime;
 
+//Not entierly an interface. It's an abstract class.
 class ISystem {
  public:
+ 	DeltaTime* deltaTime;
  	ComponentManager* componentManager;
  	virtual void add(unsigned long long int* id) = 0;
  	virtual void remove(unsigned long long int* id) = 0;

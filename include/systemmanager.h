@@ -8,6 +8,7 @@ using namespace std;
 
 class ISystem;
 class ComponentManager;
+class DeltaTime;
 
 class SystemManager {
  public:
@@ -16,8 +17,9 @@ class SystemManager {
  		in order to aquire the components
  	*/
 
- 	SystemManager(ComponentManager* componentManager);
+ 	SystemManager(ComponentManager* componentManager, DeltaTime* deltaTime);
  	ComponentManager* const componentManager;
+ 	DeltaTime* const deltaTime;
 	forward_list<ISystem*> systems;
 	unordered_map<string, ISystem*> systemByIdentifiers;
 	void add(ISystem* system);

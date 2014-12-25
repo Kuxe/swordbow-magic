@@ -12,8 +12,8 @@ class MoveComponent {
 	MoveComponent(
 		const float& xpos = 0,
 		const float& ypos = 0,
-		const float& xspeed = 1,
-		const float& yspeed = 1);
+		const float& xspeed = 100,
+		const float& yspeed = 100);
 	virtual ~MoveComponent();
 
 	void virtual move();

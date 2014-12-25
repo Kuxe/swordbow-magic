@@ -1,4 +1,5 @@
 #include <iostream>
+#include "deltatime.h"
 #include "eventmanager.h"
 #include "componentmanager.h"
 #include "systemmanager.h"
@@ -14,10 +15,11 @@ using namespace std;
 int main(int argc, char** argv) {
 	bool running = true;
 
+	DeltaTime deltaTime;
 	EventManager eventManager(&running);
 
 	ComponentManager componentManager;
-	SystemManager systemManager(&componentManager);
+	SystemManager systemManager(&componentManager, &deltaTime);
 	IdManager idManager;
 
 	EntityManager entityManager(&systemManager, &componentManager, &idManager);
@@ -34,8 +36,12 @@ int main(int argc, char** argv) {
 	eventManager.userInputComponent = componentManager.inputComponents.at(playerId);
 
 	while(running) {
+		deltaTime.start();
+
 		systemManager.update();
 		eventManager.process();
+
+		deltaTime.stop();
 	}
 
 	return 0;

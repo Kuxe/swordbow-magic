@@ -4,14 +4,16 @@
 
 using namespace std;
 
-SystemManager::SystemManager(ComponentManager* componentManager) :
-	componentManager(componentManager) {
+SystemManager::SystemManager(ComponentManager* componentManager, DeltaTime* deltaTime) :
+	componentManager(componentManager),
+	deltaTime(deltaTime) {
 
 }
 
 void SystemManager::add(ISystem* system) {
 	systems.push_front(system);
 	system->componentManager = componentManager;
+	system->deltaTime = deltaTime;
 	systemByIdentifiers.insert(std::make_pair(system->getIdentifier(), system));
 }
 void SystemManager::remove(ISystem* system) {
