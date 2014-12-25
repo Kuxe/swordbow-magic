@@ -29,6 +29,8 @@ rundebug:
 
 tests:
 	$(CC) $(CFLAGS) $(TEST_SRC_FILES) $(LINKER_FLAGS) $(BUILD_TEST)
+
+runtests:
 	./test/runtests
 
 profile: debug
