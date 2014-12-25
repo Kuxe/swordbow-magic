@@ -29,8 +29,11 @@ ISystem* SystemManager::getSystem(string identifier) {
 	try {
 		system = systemByIdentifiers.at(identifier);
 	} catch(const std::out_of_range& oor) {
-		cout << "out_of_range exception caught. " << endl;
-		cout << "Maybe there as a typo in the system-identifier, " << identifier << "?" << endl;
+
+		cout << "out_of_range exception caught in SystemManager::getSystem(string identifier): " << oor.what() << endl;
+		cout << "1. Maybe there as a typo in the system-identifier argument, " << identifier << "?" << endl;
+		cout << "2. Maybe " << identifier << " wasn't added to this SystemManager?" << endl;
+		cout << "3. Maybe " << identifier << " was added, but got removed?" << endl;
 		cout << "Things will go wrong from now on!" << endl;
 	}
 
