@@ -12,6 +12,9 @@
 TEST_CASE("MoveSystem") {
 	ComponentManager componentManager;
 	DeltaTime deltaTime;
+	//Get a deltaTime (nothing will move if no time has passed!)
+	deltaTime.start();
+	deltaTime.stop();
 	SystemManager systemManager(&componentManager, &deltaTime);
 	IdManager idManager;
 
