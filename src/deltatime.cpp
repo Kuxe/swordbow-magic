@@ -11,6 +11,5 @@ void DeltaTime::stop() {
 	deltaTime = (stopTime - startTime).count() / 1000000000.0f;
 }
 float DeltaTime::delta() const {
-	cout << deltaTime << endl;
 	return deltaTime;
 }
