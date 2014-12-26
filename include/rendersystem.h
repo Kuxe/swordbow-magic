@@ -16,14 +16,22 @@ struct RenderData {
 	MoveComponent* moveComponent;
 };
 
+struct TextureData {
+	SDL_Texture* texture;
+	unsigned char width;
+	unsigned char height;
+};
+
 class RenderSystem : public ISystem {
  private:
 	unordered_map<unsigned long long int*, RenderData> renderDatas;
 	static constexpr ushort SCREEN_WIDTH = 640;
 	static constexpr ushort SCREEN_HEIGHT = 480;
+
+	SDL_Renderer* renderer = nullptr;
 	SDL_Window* window = nullptr;
 	SDL_Surface* screenSurface = nullptr;
-	unordered_map<string, SDL_Surface*> surfaces;
+	unordered_map<string, TextureData> textureDatas;
  public:
  	RenderSystem();
  	~RenderSystem();

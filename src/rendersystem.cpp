@@ -21,50 +21,58 @@ RenderSystem::RenderSystem() {
             SDL_WINDOW_SHOWN);
 
         if(!window) {
-            cout << "Window could not be created! SDL_Error: " << SDL_GetError() << endl;
+            cout << "ERROR: Window could not be created! SDL_Error: " << SDL_GetError() << endl;
         } else {
-            //Get window surface
-            screenSurface = SDL_GetWindowSurface( window );
-
-            //Fill the surface white
-            SDL_FillRect(screenSurface, NULL, SDL_MapRGB( screenSurface->format, 0xFF, 0xFF, 0xFF));
-            
-            //Update the surface
-            SDL_UpdateWindowSurface(window);
+            renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+            if(!renderer) {
+                cout << "ERROR: Renderer could not be created! SDL_Error: " << SDL_GetError() << endl;
+            } else {
+                SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+            }
         }
     }
 
     //We want to access surfaces by their image path later on, so store paths right away
-    for(auto a : {
+    for(auto path :{
             "./resources/images/HelloWorld.bmp",
             "./resources/images/player.bmp"
             }
         ) 
     {
-        SDL_Surface* surface = SDL_LoadBMP(a);
-        if(!surface) {
-            cout << "ERROR: Couldn't load image on: " << a << endl;
+        SDL_Surface* rawImage = SDL_LoadBMP(path);
+        if(!rawImage) {
+            cout << "ERROR: Couldn't load image on: " << path << endl;
         } else {
-            surfaces.insert(
-                make_pair(
-                    a,
-                    surface
-                )
-            );
+            SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, rawImage);
+            if(!texture) {
+                cout << "ERROR: Couldn't convert surface on addr " << rawImage << " to texture! SDL_Error: " << SDL_GetError() << endl;
+            } else {
+                SDL_FreeSurface(rawImage);
+                int w, h;
+                SDL_QueryTexture(texture, NULL, NULL, &w, &h);
+                textureDatas.insert(
+                    make_pair(
+                        path,
+                        TextureData{
+                            texture,
+                            w,
+                            h
+                        }
+                    )
+                );
+            }
         }
     }
 }
 
 RenderSystem::~RenderSystem() {
     //Free all loaded images
-    for(auto a : surfaces) {
-        free(get<1>(a));
+    for(auto textureData : textureDatas) {
+        SDL_DestroyTexture(get<1>(textureData).texture);
     }
 
-	//Destroy window
+    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-
-    //Quit SDL subsystems
     SDL_Quit();
 }
 
@@ -101,20 +109,19 @@ unsigned int RenderSystem::count() const {
 }
 
 void RenderSystem::render(const RenderData& data) const {
-    SDL_Rect pos{
+    TextureData textureData = textureDatas.at(data.renderComponent->imagePath);
+    SDL_Texture* texture = textureData.texture;
+
+    SDL_Rect rect{
         (int)(data.moveComponent->xpos + data.renderComponent->xoffset),
-        (int)(data.moveComponent->ypos + data.renderComponent->yoffset)
+        (int)(data.moveComponent->ypos + data.renderComponent->yoffset),
+        textureData.width,
+        textureData.height
     };
 
-    SDL_BlitSurface(
-        surfaces.at(
-            data.renderComponent->imagePath
-        ), 
-        NULL, 
-        screenSurface, 
-        &pos
-    );
-    SDL_UpdateWindowSurface(window);
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, textureDatas.at(data.renderComponent->imagePath).texture, NULL, &rect);
+    SDL_RenderPresent(renderer);
 }
 
 const string RenderSystem::getIdentifier() const {
