@@ -37,6 +37,7 @@ RenderSystem::RenderSystem() {
     //We want to access surfaces by their image path later on, so store paths right away
     for(auto a : {
             "./resources/images/HelloWorld.bmp",
+            "./resources/images/player.bmp"
             }
         ) 
     {

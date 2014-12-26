@@ -31,7 +31,7 @@ unsigned long long int* EntityManager::createPlayer() {
 
 	//If you'd like to change default initialization-data in a component
 	//Just save a pointer to the component like above and modify it like bellow
-	renderComponent->imagePath = "./resources/images/HelloWorld.bmp";
+	renderComponent->imagePath = "./resources/images/player.bmp";
 
 	//Tell the entity what systems belongs to
 	entities.insert(
