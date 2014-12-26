@@ -1,5 +1,6 @@
 #include "catch.hpp"
 #include "componentmanager.h"
+#include "deltatime.h"
 #include "systemmanager.h"
 #include "idmanager.h"
 #include "entitymanager.h"
@@ -10,7 +11,8 @@
 
 TEST_CASE("MoveSystem") {
 	ComponentManager componentManager;
-	SystemManager systemManager(&componentManager);
+	DeltaTime deltaTime;
+	SystemManager systemManager(&componentManager, &deltaTime);
 	IdManager idManager;
 
 	EntityManager entityManager(&systemManager, &componentManager, &idManager);

@@ -5,10 +5,12 @@
 #include "entitymanager.h"
 #include "movesystem.h"
 #include "rendersystem.h"
+#include "deltatime.h"
 
 TEST_CASE("EntityManager") {
 	ComponentManager componentManager;
-	SystemManager systemManager(&componentManager);
+	DeltaTime deltaTime;
+	SystemManager systemManager(&componentManager, &deltaTime);
 	IdManager idManager;
 
 	EntityManager entityManager(&systemManager, &componentManager, &idManager);
