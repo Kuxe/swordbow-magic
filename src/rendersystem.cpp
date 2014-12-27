@@ -27,7 +27,7 @@ RenderSystem::RenderSystem() {
             if(!renderer) {
                 cout << "ERROR: Renderer could not be created! SDL_Error: " << SDL_GetError() << endl;
             } else {
-                SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+                SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
             }
         }
     }
@@ -43,6 +43,8 @@ RenderSystem::RenderSystem() {
         if(!rawImage) {
             cout << "ERROR: Couldn't load image on: " << path << endl;
         } else {
+            //Make purple parts of images transparent by using color keying
+            SDL_SetColorKey(rawImage, SDL_TRUE, SDL_MapRGB( rawImage->format, 0xFF, 0x00, 0xFF ));
             SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, rawImage);
             if(!texture) {
                 cout << "ERROR: Couldn't convert surface on addr " << rawImage << " to texture! SDL_Error: " << SDL_GetError() << endl;
