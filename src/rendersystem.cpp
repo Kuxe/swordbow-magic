@@ -111,27 +111,29 @@ unsigned int RenderSystem::count() const {
 }
 
 void RenderSystem::render(const RenderData& data) const {
-    TextureData textureData;
-    try {
-        textureDatas.at(data.renderComponent->imagePath);
-    } catch (const std::out_of_range &oor) {
-        cout << "out_of_range exception caught in SystemManager::getSystem(string identifier): " << oor.what() << endl;
-        cout << "1. Maybe there as a typo in the RenderComponent->imagePath, " << data.renderComponent->imagePath << "?" << endl;
-        cout << "2. Maybe " << data.renderComponent->imagePath << " wasn't loaded by RenderSystem?" << endl;
-        cout << "Things will go wrong from now on!" << endl;
+    if(data.renderComponent->doRender) {
+        TextureData textureData;
+        try {
+            textureDatas.at(data.renderComponent->imagePath);
+        } catch (const std::out_of_range &oor) {
+            cout << "out_of_range exception caught in SystemManager::getSystem(string identifier): " << oor.what() << endl;
+            cout << "1. Maybe there as a typo in the RenderComponent->imagePath, " << data.renderComponent->imagePath << "?" << endl;
+            cout << "2. Maybe " << data.renderComponent->imagePath << " wasn't loaded by RenderSystem?" << endl;
+            cout << "Things will go wrong from now on!" << endl;
+        }
+        SDL_Texture* texture = textureData.texture;
+
+        SDL_Rect rect{
+            (int)(data.moveComponent->xpos + data.renderComponent->xoffset),
+            (int)(data.moveComponent->ypos + data.renderComponent->yoffset),
+            textureData.width,
+            textureData.height
+        };
+
+        SDL_RenderClear(renderer);
+        SDL_RenderCopy(renderer, textureDatas.at(data.renderComponent->imagePath).texture, NULL, &rect);
+        SDL_RenderPresent(renderer);
     }
-    SDL_Texture* texture = textureData.texture;
-
-    SDL_Rect rect{
-        (int)(data.moveComponent->xpos + data.renderComponent->xoffset),
-        (int)(data.moveComponent->ypos + data.renderComponent->yoffset),
-        textureData.width,
-        textureData.height
-    };
-
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, textureDatas.at(data.renderComponent->imagePath).texture, NULL, &rect);
-    SDL_RenderPresent(renderer);
 }
 
 const string RenderSystem::getIdentifier() const {

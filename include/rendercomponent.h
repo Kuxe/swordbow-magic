@@ -12,6 +12,10 @@ class RenderComponent {
  	float xoffset = 0;
  	float yoffset = 0;
  	float zindex = 0;
+
+ 	//If false, this entity won't re-render
+ 	//Note that it might still be visible if nothing was rendered above it
+ 	bool doRender = true;
 };
 
 #endif //RENDERCOMPONENT_H
