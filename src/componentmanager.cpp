@@ -2,6 +2,7 @@
 #include "movecomponent.h"
 #include "rendercomponent.h"
 #include "inputcomponent.h"
+#include "tilecomponent.h"
 #include <iostream>
 
 using namespace std;
@@ -23,6 +24,12 @@ InputComponent* ComponentManager::createInputComponent(unsigned long long int* i
 	return inputComponent;
 }
 
+TileComponent* ComponentManager::createTileComponent(unsigned long long int* id) {
+	TileComponent* tileComponent = new TileComponent();
+	tileComponents.insert(make_pair(id, tileComponent));
+	return tileComponent;
+}
+
 void ComponentManager::removeAllComponents(unsigned long long int* id) {
 	try {
 		delete moveComponents.at(id);
@@ -41,4 +48,23 @@ void ComponentManager::removeAllComponents(unsigned long long int* id) {
 	} catch (const std::out_of_range& oor) {
 		cout << "id has no inputComponents" << endl;
 	}
+
+	try {
+		delete tileComponents.at(id);
+	} catch (const std::out_of_range& oor) {
+		cout << "id has no tileComponents" << endl;
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

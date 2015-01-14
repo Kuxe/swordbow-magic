@@ -34,6 +34,7 @@ class EntityManager {
 
 	EntityManager(SystemManager* systemManager, ComponentManager* componentManager, IdManager* idManager);
 	unsigned long long int* createPlayer();
+	unsigned long long int* createTile();
 	void remove(unsigned long long int*);
 };
 

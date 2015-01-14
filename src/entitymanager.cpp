@@ -53,6 +53,30 @@ unsigned long long int* EntityManager::createPlayer() {
 	return id;
 }
 
+unsigned long long int* EntityManager::createTile() {
+	auto id = idManager->getId();
+
+	componentManager->createMoveComponent(id);
+	componentManager->createTileComponent(id);
+	auto rc = componentManager->createRenderComponent(id);
+
+	rc->imagePath = "./resources/images/player.bmp";
+
+	entities.insert(
+		make_pair(
+			id,
+			vector<ISystem*> {
+				systemManager->getSystem("RenderSystem"),
+			}
+		)
+	);
+
+	for(auto a : entities.at(id)) {
+		a->add(id);
+	}
+	return id;
+}
+
 void EntityManager::remove(unsigned long long int* id) {
 	//1. Remove from systemManager
 	for(auto a : entities.at(id)) {

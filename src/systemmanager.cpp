@@ -40,5 +40,5 @@ ISystem* SystemManager::getSystem(string identifier) {
 	}
 
 
-	return systemByIdentifiers.at(identifier);
+	return system;
 }

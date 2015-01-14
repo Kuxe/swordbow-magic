@@ -9,6 +9,7 @@
 #include "rendersystem.h"
 #include "movecomponent.h"
 #include "rendercomponent.h"
+#include "world.h"
 
 using namespace std;
 
@@ -30,6 +31,7 @@ int main(int argc, char** argv) {
 	systemManager.add(&moveSystem);
 	systemManager.add(&renderSystem);
 
+	World world(&entityManager);
 	auto playerId = entityManager.createPlayer();
 
 	//Keystroke events should change the input component of the player
