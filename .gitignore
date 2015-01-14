@@ -42,3 +42,6 @@ makefile
 
 # trashpapers
 /trashpapers/
+
+# callgrind and profiling data
+*.out.*
