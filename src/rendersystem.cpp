@@ -111,7 +111,15 @@ unsigned int RenderSystem::count() const {
 }
 
 void RenderSystem::render(const RenderData& data) const {
-    TextureData textureData = textureDatas.at(data.renderComponent->imagePath);
+    TextureData textureData;
+    try {
+        textureDatas.at(data.renderComponent->imagePath);
+    } catch (const std::out_of_range &oor) {
+        cout << "out_of_range exception caught in SystemManager::getSystem(string identifier): " << oor.what() << endl;
+        cout << "1. Maybe there as a typo in the RenderComponent->imagePath, " << data.renderComponent->imagePath << "?" << endl;
+        cout << "2. Maybe " << data.renderComponent->imagePath << " wasn't loaded by RenderSystem?" << endl;
+        cout << "Things will go wrong from now on!" << endl;
+    }
     SDL_Texture* texture = textureData.texture;
 
     SDL_Rect rect{
