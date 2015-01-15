@@ -114,7 +114,7 @@ void RenderSystem::render(const RenderData& data) const {
     if(data.renderComponent->doRender) {
         TextureData textureData;
         try {
-            textureDatas.at(data.renderComponent->imagePath);
+            textureData = textureDatas.at(data.renderComponent->imagePath);
         } catch (const std::out_of_range &oor) {
             cout << "out_of_range exception caught in SystemManager::getSystem(string identifier): " << oor.what() << endl;
             cout << "1. Maybe there as a typo in the RenderComponent->imagePath, " << data.renderComponent->imagePath << "?" << endl;
