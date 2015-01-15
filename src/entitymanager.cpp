@@ -60,7 +60,7 @@ unsigned long long int* EntityManager::createTile() {
 	componentManager->createTileComponent(id);
 	auto rc = componentManager->createRenderComponent(id);
 
-	rc->imagePath = "./resources/images/player.bmp";
+	rc->imagePath = "./resources/images/grass.bmp";
 
 	entities.insert(
 		make_pair(

@@ -2,6 +2,7 @@
 #include "entitymanager.h"
 #include "componentmanager.h"
 #include "movecomponent.h"
+#include "rendercomponent.h"
 
 World::World(EntityManager* entityManager) 
 	: entityManager(entityManager) {
@@ -14,6 +15,10 @@ World::World(EntityManager* entityManager)
 			auto mc = entityManager->componentManager->moveComponents.at(id);
 			mc->xpos = x * TILE_SIZE;
 			mc->ypos = y * TILE_SIZE;
+
+			//Only render these once doRender = true
+			auto rc = entityManager->componentManager->renderComponents.at(id);
+			rc->renderOnce = true;
 		}
 	}
 }

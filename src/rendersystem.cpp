@@ -35,7 +35,8 @@ RenderSystem::RenderSystem() {
     //We want to access surfaces by their image path later on, so store paths right away
     for(auto path :{
             "./resources/images/HelloWorld.bmp",
-            "./resources/images/player.bmp"
+            "./resources/images/player.bmp",
+            "./resources/images/grass.bmp",
             }
         ) 
     {
@@ -121,7 +122,6 @@ void RenderSystem::render(const RenderData& data) const {
             cout << "2. Maybe " << data.renderComponent->imagePath << " wasn't loaded by RenderSystem?" << endl;
             cout << "Things will go wrong from now on!" << endl;
         }
-        SDL_Texture* texture = textureData.texture;
 
         SDL_Rect rect{
             (int)(data.moveComponent->xpos + data.renderComponent->xoffset),
@@ -130,9 +130,12 @@ void RenderSystem::render(const RenderData& data) const {
             textureData.height
         };
 
-        SDL_RenderClear(renderer);
+        //SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, textureDatas.at(data.renderComponent->imagePath).texture, NULL, &rect);
         SDL_RenderPresent(renderer);
+    }
+    if(data.renderComponent->renderOnce) {
+        data.renderComponent->doRender = false;
     }
 }
 
