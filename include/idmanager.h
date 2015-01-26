@@ -6,7 +6,7 @@
 **/
 class IdManager {
  public:
-		unsigned long long int freeId = 0;
+		unsigned long long int freeId = 1;
 		unsigned long long int* getId();
 };
 

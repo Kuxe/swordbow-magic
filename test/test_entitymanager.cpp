@@ -6,18 +6,22 @@
 #include "movesystem.h"
 #include "rendersystem.h"
 #include "deltatime.h"
+#include "gridindexer.h"
+#include "flagsystem.h"
 
 TEST_CASE("EntityManager") {
 	ComponentManager componentManager;
 	DeltaTime deltaTime;
 	SystemManager systemManager(&componentManager, &deltaTime);
 	IdManager idManager;
-
-	EntityManager entityManager(&systemManager, &componentManager, &idManager);
+	GridIndexer gridIndexer(&componentManager);
+	EntityManager entityManager(&systemManager, &componentManager, &idManager, &gridIndexer);
+	FlagSystem flagSystem;
 
 	MoveSystem moveSystem;
-	RenderSystem renderSystem;
+	RenderSystem renderSystem(&gridIndexer);
 
+	systemManager.add(&flagSystem);
 	systemManager.add(&moveSystem);
 	systemManager.add(&renderSystem);
 

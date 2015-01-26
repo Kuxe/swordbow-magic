@@ -7,16 +7,19 @@
 #include "rendersystem.h"
 #include "movesystem.h"
 #include "rendercomponent.h"
+#include "gridindexer.h"
 
 using namespace std;
 
 EntityManager::EntityManager(
 	SystemManager* systemManager,
 	ComponentManager* componentManager,
-	IdManager* idManager) :
+	IdManager* idManager,
+	GridIndexer* gridIndexer) :
 	systemManager(systemManager),
 	componentManager(componentManager),
-	idManager(idManager) {
+	idManager(idManager),
+	gridIndexer(gridIndexer) {
 
 }
 
@@ -27,11 +30,14 @@ unsigned long long int* EntityManager::createPlayer() {
 	//Create components from componentmanager
 	componentManager->createMoveComponent(id);
 	componentManager->createInputComponent(id);
+	componentManager->createFlagComponent(id);
 	RenderComponent* renderComponent = componentManager->createRenderComponent(id);
+	gridIndexer->add(id);
 
 	//If you'd like to change default initialization-data in a component
 	//Just save a pointer to the component like above and modify it like bellow
 	renderComponent->imagePath = "./resources/images/player.bmp";
+	renderComponent->zindex = 1;
 
 	//Tell the entity what systems belongs to
 	entities.insert(
@@ -40,6 +46,7 @@ unsigned long long int* EntityManager::createPlayer() {
 			vector<ISystem*> {
 				systemManager->getSystem("RenderSystem"),
 				systemManager->getSystem("MoveSystem"),
+				systemManager->getSystem("FlagSystem"),
 			}
 		)
 	);
@@ -58,7 +65,9 @@ unsigned long long int* EntityManager::createTile() {
 
 	componentManager->createMoveComponent(id);
 	componentManager->createTileComponent(id);
+	componentManager->createFlagComponent(id);
 	auto rc = componentManager->createRenderComponent(id);
+	gridIndexer->add(id);
 
 	rc->imagePath = "./resources/images/grass.bmp";
 
@@ -67,6 +76,7 @@ unsigned long long int* EntityManager::createTile() {
 			id,
 			vector<ISystem*> {
 				systemManager->getSystem("RenderSystem"),
+				systemManager->getSystem("FlagSystem"),
 			}
 		)
 	);
@@ -82,6 +92,9 @@ void EntityManager::remove(unsigned long long int* id) {
 	for(auto a : entities.at(id)) {
 		a->remove(id);
 	}
+
+	//Remove from GridIndexer (assuming gridindexer handles removing unadded ids well)
+	gridIndexer->remove(id);
 
 	//2. Remove from componentManager (deallocate components)
 	componentManager->removeAllComponents(id);

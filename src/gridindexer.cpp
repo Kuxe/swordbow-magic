@@ -57,7 +57,7 @@ void GridIndexer::index(unsigned long long int* id) {
 	const unsigned char curCellY = mc->ypos / CELL_SIDE;
 
 	//If unit has moved to another cell
-	if(	curCellX != oldCellX || curCellY != oldCellY) {
+	if(!(curCellX == oldCellX && curCellY == oldCellY)) {
 		//id has moved into another cell, so needs to re-index
 
 		//Remove from id old cell
@@ -83,3 +83,16 @@ set<unsigned long long int*> GridIndexer::getCell(
 	const unsigned char y) const {
 	return cells[x][y].ids;
 }
+
+set<unsigned long long int*> GridIndexer::getCell(unsigned long long int* id) const {
+	const auto mc = componentManager->moveComponents.at(id);
+	return getCell(mc->xpos/20, mc->ypos/20);
+}
+
+
+
+
+
+
+
+

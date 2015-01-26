@@ -8,10 +8,12 @@ using namespace std;
 
 class MoveComponent;
 class InputComponent;
+class FlagComponent;
 
 struct MoveData {
 	MoveComponent* moveComponent;
 	InputComponent* inputComponent;
+	FlagComponent* flagComponent;
 };
 
 class MoveSystem : public ISystem {

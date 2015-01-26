@@ -8,6 +8,8 @@
 #include "rendersystem.h"
 #include "movecomponent.h"
 #include "inputcomponent.h"
+#include "gridindexer.h"
+#include "flagsystem.h"
 
 TEST_CASE("MoveSystem") {
 	ComponentManager componentManager;
@@ -17,12 +19,15 @@ TEST_CASE("MoveSystem") {
 	deltaTime.stop();
 	SystemManager systemManager(&componentManager, &deltaTime);
 	IdManager idManager;
+	GridIndexer gridIndexer(&componentManager);
+	FlagSystem flagSystem;
 
-	EntityManager entityManager(&systemManager, &componentManager, &idManager);
+	EntityManager entityManager(&systemManager, &componentManager, &idManager, &gridIndexer);
 
 	MoveSystem moveSystem;
-	RenderSystem renderSystem;
+	RenderSystem renderSystem(&gridIndexer);
 
+	systemManager.add(&flagSystem);
 	systemManager.add(&moveSystem);
 	systemManager.add(&renderSystem);
 

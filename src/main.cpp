@@ -10,6 +10,8 @@
 #include "movecomponent.h"
 #include "rendercomponent.h"
 #include "world.h"
+#include "gridindexer.h"
+#include "flagsystem.h"
 
 using namespace std;
 
@@ -21,18 +23,21 @@ int main(int argc, char** argv) {
 
 	ComponentManager componentManager;
 	SystemManager systemManager(&componentManager, &deltaTime);
+	GridIndexer gridIndexer(&componentManager);
 	IdManager idManager;
 
-	EntityManager entityManager(&systemManager, &componentManager, &idManager);
+	EntityManager entityManager(&systemManager, &componentManager, &idManager, &gridIndexer);
 
 	MoveSystem moveSystem;
-	RenderSystem renderSystem;
+	RenderSystem renderSystem(&gridIndexer);
+	FlagSystem flagSystem;
 
+	systemManager.add(&flagSystem);
 	systemManager.add(&moveSystem);
 	systemManager.add(&renderSystem);
 
-	World world(&entityManager);
 	auto playerId = entityManager.createPlayer();
+	World world(&entityManager);
 
 	//Keystroke events should change the input component of the player
 	eventManager.userInputComponent = componentManager.inputComponents.at(playerId);

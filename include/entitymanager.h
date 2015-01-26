@@ -17,6 +17,7 @@ class SystemManager;
 class ComponentManager;
 class IdManager;
 class ISystem;
+class GridIndexer;
 
 class EntityManager {
  public:
@@ -31,8 +32,9 @@ class EntityManager {
 	SystemManager* systemManager;
 	ComponentManager* componentManager;
 	IdManager* idManager;
+	GridIndexer* gridIndexer;
 
-	EntityManager(SystemManager* systemManager, ComponentManager* componentManager, IdManager* idManager);
+	EntityManager(SystemManager* systemManager, ComponentManager* componentManager, IdManager* idManager, GridIndexer* gridIndexer);
 	unsigned long long int* createPlayer();
 	unsigned long long int* createTile();
 	void remove(unsigned long long int*);

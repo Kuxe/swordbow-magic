@@ -39,6 +39,7 @@ struct Cell {
 	void index(unsigned long long int* id);
 	void update();
 	set<unsigned long long int*> getCell(unsigned char x, unsigned char y) const;
+	set<unsigned long long int*> getCell(unsigned long long int* id) const;
 };
 
 #endif //GRIDINDEXER_H
