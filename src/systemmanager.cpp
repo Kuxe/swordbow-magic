@@ -11,7 +11,12 @@ SystemManager::SystemManager(ComponentManager* componentManager, DeltaTime* delt
 }
 
 void SystemManager::add(ISystem* system) {
-	systems.push_front(system);
+	for(int i = 0; i < MAX_SYSTEMS; i++) {
+		if(systems[i] == 0) {
+			systems[i] = system;
+			i = MAX_SYSTEMS;
+		}
+	}
 	system->componentManager = componentManager;
 	system->deltaTime = deltaTime;
 	systemByIdentifiers.insert(std::make_pair(system->getIdentifier(), system));
@@ -21,8 +26,10 @@ void SystemManager::remove(ISystem* system) {
 }
 
 void SystemManager::update() {
-	for(ISystem* system : systems) {
-		system->update();
+	for(int i = 0; i < MAX_SYSTEMS; i++) {
+		if(systems[i]) {
+			systems[i]->update();
+		}
 	}
 }
 

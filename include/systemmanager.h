@@ -17,10 +17,13 @@ class SystemManager {
  		in order to aquire the components
  	*/
 
+ 	static constexpr unsigned char MAX_SYSTEMS = 255;
+
  	SystemManager(ComponentManager* componentManager, DeltaTime* deltaTime);
  	ComponentManager* const componentManager;
  	DeltaTime* const deltaTime;
-	forward_list<ISystem*> systems;
+	//forward_list<ISystem*> systems;
+	ISystem* systems[MAX_SYSTEMS] {0};
 	unordered_map<string, ISystem*> systemByIdentifiers;
 	void add(ISystem* system);
 	void remove(ISystem* system);
