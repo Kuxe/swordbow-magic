@@ -47,9 +47,11 @@ int main(int argc, char** argv) {
 
 		systemManager.update();
 		eventManager.process();
+		gridIndexer.update();
 
 		deltaTime.stop();
 	}
 
 	return 0;
 }
+
