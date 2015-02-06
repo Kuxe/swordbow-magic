@@ -87,24 +87,33 @@ set<unsigned long long int*> GridIndexer::getCell(
 
 set<unsigned long long int*> GridIndexer::getCell(unsigned long long int* id) const {
 	const auto mc = componentManager->moveComponents.at(id);
-	return getCell(mc->xpos/20, mc->ypos/20);
+	return getCell(mc->xpos/CELL_SIDE, mc->ypos/CELL_SIDE);
 }
 
 //return union of sets of cells withing id area (calc area from movecomponent and sizecomponent)
+//If an entity has top-left corner [2, 3] and bottom right corner [4, 5], return all entities in
+// [1, 2][5, 6]
 set<unsigned long long int*> GridIndexer::getOverlappingIds(unsigned long long int* id) const {
 	const auto mc = componentManager->moveComponents.at(id);
 	const auto sc = componentManager->sizeComponents.at(id);
 
-	set<unsigned long long int*> overlappingIds;
+	set<unsigned long long int*> overLappingIds;
+	const unsigned int fromx = (mc->xpos/CELL_SIDE) - 1;
+	const unsigned int tox = ((mc->xpos + sc->width)/CELL_SIDE) + 1;
+	const unsigned int fromy = (mc->ypos/CELL_SIDE) - 1;
+	const unsigned int toy = (mc->ypos + sc->height)/CELL_SIDE + 1;
 
-	for(int x = mc->xpos/20; x <= (mc->xpos + sc->width)/ 20; x++) {
-		for(int y = mc->ypos/20; y <= (mc->ypos + sc->height)/ 20; y++) {
+	for(int x = fromx; x <= tox; x++) {
+		for(int y = fromy; y <= toy; y++) {
 			const auto cellIds = getCell(x, y);
-			overlappingIds.insert(cellIds.begin(), cellIds.end());
+			overLappingIds.insert(cellIds.begin(), cellIds.end());
 		}
 	}
 
-	return overlappingIds;
+	//Remove self, id isnt considered to be overlapping itself...
+	overLappingIds.erase(id);
+
+	return overLappingIds;
 }
 
 

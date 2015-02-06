@@ -10,9 +10,11 @@ TEST_CASE("GridIndexer") {
 	//Create an entity with coordinates
 	unsigned long long int id = 3;
 	auto moveComponent = componentManager.createMoveComponent(&id);
+	auto sizeComponent = componentManager.createSizeComponent(&id);
 
 	unsigned long long int otherId = 1337;
 	auto otherMoveComponent = componentManager.createMoveComponent(&otherId);
+	auto otherSizeComponent = componentManager.createSizeComponent(&otherId);
 
 	SECTION("Initialization") {
 		//Shouldn't be any element in the gridindex from start
@@ -85,5 +87,69 @@ TEST_CASE("GridIndexer") {
 		REQUIRE(gridIndexer.getCell(0, 0).size() == 1);
 		//Should be 1 reference to id
 		REQUIRE(gridIndexer.getCell(0, 0).count(&id) == 1);
+	}
+
+	SECTION("Get overlapping ids") {
+		gridIndexer.add(&id);
+		gridIndexer.add(&otherId);
+
+		moveComponent->xpos = 30;
+		moveComponent->ypos = 30;
+
+		//entity is on cell 1, 1, so return ids in cells within [0, 0] [2, 2]
+		//For now only there's only one other id
+		//otherentity on [0, 0]
+		otherMoveComponent->xpos = 0;
+		otherMoveComponent->ypos = 0;
+		gridIndexer.update();
+		REQUIRE(gridIndexer.getOverlappingIds(&id).size() == 1);
+
+		//otherentity on [0, 1]
+		otherMoveComponent->xpos = 0;
+		otherMoveComponent->ypos = 30;
+		gridIndexer.update();
+		REQUIRE(gridIndexer.getOverlappingIds(&id).size() == 1);
+
+		//otherentity on [0, 2]
+		otherMoveComponent->xpos = 0;
+		otherMoveComponent->ypos = 50;
+		gridIndexer.update();
+		REQUIRE(gridIndexer.getOverlappingIds(&id).size() == 1);
+
+		//otherentity on [1, 0]
+		otherMoveComponent->xpos = 30;
+		otherMoveComponent->ypos = 0;
+		gridIndexer.update();
+		REQUIRE(gridIndexer.getOverlappingIds(&id).size() == 1);
+
+		//otherentity on [1, 1]
+		otherMoveComponent->xpos = 30;
+		otherMoveComponent->ypos = 30;
+		gridIndexer.update();
+		REQUIRE(gridIndexer.getOverlappingIds(&id).size() == 1);
+
+		//otherentity on [1, 2]
+		otherMoveComponent->xpos = 30;
+		otherMoveComponent->ypos = 50;
+		gridIndexer.update();
+		REQUIRE(gridIndexer.getOverlappingIds(&id).size() == 1);
+
+		//otherentity on [2, 0]
+		otherMoveComponent->xpos = 50;
+		otherMoveComponent->ypos = 0;
+		gridIndexer.update();
+		REQUIRE(gridIndexer.getOverlappingIds(&id).size() == 1);
+
+		//otherentity on [2, 1]
+		otherMoveComponent->xpos = 50;
+		otherMoveComponent->ypos = 30;
+		gridIndexer.update();
+		REQUIRE(gridIndexer.getOverlappingIds(&id).size() == 1);
+
+		//otherentity on [2, 2]
+		otherMoveComponent->xpos = 50;
+		otherMoveComponent->ypos = 50;
+		gridIndexer.update();
+		REQUIRE(gridIndexer.getOverlappingIds(&id).size() == 1);
 	}
 }
