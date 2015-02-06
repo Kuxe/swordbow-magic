@@ -10,6 +10,7 @@ class RenderComponent;
 class InputComponent;
 class TileComponent;
 class FlagComponent;
+class SizeComponent;
 
 class ComponentManager {
  public:
@@ -18,12 +19,14 @@ class ComponentManager {
 	unordered_map<unsigned long long int *, InputComponent*> inputComponents;
 	unordered_map<unsigned long long int *, TileComponent*> tileComponents;
 	unordered_map<unsigned long long int *, FlagComponent*> flagComponents;
+	unordered_map<unsigned long long int *, SizeComponent*> sizeComponents;
 
 	MoveComponent* createMoveComponent(unsigned long long int* id);
 	RenderComponent* createRenderComponent(unsigned long long int* id);
 	InputComponent* createInputComponent(unsigned long long int* id);
 	TileComponent* createTileComponent(unsigned long long int* id);
 	FlagComponent* createFlagComponent(unsigned long long int* id);
+	SizeComponent* createSizeComponent(unsigned long long int* id);
 
 	void removeAllComponents(unsigned long long int* id);
 };

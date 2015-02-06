@@ -4,6 +4,7 @@
 #include "inputcomponent.h"
 #include "tilecomponent.h"
 #include "flagcomponent.h"
+#include "sizecomponent.h"
 #include <iostream>
 
 using namespace std;
@@ -37,6 +38,12 @@ FlagComponent* ComponentManager::createFlagComponent(unsigned long long int* id)
 	return flagComponent;
 }
 
+SizeComponent* ComponentManager::createSizeComponent(unsigned long long int* id) {
+	SizeComponent* sizeComponent = new SizeComponent();
+	sizeComponents.insert(make_pair(id, sizeComponent));
+	return sizeComponent;
+}
+
 void ComponentManager::removeAllComponents(unsigned long long int* id) {
 	try {
 		delete moveComponents.at(id);
@@ -66,6 +73,12 @@ void ComponentManager::removeAllComponents(unsigned long long int* id) {
 		delete flagComponents.at(id);
 	} catch (const std::out_of_range& oor) {
 		cout << "id has no flagComponents" << endl;
+	}
+
+	try {
+		delete sizeComponents.at(id);
+	} catch (const std::out_of_range& oor) {
+		cout << "id has no sizeComponents" << endl;
 	}
 }
 

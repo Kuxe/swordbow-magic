@@ -1,5 +1,6 @@
 #include "gridindexer.h"
 #include "movecomponent.h"
+#include "sizecomponent.h"
 #include "componentmanager.h"
 #include <iostream>
 
@@ -87,6 +88,23 @@ set<unsigned long long int*> GridIndexer::getCell(
 set<unsigned long long int*> GridIndexer::getCell(unsigned long long int* id) const {
 	const auto mc = componentManager->moveComponents.at(id);
 	return getCell(mc->xpos/20, mc->ypos/20);
+}
+
+//return union of sets of cells withing id area (calc area from movecomponent and sizecomponent)
+set<unsigned long long int*> GridIndexer::getOverlappingIds(unsigned long long int* id) const {
+	const auto mc = componentManager->moveComponents.at(id);
+	const auto sc = componentManager->sizeComponents.at(id);
+
+	set<unsigned long long int*> overlappingIds;
+
+	for(int x = mc->xpos/20; x <= (mc->xpos + sc->width)/ 20; x++) {
+		for(int y = mc->ypos/20; y <= (mc->ypos + sc->height)/ 20; y++) {
+			const auto cellIds = getCell(x, y);
+			overlappingIds.insert(cellIds.begin(), cellIds.end());
+		}
+	}
+
+	return overlappingIds;
 }
 
 

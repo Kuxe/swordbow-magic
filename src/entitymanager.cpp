@@ -7,6 +7,7 @@
 #include "rendersystem.h"
 #include "movesystem.h"
 #include "rendercomponent.h"
+#include "sizecomponent.h"
 #include "gridindexer.h"
 
 using namespace std;
@@ -31,6 +32,7 @@ unsigned long long int* EntityManager::createPlayer() {
 	componentManager->createMoveComponent(id);
 	componentManager->createInputComponent(id);
 	componentManager->createFlagComponent(id);
+	auto sizeComponent = componentManager->createSizeComponent(id);
 	RenderComponent* renderComponent = componentManager->createRenderComponent(id);
 	gridIndexer->add(id);
 
@@ -38,6 +40,10 @@ unsigned long long int* EntityManager::createPlayer() {
 	//Just save a pointer to the component like above and modify it like bellow
 	renderComponent->imagePath = "./resources/images/player.bmp";
 	renderComponent->zindex = 1;
+
+	//Width of a player is 20x20
+	sizeComponent->width = 20;
+	sizeComponent->height = 20;
 
 	//Tell the entity what systems belongs to
 	entities.insert(
@@ -66,10 +72,14 @@ unsigned long long int* EntityManager::createTile() {
 	componentManager->createMoveComponent(id);
 	componentManager->createTileComponent(id);
 	componentManager->createFlagComponent(id);
+	auto sizeComponent = componentManager->createSizeComponent(id);
 	auto rc = componentManager->createRenderComponent(id);
 	gridIndexer->add(id);
 
 	rc->imagePath = "./resources/images/grass.bmp";
+
+	sizeComponent->width = 20;
+	sizeComponent->height = 20;
 
 	entities.insert(
 		make_pair(

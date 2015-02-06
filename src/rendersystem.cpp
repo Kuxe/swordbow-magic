@@ -123,7 +123,7 @@ void RenderSystem::update() {
         unsigned long long int* currentId = ids[i];
         if(currentId != 0 && componentManager->flagComponents.at(currentId)->flags & FlagComponent::HAS_CHANGED) {
             componentManager->renderComponents.at(currentId)->doRender = true;
-            for(auto closeIds : gridIndexer->getCell(currentId)) {
+            for(auto closeIds : gridIndexer->getOverlappingIds(currentId)) {
                 componentManager->renderComponents.at(closeIds)->doRender = true;
             }
         }

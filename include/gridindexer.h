@@ -40,6 +40,7 @@ struct Cell {
 	void update();
 	set<unsigned long long int*> getCell(unsigned char x, unsigned char y) const;
 	set<unsigned long long int*> getCell(unsigned long long int* id) const;
+	set<unsigned long long int*> getOverlappingIds(unsigned long long int* id) const;
 };
 
 #endif //GRIDINDEXER_H
