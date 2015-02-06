@@ -8,6 +8,7 @@
 #include "movesystem.h"
 #include "rendercomponent.h"
 #include "sizecomponent.h"
+#include "movecomponent.h"
 #include "gridindexer.h"
 
 using namespace std;
@@ -29,7 +30,7 @@ unsigned long long int* EntityManager::createPlayer() {
 	auto id = idManager->getId();
 
 	//Create components from componentmanager
-	componentManager->createMoveComponent(id);
+	auto moveComponent = componentManager->createMoveComponent(id);
 	componentManager->createInputComponent(id);
 	componentManager->createFlagComponent(id);
 	auto sizeComponent = componentManager->createSizeComponent(id);
@@ -40,6 +41,11 @@ unsigned long long int* EntityManager::createPlayer() {
 	//Just save a pointer to the component like above and modify it like bellow
 	renderComponent->imagePath = "./resources/images/player.bmp";
 	renderComponent->zindex = 1;
+	renderComponent->xoffset = -10;
+	renderComponent->yoffset = -10;
+
+	moveComponent->xpos = 20;
+	moveComponent->ypos = 20;
 
 	//Width of a player is 20x20
 	sizeComponent->width = 20;
