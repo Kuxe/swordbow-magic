@@ -26,11 +26,14 @@ RenderSystem::RenderSystem(GridIndexer* gridIndexer)
         if(!window) {
             cout << "ERROR: Window could not be created! SDL_Error: " << SDL_GetError() << endl;
         } else {
-            renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+            renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
             if(!renderer) {
                 cout << "ERROR: Renderer could not be created! SDL_Error: " << SDL_GetError() << endl;
             } else {
                 SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
+
+                targetTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
+                SDL_RenderClear(renderer);
             }
         }
     }
@@ -77,6 +80,7 @@ RenderSystem::~RenderSystem() {
         SDL_DestroyTexture(get<1>(textureData).texture);
     }
 
+    SDL_DestroyTexture(targetTexture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
@@ -123,41 +127,50 @@ void RenderSystem::update() {
         unsigned long long int* currentId = ids[i];
         if(currentId != 0 && componentManager->flagComponents.at(currentId)->flags & FlagComponent::HAS_CHANGED) {
             componentManager->renderComponents.at(currentId)->doRender = true;
+            renderingRequired = true;
             for(auto closeIds : gridIndexer->getOverlappingIds(currentId)) {
                 componentManager->renderComponents.at(closeIds)->doRender = true;
             }
         }
     }
+    if(renderingRequired) {
+        //Array of sorted renderdatas (by z-index)
+        int i = 0;
+        const int SIZE = renderDatas.size();
+        RenderData sortedRenderDatas[SIZE];
 
-    //Array of sorted renderdatas (by z-index)
-    int i = 0;
-    const int SIZE = renderDatas.size();
-    RenderData sortedRenderDatas[SIZE];
+        //Copy renderDatas unordered_map to an array
+    	for(auto data : renderDatas) {
+    		sortedRenderDatas[i] = get<1>(data);
+            i++;
+    	}
 
-    //Copy renderDatas unordered_map to an array
-	for(auto data : renderDatas) {
-		sortedRenderDatas[i] = get<1>(data);
-        i++;
-	}
+        //Sort the array by z-index
+        bool sorted = true;
+        while(!sorted) {
+            sorted = true;
+            for(i = 0; i < SIZE-1; i++) {
+                const float z1 = sortedRenderDatas[i].renderComponent->zindex;
+                const float z2 = sortedRenderDatas[i+1].renderComponent->zindex;
 
-    //Sort the array by z-index
-    bool sorted = true;
-    while(!sorted) {
-        sorted = true;
-        for(i = 0; i < SIZE-1; i++) {
-            const float z1 = sortedRenderDatas[i].renderComponent->zindex;
-            const float z2 = sortedRenderDatas[i+1].renderComponent->zindex;
-
-            if(z1 > z2) {
-                const auto temp = sortedRenderDatas[i];
-                sortedRenderDatas[i] = sortedRenderDatas[i+1];
-                sortedRenderDatas[i+1] = temp;
-                sorted = false;
+                if(z1 > z2) {
+                    const auto temp = sortedRenderDatas[i];
+                    sortedRenderDatas[i] = sortedRenderDatas[i+1];
+                    sortedRenderDatas[i+1] = temp;
+                    sorted = false;
+                }
             }
         }
-    }
-    for(auto data : sortedRenderDatas) {
-        render(data);
+        for(auto data : sortedRenderDatas) {
+            render(data);
+        }
+
+        //Set renderTarget to default, clear it, and render targetTexture to default. Finally render default.
+        SDL_SetRenderTarget(renderer, NULL);
+        SDL_RenderClear(renderer);
+        SDL_RenderCopy(renderer, targetTexture, NULL, NULL);
+        SDL_RenderPresent(renderer);
+        renderingRequired = false;
     }
 }
 
@@ -185,9 +198,15 @@ void RenderSystem::render(const RenderData& data) const {
             textureData.height
         };
 
-        //SDL_RenderClear(renderer);
+        //Render to target texture
+        //the target texture in turn will be rendered ontop of default
+        //the default is always cleared
+        //SDL_RenderPresent invalidates current backbuffer, so hence this required
+        //the targetTexture ISNT invalidated, whatever is rendered onto it it saved
+        //so it's fine to just re-render the targetTexture
+        SDL_SetTextureBlendMode(targetTexture, SDL_BLENDMODE_BLEND);
+        SDL_SetRenderTarget(renderer, targetTexture);
         SDL_RenderCopy(renderer, textureDatas.at(data.renderComponent->imagePath).texture, NULL, &rect);
-        SDL_RenderPresent(renderer);
 
         //Finally, don't render this component until it says otherwise
         data.renderComponent->doRender = false;

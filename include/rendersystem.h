@@ -31,10 +31,12 @@ class RenderSystem : public ISystem {
 	unordered_map<unsigned long long int*, RenderData> renderDatas;
 	static constexpr ushort SCREEN_WIDTH = 640;
 	static constexpr ushort SCREEN_HEIGHT = 480;
+	bool renderingRequired = true;
 
 	SDL_Renderer* renderer = nullptr;
 	SDL_Window* window = nullptr;
 	SDL_Surface* screenSurface = nullptr;
+	SDL_Texture* targetTexture = nullptr;
 	unordered_map<string, TextureData> textureDatas;
 	GridIndexer* gridIndexer;
  public:
