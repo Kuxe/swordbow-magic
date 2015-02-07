@@ -3,6 +3,7 @@
 #include "componentmanager.h"
 #include "movecomponent.h"
 #include "rendercomponent.h"
+#include "sizecomponent.h"
 
 World::World(EntityManager* entityManager) 
 	: entityManager(entityManager) {
@@ -15,6 +16,10 @@ World::World(EntityManager* entityManager)
 			auto mc = entityManager->componentManager->moveComponents.at(id);
 			mc->xpos = x * TILE_SIZE;
 			mc->ypos = y * TILE_SIZE;
+
+			auto sc = entityManager->componentManager->sizeComponents.at(id);
+			sc->width = TILE_SIZE;
+			sc->height = TILE_SIZE;
 		}
 	}
 }
