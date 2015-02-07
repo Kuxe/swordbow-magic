@@ -146,22 +146,9 @@ void RenderSystem::update() {
             i++;
     	}
 
-        //Sort the array by z-index
-        bool sorted = true;
-        while(!sorted) {
-            sorted = true;
-            for(i = 0; i < SIZE-1; i++) {
-                const float z1 = sortedRenderDatas[i].renderComponent->zindex;
-                const float z2 = sortedRenderDatas[i+1].renderComponent->zindex;
+		//Sort it based on z-index
+		sort(sortedRenderDatas, SIZE);
 
-                if(z1 > z2) {
-                    const auto temp = sortedRenderDatas[i];
-                    sortedRenderDatas[i] = sortedRenderDatas[i+1];
-                    sortedRenderDatas[i+1] = temp;
-                    sorted = false;
-                }
-            }
-        }
         for(auto data : sortedRenderDatas) {
             render(data);
         }
@@ -217,3 +204,29 @@ void RenderSystem::render(const RenderData& data) const {
 const string RenderSystem::getIdentifier() const {
 	return "RenderSystem";
 }
+
+void RenderSystem::sort(RenderData* const arr, const unsigned int size) const {
+	//Sort the array by z-index
+    bool sorted = false;
+    while(!sorted) { 
+		sorted = true;
+        for(unsigned int i = 0; i < size-1; i++) {
+			const float z1 = arr[i].renderComponent->zindex;
+            const float z2 = arr[i+1].renderComponent->zindex;
+
+            if(z1 > z2) {
+				const auto temp = arr[i];
+                arr[i] = arr[i+1];
+                arr[i+1] = temp;
+                sorted = false;
+			}            
+		}
+	}
+}
+
+
+
+
+
+
+

@@ -48,6 +48,7 @@ class RenderSystem : public ISystem {
 	unsigned int count() const;
 	void render(const RenderData& data) const;
 	const string getIdentifier() const;
+	inline void sort(RenderData* const arr, const unsigned int size) const;
 };
 
 #endif //RENDERSYSTEM_H
