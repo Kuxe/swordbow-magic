@@ -33,6 +33,7 @@ RenderSystem::RenderSystem(GridIndexer* gridIndexer)
                 SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
 
                 targetTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
+				SDL_SetRenderTarget(renderer, targetTexture);
                 SDL_RenderClear(renderer);
             }
         }
