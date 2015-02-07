@@ -45,3 +45,6 @@ makefile
 
 # callgrind and profiling data
 *.out.*
+
+# swap-files
+*.swp
