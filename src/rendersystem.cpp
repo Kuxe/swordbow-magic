@@ -44,6 +44,7 @@ RenderSystem::RenderSystem(GridIndexer* gridIndexer)
             "./resources/images/HelloWorld.bmp",
             "./resources/images/player.bmp",
             "./resources/images/grass.bmp",
+			"./resources/images/tree.png",
             }
         ) 
     {
