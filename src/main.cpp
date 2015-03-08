@@ -12,6 +12,7 @@
 #include "world.h"
 #include "gridindexer.h"
 #include "flagsystem.h"
+#include "collisionsystem.h"
 
 using namespace std;
 
@@ -31,10 +32,12 @@ int main(int argc, char** argv) {
 	MoveSystem moveSystem;
 	RenderSystem renderSystem(&gridIndexer);
 	FlagSystem flagSystem;
+	CollisionSystem collisionSystem;
 
 	systemManager.add(&flagSystem);
 	systemManager.add(&moveSystem);
 	systemManager.add(&renderSystem);
+	systemManager.add(&collisionSystem);
 
 	auto playerId = entityManager.createPlayer();
 	World world(&entityManager);
