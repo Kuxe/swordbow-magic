@@ -30,11 +30,21 @@ RenderSystem::RenderSystem(GridIndexer* gridIndexer)
             if(!renderer) {
                 cout << "ERROR: Renderer could not be created! SDL_Error: " << SDL_GetError() << endl;
             } else {
-                SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
 
-                targetTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
-				SDL_SetRenderTarget(renderer, targetTexture);
-                SDL_RenderClear(renderer);
+				//imgFlags is used to initialize PNG-loading
+				//so that IMG_Load can be used instead of SDL_LoadBMP
+				int imgFlags = IMG_INIT_PNG;
+				if(!(IMG_Init(imgFlags) & imgFlags)) {
+					cout << "ERROR: Couldnt initialze PNG usage!" << endl;
+				} else {
+				
+
+		            SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
+
+			        targetTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
+					SDL_SetRenderTarget(renderer, targetTexture);
+					SDL_RenderClear(renderer);
+				}
             }
         }
     }
@@ -48,7 +58,7 @@ RenderSystem::RenderSystem(GridIndexer* gridIndexer)
             }
         ) 
     {
-        SDL_Surface* rawImage = SDL_LoadBMP(path);
+        SDL_Surface* rawImage = IMG_Load(path);
         if(!rawImage) {
             cout << "ERROR: Couldn't load image on: " << path << endl;
         } else {
