@@ -19,6 +19,11 @@ struct RenderData {
 	RenderComponent* renderComponent;
 	MoveComponent* moveComponent;
 	SizeComponent* sizeComponent;
+
+	inline bool operator< (const RenderData& rhs) const; 
+	inline bool operator> (const RenderData& rhs) const;
+	inline bool operator<=(const RenderData& rhs) const;
+	inline bool operator>=(const RenderData& rhs) const;
 };
 
 struct TextureData {

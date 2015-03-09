@@ -11,6 +11,27 @@
 
 using namespace std;
 
+
+
+
+bool RenderData::operator< (const RenderData& rhs) const {
+	//RenderData is first ordered by zindex_base and if the bases are equal then zindex
+	//{zindex_base, zindex}
+	//{6, 4.9} is greater than {5, 5.0}
+	//{5, 5.0} is equal to {5, 5.0}
+	//{5, 4.9] is less than {5, 5.0}
+	if(renderComponent->zindex_base == rhs.renderComponent->zindex_base) {
+		return renderComponent->zindex < rhs.renderComponent->zindex;
+	} else {
+		return renderComponent->zindex_base < rhs.renderComponent->zindex_base;
+	}
+}
+
+bool RenderData::operator> (const RenderData& rhs) const { return rhs < *this; }
+bool RenderData::operator<=(const RenderData& rhs) const { return !(*this > rhs); }
+bool RenderData::operator>=(const RenderData& rhs) const { return !(*this < rhs); }
+
+
 RenderSystem::RenderSystem(GridIndexer* gridIndexer)
     : gridIndexer(gridIndexer) {
 	//Initialize SDL
@@ -229,18 +250,15 @@ void RenderSystem::sort(RenderData* const arr, const unsigned int size) const {
 	}	
 
 	//Force all entities with the lowest zindex_base to be rendered first
-	//@TODO: implement heapsort, and apply it to arr. Overload < operator in RenderData
-	//to first look at zindex_base, then if they are equal look at zindex.
-	//if zindex1 == zindex2, order doesnt matter (could perhaps cause flickering?)...	
-	//heapsort(arr);
+	//@TODO: implement heapsort, and apply it to arr. 
 
 	//What sorting algorithm is this? Does it work?
     bool sorted = false;
     while(!sorted) { 
 		sorted = true;
         for(unsigned int i = 0; i < size-1; i++) {
-			const float z1 = arr[i].renderComponent->zindex;
-            const float z2 = arr[i+1].renderComponent->zindex;
+			const RenderData& z1 = arr[i];
+            const RenderData& z2 = arr[i+1];
 
             if(z1 > z2) {
 				const auto temp = arr[i];
