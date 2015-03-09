@@ -12,11 +12,13 @@ using namespace std;
 
 class RenderComponent;
 class MoveComponent;
+class SizeComponent;
 class GridIndexer;
 
 struct RenderData {
 	RenderComponent* renderComponent;
 	MoveComponent* moveComponent;
+	SizeComponent* sizeComponent;
 };
 
 struct TextureData {

@@ -2,9 +2,12 @@
 #include "componentmanager.h"
 #include "rendercomponent.h"
 #include "movecomponent.h"
+#include "sizecomponent.h"
 #include <iostream>
 #include "gridindexer.h"
 #include "flagcomponent.h"
+#include "heap.h"
+#include "dynamicarray.h"
 
 using namespace std;
 
@@ -104,7 +107,8 @@ void RenderSystem::add(unsigned long long int* id) {
             id,
             RenderData{
                 componentManager->renderComponents.at(id),
-                componentManager->moveComponents.at(id)
+                componentManager->moveComponents.at(id),
+				componentManager->sizeComponents.at(id),
             }
         )
     );
@@ -218,6 +222,19 @@ const string RenderSystem::getIdentifier() const {
 
 void RenderSystem::sort(RenderData* const arr, const unsigned int size) const {
 	//Sort the array by z-index
+	
+	//set zindex to be lowest y
+	for(auto a : renderDatas) {
+		get<1>(a).renderComponent->zindex = get<1>(a).moveComponent->ypos + get<1>(a).sizeComponent->height;
+	}	
+
+	//Force all entities with the lowest zindex_base to be rendered first
+	//@TODO: implement heapsort, and apply it to arr. Overload < operator in RenderData
+	//to first look at zindex_base, then if they are equal look at zindex.
+	//if zindex1 == zindex2, order doesnt matter (could perhaps cause flickering?)...	
+	//heapsort(arr);
+
+	//What sorting algorithm is this? Does it work?
     bool sorted = false;
     while(!sorted) { 
 		sorted = true;
@@ -234,10 +251,4 @@ void RenderSystem::sort(RenderData* const arr, const unsigned int size) const {
 		}
 	}
 }
-
-
-
-
-
-
 

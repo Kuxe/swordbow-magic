@@ -40,7 +40,7 @@ unsigned long long int* EntityManager::createPlayer() {
 	//If you'd like to change default initialization-data in a component
 	//Just save a pointer to the component like above and modify it like bellow
 	renderComponent->imagePath = "./resources/images/player.bmp";
-	renderComponent->zindex = 1;
+	renderComponent->zindex_base = 1;
 	renderComponent->xoffset = -10;
 	renderComponent->yoffset = -10;
 
@@ -84,7 +84,7 @@ unsigned long long int* EntityManager::createTree() {
 	gridIndexer->add(id);
 
 	renderComponent->imagePath = "./resources/images/SmallTree.png";
-	renderComponent->zindex = 1;
+	renderComponent->zindex_base = 1;
 	renderComponent->xoffset = -24;
 	renderComponent->yoffset = -54;
 
@@ -122,6 +122,7 @@ unsigned long long int* EntityManager::createTile() {
 	gridIndexer->add(id);
 
 	rc->imagePath = "./resources/images/grass.bmp";
+	rc->zindex_base = 0;
 
 	sizeComponent->width = 20;
 	sizeComponent->height = 20;
