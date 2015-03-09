@@ -40,6 +40,7 @@ int main(int argc, char** argv) {
 	systemManager.add(&collisionSystem);
 
 	auto playerId = entityManager.createPlayer();
+	entityManager.createTree();
 	World world(&entityManager);
 
 	//Keystroke events should change the input component of the player

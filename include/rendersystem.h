@@ -21,8 +21,8 @@ struct RenderData {
 
 struct TextureData {
 	SDL_Texture* texture;
-	unsigned char width;
-	unsigned char height;
+	unsigned int width;
+	unsigned int height;
 };
 
 class RenderSystem : public ISystem {

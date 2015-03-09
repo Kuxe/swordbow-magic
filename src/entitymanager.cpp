@@ -74,10 +74,8 @@ unsigned long long int* EntityManager::createPlayer() {
 }
 
 unsigned long long int* EntityManager::createTree() {
-	//Get unique ID
 	auto id = idManager->getId();
 
-	//Create components from componentmanager
 	auto moveComponent = componentManager->createMoveComponent(id);
 	componentManager->createInputComponent(id);
 	componentManager->createFlagComponent(id);
@@ -85,21 +83,17 @@ unsigned long long int* EntityManager::createTree() {
 	RenderComponent* renderComponent = componentManager->createRenderComponent(id);
 	gridIndexer->add(id);
 
-	//If you'd like to change default initialization-data in a component
-	//Just save a pointer to the component like above and modify it like bellow
-	renderComponent->imagePath = "./resources/images/tree.png";
+	renderComponent->imagePath = "./resources/images/SmallTree.png";
 	renderComponent->zindex = 1;
-	renderComponent->xoffset = -10;
-	renderComponent->yoffset = -10;
+	renderComponent->xoffset = -24;
+	renderComponent->yoffset = -54;
 
-	moveComponent->xpos = 50;
-	moveComponent->ypos = 50;
+	moveComponent->xpos = 100;
+	moveComponent->ypos = 100;
 
-	//Width of a player is 20x20
-	sizeComponent->width = 20;
-	sizeComponent->height = 20;
+	sizeComponent->width = 36;
+	sizeComponent->height = 10;
 
-	//Tell the entity what systems belongs to
 	entities.insert(
 		make_pair(
 			id,
@@ -107,11 +101,11 @@ unsigned long long int* EntityManager::createTree() {
 				systemManager->getSystem("RenderSystem"),
 				systemManager->getSystem("FlagSystem"),
 				systemManager->getSystem("CollisionSystem"),
+				systemManager->getSystem("MoveSystem"),
 			}
 		)
 	);
 
-	//Insert this entity into the systems
 	for(auto a : entities.at(id)) {
 		a->add(id);
 	} 
