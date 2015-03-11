@@ -8,6 +8,7 @@
 #include "flagcomponent.h"
 #include "heap.h"
 #include "dynamicarray.h"
+#include "heapsort.h"
 
 using namespace std;
 
@@ -248,25 +249,6 @@ void RenderSystem::sort(RenderData* const arr, const unsigned int size) const {
 	for(auto a : renderDatas) {
 		get<1>(a).renderComponent->zindex = get<1>(a).moveComponent->ypos + get<1>(a).sizeComponent->height;
 	}	
-
-	//Force all entities with the lowest zindex_base to be rendered first
-	//@TODO: implement heapsort, and apply it to arr. 
-
-	//What sorting algorithm is this? Does it work?
-    bool sorted = false;
-    while(!sorted) { 
-		sorted = true;
-        for(unsigned int i = 0; i < size-1; i++) {
-			const RenderData& z1 = arr[i];
-            const RenderData& z2 = arr[i+1];
-
-            if(z1 > z2) {
-				const auto temp = arr[i];
-                arr[i] = arr[i+1];
-                arr[i+1] = temp;
-                sorted = false;
-			}            
-		}
-	}
+	heapsort(arr, size);	
 }
 
