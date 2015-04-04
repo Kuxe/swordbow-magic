@@ -40,6 +40,9 @@ struct Cell {
 	void update();
 	set<unsigned long long int*> getCell(unsigned char x, unsigned char y) const;
 	set<unsigned long long int*> getCell(unsigned long long int* id) const;
+
+	//This should really be called "getAdjacentIds".. It doesnt return ids
+	//that overlap graphically, it does return ids that are in adjacent cells.
 	set<unsigned long long int*> getOverlappingIds(unsigned long long int* id) const;
 };
 

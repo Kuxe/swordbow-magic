@@ -9,6 +9,7 @@
 #include "heap.h"
 #include "dynamicarray.h"
 #include "heapsort.h"
+#include <queue>
 
 using namespace std;
 
@@ -131,15 +132,11 @@ void RenderSystem::add(unsigned long long int* id) {
                 componentManager->renderComponents.at(id),
                 componentManager->moveComponents.at(id),
 				componentManager->sizeComponents.at(id),
+				componentManager->flagComponents.at(id),
             }
         )
     );
-    for(int i = 0; i < MAX_IDS; i++) {
-        if(ids[i] == 0) {
-            ids[i] = id;
-            i = MAX_IDS;
-        }
-    }
+	ids.add(id);
 }
 
 void RenderSystem::remove(unsigned long long int* id) {
@@ -150,53 +147,72 @@ void RenderSystem::remove(unsigned long long int* id) {
 	if(renderDatas.erase(id) == 0) {
 		cout << "WARNING: RenderSystem tried to erase unpresent ID " << *id << ", segfault inc!" << endl;
 	}
-    for(int i = 0; i < MAX_IDS; i++) {
-        if(ids[i] == id) {
-            ids[i] = 0;
-            return;
-        }
-    }
+	ids.remove(id);
 }
 
 void RenderSystem::update() {
-    //if any entity took an action which requires rendering, then nearby components
-    //probably needs re-rendering too
-    for(unsigned char i = 0; i < MAX_IDS; i++) {
-        unsigned long long int* currentId = ids[i];
-        if(currentId != 0 && componentManager->flagComponents.at(currentId)->flags & FlagComponent::HAS_CHANGED) {
-            componentManager->renderComponents.at(currentId)->doRender = true;
-            renderingRequired = true;
-            for(auto closeIds : gridIndexer->getOverlappingIds(currentId)) {
-                componentManager->renderComponents.at(closeIds)->doRender = true;
-            }
-        }
-    }
-    if(renderingRequired) {
-        //Array of sorted renderdatas (by z-index)
-        int i = 0;
-        const int SIZE = renderDatas.size();
-        RenderData sortedRenderDatas[SIZE];
 
-        //Copy renderDatas unordered_map to an array
-    	for(auto data : renderDatas) {
-    		sortedRenderDatas[i] = get<1>(data);
-            i++;
-    	}
+	//Bellow is an algorithm that for each unmarked entity, that should be rendered,
+	//adds it to a priority-queue (pq) and a queue (q).
+	//Aslong as q isn't empty, pop an entity (e) from q. For all entities overlapping e,
+	//add them to the pq and q, finally mark the overlapping entities.
+	
+	//In other words this algorithm adds all entities that should be rendered to a list.
+	//An entity should be rendered whenever it is overlapped/overlapping another entity
+	//that should be rendered (one entity that is set to be rendered might cause a group
+	//of nearby, pairwise, overlapping entities to be redrawn to in order to maintain correct
+	//z-order
 
-		//Sort it based on z-index
-		sort(sortedRenderDatas, SIZE);
+	unsigned int count = ids.getSize();
+	bool marked[100000] {false}; //TODO: Make less arbitrary, somehow.. 
+	queue<unsigned long long int*> q;
+	heap<RenderData> pq; //TODO: Use reference instead (no need for copying!)
 
-        for(auto data : sortedRenderDatas) {
-            render(data);
-        }
+	//For all ids in rendersystem
+	for(auto& id : ids){
 
-        //Set renderTarget to default, clear it, and render targetTexture to default. Finally render default.
-        SDL_SetRenderTarget(renderer, NULL);
-        SDL_RenderClear(renderer);
-        SDL_RenderCopy(renderer, targetTexture, NULL, NULL);
-        SDL_RenderPresent(renderer);
-        renderingRequired = false;
-    }
+		//if all ids havnt been added already
+		//and either HAS_CHANGED or doRender is true
+		//and the current id hasnt been targeted for rendering
+		//then add the id pq of renderdatas to be rendered
+		//and put id in the list
+		//finally mark it
+		if(count != 0 && (componentManager->flagComponents.at(id)->flags & FlagComponent::HAS_CHANGED
+				|| renderDatas.at(id).renderComponent->doRender) 
+				&& !marked[*id]) {
+			q.push(id);
+			pq.insert(renderDatas.at(id));
+			marked[*id] = true;
+            componentManager->renderComponents.at(id)->doRender = true;
+			count--;
+
+			//as long as list isnt empty and all ids havnt been added already
+			//erase an id from the list and add overlapping ids into the pq of
+			//renderdatas, and also put them in the list. Mark them.
+			while(!q.empty() && count != 0) {
+				unsigned long long int* cur = q.back(); q.pop();	
+				for(auto& overlap : gridIndexer->getOverlappingIds(cur)) { //BUG: doesnt get overlapping ids.. it gets close ids
+					if(!marked[*overlap] && count != 0) {
+						q.push(overlap);
+						pq.insert(renderDatas.at(overlap));
+						marked[*overlap] = true;
+						componentManager->renderComponents.at(overlap)->doRender = true;
+						count--;
+					}	
+				}				
+			}
+		}
+	}
+
+	while(!pq.isEmpty()) {
+		RenderData data = pq.poll();
+		render(data);
+	}
+	
+    SDL_SetRenderTarget(renderer, NULL);
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, targetTexture, NULL, NULL);
+	SDL_RenderPresent(renderer);
 }
 
 unsigned int RenderSystem::count() const {
