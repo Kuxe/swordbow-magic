@@ -1,7 +1,11 @@
 #ifndef HASHGRID_H
 #define HASHGRID_H
 
+#include <iostream>
 #include "spatialindexer.h"
+
+using std::cout;
+using std::endl;
 
 class ComponentManager;
 
@@ -34,7 +38,7 @@ class HashGrid : public SpatialIndexer {
 		 *	Bounding-box test
 		 **/
 		inline bool intersect(const SpatialIndexer::Rect a, const SpatialIndexer::Rect b) const {
-			return a.x + a.w <= b.x && a.x >= b.x + b.w && a.y + a.h <= b.y && a.y >= b.y + b.h;	
+			return a.x + a.w <= b.x || a.x >= b.x + b.w || a.y + a.h <= b.y || a.y >= b.y + b.h;		
 		}
 
 		void update();
