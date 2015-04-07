@@ -4,7 +4,7 @@
 #include "movecomponent.h"
 #include "sizecomponent.h"
 #include <iostream>
-#include "gridindexer.h"
+#include "spatialindexer.h"
 #include "flagcomponent.h"
 #include "heap.h"
 #include "dynamicarray.h"
@@ -34,8 +34,8 @@ bool RenderData::operator<=(const RenderData& rhs) const { return !(*this > rhs)
 bool RenderData::operator>=(const RenderData& rhs) const { return !(*this < rhs); }
 
 
-RenderSystem::RenderSystem(GridIndexer* gridIndexer)
-    : gridIndexer(gridIndexer) {
+RenderSystem::RenderSystem(SpatialIndexer* spatialIndexer)
+    : spatialIndexer(spatialIndexer) {
 	//Initialize SDL
     if(SDL_Init(SDL_INIT_VIDEO) < 0)
     {
@@ -171,6 +171,10 @@ void RenderSystem::update() {
 	//For all ids in rendersystem
 	for(auto& id : ids){
 
+		//Always make force textureData to be up-to-date with the image at rendercomponent
+		auto& rc = componentManager->renderComponents.at(id);
+		rc->textureData = textureDatas.at(rc->imagePath);
+
 		//if all ids havnt been added already
 		//and either HAS_CHANGED or doRender is true
 		//and the current id hasnt been targeted for rendering
@@ -180,6 +184,7 @@ void RenderSystem::update() {
 		if(count != 0 && (componentManager->flagComponents.at(id)->flags & FlagComponent::HAS_CHANGED
 				|| renderDatas.at(id).renderComponent->doRender) 
 				&& !marked[*id]) {
+
 			q.push(id);
 			pq.insert(renderDatas.at(id));
 			marked[*id] = true;
@@ -191,7 +196,9 @@ void RenderSystem::update() {
 			//renderdatas, and also put them in the list. Mark them.
 			while(!q.empty() && count != 0) {
 				unsigned long long int* cur = q.back(); q.pop();	
-				for(auto& overlap : gridIndexer->getOverlappingIds(cur)) { //BUG: doesnt get overlapping ids.. it gets close ids
+				unordered_set<ID> curOverlaps;
+				spatialIndexer->overlaps(curOverlaps, cur);
+				for(auto overlap : curOverlaps) { 
 					if(!marked[*overlap] && count != 0) {
 						q.push(overlap);
 						pq.insert(renderDatas.at(overlap));
@@ -258,7 +265,7 @@ const string RenderSystem::getIdentifier() const {
 	return "RenderSystem";
 }
 
-void RenderSystem::sort(RenderData* const arr, const unsigned int size) const {
+void RenderSystem::sort(RenderData* arr, const unsigned int size) const {
 	//Sort the array by z-index
 	
 	//set zindex to be lowest y

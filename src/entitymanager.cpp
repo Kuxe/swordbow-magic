@@ -9,7 +9,7 @@
 #include "rendercomponent.h"
 #include "sizecomponent.h"
 #include "movecomponent.h"
-#include "gridindexer.h"
+#include "hashgrid.h"
 
 using namespace std;
 
@@ -17,11 +17,11 @@ EntityManager::EntityManager(
 	SystemManager* systemManager,
 	ComponentManager* componentManager,
 	IdManager* idManager,
-	GridIndexer* gridIndexer) :
+	HashGrid* hashGrid) :
 	systemManager(systemManager),
 	componentManager(componentManager),
 	idManager(idManager),
-	gridIndexer(gridIndexer) {
+	hashGrid(hashGrid) {
 
 }
 
@@ -35,7 +35,7 @@ unsigned long long int* EntityManager::createPlayer() {
 	componentManager->createFlagComponent(id);
 	auto sizeComponent = componentManager->createSizeComponent(id);
 	RenderComponent* renderComponent = componentManager->createRenderComponent(id);
-	gridIndexer->add(id);
+	hashGrid->add(id);
 
 	//If you'd like to change default initialization-data in a component
 	//Just save a pointer to the component like above and modify it like bellow
@@ -81,7 +81,7 @@ unsigned long long int* EntityManager::createTree() {
 	componentManager->createFlagComponent(id);
 	auto sizeComponent = componentManager->createSizeComponent(id);
 	RenderComponent* renderComponent = componentManager->createRenderComponent(id);
-	gridIndexer->add(id);
+	hashGrid->add(id);
 
 	renderComponent->imagePath = "./resources/images/SmallTree.png";
 	renderComponent->zindex_base = 1;
@@ -119,7 +119,7 @@ unsigned long long int* EntityManager::createTile() {
 	componentManager->createFlagComponent(id);
 	auto sizeComponent = componentManager->createSizeComponent(id);
 	auto rc = componentManager->createRenderComponent(id);
-	gridIndexer->add(id);
+	hashGrid->add(id);
 
 	rc->imagePath = "./resources/images/grass.bmp";
 	rc->zindex_base = 0;
@@ -149,11 +149,11 @@ void EntityManager::remove(unsigned long long int* id) {
 		a->remove(id);
 	}
 
-	//Remove from GridIndexer (assuming gridindexer handles removing unadded ids well)
-	gridIndexer->remove(id);
-
 	//2. Remove from componentManager (deallocate components)
 	componentManager->removeAllComponents(id);
 	entities.erase(id);
+
+	//FIXME: Figure out how and when to remove an entity from hashGrids
+
 	delete id;
 }

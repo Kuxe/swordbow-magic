@@ -6,24 +6,27 @@
 #include "movesystem.h"
 #include "rendersystem.h"
 #include "deltatime.h"
-#include "gridindexer.h"
+#include "hashgrid.h"
 #include "flagsystem.h"
+#include "collisionsystem.h"
 
 TEST_CASE("EntityManager") {
 	ComponentManager componentManager;
 	DeltaTime deltaTime;
 	SystemManager systemManager(&componentManager, &deltaTime);
 	IdManager idManager;
-	GridIndexer gridIndexer(&componentManager);
-	EntityManager entityManager(&systemManager, &componentManager, &idManager, &gridIndexer);
+	HashGrid hashGrid(&componentManager);
+	EntityManager entityManager(&systemManager, &componentManager, &idManager, &hashGrid);
 	FlagSystem flagSystem;
 
 	MoveSystem moveSystem;
-	RenderSystem renderSystem(&gridIndexer);
+	RenderSystem renderSystem(&hashGrid);
+	CollisionSystem collisionSystem;
 
 	systemManager.add(&flagSystem);
 	systemManager.add(&moveSystem);
 	systemManager.add(&renderSystem);
+	systemManager.add(&collisionSystem);
 
 	/* TESTING: Make sure a player can be created, updated, removed without breaking the systems */
 	unsigned long long int* playerId = 0;

@@ -17,7 +17,7 @@ class SystemManager;
 class ComponentManager;
 class IdManager;
 class ISystem;
-class GridIndexer;
+class HashGrid;
 
 class EntityManager {
  public:
@@ -32,9 +32,9 @@ class EntityManager {
 	SystemManager* systemManager;
 	ComponentManager* componentManager;
 	IdManager* idManager;
-	GridIndexer* gridIndexer;
+	HashGrid* hashGrid;
 
-	EntityManager(SystemManager* systemManager, ComponentManager* componentManager, IdManager* idManager, GridIndexer* gridIndexer);
+	EntityManager(SystemManager* systemManager, ComponentManager* componentManager, IdManager* idManager, HashGrid* hashGrid);
 	unsigned long long int* createPlayer();
 	unsigned long long int* createTree();
 	unsigned long long int* createTile();

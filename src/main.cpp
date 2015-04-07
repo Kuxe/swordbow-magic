@@ -10,7 +10,7 @@
 #include "movecomponent.h"
 #include "rendercomponent.h"
 #include "world.h"
-#include "gridindexer.h"
+#include "hashgrid.h"
 #include "flagsystem.h"
 #include "collisionsystem.h"
 
@@ -24,13 +24,13 @@ int main(int argc, char** argv) {
 
 	ComponentManager componentManager;
 	SystemManager systemManager(&componentManager, &deltaTime);
-	GridIndexer gridIndexer(&componentManager);
+	HashGrid hashGrid(&componentManager, 650, 500);
 	IdManager idManager;
 
-	EntityManager entityManager(&systemManager, &componentManager, &idManager, &gridIndexer);
+	EntityManager entityManager(&systemManager, &componentManager, &idManager, &hashGrid);
 
 	MoveSystem moveSystem;
-	RenderSystem renderSystem(&gridIndexer);
+	RenderSystem renderSystem(&hashGrid);
 	FlagSystem flagSystem;
 	CollisionSystem collisionSystem;
 
@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
 
 		systemManager.update();
 		eventManager.process();
-		gridIndexer.update();
+		hashGrid.update(); 
 
 		deltaTime.stop();
 	}

@@ -3,7 +3,7 @@
 #include "deltatime.h"
 #include "componentmanager.h"
 #include "idmanager.h"
-#include "gridindexer.h"
+#include "hashgrid.h"
 #include "entitymanager.h"
 #include "flagsystem.h"
 #include "movesystem.h"
@@ -19,16 +19,16 @@ TEST_CASE("RenderSystem") {
 			&deltaTime);
 
 	IdManager idManager;
-	GridIndexer	gridIndexer(&componentManager);
+	HashGrid hashGrid(&componentManager);
 	EntityManager entityManager(
 			&systemManager,
 			&componentManager,
 			&idManager,
-			&gridIndexer);
+			&hashGrid);
 
 	FlagSystem flagSystem;
 	MoveSystem moveSystem;
-	RenderSystem renderSystem(&gridIndexer);
+	RenderSystem renderSystem(&hashGrid);
 
 	systemManager.add(&flagSystem);
 	systemManager.add(&moveSystem);

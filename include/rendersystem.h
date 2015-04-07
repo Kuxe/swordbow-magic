@@ -15,7 +15,7 @@ class RenderComponent;
 class MoveComponent;
 class SizeComponent;
 class FlagComponent;
-class GridIndexer;
+class SpatialIndexer;
 
 struct RenderData {
 	RenderComponent* renderComponent;
@@ -51,9 +51,9 @@ class RenderSystem : public ISystem {
 	SDL_Surface* screenSurface = nullptr;
 	SDL_Texture* targetTexture = nullptr;
 	unordered_map<string, TextureData> textureDatas;
-	GridIndexer* gridIndexer;
+	SpatialIndexer* spatialIndexer;
  public:
- 	RenderSystem(GridIndexer* gridIndexer);
+ 	RenderSystem(SpatialIndexer* spatialIndexer);
  	~RenderSystem();
 	void add(unsigned long long int* id);
 	void remove(unsigned long long int* id);
@@ -62,7 +62,7 @@ class RenderSystem : public ISystem {
 	unsigned int count() const;
 	void render(const RenderData& data) const;
 	const string getIdentifier() const;
-	inline void sort(RenderData* const arr, const unsigned int size) const;
+	void sort(RenderData* arr, const unsigned int size) const;
 };
 
 #endif //RENDERSYSTEM_H

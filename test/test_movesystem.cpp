@@ -8,8 +8,9 @@
 #include "rendersystem.h"
 #include "movecomponent.h"
 #include "inputcomponent.h"
-#include "gridindexer.h"
+#include "hashgrid.h"
 #include "flagsystem.h"
+#include "collisionsystem.h"
 
 TEST_CASE("MoveSystem") {
 	ComponentManager componentManager;
@@ -19,17 +20,19 @@ TEST_CASE("MoveSystem") {
 	deltaTime.stop();
 	SystemManager systemManager(&componentManager, &deltaTime);
 	IdManager idManager;
-	GridIndexer gridIndexer(&componentManager);
+	HashGrid hashGrid(&componentManager);
 	FlagSystem flagSystem;
 
-	EntityManager entityManager(&systemManager, &componentManager, &idManager, &gridIndexer);
+	EntityManager entityManager(&systemManager, &componentManager, &idManager, &hashGrid);
 
 	MoveSystem moveSystem;
-	RenderSystem renderSystem(&gridIndexer);
+	RenderSystem renderSystem(&hashGrid);
+	CollisionSystem collisionSystem;
 
 	systemManager.add(&flagSystem);
 	systemManager.add(&moveSystem);
 	systemManager.add(&renderSystem);
+	systemManager.add(&collisionSystem);
 
 	/* 	Make sure a player is moved on input. Input is simulated in this test.
 		This test doesn't check if player moves accuratly or in the right direction

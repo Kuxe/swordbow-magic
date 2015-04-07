@@ -5,12 +5,19 @@
 
 using namespace std;
 
+//This include is really ugly. Need it because HashGrid
+//depends on width of textures. HashGrid uses rendercomponent
+//to acquire these textures. So rendercomponent must have a copy
+//of texturedata. Definition of texturedata is in rendersystem.
+#include "rendersystem.h"
+
 //Class containing render-relevant data (such as image identifier)
 class RenderComponent {
  public:
  	string imagePath = "UNSET";
  	float xoffset = 0;
  	float yoffset = 0;
+	TextureData textureData;	
 
 	//is set to y+height during runtime
 	//used in painters algorithm

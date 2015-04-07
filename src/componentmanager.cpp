@@ -82,15 +82,3 @@ void ComponentManager::removeAllComponents(unsigned long long int* id) {
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
