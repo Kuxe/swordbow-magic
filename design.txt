@@ -1,5 +1,0 @@
-Systems subscribe to componentmanager. Whenever componentmanager creates a component, it fires an event. Systems now add this component to themselves.
-
-How to know which component is associated with what entity? Eg if a renderable object is created, the rendersystem must know what movecomponent is paried with what movedata...
-
-HashMaps of components with ID as keys, components as treasures
