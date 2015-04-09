@@ -14,8 +14,8 @@ class HashGrid : public SpatialIndexer {
 		unordered_set<ID> ids;
 		unordered_set<ID>* cells;
 		unsigned int cellsCapacity;
-		const unsigned int width;
-		const unsigned int height;
+		unsigned int width;
+		unsigned int height;
 		const unsigned int side;
 
 		ComponentManager* componentManager;
@@ -24,7 +24,7 @@ class HashGrid : public SpatialIndexer {
 
 	public:
 
-		HashGrid(ComponentManager* componentManager, unsigned int width = 250, unsigned int height = 250, unsigned int side = 50);
+		HashGrid(ComponentManager* componentManager, unsigned int worldWidth = 640, unsigned int worldHeight = 640, unsigned int side = 20);
 		virtual ~HashGrid();
 		
 		virtual void add(const ID id);
@@ -38,7 +38,7 @@ class HashGrid : public SpatialIndexer {
 		 *	Bounding-box test
 		 **/
 		inline bool intersect(const SpatialIndexer::Rect a, const SpatialIndexer::Rect b) const {
-			return a.x + a.w <= b.x || a.x >= b.x + b.w || a.y + a.h <= b.y || a.y >= b.y + b.h;		
+			return !(a.x + a.w < b.x || a.x > b.x + b.w || a.y + a.h < b.y || a.y > b.y + b.h);		
 		}
 
 		void update();

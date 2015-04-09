@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
 
 	ComponentManager componentManager;
 	SystemManager systemManager(&componentManager, &deltaTime);
-	HashGrid hashGrid(&componentManager, 650, 500);
+	HashGrid hashGrid(&componentManager);
 	IdManager idManager;
 
 	EntityManager entityManager(&systemManager, &componentManager, &idManager, &hashGrid);
@@ -51,11 +51,10 @@ int main(int argc, char** argv) {
 
 		systemManager.update();
 		eventManager.process();
-		hashGrid.update(); 
+		hashGrid.update();
 
 		deltaTime.stop();
 	}
 
 	return 0;
 }
-
