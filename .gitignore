@@ -49,3 +49,12 @@ Makefile
 
 # swap-files
 *.swp
+
+#plist
+*.plist
+
+#backups
+*backup
+
+#YouCompleteMe
+.ycm_extra_conf.py
