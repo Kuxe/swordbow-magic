@@ -42,7 +42,7 @@ RenderSystem::RenderSystem(SpatialIndexer* spatialIndexer)
         cout << "ERROR: SDL could not initialize! SDL_Error: " << SDL_GetError() << endl;
     } else {
         window = SDL_CreateWindow(
-            "SDL Tutorial", 
+            "SDL Tutorial",
             SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED,
             SCREEN_WIDTH,
@@ -63,7 +63,7 @@ RenderSystem::RenderSystem(SpatialIndexer* spatialIndexer)
 				if(!(IMG_Init(imgFlags) & imgFlags)) {
 					cout << "ERROR: Couldnt initialze PNG usage!" << endl;
 				} else {
-				
+
 
 		            SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
 
@@ -82,7 +82,7 @@ RenderSystem::RenderSystem(SpatialIndexer* spatialIndexer)
             "./resources/images/grass.bmp",
 			"./resources/images/SmallTree.png",
             }
-        ) 
+        )
     {
         SDL_Surface* rawImage = IMG_Load(path);
         if(!rawImage) {
@@ -102,8 +102,8 @@ RenderSystem::RenderSystem(SpatialIndexer* spatialIndexer)
                         path,
                         TextureData{
                             texture,
-                            w,
-                            h
+                            (unsigned int)w,
+                            (unsigned int)h
                         }
                     )
                 );
@@ -156,7 +156,7 @@ void RenderSystem::update() {
 	//adds it to a priority-queue (pq) and a queue (q).
 	//Aslong as q isn't empty, pop an entity (e) from q. For all entities overlapping e,
 	//add them to the pq and q, finally mark the overlapping entities.
-	
+
 	//In other words this algorithm adds all entities that should be rendered to a list.
 	//An entity should be rendered whenever it is overlapped/overlapping another entity
 	//that should be rendered (one entity that is set to be rendered might cause a group
@@ -164,7 +164,7 @@ void RenderSystem::update() {
 	//z-order
 
 	unsigned int count = ids.getSize();
-	bool marked[100000] {false}; //TODO: Make less arbitrary, somehow.. 
+	bool marked[100000] {false}; //TODO: Make less arbitrary, somehow..
 	queue<unsigned long long int*> q;
 	heap<RenderData> pq; //TODO: Use reference instead (no need for copying!)
 
@@ -182,7 +182,7 @@ void RenderSystem::update() {
 		//and put id in the list
 		//finally mark it
 		if(count != 0 && (componentManager->flagComponents.at(id)->flags & FlagComponent::HAS_CHANGED
-				|| renderDatas.at(id).renderComponent->doRender) 
+				|| renderDatas.at(id).renderComponent->doRender)
 				&& !marked[*id]) {
 
 			q.push(id);
@@ -195,18 +195,18 @@ void RenderSystem::update() {
 			//erase an id from the list and add overlapping ids into the pq of
 			//renderdatas, and also put them in the list. Mark them.
 			while(!q.empty() && count != 0) {
-				unsigned long long int* cur = q.back(); q.pop();	
+				unsigned long long int* cur = q.back(); q.pop();
 				unordered_set<ID> curOverlaps;
 				spatialIndexer->overlaps(curOverlaps, cur);
-				for(auto overlap : curOverlaps) { 
+				for(auto overlap : curOverlaps) {
 					if(!marked[*overlap] && count != 0) {
 						q.push(overlap);
 						pq.insert(renderDatas.at(overlap));
 						marked[*overlap] = true;
 						componentManager->renderComponents.at(overlap)->doRender = true;
 						count--;
-					}	
-				}				
+					}
+				}
 			}
 		}
 	}
@@ -215,7 +215,7 @@ void RenderSystem::update() {
 		RenderData data = pq.poll();
 		render(data);
 	}
-	
+
     SDL_SetRenderTarget(renderer, NULL);
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, targetTexture, NULL, NULL);
@@ -242,8 +242,8 @@ void RenderSystem::render(const RenderData& data) const {
         SDL_Rect rect{
             (int)(data.moveComponent->xpos + data.renderComponent->xoffset),
             (int)(data.moveComponent->ypos + data.renderComponent->yoffset),
-            textureData.width,
-            textureData.height
+            (int)textureData.width,
+            (int)textureData.height
         };
 
         //Render to target texture
@@ -267,11 +267,10 @@ const string RenderSystem::getIdentifier() const {
 
 void RenderSystem::sort(RenderData* arr, const unsigned int size) const {
 	//Sort the array by z-index
-	
+
 	//set zindex to be lowest y
 	for(auto a : renderDatas) {
 		get<1>(a).renderComponent->zindex = get<1>(a).moveComponent->ypos + get<1>(a).sizeComponent->height;
-	}	
-	heapsort(arr, size);	
+	}
+	heapsort(arr, size);
 }
-
