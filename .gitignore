@@ -64,3 +64,6 @@ swordbow-magic
 
 #clang_complete
 .clang_complete
+
+#linter-clang
+.linter-clang*
