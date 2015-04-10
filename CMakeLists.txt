@@ -16,7 +16,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 include_directories(./include/)
 
-add_definitions(-std=c++14)
+add_definitions(-g -std=c++14)
 
 add_executable(swordbow-magic
     src/collisionsystem.cpp
@@ -37,5 +37,12 @@ add_executable(swordbow-magic
     src/systemmanager.cpp
     src/tilecomponent.cpp
     src/world.cpp)
+
+#Run "make run" to run the binary
+add_custom_target(run
+    COMMAND swordbow-magic
+    DEPENDS swordbow-magic
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+)
 
 install(TARGETS swordbow-magic DESTINATION bin)
