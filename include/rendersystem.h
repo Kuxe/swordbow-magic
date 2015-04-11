@@ -23,7 +23,7 @@ struct RenderData {
 	SizeComponent* sizeComponent;
 	FlagComponent* flagComponent;
 
-	inline bool operator< (const RenderData& rhs) const; 
+	inline bool operator< (const RenderData& rhs) const;
 	inline bool operator> (const RenderData& rhs) const;
 	inline bool operator<=(const RenderData& rhs) const;
 	inline bool operator>=(const RenderData& rhs) const;
@@ -62,7 +62,7 @@ class RenderSystem : public ISystem {
 	unsigned int count() const;
 	void render(const RenderData& data) const;
 	const string getIdentifier() const;
-	void sort(RenderData* arr, const unsigned int size) const;
+	void calculateZIndex(unsigned long long int* id);
 };
 
 #endif //RENDERSYSTEM_H

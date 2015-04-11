@@ -15,7 +15,7 @@ HashGrid::HashGrid(ComponentManager* componentManager, unsigned int worldWidth, 
 
 	width = worldWidth / side + (worldWidth % side != 0);
 	height = worldHeight / side + (worldHeight % side != 0);
-	
+
 	//I feel clever for remembering this-> here. Maybe having
 	//same param names as member names is a bad idea...
 	cellsCapacity = width * height;
@@ -44,9 +44,9 @@ void HashGrid::addToCells(const ID id) {
 	const auto& rc = componentManager->renderComponents.at(id);
 
 	unsigned int cellx = (mc->xpos + rc->xoffset)/side;
-	unsigned int cellxw = (mc->xpos + rc->xoffset + rc->textureData.width)/side;
+	unsigned int cellxw = (mc->xpos + rc->xoffset + rc->textureData.width-1)/side;
 	unsigned int celly = (mc->ypos + rc->yoffset)/side;
-	unsigned int cellyh = (mc->ypos + rc->yoffset + rc->textureData.height)/side;
+	unsigned int cellyh = (mc->ypos + rc->yoffset + rc->textureData.height-1)/side;
 
 	//Place ID in all cells which partially or completely contains the ID
 	for(unsigned int y = celly; y <= cellyh; y++) {
@@ -68,9 +68,9 @@ void HashGrid::overlaps(unordered_set<ID>& overlappingEntities, const ID id) {
 	const auto& rc = componentManager->renderComponents.at(id);
 
 	unsigned int cellx = (mc->xpos + rc->xoffset)/side;
-	unsigned int cellxw = (mc->xpos + rc->xoffset + rc->textureData.width)/side;
+	unsigned int cellxw = (mc->xpos + rc->xoffset + rc->textureData.width-1)/side;
 	unsigned int celly = (mc->ypos + rc->yoffset)/side;
-	unsigned int cellyh = (mc->ypos + rc->yoffset + rc->textureData.height)/side;
+	unsigned int cellyh = (mc->ypos + rc->yoffset + rc->textureData.height-1)/side;
 
 	//Loop through all cells in which this ID is partly or fully contained
 	for(unsigned int y = celly; y <= cellyh; y++) {
@@ -84,16 +84,24 @@ void HashGrid::overlaps(unordered_set<ID>& overlappingEntities, const ID id) {
 
 
 				//check if their image overlap with the image of id
+				//-1 because a rect with position {0, 0} and width=height=3
+				//is covering as such:
+				// 0123
+				//0ooo.
+				//1ooo.
+				//2ooo.
+				//3....
+				//that is, from 0 to 2 in both x and y.. So width-1 = 2
 				if(intersect(	SpatialIndexer::Rect{
 									mc->xpos + rc->xoffset,
 									mc->ypos + rc->yoffset,
-									rc->textureData.width,
-									rc->textureData.height},
+									rc->textureData.width-1,
+									rc->textureData.height-1},
 								SpatialIndexer::Rect{
 									omc->xpos + orc->xoffset,
 									omc->ypos + orc->yoffset,
-									orc->textureData.width,
-									orc->textureData.height}
+									orc->textureData.width-1,
+									orc->textureData.height-1}
 							)
 					) {
 

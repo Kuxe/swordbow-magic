@@ -10,6 +10,7 @@
 #include "dynamicarray.h"
 #include "heapsort.h"
 #include <queue>
+#include "namecomponent.h"
 
 using namespace std;
 
@@ -170,7 +171,6 @@ void RenderSystem::update() {
 
 	//For all ids in rendersystem
 	for(auto& id : ids){
-
 		//Always make force textureData to be up-to-date with the image at rendercomponent
 		auto& rc = componentManager->renderComponents.at(id);
 		rc->textureData = textureDatas.at(rc->imagePath);
@@ -184,8 +184,8 @@ void RenderSystem::update() {
 		if(count != 0 && (componentManager->flagComponents.at(id)->flags & FlagComponent::HAS_CHANGED
 				|| renderDatas.at(id).renderComponent->doRender)
 				&& !marked[*id]) {
-
 			q.push(id);
+			calculateZIndex(id);
 			pq.insert(renderDatas.at(id));
 			marked[*id] = true;
             componentManager->renderComponents.at(id)->doRender = true;
@@ -195,12 +195,13 @@ void RenderSystem::update() {
 			//erase an id from the list and add overlapping ids into the pq of
 			//renderdatas, and also put them in the list. Mark them.
 			while(!q.empty() && count != 0) {
-				unsigned long long int* cur = q.back(); q.pop();
+				unsigned long long int* cur = q.front(); q.pop();
 				unordered_set<ID> curOverlaps;
 				spatialIndexer->overlaps(curOverlaps, cur);
 				for(auto overlap : curOverlaps) {
 					if(!marked[*overlap] && count != 0) {
 						q.push(overlap);
+						calculateZIndex(overlap);
 						pq.insert(renderDatas.at(overlap));
 						marked[*overlap] = true;
 						componentManager->renderComponents.at(overlap)->doRender = true;
@@ -265,12 +266,8 @@ const string RenderSystem::getIdentifier() const {
 	return "RenderSystem";
 }
 
-void RenderSystem::sort(RenderData* arr, const unsigned int size) const {
-	//Sort the array by z-index
-
-	//set zindex to be lowest y
-	for(auto a : renderDatas) {
-		get<1>(a).renderComponent->zindex = get<1>(a).moveComponent->ypos + get<1>(a).sizeComponent->height;
-	}
-	heapsort(arr, size);
+void RenderSystem::calculateZIndex(unsigned long long int* id) {
+	auto rc = componentManager->renderComponents.at(id);
+	auto mc = componentManager->moveComponents.at(id);
+	rc->zindex = mc->ypos + rc->textureData.height + rc->yoffset;
 }
