@@ -62,60 +62,60 @@ void HashGrid::clear() {
 	}
 }
 
+//Returns all entities that are fully or partly contained by id's texture bounding box
 void HashGrid::overlaps(unordered_set<ID>& overlappingEntities, const ID id) {
 	const auto& mc = componentManager->moveComponents.at(id);
-	const auto& sc = componentManager->sizeComponents.at(id);
 	const auto& rc = componentManager->renderComponents.at(id);
 
-	unsigned int cellx = (mc->xpos + rc->xoffset)/side;
-	unsigned int cellxw = (mc->xpos + rc->xoffset + rc->textureData.width-1)/side;
-	unsigned int celly = (mc->ypos + rc->yoffset)/side;
-	unsigned int cellyh = (mc->ypos + rc->yoffset + rc->textureData.height-1)/side;
+	const SpatialIndexer::Rect queryRect {
+		mc->xpos + rc->xoffset,
+		mc->ypos + rc->yoffset,
+		rc->textureData.width-1,
+		rc->textureData.height-1
+	};
+
+	//query using textures bounding box
+	query(overlappingEntities, queryRect);
+
+	overlappingEntities.erase(id);
+}
+
+//Return all entities that are fully or partly contained by a queryArea
+void HashGrid::query(unordered_set<ID>& queryIds, Rect queryArea) {
+
+	//Convert from world-space coordinates to cellCoordinates and store
+	//cellCoordinates in cellRect
+	const SpatialIndexer::Rect cellRect {
+		queryArea.x/side,
+		queryArea.y/side,
+		queryArea.w/side,
+		queryArea.h/side,
+	};
 
 	//Loop through all cells in which this ID is partly or fully contained
-	for(unsigned int y = celly; y <= cellyh; y++) {
-		for(unsigned int x = cellx; x <= cellxw; x++) {
+	for(unsigned int y = cellRect.y; y <= (queryArea.y + queryArea.h)/side; y++) {
+		for(unsigned int x = cellRect.x; x <= (queryArea.x + queryArea.w)/side; x++) {
 
-			//For all ids in the same cells as this one...
+			//For all ids in the same cells as this one..
 			for(auto otherId : cells[y*width + x]) {
 				const auto& omc = componentManager->moveComponents.at(otherId);
 				const auto& osc = componentManager->sizeComponents.at(otherId);
 				const auto& orc = componentManager->renderComponents.at(otherId);
 
-
-				//check if their image overlap with the image of id
-				//-1 because a rect with position {0, 0} and width=height=3
-				//is covering as such:
-				// 0123
-				//0ooo.
-				//1ooo.
-				//2ooo.
-				//3....
-				//that is, from 0 to 2 in both x and y.. So width-1 = 2
-				if(intersect(	SpatialIndexer::Rect{
-									mc->xpos + rc->xoffset,
-									mc->ypos + rc->yoffset,
-									rc->textureData.width-1,
-									rc->textureData.height-1},
-								SpatialIndexer::Rect{
-									omc->xpos + orc->xoffset,
-									omc->ypos + orc->yoffset,
-									orc->textureData.width-1,
-									orc->textureData.height-1}
-							)
-					) {
-
-					overlappingEntities.insert(otherId);
+				if(intersect(
+					queryArea,
+					SpatialIndexer::Rect {
+						omc->xpos + orc->xoffset,
+						omc->ypos + orc->yoffset,
+						orc->textureData.width-1,
+						orc->textureData.height-1 }
+					)
+				) {
+					queryIds.insert(otherId);
 				}
 			}
 		}
 	}
-
-	overlappingEntities.erase(id);
-}
-
-void HashGrid::query(unordered_set<ID>& queryIds, Rect queryArea) {
-
 }
 
 void HashGrid::getNearbyIds(unordered_set<ID>& nearbyIds, const ID id) {

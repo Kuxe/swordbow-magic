@@ -28,7 +28,7 @@ class SpatialIndexer {
 		 **/
 		struct Entity {
 			Rect rect;
-			ID id;	
+			ID id;
 
 			inline bool operator==(const Entity& rhs) const {
 				return rect == rhs.rect && id == rhs.id;
@@ -65,26 +65,23 @@ class SpatialIndexer {
 		virtual void remove(ID id) = 0;
 
 		/**
-		 *	Clear all cells. Should be followed by an update-method to repopulate the cells.	
+		 *	Clear all cells. Should be followed by an update-method to repopulate the cells.
 		 *	Doesn't remove any ids.
 		 **/
 		virtual void clear() = 0;
 
 		/**
-		 * Fills the list overlappingEntities with all IDs that overlap ID.
-		 * Useful for handling collisions.
+		 * Fills the list overlappingEntities with all IDs that overlap IDs texture.
+		 * Useful for overlapping textures.
 		 **/
 		virtual void overlaps(unordered_set<ID>& overlappingIds, const ID id) = 0;
 
 		/**
-		 *	Queries an area for entities, fills the forward_list ids with
-		 *	entities within the area. Doesn't guarantees that no objects
-		 *	outside the query isnt returned. Useful for retrieving
-		 *	entities within an area.
+		 *	Return all ids within queryarea
 		 **/
 		virtual void query(unordered_set<ID>& queryIds, Rect queryArea) = 0;
 
-		
+
 		/**
 		 *	Retrieve entities in the same cell as id. Im not sure why this
 		 *	is useful when there's query and overlaps.
@@ -94,7 +91,7 @@ class SpatialIndexer {
 		/**
 		 *	After calling this, all ids in the spatialindexer have their
 		 *	positions updated in the spatialindex
-		 **/	
+		 **/
 		virtual void update() = 0;
 };
 
