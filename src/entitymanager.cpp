@@ -9,6 +9,7 @@
 #include "rendercomponent.h"
 #include "sizecomponent.h"
 #include "movecomponent.h"
+#include "namecomponent.h"
 #include "hashgrid.h"
 
 using namespace std;
@@ -35,6 +36,7 @@ unsigned long long int* EntityManager::createPlayer() {
 	componentManager->createFlagComponent(id);
 	auto sizeComponent = componentManager->createSizeComponent(id);
 	RenderComponent* renderComponent = componentManager->createRenderComponent(id);
+	auto nameComponent = componentManager->createNameComponent(id);
 	hashGrid->add(id);
 
 	//If you'd like to change default initialization-data in a component
@@ -50,6 +52,8 @@ unsigned long long int* EntityManager::createPlayer() {
 	//Width of a player is 20x20
 	sizeComponent->width = 20;
 	sizeComponent->height = 20;
+
+	nameComponent->name = "player";
 
 	//Tell the entity what systems belongs to
 	entities.insert(
@@ -69,7 +73,7 @@ unsigned long long int* EntityManager::createPlayer() {
 	//Insert this entity into the systems
 	for(auto a : entities.at(id)) {
 		a->add(id);
-	} 
+	}
 	return id;
 }
 
@@ -81,6 +85,7 @@ unsigned long long int* EntityManager::createTree() {
 	componentManager->createFlagComponent(id);
 	auto sizeComponent = componentManager->createSizeComponent(id);
 	RenderComponent* renderComponent = componentManager->createRenderComponent(id);
+	auto nameComponent = componentManager->createNameComponent(id);
 	hashGrid->add(id);
 
 	renderComponent->imagePath = "./resources/images/SmallTree.png";
@@ -93,6 +98,8 @@ unsigned long long int* EntityManager::createTree() {
 
 	sizeComponent->width = 36;
 	sizeComponent->height = 10;
+
+	nameComponent->name = "tree";
 
 	entities.insert(
 		make_pair(
@@ -108,7 +115,7 @@ unsigned long long int* EntityManager::createTree() {
 
 	for(auto a : entities.at(id)) {
 		a->add(id);
-	} 
+	}
 	return id;
 }
 unsigned long long int* EntityManager::createTile() {
@@ -119,6 +126,7 @@ unsigned long long int* EntityManager::createTile() {
 	componentManager->createFlagComponent(id);
 	auto sizeComponent = componentManager->createSizeComponent(id);
 	auto rc = componentManager->createRenderComponent(id);
+	auto nameComponent = componentManager->createNameComponent(id);
 	hashGrid->add(id);
 
 	rc->imagePath = "./resources/images/grass.bmp";
@@ -126,6 +134,8 @@ unsigned long long int* EntityManager::createTile() {
 
 	sizeComponent->width = 20;
 	sizeComponent->height = 20;
+
+	nameComponent->name = "tile";
 
 	entities.insert(
 		make_pair(
