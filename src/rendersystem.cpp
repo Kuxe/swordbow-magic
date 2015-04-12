@@ -171,8 +171,33 @@ void RenderSystem::update() {
 
 	//For all ids in rendersystem
 	for(auto& id : ids){
+		auto rc = componentManager->renderComponents.at(id);
+		auto mc = componentManager->moveComponents.at(id);
+
+		//All ids that was overlapped by this ID the previous frame should be
+		//re-rendered (without this odd colored-lines occur after moving objects)
+		//TODO: the query should be made using the textureData corresponding to
+		//whatever imagePath that id had the previous frame. Now it grabs
+		//the textureData corresponding to the current imagePath.
+		//rendercomponent should probably remember "previousImagePath" or
+		//something like that...
+		auto textureData = textureDatas.at(rc->imagePath);
+
+		unordered_set<unsigned long long int*> previousOverlaps;
+		spatialIndexer->query(
+			previousOverlaps,
+			SpatialIndexer::Rect {
+				mc->oldXpos + rc->xoffset, //assuming rc->offsets havnt been updated yet
+				mc->oldYpos + rc->yoffset,
+				textureData.width-1, //assuming textureData hasnt been updated yet
+				textureData.height-1,
+		});
+
+		for(auto a : previousOverlaps) {
+			componentManager->renderComponents.at(a)->doRender = true;
+		}
+
 		//Always make force textureData to be up-to-date with the image at rendercomponent
-		auto& rc = componentManager->renderComponents.at(id);
 		rc->textureData = textureDatas.at(rc->imagePath);
 
 		//if all ids havnt been added already
