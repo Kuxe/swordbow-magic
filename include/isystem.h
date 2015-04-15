@@ -7,12 +7,18 @@ using namespace std;
 
 class ComponentManager;
 class DeltaTime;
+class SystemManager;
 
 //Not entierly an interface. It's an abstract class.
 class ISystem {
  public:
  	DeltaTime* deltaTime;
  	ComponentManager* componentManager;
+
+    //Some systems could alter or change how an entity behaves in another system
+    //Example: MoveSystem should be able to say:
+    //"if this entity is a member of RenderSystem, then this entity should also be rendered since it moved"
+    SystemManager* systemManager;
  	virtual void add(unsigned long long int* id) = 0;
  	virtual void remove(unsigned long long int* id) = 0;
 	virtual void update() = 0;

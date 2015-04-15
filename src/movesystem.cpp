@@ -8,32 +8,25 @@
 #include "inputcomponent.h"
 #include "deltatime.h"
 #include "flagcomponent.h"
+#include "systemmanager.h"
+#include "rendersystem.h"
 
 using namespace std;
 
 void MoveSystem::add(unsigned long long int* id) {
-	moveDatas.insert(
-		make_pair(
-			id,
-			MoveData{
-				componentManager->moveComponents.at(id),
-				componentManager->inputComponents.at(id),
-				componentManager->flagComponents.at(id),
-			}
-		)
-	);
+	ids.insert(id);
 }
 
 void MoveSystem::remove(unsigned long long int* id) {
-	if(moveDatas.erase(id) == 0) {
+	if(ids.erase(id) == 0) {
 		cout << "WARNING: MoveSystem tried to erase unpresent ID " << *id << ", segfault inc!" << endl;
 	}
 }
 
 void MoveSystem::update() {
-	for(auto idMoveData : moveDatas) {
-		MoveComponent* mc = get<1>(idMoveData).moveComponent;
-		InputComponent* ic = get<1>(idMoveData).inputComponent;
+	for(auto id : ids) {
+		auto mc = componentManager->moveComponents.at(id);
+		auto ic = componentManager->inputComponents.at(id);
 		mc->oldXpos = mc->xpos;
 		mc->oldYpos = mc->ypos;
 		mc->xpos += ((ic->d * mc->xspeed) - (ic->a * mc->xspeed)) * deltaTime->delta();
@@ -41,13 +34,13 @@ void MoveSystem::update() {
 
 		//If this entity moved, set the HAS_CHANGED flag
 		if(!(mc->xpos == mc->oldXpos && mc->ypos == mc->oldYpos)) {
-			get<1>(idMoveData).flagComponent->flags |= FlagComponent::HAS_CHANGED;
+			static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->makeIdActive(id);
 		}
 	}
 }
 
 unsigned int MoveSystem::count() const {
-	return moveDatas.size();
+	return ids.size();
 }
 
 const string MoveSystem::getIdentifier() const {

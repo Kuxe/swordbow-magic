@@ -7,7 +7,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <vector>
-#include "dynamicarray.h"
+#include <unordered_set>
+#include <queue>
 
 using namespace std;
 
@@ -40,7 +41,9 @@ class RenderSystem : public ISystem {
  	static constexpr unsigned char MAX_IDS = 255;
  	//unsigned long long int* ids[MAX_IDS] {0};
 	unordered_map<unsigned long long int*, RenderData> renderDatas;
-	dynamicarray<unsigned long long int*> ids;
+	unordered_set<unsigned long long int*> ids;
+	queue<unsigned long long int*> activeIds;
+
 
 	static constexpr ushort SCREEN_WIDTH = 640;
 	static constexpr ushort SCREEN_HEIGHT = 480;
@@ -63,6 +66,7 @@ class RenderSystem : public ISystem {
 	void render(const RenderData& data) const;
 	const string getIdentifier() const;
 	void calculateZIndex(unsigned long long int* id);
+	void makeIdActive(unsigned long long int* id);
 };
 
 #endif //RENDERSYSTEM_H

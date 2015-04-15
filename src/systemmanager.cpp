@@ -19,6 +19,7 @@ void SystemManager::add(ISystem* system) {
 	}
 	system->componentManager = componentManager;
 	system->deltaTime = deltaTime;
+	system->systemManager = this;
 	systemByIdentifiers.insert(std::make_pair(system->getIdentifier(), system));
 }
 void SystemManager::remove(ISystem* system) {

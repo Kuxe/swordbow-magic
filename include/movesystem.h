@@ -2,23 +2,18 @@
 #define MOVESYSTEM_H
 
 #include "isystem.h"
-#include <unordered_map>
+#include <unordered_set>
 
 using namespace std;
 
 class MoveComponent;
 class InputComponent;
 class FlagComponent;
-
-struct MoveData {
-	MoveComponent* moveComponent;
-	InputComponent* inputComponent;
-	FlagComponent* flagComponent;
-};
+class RenderSystem;
 
 class MoveSystem : public ISystem {
  private:
-	unordered_map<unsigned long long int*, MoveData> moveDatas;
+	unordered_set<unsigned long long int*> ids;
  public:
 	void add(unsigned long long int* id);
 	void remove(unsigned long long int* id);

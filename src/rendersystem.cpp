@@ -137,7 +137,8 @@ void RenderSystem::add(unsigned long long int* id) {
             }
         )
     );
-	ids.add(id);
+	ids.insert(id);
+	activeIds.push(id);
 }
 
 void RenderSystem::remove(unsigned long long int* id) {
@@ -148,7 +149,7 @@ void RenderSystem::remove(unsigned long long int* id) {
 	if(renderDatas.erase(id) == 0) {
 		cout << "WARNING: RenderSystem tried to erase unpresent ID " << *id << ", segfault inc!" << endl;
 	}
-	ids.remove(id);
+	ids.erase(id);
 }
 
 void RenderSystem::update() {
@@ -164,13 +165,15 @@ void RenderSystem::update() {
 	//of nearby, pairwise, overlapping entities to be redrawn to in order to maintain correct
 	//z-order
 
-	unsigned int count = ids.getSize();
+	unsigned int count = ids.size();
 	bool marked[100000] {false}; //TODO: Make less arbitrary, somehow..
 	queue<unsigned long long int*> q;
 	heap<RenderData> pq; //TODO: Use reference instead (no need for copying!)
 
-	//For all ids in rendersystem
-	for(auto& id : ids){
+	//For all activeIds in rendersystem (henceforth activeIds will be referred
+	//to as just ids)
+	while(!activeIds.empty()) {
+		auto id = activeIds.front(); activeIds.pop();
 		auto rc = componentManager->renderComponents.at(id);
 		auto mc = componentManager->moveComponents.at(id);
 
@@ -193,8 +196,11 @@ void RenderSystem::update() {
 				textureData.height-1,
 		});
 
-		for(auto a : previousOverlaps) {
-			componentManager->renderComponents.at(a)->doRender = true;
+		for(auto id : previousOverlaps) {
+			if(!marked[*id]) {
+				componentManager->renderComponents.at(id)->doRender = true;
+				makeIdActive(id);
+			}
 		}
 
 		//Always make force textureData to be up-to-date with the image at rendercomponent
@@ -214,6 +220,7 @@ void RenderSystem::update() {
 			pq.insert(renderDatas.at(id));
 			marked[*id] = true;
             componentManager->renderComponents.at(id)->doRender = true;
+			makeIdActive(id);
 			count--;
 
 			//as long as list isnt empty and all ids havnt been added already
@@ -230,6 +237,7 @@ void RenderSystem::update() {
 						pq.insert(renderDatas.at(overlap));
 						marked[*overlap] = true;
 						componentManager->renderComponents.at(overlap)->doRender = true;
+						makeIdActive(id);
 						count--;
 					}
 				}
@@ -295,4 +303,11 @@ void RenderSystem::calculateZIndex(unsigned long long int* id) {
 	auto rc = componentManager->renderComponents.at(id);
 	auto mc = componentManager->moveComponents.at(id);
 	rc->zindex = mc->ypos + rc->textureData.height + rc->yoffset;
+}
+
+void RenderSystem::makeIdActive(unsigned long long int* id) {
+	//Only make the id active if it is a member of rendersystem
+	if(ids.find(id) != ids.end()) {
+		activeIds.push(id);
+	}
 }
