@@ -26,7 +26,7 @@ add_executable(swordbow-magic
     src/eventmanager.cpp
     src/flagsystem.cpp
     src/gridindexer.cpp
-    src/hashgrid.cpp
+    src/hashgridsystem.cpp
     src/idmanager.cpp
     src/isystem.cpp
     src/main.cpp

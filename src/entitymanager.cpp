@@ -10,19 +10,17 @@
 #include "sizecomponent.h"
 #include "movecomponent.h"
 #include "namecomponent.h"
-#include "hashgrid.h"
+#include "hashgridsystem.h"
 
 using namespace std;
 
 EntityManager::EntityManager(
 	SystemManager* systemManager,
 	ComponentManager* componentManager,
-	IdManager* idManager,
-	HashGrid* hashGrid) :
+	IdManager* idManager) :
 	systemManager(systemManager),
 	componentManager(componentManager),
-	idManager(idManager),
-	hashGrid(hashGrid) {
+	idManager(idManager) {
 
 }
 
@@ -37,7 +35,6 @@ unsigned long long int* EntityManager::createPlayer() {
 	auto sizeComponent = componentManager->createSizeComponent(id);
 	RenderComponent* renderComponent = componentManager->createRenderComponent(id);
 	auto nameComponent = componentManager->createNameComponent(id);
-	hashGrid->add(id);
 
 	//If you'd like to change default initialization-data in a component
 	//Just save a pointer to the component like above and modify it like bellow
@@ -64,6 +61,7 @@ unsigned long long int* EntityManager::createPlayer() {
 				systemManager->getSystem("MoveSystem"),
 				systemManager->getSystem("FlagSystem"),
 				systemManager->getSystem("CollisionSystem"),
+				systemManager->getSystem("HashGridSystem"),
 			}
 		)
 	);
@@ -86,7 +84,6 @@ unsigned long long int* EntityManager::createTree() {
 	auto sizeComponent = componentManager->createSizeComponent(id);
 	RenderComponent* renderComponent = componentManager->createRenderComponent(id);
 	auto nameComponent = componentManager->createNameComponent(id);
-	hashGrid->add(id);
 
 	renderComponent->imagePath = "./resources/images/SmallTree.png";
 	renderComponent->zindex_base = 1;
@@ -109,6 +106,7 @@ unsigned long long int* EntityManager::createTree() {
 				systemManager->getSystem("FlagSystem"),
 				systemManager->getSystem("CollisionSystem"),
 				systemManager->getSystem("MoveSystem"),
+				systemManager->getSystem("HashGridSystem"),
 			}
 		)
 	);
@@ -127,7 +125,6 @@ unsigned long long int* EntityManager::createTile() {
 	auto sizeComponent = componentManager->createSizeComponent(id);
 	auto rc = componentManager->createRenderComponent(id);
 	auto nameComponent = componentManager->createNameComponent(id);
-	hashGrid->add(id);
 
 	rc->imagePath = "./resources/images/grass.bmp";
 	rc->zindex_base = 0;
@@ -143,6 +140,7 @@ unsigned long long int* EntityManager::createTile() {
 			vector<ISystem*> {
 				systemManager->getSystem("RenderSystem"),
 				systemManager->getSystem("FlagSystem"),
+				systemManager->getSystem("HashGridSystem"),
 			}
 		)
 	);

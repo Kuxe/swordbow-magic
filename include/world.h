@@ -4,7 +4,7 @@
 class EntityManager;
 class World {
  private:
-	static constexpr short NUM_TILES = 20;
+	static constexpr short NUM_TILES = 50;
 	static constexpr unsigned char TILE_SIZE = 20;
 	unsigned long long int* tiles[NUM_TILES][NUM_TILES];
 

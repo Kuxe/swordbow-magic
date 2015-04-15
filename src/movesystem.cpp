@@ -10,6 +10,7 @@
 #include "flagcomponent.h"
 #include "systemmanager.h"
 #include "rendersystem.h"
+#include "hashgridsystem.h"
 
 using namespace std;
 
@@ -32,9 +33,16 @@ void MoveSystem::update() {
 		mc->xpos += ((ic->d * mc->xspeed) - (ic->a * mc->xspeed)) * deltaTime->delta();
 		mc->ypos += ((ic->s * mc->yspeed) - (ic->w * mc->yspeed)) * deltaTime->delta();
 
-		//If this entity moved, set the HAS_CHANGED flag
+		//Whenever an entity has been moved by something or moved by itself...
 		if(!(mc->xpos == mc->oldXpos && mc->ypos == mc->oldYpos)) {
+			//then it should render this tick
 			static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->makeIdActive(id);
+
+			//and it should be updated within HashGrid (hashgrid with bounding boxes by texture-dimensions)
+			//later on another HashGrid with bounding boxes by size-dimensions should be updated here aswell
+			//currently there is no HashGrid with bounding boxes - theres only a O(n^2) bruteforce-system..
+			static_cast<HashGridSystem*>(systemManager->getSystem("HashGridSystem"))->makeIdActive(id);
+
 		}
 	}
 }

@@ -10,7 +10,7 @@
 #include "movecomponent.h"
 #include "rendercomponent.h"
 #include "world.h"
-#include "hashgrid.h"
+#include "hashgridsystem.h"
 #include "flagsystem.h"
 #include "collisionsystem.h"
 
@@ -24,13 +24,13 @@ int main(int argc, char** argv) {
 
 	ComponentManager componentManager;
 	SystemManager systemManager(&componentManager, &deltaTime);
-	HashGrid hashGrid(&componentManager);
+	HashGridSystem hashGridSystem(&componentManager);
 	IdManager idManager;
 
-	EntityManager entityManager(&systemManager, &componentManager, &idManager, &hashGrid);
+	EntityManager entityManager(&systemManager, &componentManager, &idManager);
 
 	MoveSystem moveSystem;
-	RenderSystem renderSystem(&hashGrid);
+	RenderSystem renderSystem;
 	FlagSystem flagSystem;
 	CollisionSystem collisionSystem;
 
@@ -38,6 +38,7 @@ int main(int argc, char** argv) {
 	systemManager.add(&moveSystem);
 	systemManager.add(&renderSystem);
 	systemManager.add(&collisionSystem);
+	systemManager.add(&hashGridSystem);
 
 	auto playerId = entityManager.createPlayer();
 	entityManager.createTree();
@@ -51,7 +52,6 @@ int main(int argc, char** argv) {
 
 		systemManager.update();
 		eventManager.process();
-		hashGrid.update();
 
 		deltaTime.stop();
 	}

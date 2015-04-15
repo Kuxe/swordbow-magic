@@ -54,9 +54,9 @@ class RenderSystem : public ISystem {
 	SDL_Surface* screenSurface = nullptr;
 	SDL_Texture* targetTexture = nullptr;
 	unordered_map<string, TextureData> textureDatas;
-	SpatialIndexer* spatialIndexer;
+
  public:
- 	RenderSystem(SpatialIndexer* spatialIndexer);
+ 	RenderSystem();
  	~RenderSystem();
 	void add(unsigned long long int* id);
 	void remove(unsigned long long int* id);

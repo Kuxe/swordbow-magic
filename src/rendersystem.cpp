@@ -11,6 +11,8 @@
 #include "heapsort.h"
 #include <queue>
 #include "namecomponent.h"
+#include "systemmanager.h"
+#include "hashgridsystem.h"
 
 using namespace std;
 
@@ -35,8 +37,7 @@ bool RenderData::operator<=(const RenderData& rhs) const { return !(*this > rhs)
 bool RenderData::operator>=(const RenderData& rhs) const { return !(*this < rhs); }
 
 
-RenderSystem::RenderSystem(SpatialIndexer* spatialIndexer)
-    : spatialIndexer(spatialIndexer) {
+RenderSystem::RenderSystem() {
 	//Initialize SDL
     if(SDL_Init(SDL_INIT_VIDEO) < 0)
     {
@@ -169,6 +170,8 @@ void RenderSystem::update() {
 	bool marked[100000] {false}; //TODO: Make less arbitrary, somehow..
 	queue<unsigned long long int*> q;
 	heap<RenderData> pq; //TODO: Use reference instead (no need for copying!)
+
+	auto spatialIndexer = dynamic_cast<SpatialIndexer*>(systemManager->getSystem("HashGridSystem"));
 
 	//For all activeIds in rendersystem (henceforth activeIds will be referred
 	//to as just ids)

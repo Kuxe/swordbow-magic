@@ -65,12 +65,6 @@ class SpatialIndexer {
 		virtual void remove(ID id) = 0;
 
 		/**
-		 *	Clear all cells. Should be followed by an update-method to repopulate the cells.
-		 *	Doesn't remove any ids.
-		 **/
-		virtual void clear() = 0;
-
-		/**
 		 * Fills the list overlappingEntities with all IDs that overlap IDs texture.
 		 * Useful for overlapping textures.
 		 **/
