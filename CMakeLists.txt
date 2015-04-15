@@ -45,4 +45,10 @@ add_custom_target(run
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
 )
 
+add_custom_target(profile
+    COMMAND rm -f ./callgrind.out.* && valgrind --tool=callgrind ./swordbow-magic && kcachegrind callgrind.out.*
+    DEPENDS swordbow-magic
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+)
+
 install(TARGETS swordbow-magic DESTINATION bin)
