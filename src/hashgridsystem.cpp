@@ -27,7 +27,6 @@ HashGridSystem::~HashGridSystem() {
 void HashGridSystem::add(const ID id) {
 	ids.insert(id);
 	activeIds.push(id);
-	cout << componentManager->nameComponents.at(id)->name << " " << *id << " added to HashGridSystem" << endl;
 }
 
 void HashGridSystem::remove(const ID id) {
@@ -67,9 +66,9 @@ void HashGridSystem::removeFromCells(const ID id) {
 	for(unsigned int y = celly; y <= cellyh; y++) {
 		for(unsigned int x = cellx; x <= cellxw; x++) {
 			if(cells[y*width + x].erase(id) == 0) {
-				cout << "ERROR: hashgrid tried to erase id " << *id << " from cell " << y*width + x << " but the ID wasn't there." << endl;
+				/*cout << "ERROR: hashgrid tried to erase id " << *id << " from cell " << y*width + x << " but the ID wasn't there." << endl;
 				cout << "Strange things may happen from now on, because the ID could remain in cells ";
-				cout << "where the ID isnt physically located anymore (hashgrid got desynced)" << endl;
+				cout << "where the ID isnt physically located anymore (hashgrid got desynced)" << endl;*/
 			};
 		}
 	}
@@ -89,14 +88,14 @@ void HashGridSystem::removeFromCellsOldBoundingBox(const ID id) {
 	for(unsigned int y = celly; y <= cellyh; y++) {
 		for(unsigned int x = cellx; x <= cellxw; x++) {
 			if(cells[y*width + x].erase(id) == 0) {
-				cout << "ERROR: hashgrid tried to erase id " << *id << " from cell " << y*width + x << " but the ID wasn't there." << endl;
+				/*cout << "ERROR: hashgrid tried to erase id " << *id << " from cell " << y*width + x << " but the ID wasn't there." << endl;
 				cout << "Strange things may happen from now on, because the ID could remain in cells ";
 				cout << "where the ID isnt physically located anymore (hashgrid got desynced)" << endl;
 				cout << "as of 2015-04-16 this error-message occurs during initialization of gameworld," << endl;
 				cout << "in that case you need not to worry about the error message. It happens since" << endl;
 				cout << "adding to the HashGridSystem is done BEFORE world.cpp sets appropiate coordinates of each tile" << endl;
 				cout << "thus when the tile becomes active it tries to remove itself from {0,0}. This is of course harmless" << endl;
-				cout << "and can be ignored" << endl;
+				cout << "and can be ignored" << endl;*/
 			};
 		}
 	}

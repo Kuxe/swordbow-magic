@@ -69,7 +69,7 @@ RenderSystem::RenderSystem() {
 
 		            SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
 
-			        targetTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
+			        targetTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 16384, 16384);
 					SDL_SetRenderTarget(renderer, targetTexture);
 					SDL_RenderClear(renderer);
 				}
@@ -253,9 +253,18 @@ void RenderSystem::update() {
 		render(data);
 	}
 
+	const auto& cameraXpos = componentManager->moveComponents.at(cameraTarget)->xpos - SCREEN_WIDTH/2;
+	const auto& cameraYpos = componentManager->moveComponents.at(cameraTarget)->ypos - SCREEN_HEIGHT/2;
+	const SDL_Rect camera = {
+		cameraXpos < 0 ? 0 : cameraXpos,
+		cameraYpos < 0 ? 0 : cameraYpos,
+		SCREEN_WIDTH,
+		SCREEN_HEIGHT
+	};
+
     SDL_SetRenderTarget(renderer, NULL);
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, targetTexture, NULL, NULL);
+    SDL_RenderCopy(renderer, targetTexture, &camera, NULL);
 	SDL_RenderPresent(renderer);
 }
 
@@ -313,4 +322,8 @@ void RenderSystem::makeIdActive(unsigned long long int* id) {
 	if(ids.find(id) != ids.end()) {
 		activeIds.push(id);
 	}
+}
+
+void RenderSystem::setCameraTarget(unsigned long long int* id) {
+	cameraTarget = id;
 }

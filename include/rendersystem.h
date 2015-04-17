@@ -55,6 +55,8 @@ class RenderSystem : public ISystem {
 	SDL_Texture* targetTexture = nullptr;
 	unordered_map<string, TextureData> textureDatas;
 
+	unsigned long long int* cameraTarget;
+
  public:
  	RenderSystem();
  	~RenderSystem();
@@ -67,6 +69,7 @@ class RenderSystem : public ISystem {
 	const string getIdentifier() const;
 	void calculateZIndex(unsigned long long int* id);
 	void makeIdActive(unsigned long long int* id);
+	void setCameraTarget(unsigned long long int* id);
 };
 
 #endif //RENDERSYSTEM_H

@@ -47,6 +47,9 @@ int main(int argc, char** argv) {
 	//Keystroke events should change the input component of the player
 	eventManager.userInputComponent = componentManager.inputComponents.at(playerId);
 
+	//Set camera to follow player
+	renderSystem.setCameraTarget(playerId);
+
 	while(running) {
 		deltaTime.start();
 
