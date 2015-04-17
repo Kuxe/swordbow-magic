@@ -16,10 +16,10 @@ class HashGridSystem : public SpatialIndexer, public ISystem {
 	private:
 		unordered_set<ID> ids;
 		queue<ID> activeIds;
-		unordered_set<ID>* cells;
-		unsigned int cellsCapacity;
-		unsigned int width;
-		unsigned int height;
+		const unsigned int cellsCapacity;
+		const unsigned int width;
+		const unsigned int height;
+		unordered_set<ID>* const cells;
 		const unsigned int side;
 
 		ComponentManager* componentManager;
@@ -30,7 +30,7 @@ class HashGridSystem : public SpatialIndexer, public ISystem {
 
 	public:
 
-		HashGridSystem(ComponentManager* componentManager, unsigned int worldWidth = 65536, unsigned int worldHeight = 65536, unsigned int side = 64);
+		HashGridSystem(ComponentManager* componentManager, const unsigned int worldWidth = 65536, const unsigned int worldHeight = 65536, const unsigned int side = 64);
 		virtual ~HashGridSystem();
 
 		virtual void add(ID id);

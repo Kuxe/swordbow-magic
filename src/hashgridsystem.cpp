@@ -10,21 +10,14 @@
 using std::cout;
 using std::endl;
 
-HashGridSystem::HashGridSystem(ComponentManager* componentManager, unsigned int worldWidth, unsigned int worldHeight, unsigned int side) :
+HashGridSystem::HashGridSystem(ComponentManager* componentManager, const unsigned int worldWidth, const unsigned int worldHeight, const unsigned int side) :
 		componentManager(componentManager),
-		side(side < 1 ? 1 : side) {
-
-	width = worldWidth / side + (worldWidth % side != 0);
-	height = worldHeight / side + (worldHeight % side != 0);
-
-	//I feel clever for remembering this-> here. Maybe having
-	//same param names as member names is a bad idea...
-	cellsCapacity = width * height;
-	cells = new unordered_set<ID>[cellsCapacity];
-
-	for(int i = 0; i < cellsCapacity; i++) {
-		cells[i] = unordered_set<ID>();
-	}
+		side(side),
+		width(worldWidth / side + (worldWidth % side != 0)),
+		height(worldHeight / side + (worldHeight % side != 0)),
+		cellsCapacity(width * height),
+		cells(new unordered_set<ID>[width * height])
+		 {
 }
 
 HashGridSystem::~HashGridSystem() {
