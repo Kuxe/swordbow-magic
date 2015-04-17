@@ -30,7 +30,7 @@ class HashGridSystem : public SpatialIndexer, public ISystem {
 
 	public:
 
-		HashGridSystem(ComponentManager* componentManager, const unsigned int worldWidth = 65536, const unsigned int worldHeight = 65536, const unsigned int side = 64);
+		HashGridSystem(ComponentManager* componentManager, const unsigned int worldWidth = 16384, const unsigned int worldHeight = 16384, const unsigned int side = 64);
 		virtual ~HashGridSystem();
 
 		virtual void add(ID id);
