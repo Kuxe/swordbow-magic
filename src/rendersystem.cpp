@@ -68,7 +68,11 @@ RenderSystem::RenderSystem() {
 
 		            SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
 
-			        targetTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 16384, 16384);
+			        targetTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 8192, 8192);
+					if(!targetTexture) {
+						cout << "ERROR: Couldn't create targetTexture!" << endl;
+						cout << "Screen will probably go black from now on" << endl;
+					}
 					SDL_SetRenderTarget(renderer, targetTexture);
 					SDL_RenderClear(renderer);
 				}
