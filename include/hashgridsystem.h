@@ -11,6 +11,7 @@ using std::endl;
 using std::queue;
 
 class ComponentManager;
+class BoundingBox;
 
 class HashGridSystem : public SpatialIndexer, public ISystem {
 	private:
@@ -24,13 +25,21 @@ class HashGridSystem : public SpatialIndexer, public ISystem {
 
 		ComponentManager* componentManager;
 
+		BoundingBox* boundingBox;
+
 		void addToCells(const ID id);
 		void removeFromCells(const ID id);
 		void removeFromCellsOldBoundingBox(const ID id);
 
 	public:
 
-		HashGridSystem(ComponentManager* componentManager, const unsigned int worldWidth = 16384, const unsigned int worldHeight = 16384, const unsigned int side = 64);
+		HashGridSystem(
+			ComponentManager* componentManager,
+			BoundingBox* boundingBox,
+			const unsigned int worldWidth = 16384,
+			const unsigned int worldHeight = 16384,
+			const unsigned int side = 64);
+
 		virtual ~HashGridSystem();
 
 		virtual void add(ID id);

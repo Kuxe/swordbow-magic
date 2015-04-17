@@ -6,12 +6,20 @@
 #include "rendercomponent.h"
 #include "rendersystem.h"
 #include "namecomponent.h"
+#include "boundingbox.h"
+#include "textureboundingbox.h"
 
 using std::cout;
 using std::endl;
 
-HashGridSystem::HashGridSystem(ComponentManager* componentManager, const unsigned int worldWidth, const unsigned int worldHeight, const unsigned int side) :
+HashGridSystem::HashGridSystem(
+	ComponentManager* componentManager,
+	BoundingBox* boundingBox,
+	const unsigned int worldWidth,
+	const unsigned int worldHeight,
+	const unsigned int side) :
 		componentManager(componentManager),
+		boundingBox(boundingBox),
 		side(side),
 		width(worldWidth / side + (worldWidth % side != 0)),
 		height(worldHeight / side + (worldHeight % side != 0)),
@@ -35,14 +43,10 @@ void HashGridSystem::remove(const ID id) {
 }
 
 void HashGridSystem::addToCells(const ID id) {
-	const auto& mc = componentManager->moveComponents.at(id);
-	const auto& sc = componentManager->sizeComponents.at(id);
-	const auto& rc = componentManager->renderComponents.at(id);
-
-	unsigned int cellx = (mc->xpos + rc->xoffset)/side;
-	unsigned int cellxw = (mc->xpos + rc->xoffset + rc->textureData.width-1)/side;
-	unsigned int celly = (mc->ypos + rc->yoffset)/side;
-	unsigned int cellyh = (mc->ypos + rc->yoffset + rc->textureData.height-1)/side;
+	unsigned int cellx = (boundingBox->getX(id))/side;
+	unsigned int cellxw = (boundingBox->getX(id) + boundingBox->getW(id)-1)/side;
+	unsigned int celly = (boundingBox->getY(id))/side;
+	unsigned int cellyh = (boundingBox->getY(id) + boundingBox->getH(id)-1)/side;
 
 	//Place ID in all cells which partially or completely contains the ID
 	for(unsigned int y = celly; y <= cellyh; y++) {
@@ -53,14 +57,10 @@ void HashGridSystem::addToCells(const ID id) {
 }
 
 void HashGridSystem::removeFromCells(const ID id) {
-	const auto& mc = componentManager->moveComponents.at(id);
-	const auto& sc = componentManager->sizeComponents.at(id);
-	const auto& rc = componentManager->renderComponents.at(id);
-
-	unsigned int cellx = (mc->xpos + rc->xoffset)/side;
-	unsigned int cellxw = (mc->xpos + rc->xoffset + rc->textureData.width-1)/side;
-	unsigned int celly = (mc->ypos + rc->yoffset)/side;
-	unsigned int cellyh = (mc->ypos + rc->yoffset + rc->textureData.height-1)/side;
+	unsigned int cellx = (boundingBox->getX(id))/side;
+	unsigned int cellxw = (boundingBox->getX(id) + boundingBox->getW(id)-1)/side;
+	unsigned int celly = (boundingBox->getY(id))/side;
+	unsigned int cellyh = (boundingBox->getY(id) + boundingBox->getH(id)-1)/side;
 
 	//Remove ID in all cells which previously contained this ID
 	for(unsigned int y = celly; y <= cellyh; y++) {
@@ -79,10 +79,10 @@ void HashGridSystem::removeFromCellsOldBoundingBox(const ID id) {
 	const auto& sc = componentManager->sizeComponents.at(id);
 	const auto& rc = componentManager->renderComponents.at(id);
 
-	unsigned int cellx = (mc->oldXpos + rc->xoffset)/side;
-	unsigned int cellxw = (mc->oldXpos + rc->xoffset + rc->textureData.width-1)/side;
-	unsigned int celly = (mc->oldYpos + rc->yoffset)/side;
-	unsigned int cellyh = (mc->oldYpos + rc->yoffset + rc->textureData.height-1)/side;
+	unsigned int cellx = (boundingBox->getOldX(id))/side;
+	unsigned int cellxw = (boundingBox->getOldX(id) + boundingBox->getW(id)-1)/side;
+	unsigned int celly = (boundingBox->getOldY(id))/side;
+	unsigned int cellyh = (boundingBox->getOldY(id) + boundingBox->getH(id)-1)/side;
 
 	//Remove ID in all cells which previously contained this ID
 	for(unsigned int y = celly; y <= cellyh; y++) {
@@ -107,10 +107,10 @@ void HashGridSystem::overlaps(unordered_set<ID>& overlappingEntities, const ID i
 	const auto& rc = componentManager->renderComponents.at(id);
 
 	const SpatialIndexer::Rect queryRect {
-		mc->xpos + rc->xoffset,
-		mc->ypos + rc->yoffset,
-		rc->textureData.width-1,
-		rc->textureData.height-1
+		boundingBox->getX(id),
+		boundingBox->getY(id),
+		boundingBox->getW(id)-1,
+		boundingBox->getH(id)-1
 	};
 
 	//query using textures bounding box
@@ -137,17 +137,13 @@ void HashGridSystem::query(unordered_set<ID>& queryIds, Rect queryArea) {
 
 			//For all ids in the same cells as this one..
 			for(auto otherId : cells[y*width + x]) {
-				const auto& omc = componentManager->moveComponents.at(otherId);
-				const auto& osc = componentManager->sizeComponents.at(otherId);
-				const auto& orc = componentManager->renderComponents.at(otherId);
-
 				if(intersect(
 					queryArea,
 					SpatialIndexer::Rect {
-						omc->xpos + orc->xoffset,
-						omc->ypos + orc->yoffset,
-						orc->textureData.width-1,
-						orc->textureData.height-1 }
+						boundingBox->getX(otherId),
+						boundingBox->getY(otherId),
+						boundingBox->getW(otherId)-1,
+						boundingBox->getH(otherId)-1 }
 					)
 				) {
 					queryIds.insert(otherId);

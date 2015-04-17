@@ -12,6 +12,7 @@
 #include "world.h"
 #include "hashgridsystem.h"
 #include "collisionsystem.h"
+#include "textureboundingbox.h"
 
 using namespace std;
 
@@ -23,7 +24,9 @@ int main(int argc, char** argv) {
 
 	ComponentManager componentManager;
 	SystemManager systemManager(&componentManager, &deltaTime);
-	HashGridSystem hashGridSystem(&componentManager);
+
+	TextureBoundingBox textureBoundingBox(&componentManager);
+	HashGridSystem hashGridSystem(&componentManager, &textureBoundingBox);
 	IdManager idManager;
 
 	EntityManager entityManager(&systemManager, &componentManager, &idManager);
