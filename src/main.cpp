@@ -41,8 +41,17 @@ int main(int argc, char** argv) {
 	systemManager.add(&hashGridSystem);
 
 	auto playerId = entityManager.createPlayer();
-	entityManager.createTree();
 	World world(&entityManager);
+
+	for(int y = 1; y <= 50; y++) {
+		for(int x = 1; x <= 50; x++) {
+			auto tree = entityManager.createTree();
+			auto treeMc = componentManager.moveComponents.at(tree);
+			treeMc->xpos = x * 100;
+			treeMc->ypos = y * 100;
+
+		}
+	}
 
 	//Keystroke events should change the input component of the player
 	eventManager.userInputComponent = componentManager.inputComponents.at(playerId);
