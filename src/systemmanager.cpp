@@ -28,7 +28,7 @@ void SystemManager::remove(ISystem* system) {
 
 void SystemManager::update() {
 	for(int i = 0; i < MAX_SYSTEMS; i++) {
-		if(systems[i]) {
+		if(systems[i] && systems[i]->active) {
 			systems[i]->update();
 		}
 	}
