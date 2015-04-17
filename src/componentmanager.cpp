@@ -3,7 +3,6 @@
 #include "rendercomponent.h"
 #include "inputcomponent.h"
 #include "tilecomponent.h"
-#include "flagcomponent.h"
 #include "sizecomponent.h"
 #include "namecomponent.h"
 #include <iostream>
@@ -31,12 +30,6 @@ TileComponent* ComponentManager::createTileComponent(unsigned long long int* id)
 	TileComponent* tileComponent = new TileComponent();
 	tileComponents.insert(make_pair(id, tileComponent));
 	return tileComponent;
-}
-
-FlagComponent* ComponentManager::createFlagComponent(unsigned long long int* id) {
-	FlagComponent* flagComponent = new FlagComponent();
-	flagComponents.insert(make_pair(id, flagComponent));
-	return flagComponent;
 }
 
 SizeComponent* ComponentManager::createSizeComponent(unsigned long long int* id) {
@@ -74,12 +67,6 @@ void ComponentManager::removeAllComponents(unsigned long long int* id) {
 		delete tileComponents.at(id);
 	} catch (const std::out_of_range& oor) {
 		cout << "id has no tileComponents" << endl;
-	}
-
-	try {
-		delete flagComponents.at(id);
-	} catch (const std::out_of_range& oor) {
-		cout << "id has no flagComponents" << endl;
 	}
 
 	try {

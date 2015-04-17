@@ -8,7 +8,6 @@ using namespace std;
 
 class MoveComponent;
 class InputComponent;
-class FlagComponent;
 class RenderSystem;
 
 class MoveSystem : public ISystem {

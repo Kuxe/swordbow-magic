@@ -11,7 +11,6 @@
 #include "rendercomponent.h"
 #include "world.h"
 #include "hashgridsystem.h"
-#include "flagsystem.h"
 #include "collisionsystem.h"
 
 using namespace std;
@@ -31,10 +30,8 @@ int main(int argc, char** argv) {
 
 	MoveSystem moveSystem;
 	RenderSystem renderSystem;
-	FlagSystem flagSystem;
 	CollisionSystem collisionSystem;
 
-	systemManager.add(&flagSystem);
 	systemManager.add(&moveSystem);
 	systemManager.add(&renderSystem);
 	systemManager.add(&collisionSystem);

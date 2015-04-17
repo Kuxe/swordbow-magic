@@ -5,7 +5,6 @@
 #include "sizecomponent.h"
 #include <iostream>
 #include "spatialindexer.h"
-#include "flagcomponent.h"
 #include "heap.h"
 #include "dynamicarray.h"
 #include "heapsort.h"
@@ -134,7 +133,6 @@ void RenderSystem::add(unsigned long long int* id) {
                 componentManager->renderComponents.at(id),
                 componentManager->moveComponents.at(id),
 				componentManager->sizeComponents.at(id),
-				componentManager->flagComponents.at(id),
             }
         )
     );
@@ -215,9 +213,7 @@ void RenderSystem::update() {
 		//then add the id pq of renderdatas to be rendered
 		//and put id in the list
 		//finally mark it
-		if(count != 0 && (componentManager->flagComponents.at(id)->flags & FlagComponent::HAS_CHANGED
-				|| renderDatas.at(id).renderComponent->doRender)
-				&& !marked[*id]) {
+		if(count != 0 && renderDatas.at(id).renderComponent->doRender && !marked[*id]) {
 			q.push(id);
 			calculateZIndex(id);
 			pq.insert(renderDatas.at(id));

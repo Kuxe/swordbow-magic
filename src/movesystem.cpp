@@ -7,7 +7,6 @@
 #include "movecomponent.h"
 #include "inputcomponent.h"
 #include "deltatime.h"
-#include "flagcomponent.h"
 #include "systemmanager.h"
 #include "rendersystem.h"
 #include "hashgridsystem.h"

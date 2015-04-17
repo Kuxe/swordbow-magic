@@ -9,7 +9,6 @@ class MoveComponent;
 class RenderComponent;
 class InputComponent;
 class TileComponent;
-class FlagComponent;
 class SizeComponent;
 class NameComponent;
 
@@ -19,7 +18,6 @@ class ComponentManager {
 	unordered_map<unsigned long long int *, RenderComponent*> renderComponents;
 	unordered_map<unsigned long long int *, InputComponent*> inputComponents;
 	unordered_map<unsigned long long int *, TileComponent*> tileComponents;
-	unordered_map<unsigned long long int *, FlagComponent*> flagComponents;
 	unordered_map<unsigned long long int *, SizeComponent*> sizeComponents;
     unordered_map<unsigned long long int *, NameComponent*> nameComponents;
 
@@ -27,7 +25,6 @@ class ComponentManager {
 	RenderComponent* createRenderComponent(unsigned long long int* id);
 	InputComponent* createInputComponent(unsigned long long int* id);
 	TileComponent* createTileComponent(unsigned long long int* id);
-	FlagComponent* createFlagComponent(unsigned long long int* id);
 	SizeComponent* createSizeComponent(unsigned long long int* id);
     NameComponent* createNameComponent(unsigned long long int* id);
 

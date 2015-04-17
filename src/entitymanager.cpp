@@ -31,7 +31,6 @@ unsigned long long int* EntityManager::createPlayer() {
 	//Create components from componentmanager
 	auto moveComponent = componentManager->createMoveComponent(id);
 	componentManager->createInputComponent(id);
-	componentManager->createFlagComponent(id);
 	auto sizeComponent = componentManager->createSizeComponent(id);
 	RenderComponent* renderComponent = componentManager->createRenderComponent(id);
 	auto nameComponent = componentManager->createNameComponent(id);
@@ -59,7 +58,6 @@ unsigned long long int* EntityManager::createPlayer() {
 			vector<ISystem*> {
 				systemManager->getSystem("RenderSystem"),
 				systemManager->getSystem("MoveSystem"),
-				systemManager->getSystem("FlagSystem"),
 				systemManager->getSystem("CollisionSystem"),
 				systemManager->getSystem("HashGridSystem"),
 			}
@@ -80,7 +78,6 @@ unsigned long long int* EntityManager::createTree() {
 
 	auto moveComponent = componentManager->createMoveComponent(id);
 	componentManager->createInputComponent(id);
-	componentManager->createFlagComponent(id);
 	auto sizeComponent = componentManager->createSizeComponent(id);
 	RenderComponent* renderComponent = componentManager->createRenderComponent(id);
 	auto nameComponent = componentManager->createNameComponent(id);
@@ -103,7 +100,6 @@ unsigned long long int* EntityManager::createTree() {
 			id,
 			vector<ISystem*> {
 				systemManager->getSystem("RenderSystem"),
-				systemManager->getSystem("FlagSystem"),
 				systemManager->getSystem("CollisionSystem"),
 				systemManager->getSystem("MoveSystem"),
 				systemManager->getSystem("HashGridSystem"),
@@ -121,7 +117,6 @@ unsigned long long int* EntityManager::createTile() {
 
 	componentManager->createMoveComponent(id);
 	componentManager->createTileComponent(id);
-	componentManager->createFlagComponent(id);
 	auto sizeComponent = componentManager->createSizeComponent(id);
 	auto rc = componentManager->createRenderComponent(id);
 	auto nameComponent = componentManager->createNameComponent(id);
@@ -139,7 +134,6 @@ unsigned long long int* EntityManager::createTile() {
 			id,
 			vector<ISystem*> {
 				systemManager->getSystem("RenderSystem"),
-				systemManager->getSystem("FlagSystem"),
 				systemManager->getSystem("HashGridSystem"),
 			}
 		)
