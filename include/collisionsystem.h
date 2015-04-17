@@ -21,7 +21,7 @@ struct CollisionData {
 class CollisionSystem : public ISystem {
  private:
 	 dynamicarray<CollisionData> collisionDatas;
-	 bool colliding(const CollisionData& cd1, const CollisionData& cd2) const;
+	 static constexpr bool colliding(const CollisionData& cd1, const CollisionData& cd2);
 
  public:
 	void add(unsigned long long int* id);

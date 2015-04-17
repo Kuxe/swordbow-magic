@@ -3,7 +3,7 @@
 #include "movecomponent.h"
 #include "sizecomponent.h"
 
-bool CollisionSystem::colliding(const CollisionData& a, const CollisionData& b) const {
+constexpr bool CollisionSystem::colliding(const CollisionData& a, const CollisionData& b) {
 
 	/**
 	 * Two boxed bounded by
@@ -19,12 +19,11 @@ bool CollisionSystem::colliding(const CollisionData& a, const CollisionData& b) 
 	 *
 	 **/
 
-	//Check if any border doesn't overlap for sure
-	if(a.mc->xpos + a.sc->width < b.mc->xpos) return false;
-	if(a.mc->xpos > b.mc->xpos + b.sc->width) return false;
-	if(a.mc->ypos + a.sc->height < b.mc->ypos) return false;
-	if(a.mc->ypos > b.mc->ypos + b.sc->height) return false;
-	return true;
+	//Check if any border doesn't overlap
+	return !(a.mc->xpos + a.sc->width < b.mc->xpos ||
+			a.mc->xpos > b.mc->xpos + b.sc->width ||
+			a.mc->ypos + a.sc->height < b.mc->ypos ||
+			a.mc->ypos > b.mc->ypos + b.sc->height );
 }
 
 void CollisionSystem::add(unsigned long long int* id) {
@@ -53,11 +52,11 @@ void CollisionSystem::update() {
 				auto outerMc = collisionDatas[outer].mc;
 				outerMc->xpos = outerMc->oldXpos;
 				outerMc->ypos = outerMc->oldYpos;
-				
+
 				auto innerMc = collisionDatas[inner].mc;
 				innerMc->xpos = innerMc->oldXpos;
 				innerMc->ypos = innerMc->oldYpos;
-			};				
+			};
 		}
 	}
 }
