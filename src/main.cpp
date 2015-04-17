@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 
 	MoveSystem moveSystem;
 	RenderSystem renderSystem;
-	CollisionSystem collisionSystem;
+	CollisionSystem collisionSystem(&sizeHashGridSystem);
 
 	systemManager.add(&moveSystem);
 	systemManager.add(&renderSystem);

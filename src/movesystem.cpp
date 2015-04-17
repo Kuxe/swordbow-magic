@@ -10,6 +10,7 @@
 #include "systemmanager.h"
 #include "rendersystem.h"
 #include "hashgridsystem.h"
+#include "collisionsystem.h"
 
 using namespace std;
 
@@ -41,6 +42,7 @@ void MoveSystem::update() {
 			//to make sure that the entity actually is a member of the system)
 			static_cast<HashGridSystem*>(systemManager->getSystem("TextureHashGridSystem"))->makeIdActive(id);
 			static_cast<HashGridSystem*>(systemManager->getSystem("SizeHashGridSystem"))->makeIdActive(id);
+			static_cast<CollisionSystem*>(systemManager->getSystem("CollisionSystem"))->makeIdActive(id);
 
 		}
 	}

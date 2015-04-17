@@ -2,33 +2,33 @@
 #define COLLISIONSYSTEM_H
 
 #include "isystem.h"
-#include "dynamicarray.h"
+#include <unordered_set>
+#include <queue>
+#include "spatialindexer.h"
+
+using std::unordered_set;
+using std::queue;
 
 class MoveComponent;
 class SizeComponent;
+class SpatialIndexer;
 
-typedef unsigned long long int* ID_TYPE;
-
-struct CollisionData {
-	MoveComponent* mc;
-	SizeComponent* sc;
-
-	bool operator==(const CollisionData& rhs) {
-		return mc == rhs.mc && sc == rhs.sc;
-	}
-};
+typedef unsigned long long int* ID;
 
 class CollisionSystem : public ISystem {
- private:
-	 dynamicarray<CollisionData> collisionDatas;
-	 static constexpr bool colliding(const CollisionData& cd1, const CollisionData& cd2);
+private:
+	unordered_set<ID> ids;
+	queue<ID> activeIds;
+	SpatialIndexer* spatialIndexer;
 
- public:
-	void add(unsigned long long int* id);
-	void remove(unsigned long long int* id);
+public:
+	CollisionSystem(SpatialIndexer* spatialIndexer);
+	void add(ID id);
+	void remove(ID id);
 	void update();
 	unsigned int count() const ;
 	const string getIdentifier() const;
+	void makeIdActive(ID id);
 
 };
 
