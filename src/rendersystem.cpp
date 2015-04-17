@@ -248,6 +248,9 @@ void RenderSystem::update() {
 		}
 	}
 
+	SDL_SetTextureBlendMode(targetTexture, SDL_BLENDMODE_BLEND);
+	SDL_SetRenderTarget(renderer, targetTexture);
+
 	while(!pq.isEmpty()) {
 		RenderData data = pq.poll();
 		render(data);
@@ -292,14 +295,6 @@ void RenderSystem::render(const RenderData& data) const {
             (int)textureData.height
         };
 
-        //Render to target texture
-        //the target texture in turn will be rendered ontop of default
-        //the default is always cleared
-        //SDL_RenderPresent invalidates current backbuffer, so hence this required
-        //the targetTexture ISNT invalidated, whatever is rendered onto it it saved
-        //so it's fine to just re-render the targetTexture
-        SDL_SetTextureBlendMode(targetTexture, SDL_BLENDMODE_BLEND);
-        SDL_SetRenderTarget(renderer, targetTexture);
         SDL_RenderCopy(renderer, textureDatas.at(data.renderComponent->imagePath).texture, NULL, &rect);
 
         //Finally, don't render this component until it says otherwise
