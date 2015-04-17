@@ -12,6 +12,7 @@ public:
     unsigned int getOldY(ID id);
     unsigned int getW(ID id);
     unsigned int getH(ID id);
+    const string getSystemName() const;
 };
 
 #endif //SIZEBOUNDINGBOX_H

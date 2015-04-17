@@ -24,3 +24,7 @@ unsigned int SizeBoundingBox::getW(ID id) {
 unsigned int SizeBoundingBox::getH(ID id) {
     return componentManager->sizeComponents.at(id)->height;
 }
+
+const string SizeBoundingBox::getSystemName() const {
+    return "SizeHashGridSystem";
+}

@@ -59,7 +59,8 @@ unsigned long long int* EntityManager::createPlayer() {
 				systemManager->getSystem("RenderSystem"),
 				systemManager->getSystem("MoveSystem"),
 				systemManager->getSystem("CollisionSystem"),
-				systemManager->getSystem("HashGridSystem"),
+				systemManager->getSystem("TextureHashGridSystem"),
+				systemManager->getSystem("SizeHashGridSystem"),
 			}
 		)
 	);
@@ -102,7 +103,8 @@ unsigned long long int* EntityManager::createTree() {
 				systemManager->getSystem("RenderSystem"),
 				systemManager->getSystem("CollisionSystem"),
 				systemManager->getSystem("MoveSystem"),
-				systemManager->getSystem("HashGridSystem"),
+				systemManager->getSystem("TextureHashGridSystem"),
+				systemManager->getSystem("SizeHashGridSystem"),
 			}
 		)
 	);
@@ -134,7 +136,7 @@ unsigned long long int* EntityManager::createTile() {
 			id,
 			vector<ISystem*> {
 				systemManager->getSystem("RenderSystem"),
-				systemManager->getSystem("HashGridSystem"),
+				systemManager->getSystem("TextureHashGridSystem"),
 			}
 		)
 	);

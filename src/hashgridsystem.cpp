@@ -182,5 +182,5 @@ unsigned int HashGridSystem::count() const {
 	return ids.size();
 }
 const string HashGridSystem::getIdentifier() const {
-	return "HashGridSystem";
+	return boundingBox->getSystemName();
 }

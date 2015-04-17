@@ -169,7 +169,7 @@ void RenderSystem::update() {
 	queue<unsigned long long int*> q;
 	heap<RenderData> pq; //TODO: Use reference instead (no need for copying!)
 
-	auto spatialIndexer = dynamic_cast<SpatialIndexer*>(systemManager->getSystem("HashGridSystem"));
+	auto spatialIndexer = dynamic_cast<SpatialIndexer*>(systemManager->getSystem("TextureHashGridSystem"));
 
 	//For all activeIds in rendersystem (henceforth activeIds will be referred
 	//to as just ids)

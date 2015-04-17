@@ -37,10 +37,10 @@ void MoveSystem::update() {
 			//then it should render this tick
 			static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->makeIdActive(id);
 
-			//and it should be updated within HashGrid (hashgrid with bounding boxes by texture-dimensions)
-			//later on another HashGrid with bounding boxes by size-dimensions should be updated here aswell
-			//currently there is no HashGrid with bounding boxes - theres only a O(n^2) bruteforce-system..
-			static_cast<HashGridSystem*>(systemManager->getSystem("HashGridSystem"))->makeIdActive(id);
+			//Update this entity within potential HashGrids (potential because a check is made within madeIdActive
+			//to make sure that the entity actually is a member of the system)
+			static_cast<HashGridSystem*>(systemManager->getSystem("TextureHashGridSystem"))->makeIdActive(id);
+			static_cast<HashGridSystem*>(systemManager->getSystem("SizeHashGridSystem"))->makeIdActive(id);
 
 		}
 	}

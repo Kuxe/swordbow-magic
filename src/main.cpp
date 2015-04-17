@@ -13,6 +13,7 @@
 #include "hashgridsystem.h"
 #include "collisionsystem.h"
 #include "textureboundingbox.h"
+#include "sizeboundingbox.h"
 
 using namespace std;
 
@@ -26,7 +27,9 @@ int main(int argc, char** argv) {
 	SystemManager systemManager(&componentManager, &deltaTime);
 
 	TextureBoundingBox textureBoundingBox(&componentManager);
-	HashGridSystem hashGridSystem(&componentManager, &textureBoundingBox);
+	SizeBoundingBox sizeBoundingBox(&componentManager);
+	HashGridSystem textureHashGridSystem(&componentManager, &textureBoundingBox);
+	HashGridSystem sizeHashGridSystem(&componentManager, &sizeBoundingBox);
 	IdManager idManager;
 
 	EntityManager entityManager(&systemManager, &componentManager, &idManager);
@@ -38,7 +41,8 @@ int main(int argc, char** argv) {
 	systemManager.add(&moveSystem);
 	systemManager.add(&renderSystem);
 	systemManager.add(&collisionSystem);
-	systemManager.add(&hashGridSystem);
+	systemManager.add(&textureHashGridSystem);
+	systemManager.add(&sizeHashGridSystem);
 
 	auto playerId = entityManager.createPlayer();
 	World world(&entityManager);

@@ -28,3 +28,7 @@ unsigned int TextureBoundingBox::getW(ID id) {
 unsigned int TextureBoundingBox::getH(ID id) {
     return componentManager->renderComponents.at(id)->textureData.height;
 }
+
+const string TextureBoundingBox::getSystemName() const {
+    return "TextureHashGridSystem";
+}
