@@ -15,25 +15,16 @@
 
 using namespace std;
 
-
-
-
-bool RenderData::operator< (const RenderData& rhs) const {
-	//RenderData is first ordered by zindex_base and if the bases are equal then zindex
-	//{zindex_base, zindex}
-	//{6, 4.9} is greater than {5, 5.0}
-	//{5, 5.0} is equal to {5, 5.0}
-	//{5, 4.9] is less than {5, 5.0}
-	if(renderComponent->zindex_base == rhs.renderComponent->zindex_base) {
-		return renderComponent->zindex < rhs.renderComponent->zindex;
-	} else {
-		return renderComponent->zindex_base < rhs.renderComponent->zindex_base;
-	}
+bool SortHelper::operator< (const SortHelper& rhs) const {
+    return
+        renderComponent->zindex_base == rhs.renderComponent->zindex_base ?
+        renderComponent->zindex < rhs.renderComponent->zindex :
+        renderComponent->zindex_base < rhs.renderComponent->zindex_base;
 }
 
-bool RenderData::operator> (const RenderData& rhs) const { return rhs < *this; }
-bool RenderData::operator<=(const RenderData& rhs) const { return !(*this > rhs); }
-bool RenderData::operator>=(const RenderData& rhs) const { return !(*this < rhs); }
+bool SortHelper::operator> (const SortHelper& rhs) const { return rhs < *this; }
+bool SortHelper::operator<=(const SortHelper& rhs) const { return !(*this > rhs); }
+bool SortHelper::operator>=(const SortHelper& rhs) const { return !(*this < rhs); }
 
 
 RenderSystem::RenderSystem() {
@@ -131,28 +122,11 @@ RenderSystem::~RenderSystem() {
 }
 
 void RenderSystem::add(unsigned long long int* id) {
-	renderDatas.insert(
-        make_pair(
-            id,
-            RenderData{
-                componentManager->renderComponents.at(id),
-                componentManager->moveComponents.at(id),
-				componentManager->sizeComponents.at(id),
-            }
-        )
-    );
 	ids.insert(id);
 	activeIds.push(id);
 }
 
 void RenderSystem::remove(unsigned long long int* id) {
-	if(id == nullptr) {
-		cout << "WARNING: No id on adress: " << id << endl;
-		return;
-	}
-	if(renderDatas.erase(id) == 0) {
-		cout << "WARNING: RenderSystem tried to erase unpresent ID " << *id << ", segfault inc!" << endl;
-	}
 	ids.erase(id);
 }
 
@@ -172,7 +146,7 @@ void RenderSystem::update() {
 	unsigned int count = ids.size();
 	bool marked[100000] {false}; //TODO: Make less arbitrary, somehow..
 	queue<unsigned long long int*> q;
-	heap<RenderData> pq; //TODO: Use reference instead (no need for copying!)
+	heap<SortHelper> pq; //TODO: Use reference instead (no need for copying!)
 
 	auto spatialIndexer = dynamic_cast<SpatialIndexer*>(systemManager->getSystem("TextureHashGridSystem"));
 
@@ -218,10 +192,11 @@ void RenderSystem::update() {
 		//then add the id pq of renderdatas to be rendered
 		//and put id in the list
 		//finally mark it
-		if(count != 0 && renderDatas.at(id).renderComponent->doRender && !marked[*id]) {
+		if(count != 0 && componentManager->renderComponents.at(id)->doRender && !marked[*id]) {
 			q.push(id);
 			calculateZIndex(id);
-			pq.insert(renderDatas.at(id));
+            SortHelper sh {id, componentManager->renderComponents.at(id)};
+			pq.insert(sh);
 			marked[*id] = true;
             componentManager->renderComponents.at(id)->doRender = true;
 			makeIdActive(id);
@@ -238,7 +213,8 @@ void RenderSystem::update() {
 					if(!marked[*overlap] && count != 0) {
 						q.push(overlap);
 						calculateZIndex(overlap);
-						pq.insert(renderDatas.at(overlap));
+                        SortHelper sh {overlap, componentManager->renderComponents.at(overlap)};
+						pq.insert(sh);
 						marked[*overlap] = true;
 						componentManager->renderComponents.at(overlap)->doRender = true;
 						makeIdActive(id);
@@ -253,8 +229,8 @@ void RenderSystem::update() {
 	SDL_SetRenderTarget(renderer, targetTexture);
 
 	while(!pq.isEmpty()) {
-		RenderData data = pq.poll();
-		render(data);
+		auto sortHelper = pq.poll();
+		render(sortHelper.id);
 	}
 
 	const auto& cameraXpos = componentManager->moveComponents.at(cameraTarget)->xpos - SCREEN_WIDTH/2;
@@ -273,33 +249,33 @@ void RenderSystem::update() {
 }
 
 unsigned int RenderSystem::count() const {
-	return renderDatas.size();
+	return ids.size();
 }
 
-void RenderSystem::render(const RenderData& data) const {
+void RenderSystem::render(unsigned long long int* id) const {
     //render if component wants to be re-rendered
-    if(data.renderComponent->doRender) {
+    if(componentManager->renderComponents.at(id)->doRender) {
         TextureData textureData;
         try {
-            textureData = textureDatas.at(data.renderComponent->imagePath);
+            textureData = textureDatas.at(componentManager->renderComponents.at(id)->imagePath);
         } catch (const std::out_of_range &oor) {
             cout << "out_of_range exception caught in SystemManager::getSystem(string identifier): " << oor.what() << endl;
-            cout << "1. Maybe there as a typo in the RenderComponent->imagePath, " << data.renderComponent->imagePath << "?" << endl;
-            cout << "2. Maybe " << data.renderComponent->imagePath << " wasn't loaded by RenderSystem?" << endl;
+            cout << "1. Maybe there as a typo in the RenderComponent->imagePath, " << componentManager->renderComponents.at(id)->imagePath << "?" << endl;
+            cout << "2. Maybe " << componentManager->renderComponents.at(id)->imagePath << " wasn't loaded by RenderSystem?" << endl;
             cout << "Things will go wrong from now on!" << endl;
         }
 
         SDL_Rect rect{
-            (int)(data.moveComponent->xpos + data.renderComponent->xoffset),
-            (int)(data.moveComponent->ypos + data.renderComponent->yoffset),
+            (int)(componentManager->moveComponents.at(id)->xpos + componentManager->renderComponents.at(id)->xoffset),
+            (int)(componentManager->moveComponents.at(id)->ypos + componentManager->renderComponents.at(id)->yoffset),
             (int)textureData.width,
             (int)textureData.height
         };
 
-        SDL_RenderCopy(renderer, textureDatas.at(data.renderComponent->imagePath).texture, NULL, &rect);
+        SDL_RenderCopy(renderer, textureDatas.at(componentManager->renderComponents.at(id)->imagePath).texture, NULL, &rect);
 
         //Finally, don't render this component until it says otherwise
-        data.renderComponent->doRender = false;
+        componentManager->renderComponents.at(id)->doRender = false;
     }
 }
 

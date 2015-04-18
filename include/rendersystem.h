@@ -18,29 +18,24 @@ class SizeComponent;
 class FlagComponent;
 class SpatialIndexer;
 
-struct RenderData {
-	RenderComponent* renderComponent;
-	MoveComponent* moveComponent;
-	SizeComponent* sizeComponent;
-	FlagComponent* flagComponent;
-
-	inline bool operator< (const RenderData& rhs) const;
-	inline bool operator> (const RenderData& rhs) const;
-	inline bool operator<=(const RenderData& rhs) const;
-	inline bool operator>=(const RenderData& rhs) const;
-};
-
 struct TextureData {
 	SDL_Texture* texture;
 	unsigned int width;
 	unsigned int height;
 };
 
+struct SortHelper {
+	unsigned long long int* id;
+	RenderComponent* renderComponent;
+
+	inline bool operator< (const SortHelper& rhs) const;
+    inline bool operator> (const SortHelper& rhs) const;
+    inline bool operator<=(const SortHelper& rhs) const;
+    inline bool operator>=(const SortHelper& rhs) const;
+};
+
 class RenderSystem : public ISystem {
  private:
- 	static constexpr unsigned char MAX_IDS = 255;
- 	//unsigned long long int* ids[MAX_IDS] {0};
-	unordered_map<unsigned long long int*, RenderData> renderDatas;
 	unordered_set<unsigned long long int*> ids;
 	queue<unsigned long long int*> activeIds;
 
@@ -65,7 +60,7 @@ class RenderSystem : public ISystem {
 	void update();
 	void update2();
 	unsigned int count() const;
-	void render(const RenderData& data) const;
+	void render(unsigned long long int* id) const;
 	const string getIdentifier() const;
 	void calculateZIndex(unsigned long long int* id);
 	void makeIdActive(unsigned long long int* id);
