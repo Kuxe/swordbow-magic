@@ -13,7 +13,7 @@ class SpatialIndexer {
 		 * Simple rect-structure
 		 **/
 		struct Rect {
-			int x, y, w, h;
+			unsigned int x, y, w, h;
 
 			inline bool operator==(const Rect& rhs) const {
 				return x == rhs.x && y == rhs.y && w == rhs.w && h == rhs.h;
@@ -68,19 +68,19 @@ class SpatialIndexer {
 		 * Fills the list overlappingEntities with all IDs that overlap IDs texture.
 		 * Useful for overlapping textures.
 		 **/
-		virtual void overlaps(unordered_set<ID>& overlappingIds, const ID id) = 0;
+		virtual void overlaps(unordered_set<ID>& overlappingIds, const ID id) const = 0;
 
 		/**
 		 *	Return all ids within queryarea
 		 **/
-		virtual void query(unordered_set<ID>& queryIds, Rect queryArea) = 0;
+		virtual void query(unordered_set<ID>& queryIds, const Rect& queryArea) const = 0;
 
 
 		/**
 		 *	Retrieve entities in the same cell as id. Im not sure why this
 		 *	is useful when there's query and overlaps.
 		 **/
-		virtual void getNearbyIds(unordered_set<ID>& nearbyIds, const ID id) = 0;
+		virtual void getNearbyIds(unordered_set<ID>& nearbyIds, const ID id) const = 0;
 
 		/**
 		 *	After calling this, all ids in the spatialindexer have their

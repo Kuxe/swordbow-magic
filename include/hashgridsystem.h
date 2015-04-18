@@ -44,9 +44,9 @@ class HashGridSystem : public SpatialIndexer, public ISystem {
 
 		virtual void add(ID id);
 		virtual void remove(ID id);
-		virtual void overlaps(unordered_set<ID>& overlappingIds, const ID id);
-		virtual void query(unordered_set<ID>& queryIds, Rect queryArea);
-		virtual void getNearbyIds(unordered_set<ID>& nearbyIds, const ID id);
+		virtual void overlaps(unordered_set<ID>& overlappingIds, const ID id) const;
+		virtual void query(unordered_set<ID>& queryIds, const Rect& queryArea) const ;
+		virtual void getNearbyIds(unordered_set<ID>& nearbyIds, const ID id) const;
 
 		/**
 		 *	Bounding-box test

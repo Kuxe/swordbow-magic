@@ -7,7 +7,6 @@
 #include "rendersystem.h"
 #include "namecomponent.h"
 #include "boundingbox.h"
-#include "textureboundingbox.h"
 
 using std::cout;
 using std::endl;
@@ -43,28 +42,22 @@ void HashGridSystem::remove(const ID id) {
 }
 
 void HashGridSystem::addToCells(const ID id) {
-	unsigned int cellx = (boundingBox->getX(id))/side;
-	unsigned int cellxw = (boundingBox->getX(id) + boundingBox->getW(id)-1)/side;
-	unsigned int celly = (boundingBox->getY(id))/side;
-	unsigned int cellyh = (boundingBox->getY(id) + boundingBox->getH(id)-1)/side;
+	const auto bb = boundingBox->getBoundingBox(id);
 
 	//Place ID in all cells which partially or completely contains the ID
-	for(unsigned int y = celly; y <= cellyh; y++) {
-		for(unsigned int x = cellx; x <= cellxw; x++) {
+	for(unsigned int y = bb.y/side; y <= (bb.y + bb.h)/side; y++) {
+		for(unsigned int x = bb.x/side; x <= (bb.x + bb.w)/side; x++) {
 			cells[y*width + x].insert(id);
 		}
 	}
 }
 
 void HashGridSystem::removeFromCells(const ID id) {
-	unsigned int cellx = (boundingBox->getX(id))/side;
-	unsigned int cellxw = (boundingBox->getX(id) + boundingBox->getW(id)-1)/side;
-	unsigned int celly = (boundingBox->getY(id))/side;
-	unsigned int cellyh = (boundingBox->getY(id) + boundingBox->getH(id)-1)/side;
+	const auto bb = boundingBox->getBoundingBox(id);
 
 	//Remove ID in all cells which previously contained this ID
-	for(unsigned int y = celly; y <= cellyh; y++) {
-		for(unsigned int x = cellx; x <= cellxw; x++) {
+	for(unsigned int y = bb.y/side; y <= (bb.y + bb.h)/side; y++) {
+		for(unsigned int x = bb.x/side; x <= (bb.x + bb.w)/side; x++) {
 			if(cells[y*width + x].erase(id) == 0) {
 				/*cout << "ERROR: hashgrid tried to erase id " << *id << " from cell " << y*width + x << " but the ID wasn't there." << endl;
 				cout << "Strange things may happen from now on, because the ID could remain in cells ";
@@ -75,18 +68,11 @@ void HashGridSystem::removeFromCells(const ID id) {
 }
 
 void HashGridSystem::removeFromCellsOldBoundingBox(const ID id) {
-	const auto& mc = componentManager->moveComponents.at(id);
-	const auto& sc = componentManager->sizeComponents.at(id);
-	const auto& rc = componentManager->renderComponents.at(id);
-
-	unsigned int cellx = (boundingBox->getOldX(id))/side;
-	unsigned int cellxw = (boundingBox->getOldX(id) + boundingBox->getW(id)-1)/side;
-	unsigned int celly = (boundingBox->getOldY(id))/side;
-	unsigned int cellyh = (boundingBox->getOldY(id) + boundingBox->getH(id)-1)/side;
+	const auto bb = boundingBox->getBoundingBox(id);
 
 	//Remove ID in all cells which previously contained this ID
-	for(unsigned int y = celly; y <= cellyh; y++) {
-		for(unsigned int x = cellx; x <= cellxw; x++) {
+	for(unsigned int y = bb.y/side; y <= (bb.y + bb.h)/side; y++) {
+		for(unsigned int x = bb.x/side; x <= (bb.x + bb.w)/side; x++) {
 			if(cells[y*width + x].erase(id) == 0) {
 				/*cout << "ERROR: hashgrid tried to erase id " << *id << " from cell " << y*width + x << " but the ID wasn't there." << endl;
 				cout << "Strange things may happen from now on, because the ID could remain in cells ";
@@ -101,51 +87,22 @@ void HashGridSystem::removeFromCellsOldBoundingBox(const ID id) {
 	}
 }
 
-//Returns all entities that are fully or partly contained by id's texture bounding box
-void HashGridSystem::overlaps(unordered_set<ID>& overlappingEntities, const ID id) {
-	const auto& mc = componentManager->moveComponents.at(id);
-	const auto& rc = componentManager->renderComponents.at(id);
-
-	const SpatialIndexer::Rect queryRect {
-		boundingBox->getX(id),
-		boundingBox->getY(id),
-		boundingBox->getW(id)-1,
-		boundingBox->getH(id)-1
-	};
-
-	//query using textures bounding box
-	query(overlappingEntities, queryRect);
-
+//Returns all entities that are fully or partly contained by id's bounding box
+void HashGridSystem::overlaps(unordered_set<ID>& overlappingEntities, const ID id) const {
+	query(overlappingEntities, boundingBox->getBoundingBox(id));
 	overlappingEntities.erase(id);
 }
 
 //Return all entities that are fully or partly contained by a queryArea
-void HashGridSystem::query(unordered_set<ID>& queryIds, Rect queryArea) {
-
-	//Convert from world-space coordinates to cellCoordinates and store
-	//cellCoordinates in cellRect
-	const SpatialIndexer::Rect cellRect {
-		queryArea.x/side,
-		queryArea.y/side,
-		queryArea.w/side,
-		queryArea.h/side,
-	};
+void HashGridSystem::query(unordered_set<ID>& queryIds, const Rect& queryArea) const {
 
 	//Loop through all cells in which this ID is partly or fully contained
-	for(unsigned int y = cellRect.y; y <= (queryArea.y + queryArea.h)/side; y++) {
-		for(unsigned int x = cellRect.x; x <= (queryArea.x + queryArea.w)/side; x++) {
+	for(unsigned int y = queryArea.y/side; y <= (queryArea.y + queryArea.h)/side; y++) {
+		for(unsigned int x = queryArea.x/side; x <= (queryArea.x + queryArea.w)/side; x++) {
 
 			//For all ids in the same cells as this one..
 			for(auto otherId : cells[y*width + x]) {
-				if(intersect(
-					queryArea,
-					SpatialIndexer::Rect {
-						boundingBox->getX(otherId),
-						boundingBox->getY(otherId),
-						boundingBox->getW(otherId)-1,
-						boundingBox->getH(otherId)-1 }
-					)
-				) {
+				if(intersect(queryArea, boundingBox->getBoundingBox(otherId))) {
 					queryIds.insert(otherId);
 				}
 			}
@@ -153,7 +110,7 @@ void HashGridSystem::query(unordered_set<ID>& queryIds, Rect queryArea) {
 	}
 }
 
-void HashGridSystem::getNearbyIds(unordered_set<ID>& nearbyIds, const ID id) {
+void HashGridSystem::getNearbyIds(unordered_set<ID>& nearbyIds, const ID id) const {
 
 }
 

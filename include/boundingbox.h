@@ -2,6 +2,7 @@
 #define BOUNDINGBOX_H
 
 #include <string>
+#include "spatialindexer.h"
 
 using std::string;
 
@@ -13,14 +14,10 @@ protected:
         const ComponentManager* const componentManager;
 public:
 
-    BoundingBox(ComponentManager* componentManager) :
+    BoundingBox(const ComponentManager* const componentManager) :
         componentManager(componentManager) {}
-    virtual unsigned int getX(ID id) = 0;
-    virtual unsigned int getY(ID id) = 0;
-    virtual unsigned int getOldX(ID id) = 0;
-    virtual unsigned int getOldY(ID id) = 0;
-    virtual unsigned int getW(ID id) = 0;
-    virtual unsigned int getH(ID id) = 0;
+    virtual const SpatialIndexer::Rect getBoundingBox(ID id) const = 0;
+    virtual const SpatialIndexer::Rect getOldBoundingBox(ID id) const = 0;
     virtual const string getSystemName() const = 0;
 };
 

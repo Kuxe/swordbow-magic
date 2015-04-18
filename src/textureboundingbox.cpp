@@ -3,30 +3,29 @@
 #include "movecomponent.h"
 #include "rendercomponent.h"
 
-TextureBoundingBox::TextureBoundingBox(ComponentManager* componentManager):
+TextureBoundingBox::TextureBoundingBox(const ComponentManager* const componentManager):
     BoundingBox(componentManager) {}
 
-unsigned int TextureBoundingBox::getX(ID id) {
-    return  componentManager->moveComponents.at(id)->xpos +
-            componentManager->renderComponents.at(id)->xoffset;
+const SpatialIndexer::Rect TextureBoundingBox::getBoundingBox(ID id) const {
+    const MoveComponent* mc = componentManager->moveComponents.at(id);
+    const RenderComponent* rc = componentManager->renderComponents.at(id);
+    return SpatialIndexer::Rect {
+        mc->xpos + rc->xoffset,
+        mc->ypos + rc->yoffset,
+        rc->textureData.width - 1,
+        rc->textureData.height - 1,
+    };
 }
-unsigned int TextureBoundingBox::getY(ID id) {
-    return  componentManager->moveComponents.at(id)->ypos +
-            componentManager->renderComponents.at(id)->yoffset;
-}
-unsigned int TextureBoundingBox::getOldX(ID id) {
-    return  componentManager->moveComponents.at(id)->oldXpos +
-            componentManager->renderComponents.at(id)->xoffset;
-}
-unsigned int TextureBoundingBox::getOldY(ID id) {
-    return  componentManager->moveComponents.at(id)->oldYpos +
-            componentManager->renderComponents.at(id)->yoffset;
-}
-unsigned int TextureBoundingBox::getW(ID id) {
-    return componentManager->renderComponents.at(id)->textureData.width;
-}
-unsigned int TextureBoundingBox::getH(ID id) {
-    return componentManager->renderComponents.at(id)->textureData.height;
+
+const SpatialIndexer::Rect TextureBoundingBox::getOldBoundingBox(ID id) const {
+    const MoveComponent* mc = componentManager->moveComponents.at(id);
+    const RenderComponent* rc = componentManager->renderComponents.at(id);
+    return SpatialIndexer::Rect {
+        mc->oldXpos + rc->xoffset,
+        mc->oldYpos + rc->yoffset,
+        rc->textureData.width - 1,
+        rc->textureData.height - 1,
+    };
 }
 
 const string TextureBoundingBox::getSystemName() const {

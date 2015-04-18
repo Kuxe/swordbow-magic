@@ -3,26 +3,29 @@
 #include "movecomponent.h"
 #include "sizecomponent.h"
 
-SizeBoundingBox::SizeBoundingBox(ComponentManager* componentManager):
+SizeBoundingBox::SizeBoundingBox(const ComponentManager* const componentManager):
     BoundingBox(componentManager) {}
 
-unsigned int SizeBoundingBox::getX(ID id) {
-    return  componentManager->moveComponents.at(id)->xpos;
+const SpatialIndexer::Rect SizeBoundingBox::getBoundingBox(ID id) const {
+    const auto& mc = componentManager->moveComponents.at(id);
+    const auto& sc = componentManager->sizeComponents.at(id);
+    return SpatialIndexer::Rect {
+        mc->xpos,
+        mc->ypos,
+        sc->width - 1,
+        sc->height - 1,
+    };
 }
-unsigned int SizeBoundingBox::getY(ID id) {
-    return  componentManager->moveComponents.at(id)->ypos;
-}
-unsigned int SizeBoundingBox::getOldX(ID id) {
-    return  componentManager->moveComponents.at(id)->oldXpos;
-}
-unsigned int SizeBoundingBox::getOldY(ID id) {
-    return  componentManager->moveComponents.at(id)->oldYpos;
-}
-unsigned int SizeBoundingBox::getW(ID id) {
-    return componentManager->sizeComponents.at(id)->width;
-}
-unsigned int SizeBoundingBox::getH(ID id) {
-    return componentManager->sizeComponents.at(id)->height;
+
+const SpatialIndexer::Rect SizeBoundingBox::getOldBoundingBox(ID id) const {
+    const auto& mc = componentManager->moveComponents.at(id);
+    const auto& sc = componentManager->sizeComponents.at(id);
+    return SpatialIndexer::Rect {
+        mc->oldXpos,
+        mc->oldYpos,
+        sc->width - 1,
+        sc->height - 1,
+    };
 }
 
 const string SizeBoundingBox::getSystemName() const {

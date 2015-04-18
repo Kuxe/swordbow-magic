@@ -5,13 +5,9 @@
 
 class TextureBoundingBox : public BoundingBox {
 public:
-    TextureBoundingBox(ComponentManager* componentManager);
-    unsigned int getX(ID id);
-    unsigned int getY(ID id);
-    unsigned int getOldX(ID id);
-    unsigned int getOldY(ID id);
-    unsigned int getW(ID id);
-    unsigned int getH(ID id);
+    TextureBoundingBox(const ComponentManager* const componentManager);
+    const SpatialIndexer::Rect getBoundingBox(ID id) const;
+    const SpatialIndexer::Rect getOldBoundingBox(ID id) const;
     const string getSystemName() const;
 };
 
