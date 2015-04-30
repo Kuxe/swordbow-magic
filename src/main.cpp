@@ -47,12 +47,12 @@ int main(int argc, char** argv) {
 	auto playerId = entityManager.createPlayer();
 	World world(&entityManager);
 
-	for(int y = 1; y <= 3; y++) {
-		for(int x = 1; x <= 3; x++) {
+	for(int y = 1; y <= 250; y++) {
+		for(int x = 1; x <= 250; x++) {
 			auto tree = entityManager.createTree();
 			auto treeMc = componentManager.moveComponents.at(tree);
-			treeMc->xpos = x * 100;
-			treeMc->ypos = y * 100;
+			treeMc->xpos = 20 + x * 40;
+			treeMc->ypos = 20 + y * 40;
 
 		}
 	}

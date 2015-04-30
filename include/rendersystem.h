@@ -9,6 +9,8 @@
 #include <vector>
 #include <unordered_set>
 #include <queue>
+#include "spatialindexer.h"
+#include "heap.h"
 
 using namespace std;
 
@@ -24,21 +26,24 @@ struct TextureData {
 	unsigned int height;
 };
 
-struct SortHelper {
+struct RenderData {
 	unsigned long long int* id;
 	RenderComponent* renderComponent;
+	TextureData textureData;
+	SDL_Rect cliprect;
+	SDL_Rect target;
 
-	inline bool operator< (const SortHelper& rhs) const;
-    inline bool operator> (const SortHelper& rhs) const;
-    inline bool operator<=(const SortHelper& rhs) const;
-    inline bool operator>=(const SortHelper& rhs) const;
+	inline bool operator< (const RenderData& rhs) const;
+    inline bool operator> (const RenderData& rhs) const;
+    inline bool operator<=(const RenderData& rhs) const;
+    inline bool operator>=(const RenderData& rhs) const;
 };
 
 class RenderSystem : public ISystem {
  private:
 	unordered_set<unsigned long long int*> ids;
 	queue<unsigned long long int*> activeIds;
-	queue<SortHelper> previousRedraws;
+	queue<SpatialIndexer::Rect> previousDrawAreas;
 
 
 	static constexpr ushort SCREEN_WIDTH = 640;
@@ -53,6 +58,8 @@ class RenderSystem : public ISystem {
 
 	unsigned long long int* cameraTarget;
 
+	void renderArea(heap<RenderData>& pq, SpatialIndexer::Rect area);
+
  public:
  	RenderSystem();
  	~RenderSystem();
@@ -61,11 +68,12 @@ class RenderSystem : public ISystem {
 	void update();
 	void update2();
 	unsigned int count() const;
-	void render(unsigned long long int* id) const;
+	void render(const RenderData& rd) const;
 	const string getIdentifier() const;
 	void calculateZIndex(unsigned long long int* id);
 	void makeIdActive(unsigned long long int* id);
 	void setCameraTarget(unsigned long long int* id);
+	void setImage(unsigned long long int* id, string path);
 };
 
 #endif //RENDERSYSTEM_H

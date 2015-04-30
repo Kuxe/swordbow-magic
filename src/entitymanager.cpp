@@ -37,13 +37,13 @@ unsigned long long int* EntityManager::createPlayer() {
 
 	//If you'd like to change default initialization-data in a component
 	//Just save a pointer to the component like above and modify it like bellow
-	renderComponent->imagePath = "./resources/images/player.bmp";
+	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/player.bmp");
 	renderComponent->zindex_base = 1;
 	renderComponent->xoffset = -10;
 	renderComponent->yoffset = -10;
 
-	moveComponent->xpos = 20;
-	moveComponent->ypos = 20;
+	moveComponent->xpos = 10;
+	moveComponent->ypos = 10;
 
 	//Width of a player is 20x20
 	sizeComponent->width = 20;
@@ -83,7 +83,7 @@ unsigned long long int* EntityManager::createTree() {
 	RenderComponent* renderComponent = componentManager->createRenderComponent(id);
 	auto nameComponent = componentManager->createNameComponent(id);
 
-	renderComponent->imagePath = "./resources/images/SmallTree.png";
+	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/SmallTree.png");
 	renderComponent->zindex_base = 1;
 	renderComponent->xoffset = -24;
 	renderComponent->yoffset = -54;
@@ -123,7 +123,7 @@ unsigned long long int* EntityManager::createTile() {
 	auto rc = componentManager->createRenderComponent(id);
 	auto nameComponent = componentManager->createNameComponent(id);
 
-	rc->imagePath = "./resources/images/grass.bmp";
+	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/grass.bmp");
 	rc->zindex_base = 0;
 
 	sizeComponent->width = 20;

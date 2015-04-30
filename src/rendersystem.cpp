@@ -15,16 +15,16 @@
 
 using namespace std;
 
-bool SortHelper::operator< (const SortHelper& rhs) const {
+bool RenderData::operator< (const RenderData& rhs) const {
     return
         renderComponent->zindex_base == rhs.renderComponent->zindex_base ?
         renderComponent->zindex < rhs.renderComponent->zindex :
         renderComponent->zindex_base < rhs.renderComponent->zindex_base;
 }
 
-bool SortHelper::operator> (const SortHelper& rhs) const { return rhs < *this; }
-bool SortHelper::operator<=(const SortHelper& rhs) const { return !(*this > rhs); }
-bool SortHelper::operator>=(const SortHelper& rhs) const { return !(*this < rhs); }
+bool RenderData::operator> (const RenderData& rhs) const { return rhs < *this; }
+bool RenderData::operator<=(const RenderData& rhs) const { return !(*this > rhs); }
+bool RenderData::operator>=(const RenderData& rhs) const { return !(*this < rhs); }
 
 
 RenderSystem::RenderSystem() {
@@ -130,81 +130,67 @@ void RenderSystem::remove(unsigned long long int* id) {
 	ids.erase(id);
 }
 
-void RenderSystem::update() {
-
-	//Bellow is an algorithm that for each unmarked entity, that should be rendered,
-	//adds it to a priority-queue (pq) and a queue (q).
-	//Aslong as q isn't empty, pop an entity (e) from q. For all entities overlapping e,
-	//add them to the pq and q, finally mark the overlapping entities.
-
-	//In other words this algorithm adds all entities that should be rendered to a list.
-	//An entity should be rendered whenever it is overlapped/overlapping another entity
-	//that should be rendered (one entity that is set to be rendered might cause a group
-	//of nearby, pairwise, overlapping entities to be redrawn to in order to maintain correct
-	//z-order
-
-	unsigned int count = ids.size();
-	bool marked[100000] {false}; //TODO: Make less arbitrary, somehow..
-	queue<unsigned long long int*> q;
-	heap<SortHelper> pq; //TODO: Use reference instead (no need for copying!)
-
+void RenderSystem::renderArea(heap<RenderData>& pq, SpatialIndexer::Rect area) {
+	//Make sure all overlapping ids have their part in the intersection area
+	//are redrawn
 	auto spatialIndexer = dynamic_cast<SpatialIndexer*>(systemManager->getSystem("TextureHashGridSystem"));
+	unordered_set<ID> overlappings;
+	SpatialIndexer::Rect intersectionArea;
+	SpatialIndexer::Rect idbb;
+
+	spatialIndexer->query(overlappings, area);
+	for(auto id : overlappings) {
+		auto mc = componentManager->moveComponents.at(id);
+		auto rc = componentManager->renderComponents.at(id);
+
+		//Get the intersection between an entity within drawarea and the drawarea
+		spatialIndexer->getBoundingBox(idbb, id);
+		spatialIndexer->getIntersectionArea(intersectionArea, area, idbb);
+
+		//Only draw that portion of the texture that intersects
+		calculateZIndex(id);
+		pq.insert({id, rc, rc->textureData, {
+				intersectionArea.x - mc->xpos - rc->xoffset,
+				intersectionArea.y - mc->ypos - rc->yoffset,
+				intersectionArea.w,
+				intersectionArea.h }, {
+				intersectionArea.x,
+				intersectionArea.y,
+				intersectionArea.w,
+				intersectionArea.h}
+
+				}
+			);
+	}
+}
+
+void RenderSystem::update() {
+	heap<RenderData> pq; //TODO: Use reference instead (no need for copying!)
+	auto spatialIndexer = dynamic_cast<SpatialIndexer*>(systemManager->getSystem("TextureHashGridSystem"));
+
+	//Redraw everything within drawareas from previous frame
+	while(!previousDrawAreas.empty()) {
+		auto prevDrawArea = previousDrawAreas.front(); previousDrawAreas.pop();
+		renderArea(pq, prevDrawArea);
+	}
 
 	//For all activeIds in rendersystem (henceforth activeIds will be referred
 	//to as just ids)
 	while(!activeIds.empty()) {
-        auto id = activeIds.front(); activeIds.pop();
-        auto rc = componentManager->renderComponents.at(id);
-        rc->textureData = textureDatas.at(rc->imagePath);
-        rc->doRender = true;
-        rc->cliprect = {
-            0, 0, rc->textureData.width, rc->textureData.height
-        };
-        calculateZIndex(id);
-        pq.insert({id, rc});
 
-        //Make sure all overlapping ids have their part in the intersection area
-        //are redrawn
-        unordered_set<ID> overlappings;
-        spatialIndexer->overlaps(overlappings, id);
-        for(auto otherId : overlappings) {
-            SpatialIndexer::Rect intersectionArea;
-            SpatialIndexer::Rect idbb;
-            SpatialIndexer::Rect oidbb;
-            cout << endl << componentManager->nameComponents.at(otherId)->name << endl;
-
-            spatialIndexer->getBoundingBox(idbb, id);
-            spatialIndexer->getBoundingBox(oidbb, otherId);
-
-            spatialIndexer->getIntersectionArea(
-                intersectionArea,
-                idbb,
-                oidbb
-            );
-            auto mc = componentManager->moveComponents.at(otherId);
-            auto rc = componentManager->renderComponents.at(otherId);
-            cout << "intersectionarea: {" << intersectionArea.x << ", " << intersectionArea.y << ", " << intersectionArea.w << ", " << intersectionArea.h << "}" << endl;
-            rc->cliprect = {
-                -mc->xpos + rc->xoffset + intersectionArea.x, //Adjust cliprect from world-space to texture-space
-                -mc->ypos + rc->yoffset + intersectionArea.y, //Thats why there's minus :)
-                intersectionArea.w,
-                intersectionArea.h
-            };
-
-            cout << "texture_cliprect: {" << rc->cliprect.x << ", " << rc->cliprect.y << ", " << rc->cliprect.w << ", " << rc->cliprect.h << "}" << endl;
-
-            calculateZIndex(otherId);
-            pq.insert({otherId, componentManager->renderComponents.at(otherId)});
-            previousRedraws.push({otherId, componentManager->renderComponents.at(otherId)});
-        }
+		//Draw everything within the activeIds texturearea
+		SpatialIndexer::Rect drawArea;
+		spatialIndexer->getBoundingBox(drawArea, activeIds.front());
+		activeIds.pop();
+		previousDrawAreas.push(drawArea);
+		renderArea(pq, drawArea);
 	}
 
 	SDL_SetTextureBlendMode(targetTexture, SDL_BLENDMODE_BLEND);
 	SDL_SetRenderTarget(renderer, targetTexture);
 
 	while(!pq.isEmpty()) {
-		auto sortHelper = pq.poll();
-		render(sortHelper.id);
+		render(pq.poll());
 	}
 
 	const auto& cameraXpos = componentManager->moveComponents.at(cameraTarget)->xpos - SCREEN_WIDTH/2;
@@ -226,17 +212,8 @@ unsigned int RenderSystem::count() const {
 	return ids.size();
 }
 
-void RenderSystem::render(unsigned long long int* id) const {
-    //render if component wants to be re-rendered
-    auto rc = componentManager->renderComponents.at(id);
-    TextureData textureData;
-    SDL_Rect rect{
-        (int)(componentManager->moveComponents.at(id)->xpos + rc->xoffset + rc->cliprect.x),
-        (int)(componentManager->moveComponents.at(id)->ypos + rc->yoffset + rc->cliprect.y),
-        (int)rc->cliprect.w,
-        (int)rc->cliprect.h
-    };
-    SDL_RenderCopy(renderer, textureDatas.at(rc->imagePath).texture, &rc->cliprect, &rect);
+void RenderSystem::render(const RenderData& rd) const {
+    SDL_RenderCopy(renderer, rd.textureData.texture, &rd.cliprect, &rd.target);
 }
 
 const string RenderSystem::getIdentifier() const {
@@ -258,4 +235,10 @@ void RenderSystem::makeIdActive(unsigned long long int* id) {
 
 void RenderSystem::setCameraTarget(unsigned long long int* id) {
 	cameraTarget = id;
+}
+
+void RenderSystem::setImage(unsigned long long int* id, string path) {
+	auto rc = componentManager->renderComponents.at(id);
+	rc->imagePath = path;
+	rc->textureData = textureDatas.at(path);
 }
