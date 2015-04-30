@@ -47,7 +47,11 @@ void HashGridSystem::addToCells(const ID id) {
 	//Place ID in all cells which partially or completely contains the ID
 	for(unsigned int y = bb.y/side; y <= (bb.y + bb.h)/side; y++) {
 		for(unsigned int x = bb.x/side; x <= (bb.x + bb.w)/side; x++) {
-			cells[y*width + x].insert(id);
+			if(y*width + x < cellsCapacity) {
+				cells[y*width + x].insert(id);
+			} else {
+				cout << "WARNING: tried to index out of HashGrid cellsCapacity!" << endl;
+			}
 		}
 	}
 }
