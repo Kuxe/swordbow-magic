@@ -7,7 +7,6 @@
 using namespace std;
 
 class MoveComponent;
-class InputComponent;
 class RenderSystem;
 
 class MoveSystem : public ISystem {

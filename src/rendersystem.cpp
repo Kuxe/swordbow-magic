@@ -140,8 +140,8 @@ void RenderSystem::renderArea(heap<RenderData>& pq, SpatialIndexer::Rect area) {
 
 	spatialIndexer->query(overlappings, area);
 	for(auto id : overlappings) {
-		auto mc = componentManager->moveComponents.at(id);
-		auto rc = componentManager->renderComponents.at(id);
+		auto& mc = componentManager->moveComponents.at(id);
+		auto& rc = componentManager->renderComponents.at(id);
 
 		//Get the intersection between an entity within drawarea and the drawarea
 		spatialIndexer->getBoundingBox(idbb, id);
@@ -149,9 +149,9 @@ void RenderSystem::renderArea(heap<RenderData>& pq, SpatialIndexer::Rect area) {
 
 		//Only draw that portion of the texture that intersects
 		calculateZIndex(id);
-		pq.insert({id, rc, rc->textureData, {
-				intersectionArea.x - mc->xpos - rc->xoffset,
-				intersectionArea.y - mc->ypos - rc->yoffset,
+		pq.insert({id, &rc, rc.textureData, {
+				intersectionArea.x - mc.xpos - rc.xoffset,
+				intersectionArea.y - mc.ypos - rc.yoffset,
 				intersectionArea.w,
 				intersectionArea.h }, {
 				intersectionArea.x,
@@ -193,8 +193,8 @@ void RenderSystem::update() {
 		render(pq.poll());
 	}
 
-	const auto& cameraXpos = componentManager->moveComponents.at(cameraTarget)->xpos - SCREEN_WIDTH/2;
-	const auto& cameraYpos = componentManager->moveComponents.at(cameraTarget)->ypos - SCREEN_HEIGHT/2;
+	const auto& cameraXpos = componentManager->moveComponents.at(cameraTarget).xpos - SCREEN_WIDTH/2;
+	const auto& cameraYpos = componentManager->moveComponents.at(cameraTarget).ypos - SCREEN_HEIGHT/2;
 	const SDL_Rect camera = {
 		cameraXpos < 0 ? 0 : (int)cameraXpos,
 		cameraYpos < 0 ? 0 : (int)cameraYpos,
@@ -221,9 +221,9 @@ const string RenderSystem::getIdentifier() const {
 }
 
 void RenderSystem::calculateZIndex(unsigned long long int* id) {
-	auto rc = componentManager->renderComponents.at(id);
-	auto mc = componentManager->moveComponents.at(id);
-	rc->zindex = mc->ypos + rc->textureData.height + rc->yoffset;
+	auto& rc = componentManager->renderComponents.at(id);
+	auto& mc = componentManager->moveComponents.at(id);
+	rc.zindex = mc.ypos + rc.textureData.height + rc.yoffset;
 }
 
 void RenderSystem::makeIdActive(unsigned long long int* id) {
@@ -238,7 +238,7 @@ void RenderSystem::setCameraTarget(unsigned long long int* id) {
 }
 
 void RenderSystem::setImage(unsigned long long int* id, string path) {
-	auto rc = componentManager->renderComponents.at(id);
-	rc->imagePath = path;
-	rc->textureData = textureDatas.at(path);
+	auto& rc = componentManager->renderComponents.at(id);
+	rc.imagePath = path;
+	rc.textureData = textureDatas.at(path);
 }

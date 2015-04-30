@@ -154,8 +154,7 @@ void EntityManager::remove(unsigned long long int* id) {
 		a->remove(id);
 	}
 
-	//2. Remove from componentManager (deallocate components)
-	componentManager->removeAllComponents(id);
+	//2. Remove from componentManager (TODO: reset components)
 	entities.erase(id);
 
 	//FIXME: Figure out how and when to remove an entity from hashGrids

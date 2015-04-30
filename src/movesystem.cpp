@@ -26,15 +26,15 @@ void MoveSystem::remove(unsigned long long int* id) {
 
 void MoveSystem::update() {
 	for(auto id : ids) {
-		auto mc = componentManager->moveComponents.at(id);
-		auto ic = componentManager->inputComponents.at(id);
-		mc->oldXpos = mc->xpos;
-		mc->oldYpos = mc->ypos;
-		mc->xpos += ((ic->d * mc->xspeed) - (ic->a * mc->xspeed)) * deltaTime->delta();
-		mc->ypos += ((ic->s * mc->yspeed) - (ic->w * mc->yspeed)) * deltaTime->delta();
+		auto& mc = componentManager->moveComponents.at(id);
+		auto& ic = componentManager->inputComponents.at(id);
+		mc.oldXpos = mc.xpos;
+		mc.oldYpos = mc.ypos;
+		mc.xpos += ((ic.d * mc.xspeed) - (ic.a * mc.xspeed)) * deltaTime->delta();
+		mc.ypos += ((ic.s * mc.yspeed) - (ic.w * mc.yspeed)) * deltaTime->delta();
 
 		//Whenever an entity has been moved by something or moved by itself...
-		if(!(mc->xpos == mc->oldXpos && mc->ypos == mc->oldYpos)) {
+		if(!(mc.xpos == mc.oldXpos && mc.ypos == mc.oldYpos)) {
 			//then it should render this tick
 			static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->makeIdActive(id);
 

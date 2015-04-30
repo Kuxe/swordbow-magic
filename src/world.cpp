@@ -13,15 +13,15 @@ World::World(EntityManager* entityManager)
 			tiles[x][y] = id;
 
 			//Align tiles into a grid, spatially
-			auto mc = entityManager->componentManager->moveComponents.at(id);
-			mc->xpos = x * TILE_SIZE;
-			mc->ypos = y * TILE_SIZE;
-			mc->oldXpos = x * TILE_SIZE;
-			mc->oldYpos = y * TILE_SIZE;
+			auto& mc = entityManager->componentManager->moveComponents.at(id);
+			mc.xpos = x * TILE_SIZE;
+			mc.ypos = y * TILE_SIZE;
+			mc.oldXpos = x * TILE_SIZE;
+			mc.oldYpos = y * TILE_SIZE;
 
 			auto sc = entityManager->componentManager->sizeComponents.at(id);
-			sc->width = TILE_SIZE;
-			sc->height = TILE_SIZE;
+			sc.width = TILE_SIZE;
+			sc.height = TILE_SIZE;
 		}
 	}
 }

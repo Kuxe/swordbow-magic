@@ -22,13 +22,13 @@ void CollisionSystem::update() {
 		unordered_set<ID> overlappingIds;
 		spatialIndexer->overlaps(overlappingIds, id);
 		for(auto overlap : overlappingIds) {
-			auto outerMc = componentManager->moveComponents.at(id);
-			outerMc->xpos = outerMc->oldXpos;
-			outerMc->ypos = outerMc->oldYpos;
+			auto& outerMc = componentManager->moveComponents.at(id);
+			outerMc.xpos = outerMc.oldXpos;
+			outerMc.ypos = outerMc.oldYpos;
 
-			auto innerMc = componentManager->moveComponents.at(overlap);
-			innerMc->xpos = innerMc->oldXpos;
-			innerMc->ypos = innerMc->oldYpos;
+			auto& innerMc = componentManager->moveComponents.at(overlap);
+			innerMc.xpos = innerMc.oldXpos;
+			innerMc.ypos = innerMc.oldYpos;
 		}
 	}
 }

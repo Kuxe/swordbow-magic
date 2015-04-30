@@ -24,7 +24,6 @@ add_executable(swordbow-magic
     src/deltatime.cpp
     src/entitymanager.cpp
     src/eventmanager.cpp
-    src/gridindexer.cpp
     src/hashgridsystem.cpp
     src/idmanager.cpp
     src/isystem.cpp

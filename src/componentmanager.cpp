@@ -10,74 +10,30 @@
 using namespace std;
 
 MoveComponent* ComponentManager::createMoveComponent(unsigned long long int* id) {
-	MoveComponent* moveComponent = new MoveComponent();
-	moveComponents.insert(make_pair(id, moveComponent));
-	return moveComponent;
+	moveComponents.insert(make_pair(id, MoveComponent()));
+	return &moveComponents.at(id);
 }
 RenderComponent* ComponentManager::createRenderComponent(unsigned long long int* id) {
-	RenderComponent* renderComponent = new RenderComponent();
-	renderComponents.insert(make_pair(id, renderComponent));
-	return renderComponent;
+	renderComponents.insert(make_pair(id, RenderComponent()));
+	return &renderComponents.at(id);
 }
 
 InputComponent* ComponentManager::createInputComponent(unsigned long long int* id) {
-	InputComponent* inputComponent = new InputComponent();
-	inputComponents.insert(make_pair(id, inputComponent));
-	return inputComponent;
+	inputComponents.insert(make_pair(id, InputComponent()));
+	return &inputComponents.at(id);
 }
 
 TileComponent* ComponentManager::createTileComponent(unsigned long long int* id) {
-	TileComponent* tileComponent = new TileComponent();
-	tileComponents.insert(make_pair(id, tileComponent));
-	return tileComponent;
+	tileComponents.insert(make_pair(id, TileComponent()));
+	return &tileComponents.at(id);
 }
 
 SizeComponent* ComponentManager::createSizeComponent(unsigned long long int* id) {
-	SizeComponent* sizeComponent = new SizeComponent();
-	sizeComponents.insert(make_pair(id, sizeComponent));
-	return sizeComponent;
+	sizeComponents.insert(make_pair(id, SizeComponent()));
+	return &sizeComponents.at(id);
 }
 
 NameComponent* ComponentManager::createNameComponent(unsigned long long *id) {
-	NameComponent* nameComponent = new NameComponent();
-	nameComponents.insert(make_pair(id, nameComponent));
-	return nameComponent;
-}
-
-void ComponentManager::removeAllComponents(unsigned long long int* id) {
-	try {
-		delete moveComponents.at(id);
-	} catch (const std::out_of_range& oor) {
-		cout << "id has no MoveComponent" << endl;
-	}
-
-	try {
-		delete renderComponents.at(id);
-	} catch (const std::out_of_range& oor) {
-		cout << "id has no renderComponents" << endl;
-	}
-
-	try {
-		delete inputComponents.at(id);
-	} catch (const std::out_of_range& oor) {
-		cout << "id has no inputComponents" << endl;
-	}
-
-	try {
-		delete tileComponents.at(id);
-	} catch (const std::out_of_range& oor) {
-		cout << "id has no tileComponents" << endl;
-	}
-
-	try {
-		delete sizeComponents.at(id);
-	} catch (const std::out_of_range& oor) {
-		cout << "id has no sizeComponents" << endl;
-	}
-
-	try {
-		delete nameComponents.at(id);
-	} catch (const std::out_of_range& oor) {
-		cout << "id has no nameComponent" << endl;
-	}
+	nameComponents.insert(make_pair(id, NameComponent()));
+	return &nameComponents.at(id);
 }

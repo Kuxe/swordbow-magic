@@ -50,17 +50,17 @@ int main(int argc, char** argv) {
 	for(int y = 1; y <= 250; y++) {
 		for(int x = 1; x <= 250; x++) {
 			auto tree = entityManager.createTree();
-			auto treeMc = componentManager.moveComponents.at(tree);
-			treeMc->xpos = 20 + x * 40;
-			treeMc->ypos = 20 + y * 40;
-			treeMc->oldXpos = 20 + x * 40;
-			treeMc->oldYpos = 20 + y * 40;
+			auto& treeMc = componentManager.moveComponents.at(tree);
+			treeMc.xpos = 20 + x * 40;
+			treeMc.ypos = 20 + y * 40;
+			treeMc.oldXpos = 20 + x * 40;
+			treeMc.oldYpos = 20 + y * 40;
 
 		}
 	}
 
 	//Keystroke events should change the input component of the player
-	eventManager.userInputComponent = componentManager.inputComponents.at(playerId);
+	eventManager.userInputComponent = &componentManager.inputComponents.at(playerId);
 
 	//Set camera to follow player
 	renderSystem.setCameraTarget(playerId);
