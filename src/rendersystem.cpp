@@ -197,7 +197,6 @@ void RenderSystem::update() {
             pq.insert({otherId, componentManager->renderComponents.at(otherId)});
             previousRedraws.push({otherId, componentManager->renderComponents.at(otherId)});
         }
-
 	}
 
 	SDL_SetTextureBlendMode(targetTexture, SDL_BLENDMODE_BLEND);
@@ -211,8 +210,8 @@ void RenderSystem::update() {
 	const auto& cameraXpos = componentManager->moveComponents.at(cameraTarget)->xpos - SCREEN_WIDTH/2;
 	const auto& cameraYpos = componentManager->moveComponents.at(cameraTarget)->ypos - SCREEN_HEIGHT/2;
 	const SDL_Rect camera = {
-		cameraXpos < 0 ? 0 : cameraXpos,
-		cameraYpos < 0 ? 0 : cameraYpos,
+		cameraXpos < 0 ? 0 : (int)cameraXpos,
+		cameraYpos < 0 ? 0 : (int)cameraYpos,
 		SCREEN_WIDTH,
 		SCREEN_HEIGHT
 	};
