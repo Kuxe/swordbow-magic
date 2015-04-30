@@ -53,6 +53,8 @@ int main(int argc, char** argv) {
 			auto treeMc = componentManager.moveComponents.at(tree);
 			treeMc->xpos = 20 + x * 40;
 			treeMc->ypos = 20 + y * 40;
+			treeMc->oldXpos = 20 + x * 40;
+			treeMc->oldYpos = 20 + y * 40;
 
 		}
 	}

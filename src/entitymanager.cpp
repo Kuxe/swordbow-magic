@@ -90,6 +90,8 @@ unsigned long long int* EntityManager::createTree() {
 
 	moveComponent->xpos = 100;
 	moveComponent->ypos = 100;
+	moveComponent->oldXpos = 100;
+	moveComponent->oldYpos = 100;
 
 	sizeComponent->width = 36;
 	sizeComponent->height = 10;
@@ -102,7 +104,6 @@ unsigned long long int* EntityManager::createTree() {
 			vector<ISystem*> {
 				systemManager->getSystem("RenderSystem"),
 				systemManager->getSystem("CollisionSystem"),
-				systemManager->getSystem("MoveSystem"),
 				systemManager->getSystem("TextureHashGridSystem"),
 				systemManager->getSystem("SizeHashGridSystem"),
 			}

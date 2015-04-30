@@ -16,6 +16,8 @@ World::World(EntityManager* entityManager)
 			auto mc = entityManager->componentManager->moveComponents.at(id);
 			mc->xpos = x * TILE_SIZE;
 			mc->ypos = y * TILE_SIZE;
+			mc->oldXpos = x * TILE_SIZE;
+			mc->oldYpos = y * TILE_SIZE;
 
 			auto sc = entityManager->componentManager->sizeComponents.at(id);
 			sc->width = TILE_SIZE;
