@@ -22,7 +22,7 @@ HashGridSystem::HashGridSystem(
 		side(side),
 		width(worldWidth / side + (worldWidth % side != 0)),
 		height(worldHeight / side + (worldHeight % side != 0)),
-		cellsCapacity(width * height),
+		cellsCapacity((worldWidth / side + (worldWidth % side != 0)) * (worldHeight / side + (worldHeight % side != 0))),
 		cells(new unordered_set<ID>[width * height])
 		 {
 }
