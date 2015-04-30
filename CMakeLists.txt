@@ -4,7 +4,7 @@ project(swordbow-magic)
 
 #Flags for compiler and linker
 SET(COMPILE_FLAGS "-std=c++14")
-SET(LINK_FLAGS "-lSDL2 -lSDL2_image")
+SET(LINK_FLAGS "-lSDL2 -lSDL2_image -lSDL2_ttf")
 
 #Append flags for compiler and linker to cmake variables
 #(the compiler uses the cmake variables)

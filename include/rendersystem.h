@@ -6,6 +6,7 @@
 #include <string>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <vector>
 #include <unordered_set>
 #include <queue>
@@ -54,6 +55,7 @@ class RenderSystem : public ISystem {
 	SDL_Window* window = nullptr;
 	SDL_Surface* screenSurface = nullptr;
 	SDL_Texture* targetTexture = nullptr;
+	TTF_Font* font;
 	unordered_map<string, TextureData> textureDatas;
 
 	unsigned long long int* cameraTarget;

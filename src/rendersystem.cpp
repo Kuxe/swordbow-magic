@@ -12,6 +12,7 @@
 #include "namecomponent.h"
 #include "systemmanager.h"
 #include "hashgridsystem.h"
+#include "deltatime.h"
 
 using namespace std;
 
@@ -68,6 +69,15 @@ RenderSystem::RenderSystem() {
 					SDL_SetRenderTarget(renderer, targetTexture);
 					SDL_RenderClear(renderer);
 				}
+
+                if(TTF_Init() < 0 ) {
+                    cout << "ERROR: Couldn't initialize SDL2_ttf!" << endl;
+                } else {
+                    font = TTF_OpenFont("/usr/share/fonts/TTF/DejaVuSansMono.ttf", 8);
+                    if(!font) {
+                        cout << "ERROR: Failed to load font!" << endl;
+                    }
+                }
             }
         }
     }
@@ -110,6 +120,9 @@ RenderSystem::RenderSystem() {
 }
 
 RenderSystem::~RenderSystem() {
+    TTF_CloseFont(font);
+    TTF_Quit();
+
     //Free all loaded images
     for(auto textureData : textureDatas) {
         SDL_DestroyTexture(get<1>(textureData).texture);
