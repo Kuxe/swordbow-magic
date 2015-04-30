@@ -38,6 +38,7 @@ class RenderSystem : public ISystem {
  private:
 	unordered_set<unsigned long long int*> ids;
 	queue<unsigned long long int*> activeIds;
+	queue<SortHelper> previousRedraws;
 
 
 	static constexpr ushort SCREEN_WIDTH = 640;

@@ -153,76 +153,51 @@ void RenderSystem::update() {
 	//For all activeIds in rendersystem (henceforth activeIds will be referred
 	//to as just ids)
 	while(!activeIds.empty()) {
-		auto id = activeIds.front(); activeIds.pop();
-		auto rc = componentManager->renderComponents.at(id);
-		auto mc = componentManager->moveComponents.at(id);
+        auto id = activeIds.front(); activeIds.pop();
+        auto rc = componentManager->renderComponents.at(id);
+        rc->textureData = textureDatas.at(rc->imagePath);
+        rc->doRender = true;
+        rc->cliprect = {
+            0, 0, rc->textureData.width, rc->textureData.height
+        };
+        calculateZIndex(id);
+        pq.insert({id, rc});
 
-		//All ids that was overlapped by this ID the previous frame should be
-		//re-rendered (without this odd colored-lines occur after moving objects)
-		//TODO: the query should be made using the textureData corresponding to
-		//whatever imagePath that id had the previous frame. Now it grabs
-		//the textureData corresponding to the current imagePath.
-		//rendercomponent should probably remember "previousImagePath" or
-		//something like that...
-		auto textureData = textureDatas.at(rc->imagePath);
+        //Make sure all overlapping ids have their part in the intersection area
+        //are redrawn
+        unordered_set<ID> overlappings;
+        spatialIndexer->overlaps(overlappings, id);
+        for(auto otherId : overlappings) {
+            SpatialIndexer::Rect intersectionArea;
+            SpatialIndexer::Rect idbb;
+            SpatialIndexer::Rect oidbb;
+            cout << endl << componentManager->nameComponents.at(otherId)->name << endl;
 
-		unordered_set<unsigned long long int*> previousOverlaps;
-		spatialIndexer->query(
-			previousOverlaps,
-			SpatialIndexer::Rect {
-				mc->oldXpos + rc->xoffset, //assuming rc->offsets havnt been updated yet
-				mc->oldYpos + rc->yoffset,
-				textureData.width-1, //assuming textureData hasnt been updated yet
-				textureData.height-1,
-		});
+            spatialIndexer->getBoundingBox(idbb, id);
+            spatialIndexer->getBoundingBox(oidbb, otherId);
 
-		for(auto id : previousOverlaps) {
-			if(!marked[*id]) {
-				componentManager->renderComponents.at(id)->doRender = true;
-				makeIdActive(id);
-			}
-		}
+            spatialIndexer->getIntersectionArea(
+                intersectionArea,
+                idbb,
+                oidbb
+            );
+            auto mc = componentManager->moveComponents.at(otherId);
+            auto rc = componentManager->renderComponents.at(otherId);
+            cout << "intersectionarea: {" << intersectionArea.x << ", " << intersectionArea.y << ", " << intersectionArea.w << ", " << intersectionArea.h << "}" << endl;
+            rc->cliprect = {
+                -mc->xpos + rc->xoffset + intersectionArea.x, //Adjust cliprect from world-space to texture-space
+                -mc->ypos + rc->yoffset + intersectionArea.y, //Thats why there's minus :)
+                intersectionArea.w,
+                intersectionArea.h
+            };
 
-		//Always make force textureData to be up-to-date with the image at rendercomponent
-		rc->textureData = textureDatas.at(rc->imagePath);
+            cout << "texture_cliprect: {" << rc->cliprect.x << ", " << rc->cliprect.y << ", " << rc->cliprect.w << ", " << rc->cliprect.h << "}" << endl;
 
-		//if all ids havnt been added already
-		//and either HAS_CHANGED or doRender is true
-		//and the current id hasnt been targeted for rendering
-		//then add the id pq of renderdatas to be rendered
-		//and put id in the list
-		//finally mark it
-		if(count != 0 && componentManager->renderComponents.at(id)->doRender && !marked[*id]) {
-			q.push(id);
-			calculateZIndex(id);
-            SortHelper sh {id, componentManager->renderComponents.at(id)};
-			pq.insert(sh);
-			marked[*id] = true;
-            componentManager->renderComponents.at(id)->doRender = true;
-			makeIdActive(id);
-			count--;
+            calculateZIndex(otherId);
+            pq.insert({otherId, componentManager->renderComponents.at(otherId)});
+            previousRedraws.push({otherId, componentManager->renderComponents.at(otherId)});
+        }
 
-			//as long as list isnt empty and all ids havnt been added already
-			//erase an id from the list and add overlapping ids into the pq of
-			//renderdatas, and also put them in the list. Mark them.
-			while(!q.empty() && count != 0) {
-				unsigned long long int* cur = q.front(); q.pop();
-				unordered_set<ID> curOverlaps;
-				spatialIndexer->overlaps(curOverlaps, cur);
-				for(auto overlap : curOverlaps) {
-					if(!marked[*overlap] && count != 0) {
-						q.push(overlap);
-						calculateZIndex(overlap);
-                        SortHelper sh {overlap, componentManager->renderComponents.at(overlap)};
-						pq.insert(sh);
-						marked[*overlap] = true;
-						componentManager->renderComponents.at(overlap)->doRender = true;
-						makeIdActive(id);
-						count--;
-					}
-				}
-			}
-		}
 	}
 
 	SDL_SetTextureBlendMode(targetTexture, SDL_BLENDMODE_BLEND);
@@ -254,29 +229,15 @@ unsigned int RenderSystem::count() const {
 
 void RenderSystem::render(unsigned long long int* id) const {
     //render if component wants to be re-rendered
-    if(componentManager->renderComponents.at(id)->doRender) {
-        TextureData textureData;
-        try {
-            textureData = textureDatas.at(componentManager->renderComponents.at(id)->imagePath);
-        } catch (const std::out_of_range &oor) {
-            cout << "out_of_range exception caught in SystemManager::getSystem(string identifier): " << oor.what() << endl;
-            cout << "1. Maybe there as a typo in the RenderComponent->imagePath, " << componentManager->renderComponents.at(id)->imagePath << "?" << endl;
-            cout << "2. Maybe " << componentManager->renderComponents.at(id)->imagePath << " wasn't loaded by RenderSystem?" << endl;
-            cout << "Things will go wrong from now on!" << endl;
-        }
-
-        SDL_Rect rect{
-            (int)(componentManager->moveComponents.at(id)->xpos + componentManager->renderComponents.at(id)->xoffset),
-            (int)(componentManager->moveComponents.at(id)->ypos + componentManager->renderComponents.at(id)->yoffset),
-            (int)textureData.width,
-            (int)textureData.height
-        };
-
-        SDL_RenderCopy(renderer, textureDatas.at(componentManager->renderComponents.at(id)->imagePath).texture, NULL, &rect);
-
-        //Finally, don't render this component until it says otherwise
-        componentManager->renderComponents.at(id)->doRender = false;
-    }
+    auto rc = componentManager->renderComponents.at(id);
+    TextureData textureData;
+    SDL_Rect rect{
+        (int)(componentManager->moveComponents.at(id)->xpos + rc->xoffset + rc->cliprect.x),
+        (int)(componentManager->moveComponents.at(id)->ypos + rc->yoffset + rc->cliprect.y),
+        (int)rc->cliprect.w,
+        (int)rc->cliprect.h
+    };
+    SDL_RenderCopy(renderer, textureDatas.at(rc->imagePath).texture, &rc->cliprect, &rect);
 }
 
 const string RenderSystem::getIdentifier() const {

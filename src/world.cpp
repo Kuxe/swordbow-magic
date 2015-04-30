@@ -5,7 +5,7 @@
 #include "rendercomponent.h"
 #include "sizecomponent.h"
 
-World::World(EntityManager* entityManager) 
+World::World(EntityManager* entityManager)
 	: entityManager(entityManager) {
 	for(short y = 0; y < NUM_TILES; y++) {
 		for(short x = 0; x < NUM_TILES; x++) {

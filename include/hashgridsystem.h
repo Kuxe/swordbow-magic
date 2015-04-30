@@ -63,13 +63,17 @@ class HashGridSystem : public SpatialIndexer, public ISystem {
 			//TODO: This can probably be optimized
 			const unsigned int x = a.x >= b.x ? a.x : b.x;
 			const unsigned int y = a.y >= b.y ? a.y : b.y;
-			const unsigned int w = a.x + a.w <= b.x + b.w ? a.x + a.w - x : b.x + b.w - x;
-			const unsigned int h = a.y + a.h <= b.y + b.h ? a.y + a.h - y : b.y + b.h - y;
+			const unsigned int w = (a.x + a.w) <= (b.x + b.w) ? a.x + a.w - x : b.x + b.w - x;
+			const unsigned int h = (a.y + a.h) <= (b.y + b.h) ? a.y + a.h - y : b.y + b.h - y;
+			cout << "               a: {" << a.x << ", " << a.y << ", " << a.w << ", " << a.h << "}" << endl;
+			cout << "               b: {" << b.x << ", " << b.y << ", " << b.w << ", " << b.h << "}" << endl;
 
 			intersectionArea = {
 				x, y, w, h
 			};
 		}
+
+		inline void getBoundingBox(SpatialIndexer::Rect& boundingBox, const ID id) const;
 
 		void makeIdActive(const ID id);
 

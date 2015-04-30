@@ -114,6 +114,10 @@ void HashGridSystem::getNearbyIds(unordered_set<ID>& nearbyIds, const ID id) con
 
 }
 
+void HashGridSystem::getBoundingBox(SpatialIndexer::Rect& bb, ID id) const {
+	bb = boundingBox->getBoundingBox(id);
+}
+
 void HashGridSystem::makeIdActive(const ID id) {
 	//if the id is a member of hashgrid...
 	if(ids.find(id) != ids.end()) {
