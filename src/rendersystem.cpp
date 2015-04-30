@@ -196,8 +196,8 @@ void RenderSystem::update() {
 		spatialIndexer->query(
 			previousOverlaps,
 			SpatialIndexer::Rect {
-				mc->oldXpos + rc->xoffset, //assuming rc->offsets havnt been updated yet
-				mc->oldYpos + rc->yoffset,
+				(unsigned int)(mc->oldXpos + rc->xoffset), //assuming rc->offsets havnt been updated yet
+				(unsigned int)(mc->oldYpos + rc->yoffset),
 				textureData.width-1, //assuming textureData hasnt been updated yet
 				textureData.height-1,
 		});
@@ -260,8 +260,8 @@ void RenderSystem::update() {
 	const auto& cameraXpos = componentManager->moveComponents.at(cameraTarget)->xpos - SCREEN_WIDTH/2;
 	const auto& cameraYpos = componentManager->moveComponents.at(cameraTarget)->ypos - SCREEN_HEIGHT/2;
 	const SDL_Rect camera = {
-		cameraXpos < 0 ? 0 : cameraXpos,
-		cameraYpos < 0 ? 0 : cameraYpos,
+		cameraXpos < 0 ? 0 : (int)cameraXpos,
+		cameraYpos < 0 ? 0 : (int)cameraYpos,
 		SCREEN_WIDTH,
 		SCREEN_HEIGHT
 	};
