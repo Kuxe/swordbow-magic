@@ -10,10 +10,10 @@ const SpatialIndexer::Rect SizeBoundingBox::getBoundingBox(ID id) const {
     const auto& mc = componentManager->moveComponents.at(id);
     const auto& sc = componentManager->sizeComponents.at(id);
     return SpatialIndexer::Rect {
-        mc.xpos,
-        mc.ypos,
-        sc.width - 1,
-        sc.height - 1,
+        (unsigned int)mc.xpos,
+        (unsigned int)mc.ypos,
+        (unsigned int)(sc.width - 1),
+        (unsigned int)(sc.height - 1),
     };
 }
 
@@ -21,10 +21,10 @@ const SpatialIndexer::Rect SizeBoundingBox::getOldBoundingBox(ID id) const {
     const auto& mc = componentManager->moveComponents.at(id);
     const auto& sc = componentManager->sizeComponents.at(id);
     return SpatialIndexer::Rect {
-        mc.oldXpos,
-        mc.oldYpos,
-        sc.width - 1,
-        sc.height - 1,
+        (unsigned int)mc.oldXpos,
+        (unsigned int)mc.oldYpos,
+        (unsigned int)(sc.width - 1),
+        (unsigned int)(sc.height - 1),
     };
 }
 

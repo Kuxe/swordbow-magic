@@ -163,14 +163,14 @@ void RenderSystem::renderArea(heap<RenderData>& pq, SpatialIndexer::Rect area) {
 		//Only draw that portion of the texture that intersects
 		calculateZIndex(id);
 		pq.insert({id, &rc, rc.textureData, {
-				intersectionArea.x - mc.xpos - rc.xoffset,
-				intersectionArea.y - mc.ypos - rc.yoffset,
-				intersectionArea.w,
-				intersectionArea.h }, {
-				intersectionArea.x,
-				intersectionArea.y,
-				intersectionArea.w,
-				intersectionArea.h}
+				(int)(intersectionArea.x - mc.xpos - rc.xoffset),
+				(int)(intersectionArea.y - mc.ypos - rc.yoffset),
+				(int)intersectionArea.w,
+				(int)intersectionArea.h }, {
+				(int)intersectionArea.x,
+				(int)intersectionArea.y,
+				(int)intersectionArea.w,
+				(int)intersectionArea.h}
 
 				}
 			);

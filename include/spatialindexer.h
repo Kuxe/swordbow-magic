@@ -82,9 +82,9 @@ class SpatialIndexer {
 		 **/
 		virtual void getNearbyIds(unordered_set<ID>& nearbyIds, const ID id) const = 0;
 
-		virtual inline void getIntersectionArea(Rect& intersectionArea,	const Rect& a, const Rect& b) const = 0;
+		virtual void getIntersectionArea(Rect& intersectionArea,	const Rect& a, const Rect& b) const = 0;
 
-		virtual inline void getBoundingBox(Rect& boundingBox, const ID id) const = 0;
+		virtual void getBoundingBox(Rect& boundingBox, const ID id) const = 0;
 
 		/**
 		 *	After calling this, all ids in the spatialindexer have their
