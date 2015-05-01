@@ -12,6 +12,7 @@
 #include <queue>
 #include "spatialindexer.h"
 #include "heap.h"
+#include "text.h"
 
 using namespace std;
 
@@ -45,6 +46,7 @@ class RenderSystem : public ISystem {
 	unordered_set<unsigned long long int*> ids;
 	queue<unsigned long long int*> activeIds;
 	queue<SpatialIndexer::Rect> previousDrawAreas;
+	queue<Text> texts;
 
 
 	static constexpr ushort SCREEN_WIDTH = 640;
@@ -53,14 +55,15 @@ class RenderSystem : public ISystem {
 
 	SDL_Renderer* renderer = nullptr;
 	SDL_Window* window = nullptr;
-	SDL_Surface* screenSurface = nullptr;
-	SDL_Texture* targetTexture = nullptr;
+	SDL_Texture* worldTexture = nullptr;
+	SDL_Texture* fontTexture = nullptr;
 	TTF_Font* font;
 	unordered_map<string, TextureData> textureDatas;
 
 	unsigned long long int* cameraTarget;
 
 	void renderArea(heap<RenderData>& pq, SpatialIndexer::Rect area);
+	void renderTexts();
 
  public:
  	RenderSystem();
@@ -76,6 +79,7 @@ class RenderSystem : public ISystem {
 	void makeIdActive(unsigned long long int* id);
 	void setCameraTarget(unsigned long long int* id);
 	void setImage(unsigned long long int* id, string path);
+	void printText(const Text& text);
 };
 
 #endif //RENDERSYSTEM_H

@@ -57,23 +57,30 @@ RenderSystem::RenderSystem() {
 					cout << "ERROR: Couldnt initialze PNG usage!" << endl;
 				} else {
 
-
 		            SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
 
-			        targetTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 8192, 8192);
-					if(!targetTexture) {
-						cout << "ERROR: Couldn't create targetTexture!" << endl;
+                    fontTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
+                    if(!fontTexture) {
+						cout << "ERROR: Couldn't create fontTexture!" << endl;
 						cout << "Screen will probably go black from now on" << endl;
 						cout << "SDL_GetError(): " << SDL_GetError() << endl;
 					}
-					SDL_SetRenderTarget(renderer, targetTexture);
+                    SDL_SetTextureBlendMode(fontTexture, SDL_BLENDMODE_BLEND);
+
+			        worldTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 8192, 8192);
+					if(!worldTexture) {
+						cout << "ERROR: Couldn't create worldTexture!" << endl;
+						cout << "Screen will probably go black from now on" << endl;
+						cout << "SDL_GetError(): " << SDL_GetError() << endl;
+					}
+					SDL_SetRenderTarget(renderer, worldTexture);
 					SDL_RenderClear(renderer);
 				}
 
                 if(TTF_Init() < 0 ) {
                     cout << "ERROR: Couldn't initialize SDL2_ttf!" << endl;
                 } else {
-                    font = TTF_OpenFont("/usr/share/fonts/TTF/DejaVuSansMono.ttf", 8);
+                    font = TTF_OpenFont("/usr/share/fonts/TTF/DejaVuSansMono.ttf", 11);
                     if(!font) {
                         cout << "ERROR: Failed to load font!" << endl;
                     }
@@ -128,7 +135,8 @@ RenderSystem::~RenderSystem() {
         SDL_DestroyTexture(get<1>(textureData).texture);
     }
 
-    SDL_DestroyTexture(targetTexture);
+    SDL_DestroyTexture(fontTexture);
+    SDL_DestroyTexture(worldTexture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
@@ -199,8 +207,8 @@ void RenderSystem::update() {
 		renderArea(pq, drawArea);
 	}
 
-	SDL_SetTextureBlendMode(targetTexture, SDL_BLENDMODE_BLEND);
-	SDL_SetRenderTarget(renderer, targetTexture);
+    //Draw to worldTexture
+	SDL_SetRenderTarget(renderer, worldTexture);
 
 	while(!pq.isEmpty()) {
 		render(pq.poll());
@@ -215,9 +223,18 @@ void RenderSystem::update() {
 		SCREEN_HEIGHT
 	};
 
+    //Put the fps on tmp (text->surface->tmp->fontTexture->default render target)
+    const std::string str = std::to_string((int)(1/deltaTime->delta())) + "fps";
+    printText(Text(str, 0, 0, {231, 195, 175}));
+
+    //Render all texts
+    renderTexts();
+
+    //Draw to default render target (NULL)
     SDL_SetRenderTarget(renderer, NULL);
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, targetTexture, &camera, NULL);
+    SDL_RenderCopy(renderer, worldTexture, &camera, NULL);
+    SDL_RenderCopy(renderer, fontTexture, nullptr, nullptr);
 	SDL_RenderPresent(renderer);
 }
 
@@ -254,4 +271,28 @@ void RenderSystem::setImage(unsigned long long int* id, string path) {
 	auto& rc = componentManager->renderComponents.at(id);
 	rc.imagePath = path;
 	rc.textureData = textureDatas.at(path);
+}
+
+void RenderSystem::printText(const Text& text) {
+    texts.push(text);
+}
+
+void RenderSystem::renderTexts() {
+    //Deal with text. Pops texts from the 'texts'-queue
+    //printing the texts using data from texts-class
+    SDL_SetRenderTarget(renderer, fontTexture);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    SDL_RenderClear(renderer);
+    while(!texts.empty()) {
+        const auto& text = texts.front(); texts.pop();
+        //Put the fps on tmp (text->surface->tmp->fontTexture->default render target)
+        auto fontSurface = TTF_RenderText_Solid(font, text.text.c_str(), text.color);
+        auto tmpTexture = SDL_CreateTextureFromSurface(renderer, fontSurface);
+        int w, h;
+        TTF_SizeText(font, text.text.c_str(), &w, &h);
+        const SDL_Rect tmpdest = {text.x, text.y, w, h};
+        SDL_RenderCopy(renderer, tmpTexture, nullptr, &tmpdest);
+        SDL_FreeSurface(fontSurface);
+        SDL_DestroyTexture(tmpTexture);
+    }
 }

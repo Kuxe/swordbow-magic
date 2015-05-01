@@ -34,6 +34,7 @@ add_executable(swordbow-magic
     src/rendersystem.cpp
     src/sizeboundingbox.cpp
     src/systemmanager.cpp
+    src/text.cpp
     src/textureboundingbox.cpp
     src/tilecomponent.cpp
     src/world.cpp)
