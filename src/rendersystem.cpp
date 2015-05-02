@@ -256,7 +256,7 @@ void RenderSystem::calculateZIndex(unsigned long long int* id) {
 	rc.zindex = mc.ypos + rc.textureData.height + rc.yoffset;
 }
 
-void RenderSystem::makeIdActive(unsigned long long int* id) {
+void RenderSystem::activateId(unsigned long long int* id) {
 	//Only make the id active if it is a member of rendersystem
 	if(ids.find(id) != ids.end()) {
 		activeIds.push(id);

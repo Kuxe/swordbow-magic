@@ -11,6 +11,9 @@
 #include "movecomponent.h"
 #include "namecomponent.h"
 #include "hashgridsystem.h"
+#include "activateid.h"
+#include "addidtosystem.h"
+#include "removeidfromsystem.h"
 
 using namespace std;
 
@@ -32,8 +35,11 @@ unsigned long long int* EntityManager::createPlayer() {
 	auto moveComponent = componentManager->createMoveComponent(id);
 	componentManager->createInputComponent(id);
 	auto sizeComponent = componentManager->createSizeComponent(id);
-	RenderComponent* renderComponent = componentManager->createRenderComponent(id);
+	auto renderComponent = componentManager->createRenderComponent(id);
 	auto nameComponent = componentManager->createNameComponent(id);
+	auto moveEventComponent = componentManager->createMoveEventComponent(id);
+	auto pressKeyEventComponent = componentManager->createPressKeyEventComponent(id);
+	auto releaseKeyEventComponent = componentManager->createReleaseKeyEventComponent(id);
 
 	//If you'd like to change default initialization-data in a component
 	//Just save a pointer to the component like above and modify it like bellow
@@ -50,6 +56,14 @@ unsigned long long int* EntityManager::createPlayer() {
 	sizeComponent->height = 20;
 
 	nameComponent->name = "player";
+
+	moveEventComponent->addCommand(new ActivateId(id, "RenderSystem", systemManager));
+	moveEventComponent->addCommand(new ActivateId(id, "CollisionSystem", systemManager));
+	moveEventComponent->addCommand(new ActivateId(id, "TextureHashGridSystem", systemManager));
+	moveEventComponent->addCommand(new ActivateId(id, "SizeHashGridSystem", systemManager));
+
+	pressKeyEventComponent->addCommand(new AddIdToSystem(id, "MoveSystem", systemManager));
+	releaseKeyEventComponent->addCommand(new RemoveIdFromSystem(id, "MoveSystem", systemManager));
 
 	//Tell the entity what systems belongs to
 	entities.insert(

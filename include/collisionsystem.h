@@ -28,7 +28,7 @@ public:
 	void update();
 	unsigned int count() const ;
 	const string getIdentifier() const;
-	void makeIdActive(ID id);
+	void activateId(ID id);
 
 };
 

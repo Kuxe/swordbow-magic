@@ -2,6 +2,9 @@
 #include <SDL2/SDL.h>
 
 #include "inputcomponent.h"
+#include "presskeyeventcomponent.h"
+#include "releasekeyeventcomponent.h"
+#include "componentmanager.h"
 
 #include <iostream>
 using namespace std;
@@ -27,18 +30,22 @@ void EventManager::process() {
 				switch(event.key.keysym.sym) {
 					case SDLK_w: {
 						userInputComponent->w = true;
+						userPressKeyEventComponent->happen();
 						break;
 					}
 					case SDLK_a: {
 						userInputComponent->a = true;
+						userPressKeyEventComponent->happen();
 						break;
 					}
 					case SDLK_s: {
 						userInputComponent->s = true;
+						userPressKeyEventComponent->happen();
 						break;
 					}
 					case SDLK_d: {
 						userInputComponent->d = true;
+						userPressKeyEventComponent->happen();
 						break;
 					}
 				}
@@ -65,8 +72,23 @@ void EventManager::process() {
 						break;
 					}
 				}
+
+				//TODO: This event doesnt make sense. "RelaseKeyEvent" but only
+				//if all keys are release.. hmm.. userReleaseKeyEvent does, as of
+				//2015-05-03 01:41 remove the player from movesystem, which should
+				//only happen if no keys are down. Hence this piece of shitty code.
+				if( userInputComponent->w == false && userInputComponent->a == false &&
+					userInputComponent->s == false && userInputComponent->d == false) {
+						userReleaseKeyEventComponent->happen();
+					}
 			} break;
 		}
 
 	}
+}
+
+void EventManager::setPlayer(ID id, ComponentManager* componentManager) {
+	userInputComponent = &componentManager->inputComponents.at(id);
+	userPressKeyEventComponent = &componentManager->pressKeyEventComponents.at(id);
+	userReleaseKeyEventComponent = &componentManager->releaseKeyEventComponents.at(id);
 }

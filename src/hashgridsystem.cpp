@@ -122,7 +122,7 @@ void HashGridSystem::getBoundingBox(SpatialIndexer::Rect& bb, ID id) const {
 	bb = boundingBox->getBoundingBox(id);
 }
 
-void HashGridSystem::makeIdActive(const ID id) {
+void HashGridSystem::activateId(const ID id) {
 	//if the id is a member of hashgrid...
 	if(ids.find(id) != ids.end()) {
 		//then it is legit to make it an active id

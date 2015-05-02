@@ -72,7 +72,7 @@ class HashGridSystem : public SpatialIndexer, public ISystem {
 
 		inline void getBoundingBox(SpatialIndexer::Rect& boundingBox, const ID id) const;
 
-		void makeIdActive(const ID id);
+		void activateId(ID id);
 
 		void update();
 		unsigned int count() const;

@@ -5,6 +5,7 @@
 #include "tilecomponent.h"
 #include "sizecomponent.h"
 #include "namecomponent.h"
+#include "moveeventcomponent.h"
 #include <iostream>
 
 using namespace std;
@@ -36,4 +37,19 @@ SizeComponent* ComponentManager::createSizeComponent(unsigned long long int* id)
 NameComponent* ComponentManager::createNameComponent(unsigned long long *id) {
 	nameComponents.insert(make_pair(id, NameComponent()));
 	return &nameComponents.at(id);
+}
+
+MoveEventComponent* ComponentManager::createMoveEventComponent(unsigned long long *id) {
+	moveEventComponents.insert(make_pair(id, MoveEventComponent()));
+	return &moveEventComponents.at(id);
+}
+
+PressKeyEventComponent* ComponentManager::createPressKeyEventComponent(unsigned long long *id) {
+	pressKeyEventComponents.insert(make_pair(id, PressKeyEventComponent()));
+	return &pressKeyEventComponents.at(id);
+}
+
+ReleaseKeyEventComponent* ComponentManager::createReleaseKeyEventComponent(unsigned long long *id) {
+	releaseKeyEventComponents.insert(make_pair(id, ReleaseKeyEventComponent()));
+	return &releaseKeyEventComponents.at(id);
 }

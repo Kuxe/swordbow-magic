@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
 	}
 
 	//Keystroke events should change the input component of the player
-	eventManager.userInputComponent = &componentManager.inputComponents.at(playerId);
+	eventManager.setPlayer(playerId, &componentManager);
 
 	//Set camera to follow player
 	renderSystem.setCameraTarget(playerId);

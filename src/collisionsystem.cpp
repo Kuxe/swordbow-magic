@@ -41,7 +41,7 @@ const string CollisionSystem::getIdentifier() const {
 	return "CollisionSystem";
 }
 
-void CollisionSystem::makeIdActive(ID id) {
+void CollisionSystem::activateId(ID id) {
 	if(ids.find(id) != ids.end()) {
 		activeIds.push(id);
 	}

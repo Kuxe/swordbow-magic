@@ -76,7 +76,7 @@ class RenderSystem : public ISystem {
 	void render(const RenderData& rd) const;
 	const string getIdentifier() const;
 	void calculateZIndex(unsigned long long int* id);
-	void makeIdActive(unsigned long long int* id);
+	void activateId(unsigned long long int* id);
 	void setCameraTarget(unsigned long long int* id);
 	void setImage(unsigned long long int* id, string path);
 	void printText(const Text& text);

@@ -16,6 +16,7 @@ using namespace std;
 
 void MoveSystem::add(unsigned long long int* id) {
 	ids.insert(id);
+	activeIds.insert(id);
 }
 
 void MoveSystem::remove(unsigned long long int* id) {
@@ -35,14 +36,8 @@ void MoveSystem::update() {
 
 		//Whenever an entity has been moved by something or moved by itself...
 		if(!(mc.xpos == mc.oldXpos && mc.ypos == mc.oldYpos)) {
-			//then it should render this tick
-			static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->makeIdActive(id);
-
-			//Update this entity within potential HashGrids (potential because a check is made within madeIdActive
-			//to make sure that the entity actually is a member of the system)
-			static_cast<HashGridSystem*>(systemManager->getSystem("TextureHashGridSystem"))->makeIdActive(id);
-			static_cast<HashGridSystem*>(systemManager->getSystem("SizeHashGridSystem"))->makeIdActive(id);
-			static_cast<CollisionSystem*>(systemManager->getSystem("CollisionSystem"))->makeIdActive(id);
+			//Then it moved. Sherlock
+			componentManager->moveEventComponents.at(id).happen();
 
 		}
 	}
@@ -54,4 +49,8 @@ unsigned int MoveSystem::count() const {
 
 const string MoveSystem::getIdentifier() const {
 	return "MoveSystem";
+}
+
+void MoveSystem::activateId(unsigned long long int* id) {
+	add(id);
 }
