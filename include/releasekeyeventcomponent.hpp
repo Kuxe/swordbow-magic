@@ -2,7 +2,7 @@
 #define RELEASEKEYEVENTCOMPONENT_H
 
 #include <forward_list>
-#include "icommand.h"
+#include "icommand.hpp"
 
 class ReleaseKeyEventComponent {
 private:

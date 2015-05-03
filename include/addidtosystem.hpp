@@ -1,7 +1,7 @@
 #ifndef ADDIDTOSYSTEM_H
 #define ADDIDTOSYSTEM_H
 
-#include "icommand.h"
+#include "icommand.hpp"
 
 class AddIdToSystem : public ICommand {
 private:

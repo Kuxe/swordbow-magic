@@ -1,4 +1,4 @@
-#include "movecomponent.h"
+#include "movecomponent.hpp"
 
 MoveComponent::MoveComponent(
 	const float& xpos,
@@ -7,7 +7,7 @@ MoveComponent::MoveComponent(
 	const float& oldYpos,
 	const float& xspeed,
 	const float& yspeed)
-	: 
+	:
 	xpos(xpos),
 	ypos(ypos),
 	oldXpos(oldXpos),

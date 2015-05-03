@@ -2,9 +2,9 @@
 #define HASHGRIDSYSTEM_H
 
 #include <iostream>
-#include "spatialindexer.h"
+#include "spatialindexer.hpp"
 #include <queue>
-#include "isystem.h"
+#include "isystem.hpp"
 
 using std::cout;
 using std::endl;

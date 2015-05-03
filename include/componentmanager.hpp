@@ -2,15 +2,15 @@
 #define COMPONENTMANAGER_H
 
 #include <unordered_map>
-#include "movecomponent.h"
-#include "rendercomponent.h"
-#include "inputcomponent.h"
-#include "tilecomponent.h"
-#include "sizecomponent.h"
-#include "namecomponent.h"
-#include "moveeventcomponent.h"
-#include "presskeyeventcomponent.h"
-#include "releasekeyeventcomponent.h"
+#include "movecomponent.hpp"
+#include "rendercomponent.hpp"
+#include "inputcomponent.hpp"
+#include "tilecomponent.hpp"
+#include "sizecomponent.hpp"
+#include "namecomponent.hpp"
+#include "moveeventcomponent.hpp"
+#include "presskeyeventcomponent.hpp"
+#include "releasekeyeventcomponent.hpp"
 
 using namespace std;
 

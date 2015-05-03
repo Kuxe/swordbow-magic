@@ -1,7 +1,7 @@
-#include "collisionsystem.h"
-#include "componentmanager.h"
-#include "movecomponent.h"
-#include "sizecomponent.h"
+#include "collisionsystem.hpp"
+#include "componentmanager.hpp"
+#include "movecomponent.hpp"
+#include "sizecomponent.hpp"
 
 CollisionSystem::CollisionSystem(SpatialIndexer* spatialIndexer) :
 	spatialIndexer(spatialIndexer) {}

@@ -1,16 +1,16 @@
 #define NDEBUG
 
-#include "movesystem.h"
+#include "movesystem.hpp"
 #include <iostream>
-#include "deltatime.h"
-#include "componentmanager.h"
-#include "movecomponent.h"
-#include "inputcomponent.h"
-#include "deltatime.h"
-#include "systemmanager.h"
-#include "rendersystem.h"
-#include "hashgridsystem.h"
-#include "collisionsystem.h"
+#include "deltatime.hpp"
+#include "componentmanager.hpp"
+#include "movecomponent.hpp"
+#include "inputcomponent.hpp"
+#include "deltatime.hpp"
+#include "systemmanager.hpp"
+#include "rendersystem.hpp"
+#include "hashgridsystem.hpp"
+#include "collisionsystem.hpp"
 
 using namespace std;
 

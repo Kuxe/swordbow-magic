@@ -1,12 +1,12 @@
-#include "hashgridsystem.h"
-#include "componentmanager.h"
+#include "hashgridsystem.hpp"
+#include "componentmanager.hpp"
 #include <iostream>
-#include "movecomponent.h"
-#include "sizecomponent.h"
-#include "rendercomponent.h"
-#include "rendersystem.h"
-#include "namecomponent.h"
-#include "boundingbox.h"
+#include "movecomponent.hpp"
+#include "sizecomponent.hpp"
+#include "rendercomponent.hpp"
+#include "rendersystem.hpp"
+#include "namecomponent.hpp"
+#include "boundingbox.hpp"
 
 using std::cout;
 using std::endl;

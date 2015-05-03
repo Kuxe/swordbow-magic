@@ -1,5 +1,5 @@
 #include <iostream>
-#include "deltatime.h"
+#include "deltatime.hpp"
 
 using namespace std;
 

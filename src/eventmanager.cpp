@@ -1,10 +1,10 @@
-#include "eventmanager.h"
+#include "eventmanager.hpp"
 #include <SDL2/SDL.h>
 
-#include "inputcomponent.h"
-#include "presskeyeventcomponent.h"
-#include "releasekeyeventcomponent.h"
-#include "componentmanager.h"
+#include "inputcomponent.hpp"
+#include "presskeyeventcomponent.hpp"
+#include "releasekeyeventcomponent.hpp"
+#include "componentmanager.hpp"
 
 #include <iostream>
 using namespace std;

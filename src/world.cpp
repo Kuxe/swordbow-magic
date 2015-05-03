@@ -1,9 +1,9 @@
-#include "world.h"
-#include "entitymanager.h"
-#include "componentmanager.h"
-#include "movecomponent.h"
-#include "rendercomponent.h"
-#include "sizecomponent.h"
+#include "world.hpp"
+#include "entitymanager.hpp"
+#include "componentmanager.hpp"
+#include "movecomponent.hpp"
+#include "rendercomponent.hpp"
+#include "sizecomponent.hpp"
 
 World::World(EntityManager* entityManager)
 	: entityManager(entityManager) {

@@ -1,7 +1,7 @@
 #ifndef SIZEBOUNDINGBOX_H
 #define SIZEBOUNDINGBOX_H
 
-#include "boundingbox.h"
+#include "boundingbox.hpp"
 
 class SizeBoundingBox : public BoundingBox {
 public:

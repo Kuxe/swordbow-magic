@@ -2,7 +2,7 @@
 #define BOUNDINGBOX_H
 
 #include <string>
-#include "spatialindexer.h"
+#include "spatialindexer.hpp"
 
 using std::string;
 

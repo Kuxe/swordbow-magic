@@ -1,6 +1,6 @@
 #ifndef ACTIVATEID_H
 
-#include "icommand.h"
+#include "icommand.hpp"
 
 class SystemManager;
 typedef unsigned long long int* id;

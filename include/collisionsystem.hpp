@@ -1,10 +1,10 @@
 #ifndef COLLISIONSYSTEM_H
 #define COLLISIONSYSTEM_H
 
-#include "isystem.h"
+#include "isystem.hpp"
 #include <unordered_set>
 #include <queue>
-#include "spatialindexer.h"
+#include "spatialindexer.hpp"
 
 using std::unordered_set;
 using std::queue;

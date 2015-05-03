@@ -9,7 +9,7 @@ using namespace std;
 //depends on width of textures. HashGrid uses rendercomponent
 //to acquire these textures. So rendercomponent must have a copy
 //of texturedata. Definition of texturedata is in rendersystem.
-#include "rendersystem.h"
+#include "rendersystem.hpp"
 
 //Class containing render-relevant data (such as image identifier)
 class RenderComponent {

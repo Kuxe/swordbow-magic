@@ -1,19 +1,19 @@
-#include "entitymanager.h"
-#include "componentmanager.h"
-#include "idmanager.h"
+#include "entitymanager.hpp"
+#include "componentmanager.hpp"
+#include "idmanager.hpp"
 #include <iostream>
 
-#include "systemmanager.h"
-#include "rendersystem.h"
-#include "movesystem.h"
-#include "rendercomponent.h"
-#include "sizecomponent.h"
-#include "movecomponent.h"
-#include "namecomponent.h"
-#include "hashgridsystem.h"
-#include "activateid.h"
-#include "addidtosystem.h"
-#include "removeidfromsystem.h"
+#include "systemmanager.hpp"
+#include "rendersystem.hpp"
+#include "movesystem.hpp"
+#include "rendercomponent.hpp"
+#include "sizecomponent.hpp"
+#include "movecomponent.hpp"
+#include "namecomponent.hpp"
+#include "hashgridsystem.hpp"
+#include "activateid.hpp"
+#include "addidtosystem.hpp"
+#include "removeidfromsystem.hpp"
 
 using namespace std;
 

@@ -1,4 +1,4 @@
-#include "text.h"
+#include "text.hpp"
 
 Text::Text(const string& text, const int& x, const int& y, const SDL_Color& color) :
     text(text),

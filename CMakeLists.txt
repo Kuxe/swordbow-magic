@@ -26,17 +26,14 @@ add_executable(swordbow-magic
     src/eventmanager.cpp
     src/hashgridsystem.cpp
     src/idmanager.cpp
-    src/isystem.cpp
     src/main.cpp
     src/movecomponent.cpp
     src/movesystem.cpp
-    src/rendercomponent.cpp
     src/rendersystem.cpp
     src/sizeboundingbox.cpp
     src/systemmanager.cpp
     src/text.cpp
     src/textureboundingbox.cpp
-    src/tilecomponent.cpp
     src/world.cpp)
 
 #Run "make run" to run the binary

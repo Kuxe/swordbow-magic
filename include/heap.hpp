@@ -1,7 +1,7 @@
 #ifndef HEAP_H
 #define HEAP_H
 
-#include "dynamicarray.h"
+#include "dynamicarray.hpp"
 #include <iostream>
 
 using namespace std;
@@ -10,9 +10,9 @@ template<class T>
 class heap {
 	private:
 		class Node {
-		
+
 		};
-	
+
 		dynamicarray<T> dynarr;
 		unsigned int lastIndex = 0;
 
@@ -20,7 +20,7 @@ class heap {
 			const T temp = dynarr[index1];
 			dynarr[index1] = dynarr[index2];
 			dynarr[index2] = temp;
-		
+
 		}
 
 		unsigned int lowestChildIndex(unsigned int index) {
@@ -37,7 +37,7 @@ class heap {
 			if(dynarr[index/2] > dynarr[index]) {
 				swap(index/2, index);
 				bubbleUp(index/2);
-			}	
+			}
 		}
 
 		void bubbleDown(unsigned int index) {
@@ -52,7 +52,7 @@ class heap {
 
 		heap(unsigned int initialCapacity = 4) :
 			dynarr(initialCapacity) {
-				
+
 		}
 
 		void insert(T elem) {

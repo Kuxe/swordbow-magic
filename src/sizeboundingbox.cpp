@@ -1,7 +1,7 @@
-#include "sizeboundingbox.h"
-#include "componentmanager.h"
-#include "movecomponent.h"
-#include "sizecomponent.h"
+#include "sizeboundingbox.hpp"
+#include "componentmanager.hpp"
+#include "movecomponent.hpp"
+#include "sizecomponent.hpp"
 
 SizeBoundingBox::SizeBoundingBox(const ComponentManager* const componentManager):
     BoundingBox(componentManager) {}

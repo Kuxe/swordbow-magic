@@ -1,7 +1,7 @@
 #ifndef TEXTUREDBOUNDINGBOX_H
 #define TEXTUREDBOUNDINGBOX_H
 
-#include "boundingbox.h"
+#include "boundingbox.hpp"
 
 class TextureBoundingBox : public BoundingBox {
 public:

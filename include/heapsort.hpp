@@ -3,7 +3,7 @@
 
 template<class T>
 void bubbleDown(T* arr, auto index, auto lastElement) {
-	//Compare children	
+	//Compare children
 	auto right = (index + 1)*2;
 	auto left = (index + 1)*2-1;
 
@@ -21,16 +21,16 @@ void bubbleDown(T* arr, auto index, auto lastElement) {
 				arr[left] = arr[index];
 				arr[index] = temp;
 			}
-			return;	
+			return;
 		}
 		//Determine which of left and right children are the greatest
 		const auto greatest = arr[right] > arr[left] ? right : left;
-		//If parent is lesser than the greatest, swap	
+		//If parent is lesser than the greatest, swap
 		if(arr[index] < arr[greatest]) {
 			const T temp = arr[greatest];
 			arr[greatest] = arr[index];
 			arr[index] = temp;
-	
+
 			//Continue bubbling down the, former, parent
 			//could make recursive call here, but its better to
 			//just index=greatest
@@ -53,7 +53,7 @@ void heapsort(T* arr, auto size) {
 	//Initialization phase in the algorithm
 	//make sure the array is ordered as a reversed POV-tree
 	for(auto parent = (lastElement+1)/2; parent != 0; parent--) {
-		bubbleDown(arr, parent-1, lastElement);	
+		bubbleDown(arr, parent-1, lastElement);
 	}
 
 	//Enter phase two!
@@ -63,7 +63,7 @@ void heapsort(T* arr, auto size) {
 	//Swap root with the last element. Bubble the new root (former last element)
 	//to its position. The second new root is the largest element. Swap it down.
 	//rince repeat
-	
+
 	while(lastElement > 0) {
 		//swap root and last element
 		const T temp = arr[0];

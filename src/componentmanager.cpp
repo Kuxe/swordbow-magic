@@ -1,11 +1,11 @@
-#include "componentmanager.h"
-#include "movecomponent.h"
-#include "rendercomponent.h"
-#include "inputcomponent.h"
-#include "tilecomponent.h"
-#include "sizecomponent.h"
-#include "namecomponent.h"
-#include "moveeventcomponent.h"
+#include "componentmanager.hpp"
+#include "movecomponent.hpp"
+#include "rendercomponent.hpp"
+#include "inputcomponent.hpp"
+#include "tilecomponent.hpp"
+#include "sizecomponent.hpp"
+#include "namecomponent.hpp"
+#include "moveeventcomponent.hpp"
 #include <iostream>
 
 using namespace std;

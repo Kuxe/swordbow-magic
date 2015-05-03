@@ -1,18 +1,18 @@
-#include "rendersystem.h"
-#include "componentmanager.h"
-#include "rendercomponent.h"
-#include "movecomponent.h"
-#include "sizecomponent.h"
+#include "rendersystem.hpp"
+#include "componentmanager.hpp"
+#include "rendercomponent.hpp"
+#include "movecomponent.hpp"
+#include "sizecomponent.hpp"
 #include <iostream>
-#include "spatialindexer.h"
-#include "heap.h"
-#include "dynamicarray.h"
-#include "heapsort.h"
+#include "spatialindexer.hpp"
+#include "heap.hpp"
+#include "dynamicarray.hpp"
+#include "heapsort.hpp"
 #include <queue>
-#include "namecomponent.h"
-#include "systemmanager.h"
-#include "hashgridsystem.h"
-#include "deltatime.h"
+#include "namecomponent.hpp"
+#include "systemmanager.hpp"
+#include "hashgridsystem.hpp"
+#include "deltatime.hpp"
 
 using namespace std;
 

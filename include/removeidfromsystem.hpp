@@ -1,7 +1,7 @@
 #ifndef REMOVEIDFROMSYSTEM_H
 #define REMOVEIDFROMSYSTEM_H
 
-#include "icommand.h"
+#include "icommand.hpp"
 
 class RemoveIdFromSystem : public ICommand {
 private:

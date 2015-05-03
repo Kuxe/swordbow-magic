@@ -1,7 +1,7 @@
 #ifndef RENDERSYSTEM_H
 #define RENDERSYSTEM_H
 
-#include "isystem.h"
+#include "isystem.hpp"
 #include <unordered_map>
 #include <string>
 #include <SDL2/SDL.h>
@@ -10,9 +10,9 @@
 #include <vector>
 #include <unordered_set>
 #include <queue>
-#include "spatialindexer.h"
-#include "heap.h"
-#include "text.h"
+#include "spatialindexer.hpp"
+#include "heap.hpp"
+#include "text.hpp"
 
 using namespace std;
 

@@ -2,7 +2,7 @@
 #define MOVEEVENTCOMPONENT_H
 
 #include <forward_list>
-#include "icommand.h"
+#include "icommand.hpp"
 
 class MoveEventComponent {
 private:

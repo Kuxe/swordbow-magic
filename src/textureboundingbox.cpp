@@ -1,7 +1,7 @@
-#include "textureboundingbox.h"
-#include "componentmanager.h"
-#include "movecomponent.h"
-#include "rendercomponent.h"
+#include "textureboundingbox.hpp"
+#include "componentmanager.hpp"
+#include "movecomponent.hpp"
+#include "rendercomponent.hpp"
 
 TextureBoundingBox::TextureBoundingBox(const ComponentManager* const componentManager):
     BoundingBox(componentManager) {}
