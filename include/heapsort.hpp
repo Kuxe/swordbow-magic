@@ -2,7 +2,7 @@
 #define HEAPSORT_H
 
 template<class T>
-void bubbleDown(T* arr, auto index, auto lastElement) {
+void bubbleDown(T* arr, unsigned int index, unsigned int lastElement) {
 	//Compare children
 	auto right = (index + 1)*2;
 	auto left = (index + 1)*2-1;
@@ -45,7 +45,7 @@ void bubbleDown(T* arr, auto index, auto lastElement) {
 }
 
 template<class T>
-void heapsort(T* arr, auto size) {
+void heapsort(T* arr, unsigned int size) {
 
 	//int arr[3], lastIndex is 2 (size-1)
 	auto lastElement = size-1;
