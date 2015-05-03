@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 project(swordbow-magic)
 
 #Flags for compiler and linker
+SET(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 SET(COMPILE_FLAGS "-std=c++14")
 SET(LINK_FLAGS "-lSDL2 -lSDL2_image -lSDL2_ttf")
 
