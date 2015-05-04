@@ -30,7 +30,7 @@ bool RenderData::operator>=(const RenderData& rhs) const { return !(*this < rhs)
 
 RenderSystem::RenderSystem() {
 	//Initialize SDL
-    if(SDL_Init(SDL_INIT_VIDEO) < 0)
+    if(SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
     {
         cout << "ERROR: SDL could not initialize! SDL_Error: " << SDL_GetError() << endl;
     } else {
@@ -139,7 +139,7 @@ RenderSystem::~RenderSystem() {
     SDL_DestroyTexture(worldTexture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-    SDL_Quit();
+    SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
 void RenderSystem::add(unsigned long long int* id) {

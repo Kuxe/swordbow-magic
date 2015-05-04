@@ -1,4 +1,5 @@
 #include <iostream>
+#include <SDL2/SDL.h>
 #include "deltatime.hpp"
 #include "eventmanager.hpp"
 #include "componentmanager.hpp"
@@ -14,11 +15,14 @@
 #include "collisionsystem.hpp"
 #include "textureboundingbox.hpp"
 #include "sizeboundingbox.hpp"
+#include "soundsystem.hpp"
 
 using namespace std;
 
 int main(int argc, char** argv) {
 	bool running = true;
+
+	SDL_Init(0);
 
 	DeltaTime deltaTime;
 	EventManager eventManager(&running);
@@ -37,12 +41,14 @@ int main(int argc, char** argv) {
 	MoveSystem moveSystem;
 	RenderSystem renderSystem;
 	CollisionSystem collisionSystem(&sizeHashGridSystem);
+	SoundSystem soundSystem;
 
 	systemManager.add(&moveSystem);
 	systemManager.add(&renderSystem);
 	systemManager.add(&collisionSystem);
 	systemManager.add(&textureHashGridSystem);
 	systemManager.add(&sizeHashGridSystem);
+	systemManager.add(&soundSystem);
 
 	auto playerId = entityManager.createPlayer();
 	World world(&entityManager);
@@ -73,6 +79,8 @@ int main(int argc, char** argv) {
 
 		deltaTime.stop();
 	}
+
+	SDL_Quit();
 
 	return 0;
 }
