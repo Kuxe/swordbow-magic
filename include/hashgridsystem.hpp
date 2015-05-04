@@ -20,7 +20,7 @@ class HashGridSystem : public SpatialIndexer, public ISystem {
 		const unsigned int cellsCapacity;
 		const unsigned int width;
 		const unsigned int height;
-		unordered_set<ID>* const cells;
+		unordered_set<ID>* cells;
 		const unsigned int side;
 
 		ComponentManager* componentManager;

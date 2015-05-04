@@ -1,12 +1,14 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+typedef unsigned int ID;
+
 class EntityManager;
 class World {
  private:
-	static constexpr short NUM_TILES = 128;
+	static constexpr short NUM_TILES = 16;
 	static constexpr unsigned char TILE_SIZE = 20;
-	unsigned long long int* tiles[NUM_TILES][NUM_TILES];
+	ID tiles[NUM_TILES][NUM_TILES];
 
 	EntityManager* entityManager;
  public:

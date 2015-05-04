@@ -14,14 +14,14 @@
 
 using namespace std;
 
-void MoveSystem::add(unsigned long long int* id) {
+void MoveSystem::add(ID id) {
 	ids.insert(id);
 	activeIds.insert(id);
 }
 
-void MoveSystem::remove(unsigned long long int* id) {
+void MoveSystem::remove(ID id) {
 	if(ids.erase(id) == 0) {
-		cout << "WARNING: MoveSystem tried to erase unpresent ID " << *id << ", segfault inc!" << endl;
+		cout << "WARNING: MoveSystem tried to erase unpresent ID " << id << ", segfault inc!" << endl;
 	}
 }
 
@@ -51,6 +51,6 @@ const string MoveSystem::getIdentifier() const {
 	return "MoveSystem";
 }
 
-void MoveSystem::activateId(unsigned long long int* id) {
+void MoveSystem::activateId(ID id) {
 	add(id);
 }

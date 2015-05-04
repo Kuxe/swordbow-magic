@@ -6,12 +6,12 @@
 CollisionSystem::CollisionSystem(SpatialIndexer* spatialIndexer) :
 	spatialIndexer(spatialIndexer) {}
 
-void CollisionSystem::add(unsigned long long int* id) {
+void CollisionSystem::add(ID id) {
 	ids.insert(id);
 	activeIds.push(id);
 }
 
-void CollisionSystem::remove(unsigned long long int* id) {
+void CollisionSystem::remove(ID id) {
 	ids.erase(id);
 }
 

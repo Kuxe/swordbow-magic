@@ -10,18 +10,20 @@ using namespace std;
 class MoveComponent;
 class RenderSystem;
 
+typedef unsigned int ID;
+
 class MoveSystem : public ISystem {
  private:
-	unordered_set<unsigned long long int*> ids;
-    unordered_set<unsigned long long int*> activeIds;
+	unordered_set<ID> ids;
+    unordered_set<ID> activeIds;
 
  public:
-	void add(unsigned long long int* id);
-	void remove(unsigned long long int* id);
+	void add(ID id);
+	void remove(ID id);
 	void update();
 	unsigned int count() const;
 	const string getIdentifier() const;
-    void activateId(unsigned long long int* id);
+    void activateId(ID id);
 };
 
 #endif //MOVESYSTEM_H

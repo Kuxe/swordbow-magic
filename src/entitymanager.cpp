@@ -27,9 +27,15 @@ EntityManager::EntityManager(
 
 }
 
-unsigned long long int* EntityManager::createPlayer() {
+const unsigned int& EntityManager::getId() {
+	auto id = idManager->acquireId();
+	ids.insert(id);
+	return *ids.find(id);
+}
+
+ID EntityManager::createPlayer() {
 	//Get unique ID
-	auto id = idManager->getId();
+	auto id = getId();
 
 	//Create components from componentmanager
 	auto moveComponent = componentManager->createMoveComponent(id);
@@ -88,8 +94,8 @@ unsigned long long int* EntityManager::createPlayer() {
 	return id;
 }
 
-unsigned long long int* EntityManager::createTree() {
-	auto id = idManager->getId();
+ID EntityManager::createTree() {
+	auto id = idManager->acquireId();
 
 	auto moveComponent = componentManager->createMoveComponent(id);
 	componentManager->createInputComponent(id);
@@ -129,8 +135,8 @@ unsigned long long int* EntityManager::createTree() {
 	}
 	return id;
 }
-unsigned long long int* EntityManager::createTile() {
-	auto id = idManager->getId();
+ID EntityManager::createTile() {
+	auto id = idManager->acquireId();
 
 	componentManager->createMoveComponent(id);
 	componentManager->createTileComponent(id);
@@ -162,7 +168,7 @@ unsigned long long int* EntityManager::createTile() {
 	return id;
 }
 
-void EntityManager::remove(unsigned long long int* id) {
+void EntityManager::remove(ID id) {
 	//1. Remove from systemManager
 	for(auto a : entities.at(id)) {
 		a->remove(id);
@@ -173,5 +179,6 @@ void EntityManager::remove(unsigned long long int* id) {
 
 	//FIXME: Figure out how and when to remove an entity from hashGrids
 
-	delete id;
+	//3. ReleaseId to idmanager
+	idManager->releaseId(id);
 }

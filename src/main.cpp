@@ -53,14 +53,14 @@ int main(int argc, char** argv) {
 	auto playerId = entityManager.createPlayer();
 	World world(&entityManager);
 
-	for(int y = 1; y <= 250; y++) {
-		for(int x = 1; x <= 250; x++) {
+	for(int y = 1; y <= 3; y++) {
+		for(int x = 1; x <= 3; x++) {
 			auto tree = entityManager.createTree();
 			auto& treeMc = componentManager.moveComponents.at(tree);
-			treeMc.xpos = 20 + x * 40;
-			treeMc.ypos = 20 + y * 40;
-			treeMc.oldXpos = 20 + x * 40;
-			treeMc.oldYpos = 20 + y * 40;
+			treeMc.xpos = 20 + x * 70;
+			treeMc.ypos = 20 + y * 70;
+			treeMc.oldXpos = 20 + x * 70;
+			treeMc.oldYpos = 20 + y * 70;
 
 		}
 	}

@@ -8,7 +8,7 @@ class PressKeyEventComponent;
 class ReleaseKeyEventComponent;
 class ComponentManager;
 
-typedef unsigned long long int* ID;
+typedef unsigned int ID;
 
 class EventManager {
  private:

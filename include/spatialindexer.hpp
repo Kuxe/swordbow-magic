@@ -5,9 +5,11 @@
 
 using std::unordered_set;
 
-typedef unsigned long long int* ID;
+typedef unsigned int ID;
 class SpatialIndexer {
 	public:
+
+		virtual ~SpatialIndexer() { }
 
 		/**
 		 * Simple rect-structure

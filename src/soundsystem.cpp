@@ -14,10 +14,10 @@ SoundSystem::~SoundSystem() {
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
 }
 
-void SoundSystem::add(unsigned long long int* id) {
+void SoundSystem::add(ID id) {
     ids.insert(id);
 }
-void SoundSystem::remove(unsigned long long int* id) {
+void SoundSystem::remove(ID id) {
     ids.erase(id);
 }
 void SoundSystem::update() {
@@ -29,6 +29,6 @@ unsigned int SoundSystem::count() const {
 const string SoundSystem::getIdentifier() const {
     return "SoundSystem";
 }
-void SoundSystem::activateId(unsigned long long int* id) {
+void SoundSystem::activateId(ID id) {
 
 }

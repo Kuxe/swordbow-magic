@@ -10,46 +10,46 @@
 
 using namespace std;
 
-MoveComponent* ComponentManager::createMoveComponent(unsigned long long int* id) {
+MoveComponent* ComponentManager::createMoveComponent(ID id) {
 	moveComponents.insert(make_pair(id, MoveComponent()));
 	return &moveComponents.at(id);
 }
-RenderComponent* ComponentManager::createRenderComponent(unsigned long long int* id) {
+RenderComponent* ComponentManager::createRenderComponent(ID id) {
 	renderComponents.insert(make_pair(id, RenderComponent()));
 	return &renderComponents.at(id);
 }
 
-InputComponent* ComponentManager::createInputComponent(unsigned long long int* id) {
+InputComponent* ComponentManager::createInputComponent(ID id) {
 	inputComponents.insert(make_pair(id, InputComponent()));
 	return &inputComponents.at(id);
 }
 
-TileComponent* ComponentManager::createTileComponent(unsigned long long int* id) {
+TileComponent* ComponentManager::createTileComponent(ID id) {
 	tileComponents.insert(make_pair(id, TileComponent()));
 	return &tileComponents.at(id);
 }
 
-SizeComponent* ComponentManager::createSizeComponent(unsigned long long int* id) {
+SizeComponent* ComponentManager::createSizeComponent(ID id) {
 	sizeComponents.insert(make_pair(id, SizeComponent()));
 	return &sizeComponents.at(id);
 }
 
-NameComponent* ComponentManager::createNameComponent(unsigned long long *id) {
+NameComponent* ComponentManager::createNameComponent(ID id) {
 	nameComponents.insert(make_pair(id, NameComponent()));
 	return &nameComponents.at(id);
 }
 
-MoveEventComponent* ComponentManager::createMoveEventComponent(unsigned long long *id) {
+MoveEventComponent* ComponentManager::createMoveEventComponent(ID id) {
 	moveEventComponents.insert(make_pair(id, MoveEventComponent()));
 	return &moveEventComponents.at(id);
 }
 
-PressKeyEventComponent* ComponentManager::createPressKeyEventComponent(unsigned long long *id) {
+PressKeyEventComponent* ComponentManager::createPressKeyEventComponent(ID id) {
 	pressKeyEventComponents.insert(make_pair(id, PressKeyEventComponent()));
 	return &pressKeyEventComponents.at(id);
 }
 
-ReleaseKeyEventComponent* ComponentManager::createReleaseKeyEventComponent(unsigned long long *id) {
+ReleaseKeyEventComponent* ComponentManager::createReleaseKeyEventComponent(ID id) {
 	releaseKeyEventComponents.insert(make_pair(id, ReleaseKeyEventComponent()));
 	return &releaseKeyEventComponents.at(id);
 }

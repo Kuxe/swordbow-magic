@@ -8,7 +8,7 @@ using std::string;
 
 class ComponentManager;
 
-typedef unsigned long long int* ID;
+typedef unsigned int ID;
 class BoundingBox {
 protected:
         const ComponentManager* const componentManager;

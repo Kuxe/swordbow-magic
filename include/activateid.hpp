@@ -3,7 +3,7 @@
 #include "icommand.hpp"
 
 class SystemManager;
-typedef unsigned long long int* id;
+typedef unsigned int ID;
 
 /**
  *

@@ -14,27 +14,29 @@
 
 using namespace std;
 
+typedef unsigned int ID;
+
 class ComponentManager {
  public:
-	unordered_map<unsigned long long int *, MoveComponent> moveComponents;
-	unordered_map<unsigned long long int *, RenderComponent> renderComponents;
-	unordered_map<unsigned long long int *, InputComponent> inputComponents;
-	unordered_map<unsigned long long int *, TileComponent> tileComponents;
-	unordered_map<unsigned long long int *, SizeComponent> sizeComponents;
-    unordered_map<unsigned long long int *, NameComponent> nameComponents;
-    unordered_map<unsigned long long int *, MoveEventComponent> moveEventComponents;
-    unordered_map<unsigned long long int *, PressKeyEventComponent> pressKeyEventComponents;
-    unordered_map<unsigned long long int *, ReleaseKeyEventComponent> releaseKeyEventComponents;
+	unordered_map<ID, MoveComponent> moveComponents;
+	unordered_map<ID, RenderComponent> renderComponents;
+	unordered_map<ID, InputComponent> inputComponents;
+	unordered_map<ID, TileComponent> tileComponents;
+	unordered_map<ID, SizeComponent> sizeComponents;
+    unordered_map<ID, NameComponent> nameComponents;
+    unordered_map<ID, MoveEventComponent> moveEventComponents;
+    unordered_map<ID, PressKeyEventComponent> pressKeyEventComponents;
+    unordered_map<ID, ReleaseKeyEventComponent> releaseKeyEventComponents;
 
-	MoveComponent* createMoveComponent(unsigned long long int* id);
-	RenderComponent* createRenderComponent(unsigned long long int* id);
-	InputComponent* createInputComponent(unsigned long long int* id);
-	TileComponent* createTileComponent(unsigned long long int* id);
-	SizeComponent* createSizeComponent(unsigned long long int* id);
-    NameComponent* createNameComponent(unsigned long long int* id);
-    MoveEventComponent* createMoveEventComponent(unsigned long long int* id);
-    PressKeyEventComponent* createPressKeyEventComponent(unsigned long long int* id);
-    ReleaseKeyEventComponent* createReleaseKeyEventComponent(unsigned long long int* id);
+	MoveComponent* createMoveComponent(ID id);
+	RenderComponent* createRenderComponent(ID id);
+	InputComponent* createInputComponent(ID id);
+	TileComponent* createTileComponent(ID id);
+	SizeComponent* createSizeComponent(ID id);
+    NameComponent* createNameComponent(ID id);
+    MoveEventComponent* createMoveEventComponent(ID id);
+    PressKeyEventComponent* createPressKeyEventComponent(ID id);
+    ReleaseKeyEventComponent* createReleaseKeyEventComponent(ID id);
 };
 
 #endif //COMPONENTMANAGER_H

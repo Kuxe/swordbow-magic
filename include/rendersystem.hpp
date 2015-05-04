@@ -22,6 +22,8 @@ class SizeComponent;
 class FlagComponent;
 class SpatialIndexer;
 
+typedef unsigned int ID;
+
 struct TextureData {
 	SDL_Texture* texture;
 	unsigned int width;
@@ -29,7 +31,7 @@ struct TextureData {
 };
 
 struct RenderData {
-	unsigned long long int* id;
+	ID id;
 	RenderComponent* renderComponent;
 	TextureData textureData;
 	SDL_Rect cliprect;
@@ -43,8 +45,8 @@ struct RenderData {
 
 class RenderSystem : public ISystem {
  private:
-	unordered_set<unsigned long long int*> ids;
-	queue<unsigned long long int*> activeIds;
+	unordered_set<ID> ids;
+	queue<ID> activeIds;
 	queue<SpatialIndexer::Rect> previousDrawAreas;
 	queue<Text> texts;
 
@@ -60,7 +62,7 @@ class RenderSystem : public ISystem {
 	TTF_Font* font;
 	unordered_map<string, TextureData> textureDatas;
 
-	unsigned long long int* cameraTarget;
+	ID cameraTarget;
 
 	void renderArea(heap<RenderData>& pq, SpatialIndexer::Rect area);
 	void renderTexts();
@@ -68,17 +70,17 @@ class RenderSystem : public ISystem {
  public:
  	RenderSystem();
  	~RenderSystem();
-	void add(unsigned long long int* id);
-	void remove(unsigned long long int* id);
+	void add(ID id);
+	void remove(ID id);
 	void update();
 	void update2();
 	unsigned int count() const;
 	void render(const RenderData& rd) const;
 	const string getIdentifier() const;
-	void calculateZIndex(unsigned long long int* id);
-	void activateId(unsigned long long int* id);
-	void setCameraTarget(unsigned long long int* id);
-	void setImage(unsigned long long int* id, string path);
+	void calculateZIndex(ID id);
+	void activateId(ID id);
+	void setCameraTarget(ID id);
+	void setImage(ID id, string path);
 	void printText(const Text& text);
 };
 

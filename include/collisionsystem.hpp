@@ -13,7 +13,7 @@ class MoveComponent;
 class SizeComponent;
 class SpatialIndexer;
 
-typedef unsigned long long int* ID;
+typedef unsigned int ID;
 
 class CollisionSystem : public ISystem {
 private:

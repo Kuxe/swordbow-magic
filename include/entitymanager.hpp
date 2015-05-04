@@ -3,6 +3,7 @@
 
 #include <time.h>
 #include <unordered_map>
+#include <unordered_set>
 #include <string>
 #include <vector>
 
@@ -18,6 +19,8 @@ class ComponentManager;
 class IdManager;
 class ISystem;
 
+typedef unsigned int ID;
+
 class EntityManager {
  public:
  	/*	Map an ID to some systems. This unordered_map is used when adding an ID to systems
@@ -26,17 +29,19 @@ class EntityManager {
 		(except for looping through all systems and searching for ID, removing it
 		if it exits, but that's a slow bruteforce-approach)
 	*/
- 	unordered_map<unsigned long long int*, vector<ISystem*> > entities;
+ 	unordered_map<unsigned int, vector<ISystem*> > entities;
+    unordered_set<unsigned int> ids;
 
 	SystemManager* systemManager;
 	ComponentManager* componentManager;
 	IdManager* idManager;
 
 	EntityManager(SystemManager* systemManager, ComponentManager* componentManager, IdManager* idManager);
-	unsigned long long int* createPlayer();
-	unsigned long long int* createTree();
-	unsigned long long int* createTile();
-	void remove(unsigned long long int*);
+    const unsigned int& getId();
+	ID createPlayer();
+	ID createTree();
+	ID createTile();
+	void remove(ID id);
 };
 
 #endif //ENTITYMANAGER_H

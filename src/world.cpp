@@ -9,7 +9,7 @@ World::World(EntityManager* entityManager)
 	: entityManager(entityManager) {
 	for(short y = 0; y < NUM_TILES; y++) {
 		for(short x = 0; x < NUM_TILES; x++) {
-			unsigned long long int* id  = entityManager->createTile();
+			auto id  = entityManager->createTile();
 			tiles[x][y] = id;
 
 			//Align tiles into a grid, spatially

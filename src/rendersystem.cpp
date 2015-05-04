@@ -142,12 +142,12 @@ RenderSystem::~RenderSystem() {
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-void RenderSystem::add(unsigned long long int* id) {
+void RenderSystem::add(ID id) {
 	ids.insert(id);
 	activeIds.push(id);
 }
 
-void RenderSystem::remove(unsigned long long int* id) {
+void RenderSystem::remove(ID id) {
 	ids.erase(id);
 }
 
@@ -250,24 +250,24 @@ const string RenderSystem::getIdentifier() const {
 	return "RenderSystem";
 }
 
-void RenderSystem::calculateZIndex(unsigned long long int* id) {
+void RenderSystem::calculateZIndex(ID id) {
 	auto& rc = componentManager->renderComponents.at(id);
 	auto& mc = componentManager->moveComponents.at(id);
 	rc.zindex = mc.ypos + rc.textureData.height + rc.yoffset;
 }
 
-void RenderSystem::activateId(unsigned long long int* id) {
+void RenderSystem::activateId(ID id) {
 	//Only make the id active if it is a member of rendersystem
 	if(ids.find(id) != ids.end()) {
 		activeIds.push(id);
 	}
 }
 
-void RenderSystem::setCameraTarget(unsigned long long int* id) {
+void RenderSystem::setCameraTarget(ID id) {
 	cameraTarget = id;
 }
 
-void RenderSystem::setImage(unsigned long long int* id, string path) {
+void RenderSystem::setImage(ID id, string path) {
 	auto& rc = componentManager->renderComponents.at(id);
 	rc.imagePath = path;
 	rc.textureData = textureDatas.at(path);

@@ -1,13 +1,22 @@
 #include "idmanager.hpp"
-#include <climits>
 #include <iostream>
 
 using namespace std;
 
-unsigned long long int* IdManager::getId() {
-	if(freeId > ULLONG_MAX - 10) {
-		cout << "RUNNING OUT OF AVAILABLE IDS, BAD THINGS ARE ABOUT TO HAPPEN!" << endl;
-		cout << "check IdManager-implementation" << endl;
+IdManager::IdManager() {
+	for(unsigned int freeId = 1; freeId < MAX_IDS; freeId++) {
+		freeIds.push(freeId);
 	}
-	return new auto(freeId++);
+}
+
+unsigned int IdManager::acquireId() {
+	if(freeIds.empty()) {
+		cout << "Error: Ran out of free ids (idmanager.cpp). Either increase the amount of freeIds or reduce entities in world." << endl;
+	}
+	const auto acquiredId = freeIds.top(); freeIds.pop();
+	return acquiredId;
+}
+
+void IdManager::releaseId(unsigned int releasedId) {
+	freeIds.push(releasedId);
 }

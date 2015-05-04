@@ -9,7 +9,7 @@
 
 using std::unordered_set;
 
-typedef unsigned long long int* ID;
+typedef unsigned int ID;
 
 class SoundSystem : public ISystem {
 private:
@@ -18,12 +18,12 @@ private:
 public:
     SoundSystem();
     ~SoundSystem();
-    void add(unsigned long long int* id);
-    void remove(unsigned long long int* id);
+    void add(ID id);
+    void remove(ID id);
     void update();
     unsigned int count() const;
     const string getIdentifier() const;
-    void activateId(unsigned long long int* id);
+    void activateId(ID id);
 };
 
 #endif //SOUNDSYSTEM_H
