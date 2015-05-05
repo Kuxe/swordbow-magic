@@ -6,7 +6,7 @@ class DeltaTime {
  private:
  	std::chrono::high_resolution_clock::time_point startTime;
 	std::chrono::high_resolution_clock::time_point stopTime;
-	float deltaTime;
+	float deltaTime = 0.0f;
 
  public:
 	void start();

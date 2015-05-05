@@ -284,7 +284,7 @@ void RenderSystem::renderTexts() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
     SDL_RenderClear(renderer);
     while(!texts.empty()) {
-        const auto& text = texts.front(); texts.pop();
+        const Text text = texts.front(); texts.pop();
         //Put the fps on tmp (text->surface->tmp->fontTexture->default render target)
         auto fontSurface = TTF_RenderText_Solid(font, text.text.c_str(), text.color);
         auto tmpTexture = SDL_CreateTextureFromSurface(renderer, fontSurface);
