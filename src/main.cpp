@@ -71,6 +71,9 @@ int main(int argc, char** argv) {
 	//Set camera to follow player
 	renderSystem.setCameraTarget(playerId);
 
+	//Play some sweet music
+	soundSystem.playMusic("./resources/sounds/naturesounds.ogg");
+
 	while(running) {
 		deltaTime.start();
 
