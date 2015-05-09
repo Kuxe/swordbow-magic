@@ -11,6 +11,7 @@
 #include "moveeventcomponent.hpp"
 #include "presskeyeventcomponent.hpp"
 #include "releasekeyeventcomponent.hpp"
+#include "soundcomponent.hpp"
 
 using namespace std;
 
@@ -27,6 +28,7 @@ class ComponentManager {
     unordered_map<ID, MoveEventComponent> moveEventComponents;
     unordered_map<ID, PressKeyEventComponent> pressKeyEventComponents;
     unordered_map<ID, ReleaseKeyEventComponent> releaseKeyEventComponents;
+    unordered_map<ID, SoundComponent> soundComponents;
 
 	MoveComponent* createMoveComponent(ID id);
 	RenderComponent* createRenderComponent(ID id);
@@ -37,6 +39,7 @@ class ComponentManager {
     MoveEventComponent* createMoveEventComponent(ID id);
     PressKeyEventComponent* createPressKeyEventComponent(ID id);
     ReleaseKeyEventComponent* createReleaseKeyEventComponent(ID id);
+    SoundComponent* createSoundComponent(ID id);
 };
 
 #endif //COMPONENTMANAGER_H

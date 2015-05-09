@@ -14,6 +14,8 @@
 #include "activateid.hpp"
 #include "addidtosystem.hpp"
 #include "removeidfromsystem.hpp"
+#include "playsound.hpp"
+#include "soundsystem.hpp"
 
 using namespace std;
 
@@ -46,6 +48,7 @@ ID EntityManager::createPlayer() {
 	auto moveEventComponent = componentManager->createMoveEventComponent(id);
 	auto pressKeyEventComponent = componentManager->createPressKeyEventComponent(id);
 	auto releaseKeyEventComponent = componentManager->createReleaseKeyEventComponent(id);
+	auto soundComponent = componentManager->createSoundComponent(id);
 
 	//If you'd like to change default initialization-data in a component
 	//Just save a pointer to the component like above and modify it like bellow
@@ -63,11 +66,15 @@ ID EntityManager::createPlayer() {
 
 	nameComponent->name = "player";
 
+	soundComponent->walk.path = "./resources/sounds/walking.wav";
+	soundComponent->walk.duration = 250;
+
 	moveEventComponent->addCommand(new ActivateId(id, "RenderSystem", systemManager));
 	moveEventComponent->addCommand(new ActivateId(id, "CollisionSystem", systemManager));
 	moveEventComponent->addCommand(new ActivateId(id, "TextureHashGridSystem", systemManager));
 	moveEventComponent->addCommand(new ActivateId(id, "SizeHashGridSystem", systemManager));
-
+	moveEventComponent->addCommand(new PlaySound(static_cast<SoundSystem*>(systemManager->getSystem("SoundSystem")), soundComponent->walk));
+	
 	pressKeyEventComponent->addCommand(new AddIdToSystem(id, "MoveSystem", systemManager));
 	releaseKeyEventComponent->addCommand(new RemoveIdFromSystem(id, "MoveSystem", systemManager));
 

@@ -53,3 +53,8 @@ ReleaseKeyEventComponent* ComponentManager::createReleaseKeyEventComponent(ID id
 	releaseKeyEventComponents.insert(make_pair(id, ReleaseKeyEventComponent()));
 	return &releaseKeyEventComponents.at(id);
 }
+
+SoundComponent* ComponentManager::createSoundComponent(ID id) {
+	soundComponents.insert(make_pair(id, SoundComponent()));
+	return &soundComponents.at(id);
+}

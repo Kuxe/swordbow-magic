@@ -8,17 +8,20 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_audio.h>
 #include <SDL2/SDL_mixer.h>
+#include "soundcomponent.hpp"
 
-using std::unordered_set;
 using std::unordered_map;
 using std::string;
 
 typedef unsigned int ID;
 
+//TODO: Figure out if SoundSystem really should be a system.
 class SoundSystem : public ISystem {
 private:
     unordered_set<ID> ids;
     unordered_map<string, Mix_Music*> musics;
+    unordered_map<string, Mix_Chunk*> sounds;
+    unordered_map<Mix_Chunk*, int> channels;
 
 public:
     SoundSystem();
@@ -30,6 +33,8 @@ public:
     const string getIdentifier() const;
     void activateId(ID id);
     void playMusic(const string& musicPath) const;
+    void playSound(SoundComponent::Sound& scSound) const;
+    void stopSound(SoundComponent::Sound& scSound) const;
 };
 
 #endif //SOUNDSYSTEM_H
