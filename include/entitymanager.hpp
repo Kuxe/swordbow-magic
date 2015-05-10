@@ -38,7 +38,12 @@ class EntityManager {
 
 	EntityManager(SystemManager* systemManager, ComponentManager* componentManager, IdManager* idManager);
     const unsigned int& getId();
-	ID createPlayer();
+
+    struct FatManData {
+        float xpos, ypos;
+    };
+	ID createFatMan();
+    ID createFatMan(FatManData data);
 	ID createTree();
 	ID createTile();
 	void remove(ID id);

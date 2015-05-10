@@ -53,7 +53,9 @@ int main(int argc, char** argv) {
 	systemManager.add(&soundSystem);
 	systemManager.add(&animationSystem);
 
-	auto playerId = entityManager.createPlayer();
+	auto playerId = entityManager.createFatMan();
+	auto botId = entityManager.createFatMan({60, 20});
+
 	World world(&entityManager);
 
 	for(int y = 1; y <= 3; y++) {

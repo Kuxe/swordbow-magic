@@ -35,7 +35,7 @@ const unsigned int& EntityManager::getId() {
 	return *ids.find(id);
 }
 
-ID EntityManager::createPlayer() {
+ID EntityManager::createFatMan(FatManData data) {
 	//Get unique ID
 	auto id = getId();
 
@@ -58,8 +58,8 @@ ID EntityManager::createPlayer() {
 	renderComponent->xoffset = -10;
 	renderComponent->yoffset = -10;
 
-	moveComponent->xpos = 10;
-	moveComponent->ypos = 10;
+	moveComponent->xpos = data.xpos;
+	moveComponent->ypos = data.ypos;
 
 	//Width of a player is 20x20
 	sizeComponent->width = 20;
@@ -131,6 +131,10 @@ ID EntityManager::createPlayer() {
 		a->add(id);
 	}
 	return id;
+}
+
+ID EntityManager::createFatMan() {
+	return createFatMan({10, 10});
 }
 
 ID EntityManager::createTree() {
