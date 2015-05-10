@@ -3,6 +3,7 @@
 
 #include <unordered_set>
 #include "isystem.hpp"
+#include "animationcomponent.hpp"
 
 using std::unordered_set;
 
@@ -17,6 +18,7 @@ public:
     unsigned int count() const;
     const string getIdentifier() const;
     void activateId(ID id);
+    void updateAnimation(ID id, AnimationComponent::Animation* const animation) const;
 };
 
 #endif //ANIMATIONSYSTEM_HPP

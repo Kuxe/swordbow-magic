@@ -283,6 +283,7 @@ void RenderSystem::setImage(ID id, string path) {
 	auto& rc = componentManager->renderComponents.at(id);
 	rc.imagePath = path;
 	rc.textureData = textureDatas.at(path);
+    activateId(id);
 }
 
 void RenderSystem::printText(const Text& text) {

@@ -49,10 +49,11 @@ ID EntityManager::createPlayer() {
 	auto pressKeyEventComponent = componentManager->createPressKeyEventComponent(id);
 	auto releaseKeyEventComponent = componentManager->createReleaseKeyEventComponent(id);
 	auto soundComponent = componentManager->createSoundComponent(id);
+	auto animationComponent = componentManager->createAnimationComponent(id);
 
 	//If you'd like to change default initialization-data in a component
 	//Just save a pointer to the component like above and modify it like bellow
-	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/player.bmp");
+	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/playerv3_front.png");
 	renderComponent->zindex_base = 1;
 	renderComponent->xoffset = -10;
 	renderComponent->yoffset = -10;
@@ -69,12 +70,42 @@ ID EntityManager::createPlayer() {
 	soundComponent->walk.path = "./resources/sounds/walking.wav";
 	soundComponent->walk.duration = 250;
 
+	animationComponent->idle.north.frames.push_back("./resources/images/playerv3_back.png");
+	animationComponent->idle.northEast.frames.push_back("./resources/images/playerv3_back.png");
+	animationComponent->idle.east.frames.push_back("./resources/images/playerv3_right.png");
+	animationComponent->idle.southEast.frames.push_back("./resources/images/playerv3_front.png");
+	animationComponent->idle.south.frames.push_back("./resources/images/playerv3_front.png");
+	animationComponent->idle.southWest.frames.push_back("./resources/images/playerv3_front.png");
+	animationComponent->idle.west.frames.push_back("./resources/images/playerv3_left.png");
+	animationComponent->idle.northWest.frames.push_back("./resources/images/playerv3_back.png");
+
+	animationComponent->walking.north.frames.push_back("./resources/images/playerv3_back.png");
+	animationComponent->walking.northEast.frames.push_back("./resources/images/playerv3_back.png");
+	animationComponent->walking.northWest.frames.push_back("./resources/images/playerv3_back.png");
+	animationComponent->walking.east.frames.push_back("./resources/images/playerv3_right.png");
+	animationComponent->walking.west.frames.push_back("./resources/images/playerv3_left.png");
+
+	animationComponent->walking.southWest.frames.push_back("./resources/images/playerv3_front_run1.png");
+	animationComponent->walking.southWest.frames.push_back("./resources/images/playerv3_front_run2.png");
+	animationComponent->walking.southWest.frames.push_back("./resources/images/playerv3_front_run3.png");
+	animationComponent->walking.southWest.frames.push_back("./resources/images/playerv3_front_run4.png");
+
+	animationComponent->walking.south.frames.push_back("./resources/images/playerv3_front_run1.png");
+	animationComponent->walking.south.frames.push_back("./resources/images/playerv3_front_run2.png");
+	animationComponent->walking.south.frames.push_back("./resources/images/playerv3_front_run3.png");
+	animationComponent->walking.south.frames.push_back("./resources/images/playerv3_front_run4.png");
+
+	animationComponent->walking.southEast.frames.push_back("./resources/images/playerv3_front_run1.png");
+	animationComponent->walking.southEast.frames.push_back("./resources/images/playerv3_front_run2.png");
+	animationComponent->walking.southEast.frames.push_back("./resources/images/playerv3_front_run3.png");
+	animationComponent->walking.southEast.frames.push_back("./resources/images/playerv3_front_run4.png");
+
 	moveEventComponent->addCommand(new ActivateId(id, "RenderSystem", systemManager));
 	moveEventComponent->addCommand(new ActivateId(id, "CollisionSystem", systemManager));
 	moveEventComponent->addCommand(new ActivateId(id, "TextureHashGridSystem", systemManager));
 	moveEventComponent->addCommand(new ActivateId(id, "SizeHashGridSystem", systemManager));
 	moveEventComponent->addCommand(new PlaySound(static_cast<SoundSystem*>(systemManager->getSystem("SoundSystem")), soundComponent->walk));
-	
+
 	pressKeyEventComponent->addCommand(new AddIdToSystem(id, "MoveSystem", systemManager));
 	releaseKeyEventComponent->addCommand(new RemoveIdFromSystem(id, "MoveSystem", systemManager));
 
@@ -88,6 +119,7 @@ ID EntityManager::createPlayer() {
 				systemManager->getSystem("CollisionSystem"),
 				systemManager->getSystem("TextureHashGridSystem"),
 				systemManager->getSystem("SizeHashGridSystem"),
+				systemManager->getSystem("AnimationSystem"),
 			}
 		)
 	);

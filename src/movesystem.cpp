@@ -22,7 +22,16 @@ void MoveSystem::add(ID id) {
 void MoveSystem::remove(ID id) {
 	if(ids.erase(id) == 0) {
 		cout << "WARNING: MoveSystem tried to erase unpresent ID " << id << ", segfault inc!" << endl;
+		return;
 	}
+
+	//since ID isnt moving anymore, oldxpos should be equal to xpos
+	//but that update wont happen within update() method since
+	//this id wont be iterated over within that loop after this call
+	//so it is neccesary to force-update oldxpos here
+	auto& mc = componentManager->moveComponents.at(id);
+	mc.oldXpos = mc.xpos;
+	mc.oldYpos = mc.ypos;
 }
 
 void MoveSystem::update() {
@@ -38,7 +47,6 @@ void MoveSystem::update() {
 		if(!(mc.xpos == mc.oldXpos && mc.ypos == mc.oldYpos)) {
 			//Then it moved. Sherlock
 			componentManager->moveEventComponents.at(id).happen();
-
 		}
 	}
 }
