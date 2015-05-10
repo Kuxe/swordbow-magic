@@ -1,14 +1,7 @@
 #include "componentmanager.hpp"
-#include "movecomponent.hpp"
-#include "rendercomponent.hpp"
-#include "inputcomponent.hpp"
-#include "tilecomponent.hpp"
-#include "sizecomponent.hpp"
-#include "namecomponent.hpp"
-#include "moveeventcomponent.hpp"
-#include <iostream>
 
-using namespace std;
+//FIXME: Recreating an entity with a recycled ID might reuse old component datas
+//without reseting (or removing old component + inserting new component on same id)
 
 MoveComponent* ComponentManager::createMoveComponent(ID id) {
 	moveComponents.insert(make_pair(id, MoveComponent()));
@@ -62,4 +55,14 @@ SoundComponent* ComponentManager::createSoundComponent(ID id) {
 AnimationComponent* ComponentManager::createAnimationComponent(ID id) {
 	animationComponents.insert(make_pair(id, AnimationComponent()));
 	return &animationComponents.at(id);
+}
+
+HealthComponent* ComponentManager::createHealthComponent(ID id) {
+	healthComponents.insert(make_pair(id, HealthComponent()));
+	return &healthComponents.at(id);
+}
+
+RemoveComponent* ComponentManager::createRemoveComponent(ID id) {
+	removeComponents.insert(make_pair(id, RemoveComponent()));
+	return &removeComponents.at(id);
 }

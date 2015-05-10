@@ -13,6 +13,8 @@
 #include "presskeyeventcomponent.hpp"
 #include "releasekeyeventcomponent.hpp"
 #include "soundcomponent.hpp"
+#include "healthcomponent.hpp"
+#include "removecomponent.hpp"
 
 using namespace std;
 
@@ -31,6 +33,8 @@ class ComponentManager {
     unordered_map<ID, ReleaseKeyEventComponent> releaseKeyEventComponents;
     unordered_map<ID, SoundComponent> soundComponents;
     unordered_map<ID, AnimationComponent> animationComponents;
+    unordered_map<ID, HealthComponent> healthComponents;
+    unordered_map<ID, RemoveComponent> removeComponents;
 
 	MoveComponent* createMoveComponent(ID id);
 	RenderComponent* createRenderComponent(ID id);
@@ -43,6 +47,8 @@ class ComponentManager {
     ReleaseKeyEventComponent* createReleaseKeyEventComponent(ID id);
     SoundComponent* createSoundComponent(ID id);
     AnimationComponent* createAnimationComponent(ID id);
+    HealthComponent* createHealthComponent(ID id);
+    RemoveComponent* createRemoveComponent(ID id);
 };
 
 #endif //COMPONENTMANAGER_H

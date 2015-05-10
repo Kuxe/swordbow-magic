@@ -50,6 +50,8 @@ ID EntityManager::createFatMan(FatManData data) {
 	auto releaseKeyEventComponent = componentManager->createReleaseKeyEventComponent(id);
 	auto soundComponent = componentManager->createSoundComponent(id);
 	auto animationComponent = componentManager->createAnimationComponent(id);
+	componentManager->createHealthComponent(id);
+	componentManager->createRemoveComponent(id);
 
 	//If you'd like to change default initialization-data in a component
 	//Just save a pointer to the component like above and modify it like bellow
@@ -60,6 +62,8 @@ ID EntityManager::createFatMan(FatManData data) {
 
 	moveComponent->xpos = data.xpos;
 	moveComponent->ypos = data.ypos;
+	moveComponent->xspeed = 200;
+	moveComponent->yspeed = 200;
 
 	//Width of a player is 20x20
 	sizeComponent->width = 20;
@@ -120,6 +124,8 @@ ID EntityManager::createFatMan(FatManData data) {
 				systemManager->getSystem("TextureHashGridSystem"),
 				systemManager->getSystem("SizeHashGridSystem"),
 				systemManager->getSystem("AnimationSystem"),
+				systemManager->getSystem("HealthSystem"),
+				systemManager->getSystem("RemoveSystem"),
 			}
 		)
 	);
@@ -216,11 +222,9 @@ void EntityManager::remove(ID id) {
 	for(auto a : entities.at(id)) {
 		a->remove(id);
 	}
-
-	//2. Remove from componentManager (TODO: reset components)
 	entities.erase(id);
 
-	//FIXME: Figure out how and when to remove an entity from hashGrids
+	//2. Remove from componentManager (TODO: reset components)
 
 	//3. ReleaseId to idmanager
 	idManager->releaseId(id);

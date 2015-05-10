@@ -17,6 +17,8 @@
 #include "textureboundingbox.hpp"
 #include "sizeboundingbox.hpp"
 #include "soundsystem.hpp"
+#include "healthsystem.hpp"
+#include "removesystem.hpp"
 
 using namespace std;
 
@@ -44,6 +46,8 @@ int main(int argc, char** argv) {
 	CollisionSystem collisionSystem(&sizeHashGridSystem);
 	SoundSystem soundSystem;
 	AnimationSystem animationSystem;
+	HealthSystem healthSystem;
+	RemoveSystem removeSystem(&entityManager);
 
 	systemManager.add(&moveSystem);
 	systemManager.add(&renderSystem);
@@ -52,6 +56,8 @@ int main(int argc, char** argv) {
 	systemManager.add(&sizeHashGridSystem);
 	systemManager.add(&soundSystem);
 	systemManager.add(&animationSystem);
+	systemManager.add(&healthSystem);
+	systemManager.add(&removeSystem);
 
 	auto playerId = entityManager.createFatMan();
 	auto botId = entityManager.createFatMan({60, 20});
