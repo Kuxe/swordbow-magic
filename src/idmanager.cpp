@@ -4,7 +4,7 @@
 using namespace std;
 
 IdManager::IdManager() {
-	for(unsigned int freeId = 1; freeId < MAX_IDS; freeId++) {
+	for(unsigned int freeId = MAX_IDS-1; freeId > 0; freeId--) {
 		freeIds.push(freeId);
 	}
 }
