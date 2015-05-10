@@ -95,6 +95,18 @@ RenderSystem::RenderSystem() {
             "./resources/images/player.bmp",
             "./resources/images/grass.bmp",
 			"./resources/images/SmallTree.png",
+            "./resources/images/playerv2.png",
+
+
+            "./resources/images/playerv3_front.png",
+            "./resources/images/playerv3_back.png",
+            "./resources/images/playerv3_left.png",
+            "./resources/images/playerv3_right.png",
+
+            "./resources/images/playerv3_front_run1.png",
+            "./resources/images/playerv3_front_run2.png",
+            "./resources/images/playerv3_front_run3.png",
+            "./resources/images/playerv3_front_run4.png",
             }
         )
     {
