@@ -2,6 +2,7 @@
 #define COMPONENTMANAGER_H
 
 #include <unordered_map>
+#include "animationcomponent.hpp"
 #include "movecomponent.hpp"
 #include "rendercomponent.hpp"
 #include "inputcomponent.hpp"
@@ -29,6 +30,7 @@ class ComponentManager {
     unordered_map<ID, PressKeyEventComponent> pressKeyEventComponents;
     unordered_map<ID, ReleaseKeyEventComponent> releaseKeyEventComponents;
     unordered_map<ID, SoundComponent> soundComponents;
+    unordered_map<ID, AnimationComponent> animationComponents;
 
 	MoveComponent* createMoveComponent(ID id);
 	RenderComponent* createRenderComponent(ID id);
@@ -40,6 +42,7 @@ class ComponentManager {
     PressKeyEventComponent* createPressKeyEventComponent(ID id);
     ReleaseKeyEventComponent* createReleaseKeyEventComponent(ID id);
     SoundComponent* createSoundComponent(ID id);
+    AnimationComponent* createAnimationComponent(ID id);
 };
 
 #endif //COMPONENTMANAGER_H

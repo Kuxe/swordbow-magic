@@ -1,5 +1,6 @@
 #include <iostream>
 #include <SDL2/SDL.h>
+#include "animationsystem.hpp"
 #include "deltatime.hpp"
 #include "eventmanager.hpp"
 #include "componentmanager.hpp"
@@ -42,6 +43,7 @@ int main(int argc, char** argv) {
 	RenderSystem renderSystem;
 	CollisionSystem collisionSystem(&sizeHashGridSystem);
 	SoundSystem soundSystem;
+	AnimationSystem animationSystem;
 
 	systemManager.add(&moveSystem);
 	systemManager.add(&renderSystem);
@@ -49,6 +51,7 @@ int main(int argc, char** argv) {
 	systemManager.add(&textureHashGridSystem);
 	systemManager.add(&sizeHashGridSystem);
 	systemManager.add(&soundSystem);
+	systemManager.add(&animationSystem);
 
 	auto playerId = entityManager.createPlayer();
 	World world(&entityManager);

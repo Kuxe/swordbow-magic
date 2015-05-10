@@ -58,3 +58,8 @@ SoundComponent* ComponentManager::createSoundComponent(ID id) {
 	soundComponents.insert(make_pair(id, SoundComponent()));
 	return &soundComponents.at(id);
 }
+
+AnimationComponent* ComponentManager::createAnimationComponent(ID id) {
+	animationComponents.insert(make_pair(id, AnimationComponent()));
+	return &animationComponents.at(id);
+}
