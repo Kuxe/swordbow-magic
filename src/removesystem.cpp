@@ -25,7 +25,7 @@ void RemoveSystem::update() {
 
     queue<ID> doomedIds;
 
-    for(auto id : ids) {
+    for(auto id : activeIds) {
         //1. If component have any last wishes, such as exploding or playing death sound
         //This would be the place to ensure that will happen
 
@@ -44,5 +44,9 @@ const string RemoveSystem::getIdentifier() const {
     return "RemoveSystem";
 }
 void RemoveSystem::activateId(ID id) {
+    if(ids.find(id) == ids.end()) {
+        return;
+    }
 
+    activeIds.insert(id);
 }

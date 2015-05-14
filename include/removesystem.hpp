@@ -12,6 +12,7 @@ class EntityManager;
 class RemoveSystem : public ISystem {
 private:
     unordered_set<ID> ids;
+    unordered_set<ID> activeIds;
     EntityManager* entityManager;
 
 public:
