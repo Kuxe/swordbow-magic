@@ -2,6 +2,7 @@
 #include "componentmanager.hpp"
 #include "idmanager.hpp"
 #include <iostream>
+#include <forward_list>
 
 #include "systemmanager.hpp"
 #include "rendersystem.hpp"
@@ -41,17 +42,18 @@ ID EntityManager::createFatMan(FatManData data) {
 
 	//Create components from componentmanager
 	auto moveComponent = componentManager->createMoveComponent(id);
-	componentManager->createInputComponent(id);
+	auto inputComponent = componentManager->createInputComponent(id);
 	auto sizeComponent = componentManager->createSizeComponent(id);
 	auto renderComponent = componentManager->createRenderComponent(id);
 	auto nameComponent = componentManager->createNameComponent(id);
 	auto moveEventComponent = componentManager->createMoveEventComponent(id);
-	auto pressKeyEventComponent = componentManager->createPressKeyEventComponent(id);
 	auto releaseKeyEventComponent = componentManager->createReleaseKeyEventComponent(id);
 	auto soundComponent = componentManager->createSoundComponent(id);
 	auto animationComponent = componentManager->createAnimationComponent(id);
 	componentManager->createHealthComponent(id);
 	componentManager->createRemoveComponent(id);
+	componentManager->createAttackComponent(id);
+	auto commandComponent = componentManager->createCommandComponent(id);
 
 	//If you'd like to change default initialization-data in a component
 	//Just save a pointer to the component like above and modify it like bellow
@@ -110,7 +112,47 @@ ID EntityManager::createFatMan(FatManData data) {
 	moveEventComponent->addCommand(new ActivateId(id, "SizeHashGridSystem", systemManager));
 	moveEventComponent->addCommand(new PlaySound(static_cast<SoundSystem*>(systemManager->getSystem("SoundSystem")), soundComponent->walk));
 
-	pressKeyEventComponent->addCommand(new AddIdToSystem(id, "MoveSystem", systemManager));
+	inputComponent->bindings.insert(make_pair(119 /*SDLK_W*/, 1 /*move up*/));
+	inputComponent->bindings.insert(make_pair(100 /*SDLK_D*/, 2 /*move right*/));
+	inputComponent->bindings.insert(make_pair(97 /*SDLK_S*/, 3 /*move down*/));
+	inputComponent->bindings.insert(make_pair(115 /*SDLK_A*/, 4 /*move left*/));
+	inputComponent->bindings.insert(make_pair(32 /*SDLK_SPACE*/, 5 /*attack*/));
+
+	commandComponent->commands.insert(make_pair(
+		1,
+		forward_list<ICommand*> {
+			new AddIdToSystem(id, "MoveSystem", systemManager),
+		}
+	));
+
+	commandComponent->commands.insert(make_pair(
+		2,
+		forward_list<ICommand*> {
+			new AddIdToSystem(id, "MoveSystem", systemManager),
+		}
+	));
+
+	commandComponent->commands.insert(make_pair(
+		3,
+		forward_list<ICommand*> {
+			new AddIdToSystem(id, "MoveSystem", systemManager),
+		}
+	));
+
+	commandComponent->commands.insert(make_pair(
+		4,
+		forward_list<ICommand*> {
+			new AddIdToSystem(id, "MoveSystem", systemManager),
+		}
+	));
+
+	commandComponent->commands.insert(make_pair(
+		5,
+		forward_list<ICommand*> {
+			new ActivateId(id, "AttackSystem", systemManager),
+		}
+	));
+
 	releaseKeyEventComponent->addCommand(new RemoveIdFromSystem(id, "MoveSystem", systemManager));
 
 	//Tell the entity what systems belongs to
@@ -126,6 +168,8 @@ ID EntityManager::createFatMan(FatManData data) {
 				systemManager->getSystem("AnimationSystem"),
 				systemManager->getSystem("HealthSystem"),
 				systemManager->getSystem("RemoveSystem"),
+				systemManager->getSystem("AttackSystem"),
+				systemManager->getSystem("InputSystem"),
 			}
 		)
 	);

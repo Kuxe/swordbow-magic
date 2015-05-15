@@ -7,6 +7,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 add_executable(swordbow-magic
     src/animationsystem.cpp
+    src/attacksystem.cpp
     src/collisionsystem.cpp
     src/componentmanager.cpp
     src/deltatime.cpp
@@ -15,6 +16,7 @@ add_executable(swordbow-magic
     src/hashgridsystem.cpp
     src/healthsystem.cpp
     src/idmanager.cpp
+    src/inputsystem.cpp
     src/main.cpp
     src/movecomponent.cpp
     src/movesystem.cpp

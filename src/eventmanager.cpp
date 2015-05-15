@@ -2,15 +2,13 @@
 #include <SDL2/SDL.h>
 
 #include "inputcomponent.hpp"
-#include "presskeyeventcomponent.hpp"
 #include "releasekeyeventcomponent.hpp"
 #include "componentmanager.hpp"
+#include "inputsystem.hpp"
 
-#include <iostream>
-using namespace std;
-
-EventManager::EventManager(bool* runningPtr)
-	: runningPtr(runningPtr) {
+EventManager::EventManager(bool* runningPtr, InputSystem* inputSystem) :
+	runningPtr(runningPtr),
+	inputSystem(inputSystem) {
 
 }
 
@@ -30,25 +28,30 @@ void EventManager::process() {
 				switch(event.key.keysym.sym) {
 					case SDLK_w: {
 						userInputComponent->w = true;
-						userPressKeyEventComponent->happen();
 						break;
 					}
 					case SDLK_a: {
 						userInputComponent->a = true;
-						userPressKeyEventComponent->happen();
 						break;
 					}
 					case SDLK_s: {
 						userInputComponent->s = true;
-						userPressKeyEventComponent->happen();
 						break;
 					}
 					case SDLK_d: {
 						userInputComponent->d = true;
-						userPressKeyEventComponent->happen();
+						break;
+					}
+					case SDLK_SPACE: {
+						userInputComponent->space = true;
 						break;
 					}
 				}
+
+				//Save the keypress for later processing within inputsystem
+				userInputComponent->presses.push(event.key.keysym.sym);
+				inputSystem->activateId(playerId);
+
 			} break;
 
 			//If user released a key
@@ -71,8 +74,15 @@ void EventManager::process() {
 						userInputComponent->d = false;
 						break;
 					}
+					case SDLK_SPACE: {
+						userInputComponent->space = false;
+						break;
+					}
 				}
 
+				userInputComponent->presses.push(event.key.keysym.sym);
+
+				//TODO: 2015-05-15 Should probably remove this bellow...
 				//TODO: This event doesnt make sense. "RelaseKeyEvent" but only
 				//if all keys are release.. hmm.. userReleaseKeyEvent does, as of
 				//2015-05-03 01:41 remove the player from movesystem, which should
@@ -89,6 +99,6 @@ void EventManager::process() {
 
 void EventManager::setPlayer(ID id, ComponentManager* componentManager) {
 	userInputComponent = &componentManager->inputComponents.at(id);
-	userPressKeyEventComponent = &componentManager->pressKeyEventComponents.at(id);
 	userReleaseKeyEventComponent = &componentManager->releaseKeyEventComponents.at(id);
+	playerId = id;
 }

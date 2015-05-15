@@ -4,21 +4,22 @@
 #include <SDL2/SDL.h>
 
 class InputComponent;
-class PressKeyEventComponent;
 class ReleaseKeyEventComponent;
 class ComponentManager;
 
 typedef unsigned int ID;
 
+class InputSystem;
 class EventManager {
  private:
  	SDL_Event event;
  	bool* runningPtr;
     InputComponent* userInputComponent;
-    PressKeyEventComponent* userPressKeyEventComponent;
     ReleaseKeyEventComponent* userReleaseKeyEventComponent;
+    ID playerId;
+    InputSystem* inputSystem;
  public:
- 	EventManager(bool* runningPtr);
+ 	EventManager(bool* runningPtr, InputSystem* inputSystem);
 	void process();
     void setPlayer(ID id, ComponentManager* componentManager);
 };

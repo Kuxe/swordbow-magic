@@ -37,11 +37,6 @@ MoveEventComponent* ComponentManager::createMoveEventComponent(ID id) {
 	return &moveEventComponents.at(id);
 }
 
-PressKeyEventComponent* ComponentManager::createPressKeyEventComponent(ID id) {
-	pressKeyEventComponents.insert(make_pair(id, PressKeyEventComponent()));
-	return &pressKeyEventComponents.at(id);
-}
-
 ReleaseKeyEventComponent* ComponentManager::createReleaseKeyEventComponent(ID id) {
 	releaseKeyEventComponents.insert(make_pair(id, ReleaseKeyEventComponent()));
 	return &releaseKeyEventComponents.at(id);
@@ -65,4 +60,14 @@ HealthComponent* ComponentManager::createHealthComponent(ID id) {
 RemoveComponent* ComponentManager::createRemoveComponent(ID id) {
 	removeComponents.insert(make_pair(id, RemoveComponent()));
 	return &removeComponents.at(id);
+}
+
+AttackComponent* ComponentManager::createAttackComponent(ID id) {
+	attackComponents.insert(make_pair(id, AttackComponent()));
+	return &attackComponents.at(id);
+}
+
+CommandComponent* ComponentManager::createCommandComponent(ID id) {
+	commandComponents.insert(make_pair(id, CommandComponent()));
+	return &commandComponents.at(id);
 }

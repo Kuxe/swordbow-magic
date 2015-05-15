@@ -10,11 +10,12 @@
 #include "sizecomponent.hpp"
 #include "namecomponent.hpp"
 #include "moveeventcomponent.hpp"
-#include "presskeyeventcomponent.hpp"
 #include "releasekeyeventcomponent.hpp"
 #include "soundcomponent.hpp"
 #include "healthcomponent.hpp"
 #include "removecomponent.hpp"
+#include "attackcomponent.hpp"
+#include "commandcomponent.hpp"
 
 using namespace std;
 
@@ -29,12 +30,13 @@ class ComponentManager {
 	unordered_map<ID, SizeComponent> sizeComponents;
     unordered_map<ID, NameComponent> nameComponents;
     unordered_map<ID, MoveEventComponent> moveEventComponents;
-    unordered_map<ID, PressKeyEventComponent> pressKeyEventComponents;
     unordered_map<ID, ReleaseKeyEventComponent> releaseKeyEventComponents;
     unordered_map<ID, SoundComponent> soundComponents;
     unordered_map<ID, AnimationComponent> animationComponents;
     unordered_map<ID, HealthComponent> healthComponents;
     unordered_map<ID, RemoveComponent> removeComponents;
+    unordered_map<ID, AttackComponent> attackComponents;
+    unordered_map<ID, CommandComponent> commandComponents;
 
 	MoveComponent* createMoveComponent(ID id);
 	RenderComponent* createRenderComponent(ID id);
@@ -43,12 +45,13 @@ class ComponentManager {
 	SizeComponent* createSizeComponent(ID id);
     NameComponent* createNameComponent(ID id);
     MoveEventComponent* createMoveEventComponent(ID id);
-    PressKeyEventComponent* createPressKeyEventComponent(ID id);
     ReleaseKeyEventComponent* createReleaseKeyEventComponent(ID id);
     SoundComponent* createSoundComponent(ID id);
     AnimationComponent* createAnimationComponent(ID id);
     HealthComponent* createHealthComponent(ID id);
     RemoveComponent* createRemoveComponent(ID id);
+    AttackComponent* createAttackComponent(ID id);
+    CommandComponent* createCommandComponent(ID id);
 };
 
 #endif //COMPONENTMANAGER_H

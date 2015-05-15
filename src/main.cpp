@@ -19,6 +19,8 @@
 #include "soundsystem.hpp"
 #include "healthsystem.hpp"
 #include "removesystem.hpp"
+#include "attacksystem.hpp"
+#include "inputsystem.hpp"
 
 using namespace std;
 
@@ -28,7 +30,6 @@ int main(int argc, char** argv) {
 	SDL_Init(0);
 
 	DeltaTime deltaTime;
-	EventManager eventManager(&running);
 
 	ComponentManager componentManager;
 	SystemManager systemManager(&componentManager, &deltaTime);
@@ -48,6 +49,8 @@ int main(int argc, char** argv) {
 	AnimationSystem animationSystem;
 	HealthSystem healthSystem;
 	RemoveSystem removeSystem(&entityManager);
+	AttackSystem attackSystem(&sizeHashGridSystem);
+	InputSystem inputSystem;
 
 	systemManager.add(&moveSystem);
 	systemManager.add(&renderSystem);
@@ -58,6 +61,10 @@ int main(int argc, char** argv) {
 	systemManager.add(&animationSystem);
 	systemManager.add(&healthSystem);
 	systemManager.add(&removeSystem);
+	systemManager.add(&attackSystem);
+	systemManager.add(&inputSystem);
+
+	EventManager eventManager(&running, &inputSystem);
 
 	auto playerId = entityManager.createFatMan();
 	auto botId = entityManager.createFatMan({60, 20});

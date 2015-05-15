@@ -2,6 +2,7 @@
 #include <iostream>
 #include "healthcomponent.hpp"
 #include "componentmanager.hpp"
+#include "systemmanager.hpp"
 
 using std::cout;
 using std::endl;
@@ -19,10 +20,10 @@ void HealthSystem::remove(ID id) {
 void HealthSystem::update() {
     for(auto id : ids) {
         auto& hc = componentManager->healthComponents.at(id);
-        hc.health--;
+
         //Check if id is dead
         if(hc.health <= 0) {
-            //Activate this id within some "removalSystem" of some sort
+            systemManager->getSystem("RemoveSystem")->activateId(id);
         }
     }
 }
