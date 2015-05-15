@@ -3,8 +3,10 @@
 
 #include "isystem.hpp"
 #include <unordered_set>
+#include <queue>
 
 using std::unordered_set;
+using std::queue;
 
 typedef unsigned int ID;
 
@@ -12,7 +14,7 @@ class EntityManager;
 class RemoveSystem : public ISystem {
 private:
     unordered_set<ID> ids;
-    unordered_set<ID> activeIds;
+    queue<ID> activeIds;
     EntityManager* entityManager;
 
 public:

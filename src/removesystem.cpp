@@ -22,19 +22,15 @@ void RemoveSystem::remove(ID id) {
     ids.erase(id);
 }
 void RemoveSystem::update() {
+    while(!activeIds.empty()) {
+        auto id = activeIds.front(); activeIds.pop();
 
-    queue<ID> doomedIds;
-
-    for(auto id : activeIds) {
         //1. If component have any last wishes, such as exploding or playing death sound
         //This would be the place to ensure that will happen
 
         //2. Kill the entity completely, not a single trace of it should exist beyond this point
         //(pushing it onto doomedIds to prevent iterator invalidations, it gets removed later)
-        doomedIds.push(id);
-    }
-    while(!doomedIds.empty()) {
-        entityManager->remove(doomedIds.front()); doomedIds.pop();
+        entityManager->remove(id);
     }
 }
 unsigned int RemoveSystem::count() const {
@@ -48,5 +44,5 @@ void RemoveSystem::activateId(ID id) {
         return;
     }
 
-    activeIds.insert(id);
+    activeIds.push(id);
 }
