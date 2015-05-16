@@ -270,7 +270,8 @@ void EntityManager::remove(ID id) {
 	//Remove from entitymanager
 	entities.erase(id);
 
-	//2. Remove from componentManager (TODO: reset components)
+	//2. Remove from componentManager
+	componentManager->clearComponents(id);
 
 	//3. ReleaseId to idmanager
 	idManager->releaseId(id);

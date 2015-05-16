@@ -1,8 +1,5 @@
 #include "componentmanager.hpp"
 
-//FIXME: Recreating an entity with a recycled ID might reuse old component datas
-//without reseting (or removing old component + inserting new component on same id)
-
 MoveComponent* ComponentManager::createMoveComponent(ID id) {
 	moveComponents.insert(make_pair(id, MoveComponent()));
 	return &moveComponents.at(id);
@@ -71,3 +68,20 @@ CommandComponent* ComponentManager::createCommandComponent(ID id) {
 	commandComponents.insert(make_pair(id, CommandComponent()));
 	return &commandComponents.at(id);
 }
+
+void ComponentManager::clearComponents(ID id) {
+	moveComponents.erase(id);
+	renderComponents.erase(id);
+	inputComponents.erase(id);
+	tileComponents.erase(id);
+	sizeComponents.erase(id);
+    nameComponents.erase(id);
+    releaseKeyEventComponents.erase(id);
+    moveEventComponents.erase(id);
+    soundComponents.erase(id);
+    animationComponents.erase(id);
+    healthComponents.erase(id);
+    removeComponents.erase(id);
+    attackComponents.erase(id);
+    commandComponents.erase(id);
+};

@@ -52,6 +52,8 @@ class ComponentManager {
     RemoveComponent* createRemoveComponent(ID id);
     AttackComponent* createAttackComponent(ID id);
     CommandComponent* createCommandComponent(ID id);
+
+    void clearComponents(ID id);
 };
 
 #endif //COMPONENTMANAGER_H
