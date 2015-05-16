@@ -263,9 +263,11 @@ ID EntityManager::createTile() {
 
 void EntityManager::remove(ID id) {
 	//1. Remove from systemManager
-	for(auto a : entities.at(id)) {
-		a->remove(id);
+	for(auto system : entities.at(id)) {
+		system->remove(id);
 	}
+
+	//Remove from entitymanager
 	entities.erase(id);
 
 	//2. Remove from componentManager (TODO: reset components)
