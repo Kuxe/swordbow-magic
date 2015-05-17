@@ -17,15 +17,13 @@ HashGridSystem::HashGridSystem(
 	const unsigned int worldWidth,
 	const unsigned int worldHeight,
 	const unsigned int side) :
-		componentManager(componentManager),
-		boundingBox(boundingBox),
-		side(side),
 		width(worldWidth / side + (worldWidth % side != 0)),
 		height(worldHeight / side + (worldHeight % side != 0)),
-		cellsCapacity((worldWidth / side + (worldWidth % side != 0)) * (worldHeight / side + (worldHeight % side != 0)))
-		 {
-	cells = new unordered_set<ID>[width * height];
-}
+		cellsCapacity(width * height),
+		cells(new unordered_set<ID>[cellsCapacity]),
+		side(side),
+		componentManager(componentManager),
+		boundingBox(boundingBox) { }
 
 HashGridSystem::~HashGridSystem() {
 	delete[] cells;

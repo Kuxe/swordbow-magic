@@ -17,9 +17,9 @@ class HashGridSystem : public SpatialIndexer, public ISystem {
 	private:
 		unordered_set<ID> ids;
 		queue<ID> activeIds;
-		const unsigned int cellsCapacity;
 		const unsigned int width;
 		const unsigned int height;
+		const unsigned int cellsCapacity;
 		unordered_set<ID>* cells;
 		const unsigned int side;
 
