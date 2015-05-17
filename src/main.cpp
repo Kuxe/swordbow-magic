@@ -2,7 +2,7 @@
 #include <SDL2/SDL.h>
 #include "animationsystem.hpp"
 #include "deltatime.hpp"
-#include "eventmanager.hpp"
+#include "keyboardsystem.hpp"
 #include "componentmanager.hpp"
 #include "systemmanager.hpp"
 #include "idmanager.hpp"
@@ -37,13 +37,13 @@ int main(int argc, char** argv) {
 
 	TextureBoundingBox textureBoundingBox(&componentManager);
 	SizeBoundingBox sizeBoundingBox(&componentManager);
-	HashGridSystem textureHashGridSystem(&componentManager, &textureBoundingBox);
-	HashGridSystem sizeHashGridSystem(&componentManager, &sizeBoundingBox);
 	IdManager idManager;
 
 	EntityManager entityManager(&systemManager, &componentManager, &idManager);
 
 	//Declare systems
+	HashGridSystem textureHashGridSystem(&componentManager, &textureBoundingBox);
+	HashGridSystem sizeHashGridSystem(&componentManager, &sizeBoundingBox);
 	MoveSystem moveSystem;
 	RenderSystem renderSystem;
 	CollisionSystem collisionSystem(&sizeHashGridSystem);
@@ -54,11 +54,13 @@ int main(int argc, char** argv) {
 	AttackSystem attackSystem(&sizeHashGridSystem);
 	InputSystem inputSystem;
 	CameraSystem cameraSystem(&renderSystem);
+	KeyboardSystem keyboardSystem(&running);
 
 	//Couple systems where neccesary
 	renderSystem.setCameraSystem(&cameraSystem);
 
-
+	//Add systems to systemmanager
+	systemManager.add(&keyboardSystem);
 	systemManager.add(&inputSystem);
 	systemManager.add(&moveSystem);
 	systemManager.add(&textureHashGridSystem);
@@ -72,11 +74,11 @@ int main(int argc, char** argv) {
 	systemManager.add(&healthSystem);
 	systemManager.add(&removeSystem);
 
-	EventManager eventManager(&running, &inputSystem);
-
+	//Create ids
 	auto playerId = entityManager.createFatMan({50, 50});
 	auto botId = entityManager.createFatMan({10, 10});
 
+	//Populate world with... world
 	World world(&entityManager);
 
 	for(int y = 1; y <= 3; y++) {
@@ -92,7 +94,7 @@ int main(int argc, char** argv) {
 	}
 
 	//Keystroke events should change the input component of the player
-	eventManager.setPlayer(playerId, &componentManager);
+	entityManager.registerIdToSystem("KeyboardSystem", playerId);
 
 	//Camera should revolve around the player
 	entityManager.registerIdToSystem("CameraSystem", playerId);
@@ -102,10 +104,7 @@ int main(int argc, char** argv) {
 
 	while(running) {
 		deltaTime.start();
-
 		systemManager.update();
-		eventManager.process();
-
 		deltaTime.stop();
 	}
 

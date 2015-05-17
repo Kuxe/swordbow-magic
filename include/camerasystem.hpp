@@ -11,7 +11,7 @@ typedef unsigned int ID;
 class RenderSystem;
 class CameraSystem : public ISystem {
 private:
-    ID cameraSource;
+    ID cameraSource = 0;
     RenderSystem* renderSystem;
     SDL_Rect camera;
 

@@ -1,18 +1,31 @@
-#include "eventmanager.hpp"
+#include "keyboardsystem.hpp"
 #include <SDL2/SDL.h>
 
 #include "inputcomponent.hpp"
 #include "releasekeyeventcomponent.hpp"
 #include "componentmanager.hpp"
 #include "inputsystem.hpp"
+#include "systemmanager.hpp"
 
-EventManager::EventManager(bool* runningPtr, InputSystem* inputSystem) :
-	runningPtr(runningPtr),
-	inputSystem(inputSystem) {
+KeyboardSystem::KeyboardSystem(bool* runningPtr) :
+	runningPtr(runningPtr) {
 
 }
 
-void EventManager::process() {
+void KeyboardSystem::add(ID id) {
+	this->id = id;
+}
+void KeyboardSystem::remove(ID id) {
+	if(this->id == id) this->id = 0;
+}
+
+void KeyboardSystem::update() {
+	if(id == 0) return;
+
+	auto& ic = componentManager->inputComponents.at(id);
+	auto& urkc = componentManager->releaseKeyEventComponents.at(id);
+	auto inputSystem = systemManager->getSystem("InputSystem");
+
 	//Fetch all events that ocurred...
 	while(SDL_PollEvent(&event) != 0) {
 		//And take appropiate action!
@@ -27,30 +40,30 @@ void EventManager::process() {
 				//Figure out what key was pressed
 				switch(event.key.keysym.sym) {
 					case SDLK_w: {
-						userInputComponent->w = true;
+						ic.w = true;
 						break;
 					}
 					case SDLK_a: {
-						userInputComponent->a = true;
+						ic.a = true;
 						break;
 					}
 					case SDLK_s: {
-						userInputComponent->s = true;
+						ic.s = true;
 						break;
 					}
 					case SDLK_d: {
-						userInputComponent->d = true;
+						ic.d = true;
 						break;
 					}
 					case SDLK_SPACE: {
-						userInputComponent->space = true;
+						ic.space = true;
 						break;
 					}
 				}
 
 				//Save the keypress for later processing within inputsystem
-				userInputComponent->presses.push(event.key.keysym.sym);
-				inputSystem->activateId(playerId);
+				ic.presses.push(event.key.keysym.sym);
+				inputSystem->activateId(id);
 
 			} break;
 
@@ -59,37 +72,37 @@ void EventManager::process() {
 				//Figure out what key was released
 				switch(event.key.keysym.sym) {
 					case SDLK_w: {
-						userInputComponent->w = false;
+						ic.w = false;
 						break;
 					}
 					case SDLK_a: {
-						userInputComponent->a = false;
+						ic.a = false;
 						break;
 					}
 					case SDLK_s: {
-						userInputComponent->s = false;
+						ic.s = false;
 						break;
 					}
 					case SDLK_d: {
-						userInputComponent->d = false;
+						ic.d = false;
 						break;
 					}
 					case SDLK_SPACE: {
-						userInputComponent->space = false;
+						ic.space = false;
 						break;
 					}
 				}
 
-				userInputComponent->presses.push(event.key.keysym.sym);
+				ic.presses.push(event.key.keysym.sym);
 
 				//TODO: 2015-05-15 Should probably remove this bellow...
 				//TODO: This event doesnt make sense. "RelaseKeyEvent" but only
 				//if all keys are release.. hmm.. userReleaseKeyEvent does, as of
 				//2015-05-03 01:41 remove the player from movesystem, which should
 				//only happen if no keys are down. Hence this piece of shitty code.
-				if( userInputComponent->w == false && userInputComponent->a == false &&
-					userInputComponent->s == false && userInputComponent->d == false) {
-						userReleaseKeyEventComponent->happen();
+				if( ic.w == false && ic.a == false &&
+					ic.s == false && ic.d == false) {
+						urkc.happen();
 					}
 			} break;
 		}
@@ -97,8 +110,12 @@ void EventManager::process() {
 	}
 }
 
-void EventManager::setPlayer(ID id, ComponentManager* componentManager) {
-	userInputComponent = &componentManager->inputComponents.at(id);
-	userReleaseKeyEventComponent = &componentManager->releaseKeyEventComponents.at(id);
-	playerId = id;
+unsigned int KeyboardSystem::count() const {
+	return id > 0;
+}
+const std::string KeyboardSystem::getIdentifier() const {
+	return "KeyboardSystem";
+}
+void KeyboardSystem::activateId(ID id) {
+
 }

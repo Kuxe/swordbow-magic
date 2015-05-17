@@ -13,11 +13,11 @@ add_executable(swordbow-magic
     src/componentmanager.cpp
     src/deltatime.cpp
     src/entitymanager.cpp
-    src/eventmanager.cpp
     src/hashgridsystem.cpp
     src/healthsystem.cpp
     src/idmanager.cpp
     src/inputsystem.cpp
+    src/keyboardsystem.cpp
     src/main.cpp
     src/movecomponent.cpp
     src/movesystem.cpp
