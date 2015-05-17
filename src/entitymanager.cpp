@@ -112,67 +112,47 @@ ID EntityManager::createFatMan(FatManData data) {
 	moveEventComponent->addCommand(new ActivateId(id, "SizeHashGridSystem", systemManager));
 	moveEventComponent->addCommand(new PlaySound(static_cast<SoundSystem*>(systemManager->getSystem("SoundSystem")), soundComponent->walk));
 
-	inputComponent->bindings.insert(make_pair(119 /*SDLK_W*/, 1 /*move up*/));
-	inputComponent->bindings.insert(make_pair(100 /*SDLK_D*/, 2 /*move right*/));
-	inputComponent->bindings.insert(make_pair(97 /*SDLK_S*/, 3 /*move down*/));
-	inputComponent->bindings.insert(make_pair(115 /*SDLK_A*/, 4 /*move left*/));
-	inputComponent->bindings.insert(make_pair(32 /*SDLK_SPACE*/, 5 /*attack*/));
+	inputComponent->bindings[119] = 1;
+	inputComponent->bindings[100] = 2;
+	inputComponent->bindings[97] = 3;
+	inputComponent->bindings[115] = 4;
+	inputComponent->bindings[32] = 5;
 
-	commandComponent->commands.insert(make_pair(
-		1,
-		forward_list<ICommand*> {
-			new AddIdToSystem(id, "MoveSystem", systemManager),
-		}
-	));
+	commandComponent->commands[1] = {
+		new AddIdToSystem(id, "MoveSystem", systemManager),
+	};
 
-	commandComponent->commands.insert(make_pair(
-		2,
-		forward_list<ICommand*> {
-			new AddIdToSystem(id, "MoveSystem", systemManager),
-		}
-	));
+	commandComponent->commands[2] = {
+		new AddIdToSystem(id, "MoveSystem", systemManager),
+	};
 
-	commandComponent->commands.insert(make_pair(
-		3,
-		forward_list<ICommand*> {
-			new AddIdToSystem(id, "MoveSystem", systemManager),
-		}
-	));
+	commandComponent->commands[3] = {
+		new AddIdToSystem(id, "MoveSystem", systemManager),
+	};
 
-	commandComponent->commands.insert(make_pair(
-		4,
-		forward_list<ICommand*> {
-			new AddIdToSystem(id, "MoveSystem", systemManager),
-		}
-	));
+	commandComponent->commands[4] = {
+		new AddIdToSystem(id, "MoveSystem", systemManager),
+	};
 
-	commandComponent->commands.insert(make_pair(
-		5,
-		forward_list<ICommand*> {
-			new ActivateId(id, "AttackSystem", systemManager),
-		}
-	));
+	commandComponent->commands[5] = {
+		new ActivateId(id, "AttackSystem", systemManager),
+	};
 
 	releaseKeyEventComponent->addCommand(new RemoveIdFromSystem(id, "MoveSystem", systemManager));
 
 	//Tell the entity what systems belongs to
-	entities.insert(
-		make_pair(
-			id,
-			vector<ISystem*> {
-				systemManager->getSystem("RenderSystem"),
-				systemManager->getSystem("MoveSystem"),
-				systemManager->getSystem("CollisionSystem"),
-				systemManager->getSystem("TextureHashGridSystem"),
-				systemManager->getSystem("SizeHashGridSystem"),
-				systemManager->getSystem("AnimationSystem"),
-				systemManager->getSystem("HealthSystem"),
-				systemManager->getSystem("RemoveSystem"),
-				systemManager->getSystem("AttackSystem"),
-				systemManager->getSystem("InputSystem"),
-			}
-		)
-	);
+	entities[id] = {
+		systemManager->getSystem("RenderSystem"),
+		systemManager->getSystem("MoveSystem"),
+		systemManager->getSystem("CollisionSystem"),
+		systemManager->getSystem("TextureHashGridSystem"),
+		systemManager->getSystem("SizeHashGridSystem"),
+		systemManager->getSystem("AnimationSystem"),
+		systemManager->getSystem("HealthSystem"),
+		systemManager->getSystem("RemoveSystem"),
+		systemManager->getSystem("AttackSystem"),
+		systemManager->getSystem("InputSystem"),
+	};
 
 
 
@@ -211,17 +191,12 @@ ID EntityManager::createTree() {
 
 	nameComponent->name = "tree";
 
-	entities.insert(
-		make_pair(
-			id,
-			vector<ISystem*> {
-				systemManager->getSystem("RenderSystem"),
-				systemManager->getSystem("CollisionSystem"),
-				systemManager->getSystem("TextureHashGridSystem"),
-				systemManager->getSystem("SizeHashGridSystem"),
-			}
-		)
-	);
+	entities[id] = {
+		systemManager->getSystem("RenderSystem"),
+		systemManager->getSystem("CollisionSystem"),
+		systemManager->getSystem("TextureHashGridSystem"),
+		systemManager->getSystem("SizeHashGridSystem"),
+	};
 
 	for(auto a : entities.at(id)) {
 		a->add(id);
@@ -245,15 +220,10 @@ ID EntityManager::createTile() {
 
 	nameComponent->name = "tile";
 
-	entities.insert(
-		make_pair(
-			id,
-			vector<ISystem*> {
-				systemManager->getSystem("RenderSystem"),
-				systemManager->getSystem("TextureHashGridSystem"),
-			}
-		)
-	);
+	entities[id] = {
+		systemManager->getSystem("RenderSystem"),
+		systemManager->getSystem("TextureHashGridSystem"),
+	};
 
 	for(auto a : entities.at(id)) {
 		a->add(id);
