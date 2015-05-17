@@ -56,7 +56,6 @@ class RenderSystem : public ISystem {
 
 	static constexpr ushort SCREEN_WIDTH = 640;
 	static constexpr ushort SCREEN_HEIGHT = 480;
-	bool renderingRequired = true;
 
 	SDL_Renderer* renderer = nullptr;
 	SDL_Window* window = nullptr;
@@ -64,8 +63,6 @@ class RenderSystem : public ISystem {
 	SDL_Texture* fontTexture = nullptr;
 	TTF_Font* font;
 	unordered_map<string, TextureData> textureDatas;
-
-	ID cameraTarget;
 
 	void renderArea(heap<RenderData>& pq, SpatialIndexer::Rect area);
 	void renderTexts();
@@ -76,7 +73,6 @@ class RenderSystem : public ISystem {
 	void add(ID id);
 	void remove(ID id);
 	void update();
-	void update2();
 	unsigned int count() const;
 	void render(const RenderData& rd) const;
 	const string getIdentifier() const;
