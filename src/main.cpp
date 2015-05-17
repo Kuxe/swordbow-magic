@@ -95,7 +95,7 @@ int main(int argc, char** argv) {
 	eventManager.setPlayer(playerId, &componentManager);
 
 	//Camera should revolve around the player
-	entityManager.registerIdToSystem("CameraSystem", botId);
+	entityManager.registerIdToSystem("CameraSystem", playerId);
 
 	//Play some sweet music
 	soundSystem.playMusic("./resources/sounds/naturesounds.ogg");
