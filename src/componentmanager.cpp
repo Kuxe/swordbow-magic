@@ -7,7 +7,6 @@ void ComponentManager::clearComponents(ID id) {
 	tileComponents.erase(id);
 	sizeComponents.erase(id);
     nameComponents.erase(id);
-    releaseKeyEventComponents.erase(id);
     moveEventComponents.erase(id);
     soundComponents.erase(id);
     animationComponents.erase(id);

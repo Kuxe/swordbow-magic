@@ -10,7 +10,6 @@
 #include "sizecomponent.hpp"
 #include "namecomponent.hpp"
 #include "moveeventcomponent.hpp"
-#include "releasekeyeventcomponent.hpp"
 #include "soundcomponent.hpp"
 #include "healthcomponent.hpp"
 #include "removecomponent.hpp"
@@ -30,7 +29,6 @@ class ComponentManager {
 	unordered_map<ID, SizeComponent> sizeComponents;
     unordered_map<ID, NameComponent> nameComponents;
     unordered_map<ID, MoveEventComponent> moveEventComponents;
-    unordered_map<ID, ReleaseKeyEventComponent> releaseKeyEventComponents;
     unordered_map<ID, SoundComponent> soundComponents;
     unordered_map<ID, AnimationComponent> animationComponents;
     unordered_map<ID, HealthComponent> healthComponents;
@@ -58,9 +56,6 @@ class ComponentManager {
     }
     constexpr MoveEventComponent* createMoveEventComponent(ID id) {
         return &(moveEventComponents[id] = MoveEventComponent());
-    }
-    constexpr ReleaseKeyEventComponent* createReleaseKeyEventComponent(ID id) {
-        return &(releaseKeyEventComponents[id] = ReleaseKeyEventComponent());
     }
     constexpr SoundComponent* createSoundComponent(ID id) {
         return &(soundComponents[id] = SoundComponent());

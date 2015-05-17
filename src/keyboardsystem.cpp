@@ -2,7 +2,6 @@
 #include <SDL2/SDL.h>
 
 #include "inputcomponent.hpp"
-#include "releasekeyeventcomponent.hpp"
 #include "componentmanager.hpp"
 #include "inputsystem.hpp"
 #include "systemmanager.hpp"
@@ -34,7 +33,6 @@ void KeyboardSystem::update() {
 		}
 	} else {
 		auto& ic = componentManager->inputComponents.at(id);
-		auto& urkc = componentManager->releaseKeyEventComponents.at(id);
 		auto inputSystem = systemManager->getSystem("InputSystem");
 
 		//Fetch all events that ocurred...
@@ -104,17 +102,9 @@ void KeyboardSystem::update() {
 						}
 					}
 
-					ic.presses.push(event.key.keysym.sym);
+					//Save the keyrelease for later processing within inputsystem
+					ic.releases.push(event.key.keysym.sym);
 
-					//TODO: 2015-05-15 Should probably remove this bellow...
-					//TODO: This event doesnt make sense. "RelaseKeyEvent" but only
-					//if all keys are release.. hmm.. userReleaseKeyEvent does, as of
-					//2015-05-03 01:41 remove the player from movesystem, which should
-					//only happen if no keys are down. Hence this piece of shitty code.
-					if( ic.w == false && ic.a == false &&
-						ic.s == false && ic.d == false) {
-							urkc.happen();
-						}
 				} break;
 			}
 		}

@@ -47,7 +47,6 @@ ID EntityManager::createFatMan(FatManData data) {
 	auto renderComponent = componentManager->createRenderComponent(id);
 	auto nameComponent = componentManager->createNameComponent(id);
 	auto moveEventComponent = componentManager->createMoveEventComponent(id);
-	auto releaseKeyEventComponent = componentManager->createReleaseKeyEventComponent(id);
 	auto soundComponent = componentManager->createSoundComponent(id);
 	auto animationComponent = componentManager->createAnimationComponent(id);
 	componentManager->createHealthComponent(id);
@@ -137,8 +136,6 @@ ID EntityManager::createFatMan(FatManData data) {
 	commandComponent->commands[5] = {
 		new ActivateId(id, "AttackSystem", systemManager),
 	};
-
-	releaseKeyEventComponent->addCommand(new RemoveIdFromSystem(id, "MoveSystem", systemManager));
 
 	//Tell the entity what systems belongs to
 	entities[id] = {
