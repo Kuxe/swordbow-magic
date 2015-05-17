@@ -45,10 +45,8 @@ void AttackSystem::update() {
 
             //... if so, apply attack damage on the impactarea
             for(auto attackedId : hashgrid->query(impactArea)) {
-                cout << componentManager->nameComponents.at(attackedId).name << " got attacked!" << endl;
-                auto& hc = componentManager->healthComponents.at(id); //FIXME: What happens if theres no healthcomponent at id?
+                auto& hc = componentManager->healthComponents.at(attackedId); //FIXME: What happens if theres no healthcomponent at id?
                 hc.health -= ac.damage;
-                cout << hc.health << "HP" << endl;
             }
         }
 
