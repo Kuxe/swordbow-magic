@@ -1,8 +1,8 @@
 #ifndef SYSTEMMANGER_H
 #define SYSTEMMANGER_H
 
-#include <forward_list>
 #include <unordered_map>
+#include <vector>
 
 using namespace std;
 
@@ -17,13 +17,10 @@ class SystemManager {
  		in order to aquire the components
  	*/
 
- 	static constexpr unsigned char MAX_SYSTEMS = 255;
-
  	SystemManager(ComponentManager* componentManager, DeltaTime* deltaTime);
  	ComponentManager* const componentManager;
  	DeltaTime* const deltaTime;
-	//forward_list<ISystem*> systems;
-	ISystem* systems[MAX_SYSTEMS] {0};
+	vector<ISystem*> systems;
 	unordered_map<string, ISystem*> systemByIdentifiers;
 	void add(ISystem* system);
 	void remove(ISystem* system);
