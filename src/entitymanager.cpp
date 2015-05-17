@@ -276,3 +276,9 @@ void EntityManager::remove(ID id) {
 	//3. ReleaseId to idmanager
 	idManager->releaseId(id);
 }
+
+void EntityManager::registerIdToSystem(const string systemIdentifier, ID id) {
+	auto system = systemManager->getSystem(systemIdentifier);
+	entities.at(id).push_back(system);
+	system->add(id);
+}

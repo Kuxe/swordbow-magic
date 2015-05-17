@@ -24,6 +24,8 @@ class SpatialIndexer;
 
 typedef unsigned int ID;
 
+class CameraSystem;
+
 struct TextureData {
 	SDL_Texture* texture;
 	unsigned int width;
@@ -49,6 +51,7 @@ class RenderSystem : public ISystem {
 	queue<ID> activeIds;
 	queue<SpatialIndexer::Rect> previousDrawAreas;
 	queue<Text> texts;
+	CameraSystem* cameraSystem;
 
 
 	static constexpr ushort SCREEN_WIDTH = 640;
@@ -79,9 +82,12 @@ class RenderSystem : public ISystem {
 	const string getIdentifier() const;
 	void calculateZIndex(ID id);
 	void activateId(ID id);
-	void setCameraTarget(ID id);
+	void setCameraSystem(CameraSystem* cameraSystem);
 	void setImage(ID id, string path);
 	void printText(const Text& text);
+	static constexpr ushort getScreenWidth() { return SCREEN_WIDTH; }
+    static constexpr ushort getScreenHeight() { return SCREEN_HEIGHT; }
+
 };
 
 #endif //RENDERSYSTEM_H

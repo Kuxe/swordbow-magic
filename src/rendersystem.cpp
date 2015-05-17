@@ -13,6 +13,7 @@
 #include "systemmanager.hpp"
 #include "hashgridsystem.hpp"
 #include "deltatime.hpp"
+#include "camerasystem.hpp"
 
 using namespace std;
 
@@ -220,15 +221,6 @@ void RenderSystem::update() {
 		render(pq.poll());
 	}
 
-	const auto& cameraXpos = componentManager->moveComponents.at(cameraTarget).xpos - SCREEN_WIDTH/2;
-	const auto& cameraYpos = componentManager->moveComponents.at(cameraTarget).ypos - SCREEN_HEIGHT/2;
-	const SDL_Rect camera = {
-		cameraXpos < 0 ? 0 : (int)cameraXpos,
-		cameraYpos < 0 ? 0 : (int)cameraYpos,
-		SCREEN_WIDTH,
-		SCREEN_HEIGHT
-	};
-
     //Put the fps on tmp (text->surface->tmp->fontTexture->default render target)
     const std::string str = std::to_string((int)(1/deltaTime->delta())) + "fps";
     printText(Text(str, 0, 0, {231, 195, 175}));
@@ -239,7 +231,7 @@ void RenderSystem::update() {
     //Draw to default render target (NULL)
     SDL_SetRenderTarget(renderer, NULL);
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, worldTexture, &camera, NULL);
+    SDL_RenderCopy(renderer, worldTexture, &cameraSystem->getCamera(), NULL);
     SDL_RenderCopy(renderer, fontTexture, nullptr, nullptr);
 	SDL_RenderPresent(renderer);
 }
@@ -269,8 +261,8 @@ void RenderSystem::activateId(ID id) {
 	}
 }
 
-void RenderSystem::setCameraTarget(ID id) {
-	cameraTarget = id;
+void RenderSystem::setCameraSystem(CameraSystem* cameraSystem) {
+	this->cameraSystem = cameraSystem;
 }
 
 void RenderSystem::setImage(ID id, string path) {

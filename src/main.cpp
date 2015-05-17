@@ -21,6 +21,7 @@
 #include "removesystem.hpp"
 #include "attacksystem.hpp"
 #include "inputsystem.hpp"
+#include "camerasystem.hpp"
 
 using namespace std;
 
@@ -42,6 +43,7 @@ int main(int argc, char** argv) {
 
 	EntityManager entityManager(&systemManager, &componentManager, &idManager);
 
+	//Declare systems
 	MoveSystem moveSystem;
 	RenderSystem renderSystem;
 	CollisionSystem collisionSystem(&sizeHashGridSystem);
@@ -51,18 +53,24 @@ int main(int argc, char** argv) {
 	RemoveSystem removeSystem(&entityManager);
 	AttackSystem attackSystem(&sizeHashGridSystem);
 	InputSystem inputSystem;
+	CameraSystem cameraSystem(&renderSystem);
 
+	//Couple systems where neccesary
+	renderSystem.setCameraSystem(&cameraSystem);
+
+
+	systemManager.add(&inputSystem);
 	systemManager.add(&moveSystem);
-	systemManager.add(&renderSystem);
-	systemManager.add(&collisionSystem);
 	systemManager.add(&textureHashGridSystem);
 	systemManager.add(&sizeHashGridSystem);
+	systemManager.add(&renderSystem);
+	systemManager.add(&cameraSystem);
+	systemManager.add(&collisionSystem);
 	systemManager.add(&soundSystem);
 	systemManager.add(&animationSystem);
+	systemManager.add(&attackSystem);
 	systemManager.add(&healthSystem);
 	systemManager.add(&removeSystem);
-	systemManager.add(&attackSystem);
-	systemManager.add(&inputSystem);
 
 	EventManager eventManager(&running, &inputSystem);
 
@@ -86,8 +94,8 @@ int main(int argc, char** argv) {
 	//Keystroke events should change the input component of the player
 	eventManager.setPlayer(playerId, &componentManager);
 
-	//Set camera to follow player
-	renderSystem.setCameraTarget(playerId);
+	//Camera should revolve around the player
+	entityManager.registerIdToSystem("CameraSystem", botId);
 
 	//Play some sweet music
 	soundSystem.playMusic("./resources/sounds/naturesounds.ogg");

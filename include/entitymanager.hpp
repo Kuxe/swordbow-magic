@@ -47,6 +47,8 @@ class EntityManager {
 	ID createTree();
 	ID createTile();
 	void remove(ID id);
+
+    void registerIdToSystem(const string systemIdentifier, ID id);
 };
 
 #endif //ENTITYMANAGER_H
