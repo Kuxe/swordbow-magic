@@ -41,7 +41,9 @@ void AttackSystem::update() {
 
         //First of all, check that sufficient amount of time has bypassed
         //since last attack...
-        if(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - ac.startTime).count() > ac.delay) {
+        const auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - ac.startTime).count();
+        if(diff > ac.delay) {
+            ac.startTime = std::chrono::high_resolution_clock::now();
 
             //... if so, apply attack damage on the impactarea
             for(auto attackedId : hashgrid->query(impactArea)) {
