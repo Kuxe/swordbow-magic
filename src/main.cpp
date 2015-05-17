@@ -66,8 +66,8 @@ int main(int argc, char** argv) {
 
 	EventManager eventManager(&running, &inputSystem);
 
-	auto playerId = entityManager.createFatMan();
-	auto botId = entityManager.createFatMan({60, 20});
+	auto playerId = entityManager.createFatMan({50, 50});
+	auto botId = entityManager.createFatMan({10, 10});
 
 	World world(&entityManager);
 

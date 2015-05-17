@@ -70,23 +70,23 @@ class SpatialIndexer {
 		 * Fills the list overlappingEntities with all IDs that overlap IDs texture.
 		 * Useful for overlapping textures.
 		 **/
-		virtual void overlaps(unordered_set<ID>& overlappingIds, const ID id) const = 0;
+		virtual unordered_set<ID> overlaps(const ID id) const = 0;
 
 		/**
 		 *	Return all ids within queryarea
 		 **/
-		virtual void query(unordered_set<ID>& queryIds, const Rect& queryArea) const = 0;
+		virtual unordered_set<ID> query(const Rect& queryArea) const = 0;
 
 
 		/**
 		 *	Retrieve entities in the same cell as id. Im not sure why this
 		 *	is useful when there's query and overlaps.
 		 **/
-		virtual void getNearbyIds(unordered_set<ID>& nearbyIds, const ID id) const = 0;
+		virtual unordered_set<ID> getNearbyIds(const ID id) const = 0;
 
-		virtual void getIntersectionArea(Rect& intersectionArea,	const Rect& a, const Rect& b) const = 0;
+		virtual Rect getIntersectionArea(const Rect& a, const Rect& b) const = 0;
 
-		virtual void getBoundingBox(Rect& boundingBox, const ID id) const = 0;
+		virtual Rect getBoundingBox(const ID id) const = 0;
 
 		/**
 		 *	After calling this, all ids in the spatialindexer have their

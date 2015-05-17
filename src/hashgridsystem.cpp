@@ -92,13 +92,15 @@ void HashGridSystem::removeFromCellsOldBoundingBox(const ID id) {
 }
 
 //Returns all entities that are fully or partly contained by id's bounding box
-void HashGridSystem::overlaps(unordered_set<ID>& overlappingEntities, const ID id) const {
-	query(overlappingEntities, boundingBox->getBoundingBox(id));
-	overlappingEntities.erase(id);
+unordered_set<ID> HashGridSystem::overlaps(const ID id) const {
+	auto overlappingIds = query(boundingBox->getBoundingBox(id));
+	overlappingIds.erase(id);
+	return overlappingIds;
 }
 
 //Return all entities that are fully or partly contained by a queryArea
-void HashGridSystem::query(unordered_set<ID>& queryIds, const Rect& queryArea) const {
+unordered_set<ID> HashGridSystem::query(const Rect& queryArea) const {
+	unordered_set<ID> queryIds;
 
 	//Loop through all cells in which this ID is partly or fully contained
 	for(unsigned int y = queryArea.y/side; y <= (queryArea.y + queryArea.h)/side; y++) {
@@ -112,14 +114,15 @@ void HashGridSystem::query(unordered_set<ID>& queryIds, const Rect& queryArea) c
 			}
 		}
 	}
+	return queryIds;
 }
 
-void HashGridSystem::getNearbyIds(unordered_set<ID>& nearbyIds, const ID id) const {
-
+unordered_set<ID> HashGridSystem::getNearbyIds(const ID id) const {
+	return unordered_set<ID>();
 }
 
-void HashGridSystem::getBoundingBox(SpatialIndexer::Rect& bb, ID id) const {
-	bb = boundingBox->getBoundingBox(id);
+SpatialIndexer::Rect HashGridSystem::getBoundingBox(ID id) const {
+	return boundingBox->getBoundingBox(id);
 }
 
 void HashGridSystem::activateId(const ID id) {

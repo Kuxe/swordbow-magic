@@ -167,18 +167,13 @@ void RenderSystem::renderArea(heap<RenderData>& pq, SpatialIndexer::Rect area) {
 	//Make sure all overlapping ids have their part in the intersection area
 	//are redrawn
 	auto spatialIndexer = dynamic_cast<SpatialIndexer*>(systemManager->getSystem("TextureHashGridSystem"));
-	unordered_set<ID> overlappings;
-	SpatialIndexer::Rect intersectionArea;
-	SpatialIndexer::Rect idbb;
 
-	spatialIndexer->query(overlappings, area);
-	for(auto id : overlappings) {
+	for(auto id : spatialIndexer->query(area)) {
 		auto& mc = componentManager->moveComponents.at(id);
 		auto& rc = componentManager->renderComponents.at(id);
 
 		//Get the intersection between an entity within drawarea and the drawarea
-		spatialIndexer->getBoundingBox(idbb, id);
-		spatialIndexer->getIntersectionArea(intersectionArea, area, idbb);
+		const auto intersectionArea = spatialIndexer->getIntersectionArea(area, spatialIndexer->getBoundingBox(id));
 
 		//Only draw that portion of the texture that intersects
 		calculateZIndex(id);
@@ -212,8 +207,7 @@ void RenderSystem::update() {
 	while(!activeIds.empty()) {
 
 		//Draw everything within the activeIds texturearea
-		SpatialIndexer::Rect drawArea;
-		spatialIndexer->getBoundingBox(drawArea, activeIds.front());
+		auto drawArea = spatialIndexer->getBoundingBox(activeIds.front());
 		activeIds.pop();
 		previousDrawAreas.push(drawArea);
 		renderArea(pq, drawArea);

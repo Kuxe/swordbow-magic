@@ -42,11 +42,9 @@ void AttackSystem::update() {
         //First of all, check that sufficient amount of time has bypassed
         //since last attack...
         if(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - ac.startTime).count() > ac.delay) {
-            //... if so, apply attack damage on the impactarea
-            unordered_set<ID> attackedIds;
-            hashgrid->query(attackedIds, impactArea);
 
-            for(auto attackedId : attackedIds) {
+            //... if so, apply attack damage on the impactarea
+            for(auto attackedId : hashgrid->query(impactArea)) {
                 cout << componentManager->nameComponents.at(attackedId).name << " got attacked!" << endl;
                 auto& hc = componentManager->healthComponents.at(id); //FIXME: What happens if theres no healthcomponent at id?
                 hc.health -= ac.damage;

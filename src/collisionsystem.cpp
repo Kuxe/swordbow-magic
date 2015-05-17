@@ -19,9 +19,7 @@ void CollisionSystem::update() {
 	while(!activeIds.empty()) {
 		auto id = activeIds.front(); activeIds.pop();
 
-		unordered_set<ID> overlappingIds;
-		spatialIndexer->overlaps(overlappingIds, id);
-		for(auto overlap : overlappingIds) {
+		for(auto overlap : spatialIndexer->overlaps(id)) {
 			auto& outerMc = componentManager->moveComponents.at(id);
 			outerMc.xpos = outerMc.oldXpos;
 			outerMc.ypos = outerMc.oldYpos;
