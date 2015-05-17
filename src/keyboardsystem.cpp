@@ -20,93 +20,104 @@ void KeyboardSystem::remove(ID id) {
 }
 
 void KeyboardSystem::update() {
-	if(id == 0) return;
 
-	auto& ic = componentManager->inputComponents.at(id);
-	auto& urkc = componentManager->releaseKeyEventComponents.at(id);
-	auto inputSystem = systemManager->getSystem("InputSystem");
-
-	//Fetch all events that ocurred...
-	while(SDL_PollEvent(&event) != 0) {
-		//And take appropiate action!
-		switch(event.type) {
-			case SDL_QUIT: {
-				*runningPtr = false;
-				break;
+	//If no id is assigned for keyboard control,
+	//it should still be possible to quit the game...
+	if(id == 0) {
+		while(SDL_PollEvent(&event) != 0) {
+			switch(event.type) {
+				case SDL_QUIT: {
+					*runningPtr = false;
+					break;
+				}
 			}
-
-			//If this event was a keydown...
-			case SDL_KEYDOWN: {
-				//Figure out what key was pressed
-				switch(event.key.keysym.sym) {
-					case SDLK_w: {
-						ic.w = true;
-						break;
-					}
-					case SDLK_a: {
-						ic.a = true;
-						break;
-					}
-					case SDLK_s: {
-						ic.s = true;
-						break;
-					}
-					case SDLK_d: {
-						ic.d = true;
-						break;
-					}
-					case SDLK_SPACE: {
-						ic.space = true;
-						break;
-					}
-				}
-
-				//Save the keypress for later processing within inputsystem
-				ic.presses.push(event.key.keysym.sym);
-				inputSystem->activateId(id);
-
-			} break;
-
-			//If user released a key
-			case SDL_KEYUP: {
-				//Figure out what key was released
-				switch(event.key.keysym.sym) {
-					case SDLK_w: {
-						ic.w = false;
-						break;
-					}
-					case SDLK_a: {
-						ic.a = false;
-						break;
-					}
-					case SDLK_s: {
-						ic.s = false;
-						break;
-					}
-					case SDLK_d: {
-						ic.d = false;
-						break;
-					}
-					case SDLK_SPACE: {
-						ic.space = false;
-						break;
-					}
-				}
-
-				ic.presses.push(event.key.keysym.sym);
-
-				//TODO: 2015-05-15 Should probably remove this bellow...
-				//TODO: This event doesnt make sense. "RelaseKeyEvent" but only
-				//if all keys are release.. hmm.. userReleaseKeyEvent does, as of
-				//2015-05-03 01:41 remove the player from movesystem, which should
-				//only happen if no keys are down. Hence this piece of shitty code.
-				if( ic.w == false && ic.a == false &&
-					ic.s == false && ic.d == false) {
-						urkc.happen();
-					}
-			} break;
 		}
+	} else {
+		auto& ic = componentManager->inputComponents.at(id);
+		auto& urkc = componentManager->releaseKeyEventComponents.at(id);
+		auto inputSystem = systemManager->getSystem("InputSystem");
 
+		//Fetch all events that ocurred...
+		while(SDL_PollEvent(&event) != 0) {
+			//And take appropiate action!
+			switch(event.type) {
+				case SDL_QUIT: {
+					*runningPtr = false;
+					break;
+				}
+
+				//If this event was a keydown...
+				case SDL_KEYDOWN: {
+					//Figure out what key was pressed
+					switch(event.key.keysym.sym) {
+						case SDLK_w: {
+							ic.w = true;
+							break;
+						}
+						case SDLK_a: {
+							ic.a = true;
+							break;
+						}
+						case SDLK_s: {
+							ic.s = true;
+							break;
+						}
+						case SDLK_d: {
+							ic.d = true;
+							break;
+						}
+						case SDLK_SPACE: {
+							ic.space = true;
+							break;
+						}
+					}
+
+					//Save the keypress for later processing within inputsystem
+					ic.presses.push(event.key.keysym.sym);
+					inputSystem->activateId(id);
+
+				} break;
+
+				//If user released a key
+				case SDL_KEYUP: {
+					//Figure out what key was released
+					switch(event.key.keysym.sym) {
+						case SDLK_w: {
+							ic.w = false;
+							break;
+						}
+						case SDLK_a: {
+							ic.a = false;
+							break;
+						}
+						case SDLK_s: {
+							ic.s = false;
+							break;
+						}
+						case SDLK_d: {
+							ic.d = false;
+							break;
+						}
+						case SDLK_SPACE: {
+							ic.space = false;
+							break;
+						}
+					}
+
+					ic.presses.push(event.key.keysym.sym);
+
+					//TODO: 2015-05-15 Should probably remove this bellow...
+					//TODO: This event doesnt make sense. "RelaseKeyEvent" but only
+					//if all keys are release.. hmm.. userReleaseKeyEvent does, as of
+					//2015-05-03 01:41 remove the player from movesystem, which should
+					//only happen if no keys are down. Hence this piece of shitty code.
+					if( ic.w == false && ic.a == false &&
+						ic.s == false && ic.d == false) {
+							urkc.happen();
+						}
+				} break;
+			}
+		}
 	}
 }
 
