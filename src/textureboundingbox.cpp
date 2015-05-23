@@ -10,8 +10,8 @@ const SpatialIndexer::Rect TextureBoundingBox::getBoundingBox(ID id) const {
     auto& mc = componentManager->moveComponents.at(id);
     auto& rc = componentManager->renderComponents.at(id);
     return SpatialIndexer::Rect {
-        (unsigned int)(mc.xpos + rc.xoffset),
-        (unsigned int)(mc.ypos + rc.yoffset),
+        (unsigned int)(mc.pos.x + rc.xoffset),
+        (unsigned int)(mc.pos.y + rc.yoffset),
         rc.textureData.width,
         rc.textureData.height,
     };
@@ -21,8 +21,8 @@ const SpatialIndexer::Rect TextureBoundingBox::getOldBoundingBox(ID id) const {
     auto& mc = componentManager->moveComponents.at(id);
     auto rc = componentManager->renderComponents.at(id);
     return SpatialIndexer::Rect {
-        (unsigned int)(mc.oldXpos + rc.xoffset),
-        (unsigned int)(mc.oldYpos + rc.yoffset),
+        (unsigned int)(mc.oldPos.x + rc.xoffset),
+        (unsigned int)(mc.oldPos.y + rc.yoffset),
         rc.textureData.width,
         rc.textureData.height,
     };

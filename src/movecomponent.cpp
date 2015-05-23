@@ -1,27 +1,19 @@
 #include "movecomponent.hpp"
 
 MoveComponent::MoveComponent(
-	const float& xpos,
-	const float& ypos,
-	const float& oldXpos,
-	const float& oldYpos,
-	const float& xspeed,
-	const float& yspeed)
+	const Point& pos,
+	const Point& oldPos,
+	const Vector2& vel)
 	:
-	xpos(xpos),
-	ypos(ypos),
-	oldXpos(oldXpos),
-	oldYpos(oldYpos),
-	xspeed(xspeed),
-	yspeed(yspeed) {
-
-}
+	pos(pos),
+	oldPos(pos),
+	vel(vel) { }
 
 MoveComponent::~MoveComponent() {
 
 }
 
 void MoveComponent::move() {
-	xpos += xspeed;
-	ypos += yspeed;
+	pos.x += vel.x;
+	pos.y += vel.y;
 }

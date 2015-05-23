@@ -179,8 +179,8 @@ void RenderSystem::renderArea(heap<RenderData>& pq, SpatialIndexer::Rect area) {
 		//Only draw that portion of the texture that intersects
 		calculateZIndex(id);
 		pq.insert({id, &rc, rc.textureData, {
-				(int)(intersectionArea.x - mc.xpos - rc.xoffset),
-				(int)(intersectionArea.y - mc.ypos - rc.yoffset),
+				(int)(intersectionArea.x - mc.pos.x - rc.xoffset),
+				(int)(intersectionArea.y - mc.pos.y - rc.yoffset),
 				(int)intersectionArea.w,
 				(int)intersectionArea.h }, {
 				(int)intersectionArea.x,
@@ -251,7 +251,7 @@ const string RenderSystem::getIdentifier() const {
 void RenderSystem::calculateZIndex(ID id) {
 	auto& rc = componentManager->renderComponents.at(id);
 	auto& mc = componentManager->moveComponents.at(id);
-	rc.zindex = mc.ypos + rc.textureData.height + rc.yoffset;
+	rc.zindex = mc.pos.y + rc.textureData.height + rc.yoffset;
 }
 
 void RenderSystem::activateId(ID id) {

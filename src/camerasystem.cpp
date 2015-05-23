@@ -15,8 +15,8 @@ void CameraSystem::remove(ID id) {
 }
 void CameraSystem::update() {
     if(cameraSource != 0) {
-        const auto& cameraXpos = componentManager->moveComponents.at(cameraSource).xpos - renderSystem->getScreenWidth()/2;
-    	const auto& cameraYpos = componentManager->moveComponents.at(cameraSource).ypos - renderSystem->getScreenHeight()/2;
+        const auto& cameraXpos = componentManager->moveComponents.at(cameraSource).pos.x - renderSystem->getScreenWidth()/2;
+    	const auto& cameraYpos = componentManager->moveComponents.at(cameraSource).pos.y - renderSystem->getScreenHeight()/2;
     	camera = {
     		cameraXpos < 0 ? 0 : (int)cameraXpos,
     		cameraYpos < 0 ? 0 : (int)cameraYpos,

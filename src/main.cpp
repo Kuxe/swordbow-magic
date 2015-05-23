@@ -85,10 +85,10 @@ int main(int argc, char** argv) {
 		for(int x = 1; x <= 3; x++) {
 			auto tree = entityManager.createTree();
 			auto& treeMc = componentManager.moveComponents.at(tree);
-			treeMc.xpos = 20 + x * 70;
-			treeMc.ypos = 20 + y * 70;
-			treeMc.oldXpos = 20 + x * 70;
-			treeMc.oldYpos = 20 + y * 70;
+			treeMc.pos.x = 20 + x * 70;
+			treeMc.pos.y = 20 + y * 70;
+			treeMc.oldPos.x = 20 + x * 70;
+			treeMc.oldPos.y = 20 + y * 70;
 
 		}
 	}

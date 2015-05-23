@@ -27,8 +27,8 @@ void AnimationSystem::update() {
         auto& mc = componentManager->moveComponents.at(id);
 
         //update state by checking in what direction entity is moving
-		auto xdir = mc.xpos - mc.oldXpos; //if > 0 Moved to right
-		auto ydir = mc.ypos - mc.oldYpos; //if > 0 Moved to down
+		auto xdir = mc.pos.x - mc.oldPos.x; //if > 0 Moved to right
+		auto ydir = mc.pos.y - mc.oldPos.y; //if > 0 Moved to down
 		if(xdir > 0 && ydir > 0) {
             ac.state = &ac.walking.southEast;
         } else if(xdir > 0 && ydir == 0) {

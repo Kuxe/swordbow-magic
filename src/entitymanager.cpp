@@ -61,10 +61,10 @@ ID EntityManager::createFatMan(FatManData data) {
 	renderComponent->xoffset = -10;
 	renderComponent->yoffset = -10;
 
-	moveComponent->xpos = data.xpos;
-	moveComponent->ypos = data.ypos;
-	moveComponent->xspeed = 200;
-	moveComponent->yspeed = 200;
+	moveComponent->pos.x = data.xpos;
+	moveComponent->pos.y = data.ypos;
+	moveComponent->vel.x = 200;
+	moveComponent->vel.y = 200;
 
 	//Width of a player is 20x20
 	sizeComponent->width = 20;
@@ -178,10 +178,10 @@ ID EntityManager::createTree() {
 	renderComponent->xoffset = -24;
 	renderComponent->yoffset = -54;
 
-	moveComponent->xpos = 100;
-	moveComponent->ypos = 100;
-	moveComponent->oldXpos = 100;
-	moveComponent->oldYpos = 100;
+	moveComponent->pos.x = 100;
+	moveComponent->pos.y = 100;
+	moveComponent->oldPos.x = 100;
+	moveComponent->oldPos.y = 100;
 
 	sizeComponent->width = 36;
 	sizeComponent->height = 10;

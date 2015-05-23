@@ -30,21 +30,21 @@ void MoveSystem::remove(ID id) {
 	//this id wont be iterated over within that loop after this call
 	//so it is neccesary to force-update oldxpos here
 	auto& mc = componentManager->moveComponents.at(id);
-	mc.oldXpos = mc.xpos;
-	mc.oldYpos = mc.ypos;
+	mc.oldPos.x = mc.pos.x;
+	mc.oldPos.y = mc.pos.y;
 }
 
 void MoveSystem::update() {
 	for(auto id : ids) {
 		auto& mc = componentManager->moveComponents.at(id);
 		auto& ic = componentManager->inputComponents.at(id);
-		mc.oldXpos = mc.xpos;
-		mc.oldYpos = mc.ypos;
-		mc.xpos += ((ic.d * mc.xspeed) - (ic.a * mc.xspeed)) * deltaTime->delta();
-		mc.ypos += ((ic.s * mc.yspeed) - (ic.w * mc.yspeed)) * deltaTime->delta();
+		mc.oldPos.x = mc.pos.x;
+		mc.oldPos.y = mc.pos.y;
+		mc.pos.x += ((ic.d * mc.vel.x) - (ic.a * mc.vel.x)) * deltaTime->delta();
+		mc.pos.y += ((ic.s * mc.vel.y) - (ic.w * mc.vel.y)) * deltaTime->delta();
 
 		//Whenever an entity has been moved by something or moved by itself...
-		if(!(mc.xpos == mc.oldXpos && mc.ypos == mc.oldYpos)) {
+		if(!(mc.pos.x == mc.oldPos.x && mc.pos.y == mc.oldPos.y)) {
 			//Then it moved. Sherlock
 			componentManager->moveEventComponents.at(id).happen();
 		}

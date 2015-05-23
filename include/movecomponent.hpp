@@ -2,24 +2,24 @@
 #define MOVECOMPONENT_H
 
 class MoveComponent {
- public:
-	float xpos;
-	float ypos;
-	float oldXpos;
-	float oldYpos;
+public:
+    struct Point {
+        float x, y;
+    };
 
-	float xspeed;
-	float yspeed; 
+    struct Vector2 {
+        float x, y;
+    };
+
+    Point pos;
+    Point oldPos;
+    Vector2 vel;
 
 	MoveComponent(
-		const float& xpos = 0,
-		const float& ypos = 0,
-		const float& oldXpos = 0,
-		const float& oldYpos = 0,
-		const float& xspeed = 100,
-		const float& yspeed = 100);
+		const Point& = {0, 0},
+		const Point& = {0, 0},
+		const Vector2& = {100, 100});
 	virtual ~MoveComponent();
-
 	void virtual move();
 };
 
