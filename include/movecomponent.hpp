@@ -19,8 +19,6 @@ public:
 		const Point& = {0, 0},
 		const Point& = {0, 0},
 		const Vector2& = {100, 100});
-	virtual ~MoveComponent();
-	void virtual move();
 };
 
 #endif //MOVECOMPONENT_H

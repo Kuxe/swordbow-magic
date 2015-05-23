@@ -8,12 +8,3 @@ MoveComponent::MoveComponent(
 	pos(pos),
 	oldPos(pos),
 	vel(vel) { }
-
-MoveComponent::~MoveComponent() {
-
-}
-
-void MoveComponent::move() {
-	pos.x += vel.x;
-	pos.y += vel.y;
-}
