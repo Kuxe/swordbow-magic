@@ -22,25 +22,26 @@ void AnimationSystem::update() {
         auto& ac = componentManager->animationComponents.at(id);
         auto& animation = ac.state;
 
-        //If this animation isn't a looping animation and it already played once,
-        //then prevent it from playing
-        if(!animation->looping && !animation->firstLoop) return;
+        //Only play animation if it's a looping animation or the first time
+        //playing the animation
+        if(animation->looping || animation->firstLoop) {
 
-        //Check if it's time to display the next frame
-        if(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - animation->startTime).count() > animation->duration) {
-            auto rs = static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"));
+            //Check if it's time to display the next frame
+            if(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - animation->startTime).count() > animation->duration) {
+                auto rs = static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"));
 
-            //It was time. Update the image associated with this entity
-            rs->setImage(id, animation->frames[animation->currentFrame]);
+                //It was time. Update the image associated with this entity
+                rs->setImage(id, animation->frames[animation->currentFrame]);
 
-            //Update the animation
-            animation->currentFrame += 1;
-            animation->currentFrame %= animation->frames.size();
-            animation->startTime = std::chrono::high_resolution_clock::now();
+                //Update the animation
+                animation->currentFrame += 1;
+                animation->currentFrame %= animation->frames.size();
+                animation->startTime = std::chrono::high_resolution_clock::now();
 
-            //Frame 1, 2, 3, 4 ... n, 0 <- on that zero. First loop is done!
-            if(animation->currentFrame == 0) {
-                animation->firstLoop = false;
+                //Frame 1, 2, 3, 4 ... n, 0 <- on that zero. First loop is done!
+                if(animation->currentFrame == 0) {
+                    animation->firstLoop = false;
+                }
             }
         }
     }
