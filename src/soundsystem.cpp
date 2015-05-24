@@ -30,7 +30,8 @@ SoundSystem::SoundSystem() {
 
     //Load sounds and store them in sound map
     const string soundPaths[] {
-        "./resources/sounds/walking.wav"
+        "./resources/sounds/walking.wav",
+        "./resources/sounds/hurt.wav",
     };
     unsigned char channelNumber = 0; //Will overflow if number of channels > 255
 

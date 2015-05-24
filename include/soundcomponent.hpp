@@ -11,13 +11,13 @@ using std::string;
 //Trees don't walk. With this component, trees could play
 //walking-sounds. Trees don't need another string for walking.
 //Waste of memory. Sufficient for now.
-class SoundComponent {
-public:
-    class Sound {
-    public:
+struct SoundComponent {
+    struct Sound {
         string path;
         std::chrono::high_resolution_clock::time_point startTime;
         unsigned int duration = 1000; //in milliseconds
+
+        Sound(const string& path = "PATH TO SOUNDFILE NOT SET!") : path(path) {}
     };
 
     //Paths to different sounds

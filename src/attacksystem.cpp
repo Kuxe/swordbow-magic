@@ -1,6 +1,9 @@
 #include "attacksystem.hpp"
 #include "hashgridsystem.hpp"
 #include "componentmanager.hpp"
+#include "soundsystem.hpp"
+#include "systemmanager.hpp"
+#include "soundcomponent.hpp"
 
 #include <iostream>
 using namespace std;
@@ -55,10 +58,22 @@ void AttackSystem::update() {
         if(diff > ac.delay) {
             ac.startTime = std::chrono::high_resolution_clock::now();
 
+            //Will be set to true if something was actually hit
+            //Is checked when playing a default 'hurt' sound
+            bool somethingWasHurt = false;
+
             //... if so, apply attack damage on the impactarea
             for(auto attackedId : hashgrid->query(impactArea)) {
                 auto& hc = componentManager->healthComponents.at(attackedId); //FIXME: What happens if theres no healthcomponent at id?
                 hc.health -= ac.damage;
+                somethingWasHurt = true;
+            }
+
+            if(somethingWasHurt) {
+                //Play a default 'hurt'-sound for
+                auto soundPath = "./resources/sounds/hurt.wav";
+                SoundComponent::Sound hurtSound =  {soundPath};
+                static_cast<SoundSystem*>(systemManager->getSystem("SoundSystem"))->playSound(hurtSound);
             }
         }
 
