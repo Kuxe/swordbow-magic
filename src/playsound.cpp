@@ -1,7 +1,7 @@
 #include "playsound.hpp"
 #include "soundsystem.hpp"
 
-PlaySound::PlaySound(SoundSystem* soundSystem, SoundComponent::Sound& sound) :
+PlaySound::PlaySound(SoundSystem* soundSystem, SoundComponent::Sound sound) :
     soundSystem(soundSystem),
     sound(sound) { }
 
