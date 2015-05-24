@@ -32,6 +32,7 @@ SoundSystem::SoundSystem() {
     const string soundPaths[] {
         "./resources/sounds/walking.wav",
         "./resources/sounds/hurt.wav",
+        "./resources/sounds/bloodsplatter.wav"
     };
     unsigned char channelNumber = 0; //Will overflow if number of channels > 255
 
