@@ -4,6 +4,7 @@
 #include "componentmanager.hpp"
 #include "entitymanager.hpp"
 #include <queue>
+#include "systemmanager.hpp"
 
 using std::cout;
 using std::endl;
@@ -27,6 +28,8 @@ void RemoveSystem::update() {
 
         //1. If component have any last wishes, such as exploding or playing death sound
         //This would be the place to ensure that will happen
+        auto spatialIndexer = dynamic_cast<SpatialIndexer*>(systemManager->getSystem("TextureHashGridSystem"));
+        static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->renderArea(spatialIndexer->getBoundingBox(id));
 
         //2. Kill the entity completely, not a single trace of it should exist beyond this point
         //(pushing it onto doomedIds to prevent iterator invalidations, it gets removed later)
