@@ -11,9 +11,9 @@ class SoundSystem;
 class PlaySound : public ICommand {
 private:
     SoundSystem* soundSystem;
-    SoundComponent::Sound& sound;
+    SoundComponent::Sound sound;
 public:
-    PlaySound(SoundSystem* soundSystem, SoundComponent::Sound& soundPath);
+    PlaySound(SoundSystem* soundSystem, const SoundComponent::Sound& soundPath);
     void execute();
 };
 
