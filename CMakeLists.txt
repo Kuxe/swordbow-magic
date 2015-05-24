@@ -42,7 +42,7 @@ PKG_SEARCH_MODULE(SDL2MIXER REQUIRED SDL2_mixer)
 
 #Flags for compiler and linker
 SET(CMAKE_CXX_COMPILER "/usr/bin/clang++")
-SET(COMPILE_FLAGS "-std=c++14")
+SET(COMPILE_FLAGS "-g -std=c++14")
 
 #Append flags for compiler and linker to cmake variables
 #(the compiler uses the cmake variables)
