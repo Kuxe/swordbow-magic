@@ -26,17 +26,14 @@ void InputSystem::update() {
 
         //For all keypresses registered on this entity...
         while(!ic.presses.empty()) {
-            auto key = ic.presses.front(); ic.presses.pop();
 
-            //Resolve keybinding, as in get action bound to the keypress
+            //Resolve keybinding, as in get event bound to the keypress
             //Note that indexing unordered_map with [] creates an element
             //with key as key... The value (forward_list) will be empty though.
-            auto action = ic.bindings[key];
-
-            //Resolve action, as in do whatever the entity should do on the action
-            for(ICommand* command : cc.commands[action]) {
+            for(ICommand* command : cc[ic.bindings[ic.presses.front()]]) {
                 command->execute();
             }
+            ic.presses.pop();
         }
     }
 }
