@@ -164,55 +164,56 @@ void RenderSystem::remove(ID id) {
 	ids.erase(id);
 }
 
-void RenderSystem::renderArea(heap<RenderData>& pq, SpatialIndexer::Rect area) {
-	//Make sure all overlapping ids have their part in the intersection area
-	//are redrawn
-	auto spatialIndexer = dynamic_cast<SpatialIndexer*>(systemManager->getSystem("TextureHashGridSystem"));
-
-	for(auto id : spatialIndexer->query(area)) {
-		auto& mc = componentManager->moveComponents.at(id);
-		auto& rc = componentManager->renderComponents.at(id);
-
-		//Get the intersection between an entity within drawarea and the drawarea
-		const auto intersectionArea = spatialIndexer->getIntersectionArea(area, spatialIndexer->getBoundingBox(id));
-
-		//Only draw that portion of the texture that intersects
-		calculateZIndex(id);
-		pq.insert({id, &rc, rc.textureData, {
-				(int)(intersectionArea.x - mc.pos.x - rc.xoffset),
-				(int)(intersectionArea.y - mc.pos.y - rc.yoffset),
-				(int)intersectionArea.w,
-				(int)intersectionArea.h }, {
-				(int)intersectionArea.x,
-				(int)intersectionArea.y,
-				(int)intersectionArea.w,
-				(int)intersectionArea.h}
-
-				}
-			);
-	}
-}
-
 void RenderSystem::update() {
 	heap<RenderData> pq; //TODO: Use reference instead (no need for copying!)
 	auto spatialIndexer = dynamic_cast<SpatialIndexer*>(systemManager->getSystem("TextureHashGridSystem"));
 
-	//Redraw everything within drawareas from previous frame
-	while(!previousDrawAreas.empty()) {
-		auto prevDrawArea = previousDrawAreas.front(); previousDrawAreas.pop();
-		renderArea(pq, prevDrawArea);
-	}
+    //Will contain all rectangles where a redraw is required
+    queue<SpatialIndexer::Rect> drawQueue;
 
-	//For all activeIds in rendersystem (henceforth activeIds will be referred
-	//to as just ids)
+    //All drawareas saved from previous frame should be drawn this frame
+	drawQueue.swap(previousDrawAreas);
+
+	//For all activeIds in rendersystem...
 	while(!activeIds.empty()) {
-
 		//Draw everything within the activeIds texturearea
-		auto drawArea = spatialIndexer->getBoundingBox(activeIds.front());
-		activeIds.pop();
-		previousDrawAreas.push(drawArea);
-		renderArea(pq, drawArea);
+        auto drawArea = spatialIndexer->getBoundingBox(activeIds.front());
+		drawQueue.push(drawArea); activeIds.pop();
+
+        //The texturearea should be saved for next frame, it must be redrawn then too
+		renderArea(drawArea);
 	}
+
+    while(!drawQueue.empty()) {
+        const auto& drawArea = drawQueue.front(); drawQueue.pop();
+
+        //Make sure all overlapping ids have their part in the intersection area
+    	//are redrawn
+    	auto spatialIndexer = dynamic_cast<SpatialIndexer*>(systemManager->getSystem("TextureHashGridSystem"));
+
+    	for(auto id : spatialIndexer->query(drawArea)) {
+    		auto& mc = componentManager->moveComponents.at(id);
+    		auto& rc = componentManager->renderComponents.at(id);
+
+    		//Get the intersection between an entity within drawarea and the drawarea
+    		const auto intersectionArea = spatialIndexer->getIntersectionArea(drawArea, spatialIndexer->getBoundingBox(id));
+
+    		//Only draw that portion of the texture that intersects
+    		calculateZIndex(id);
+    		pq.insert({id, &rc, rc.textureData, {
+    				(int)(intersectionArea.x - mc.pos.x - rc.xoffset),
+    				(int)(intersectionArea.y - mc.pos.y - rc.yoffset),
+    				(int)intersectionArea.w,
+    				(int)intersectionArea.h }, {
+    				(int)intersectionArea.x,
+    				(int)intersectionArea.y,
+    				(int)intersectionArea.w,
+    				(int)intersectionArea.h}
+
+    				}
+    			);
+    	}
+    }
 
     //Draw to worldTexture
 	SDL_SetRenderTarget(renderer, worldTexture);

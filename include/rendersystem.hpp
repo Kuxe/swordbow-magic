@@ -81,6 +81,11 @@ class RenderSystem : public ISystem {
 	void setCameraSystem(CameraSystem* cameraSystem);
 	void setImage(ID id, string path);
 	void printText(const Text& text);
+
+	//Forces a redraw within an area
+	void inline constexpr renderArea(const SpatialIndexer::Rect& area) {
+	    previousDrawAreas.push(area);
+	}
 	static constexpr ushort getScreenWidth() { return SCREEN_WIDTH; }
     static constexpr ushort getScreenHeight() { return SCREEN_HEIGHT; }
 
