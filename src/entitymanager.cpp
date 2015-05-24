@@ -41,99 +41,99 @@ ID EntityManager::createFatMan(FatManData data) {
 	auto id = getId();
 
 	//Create components from componentmanager
-	auto moveComponent = componentManager->createMoveComponent(id);
-	auto inputComponent = componentManager->createInputComponent(id);
-	auto sizeComponent = componentManager->createSizeComponent(id);
-	auto renderComponent = componentManager->createRenderComponent(id);
-	auto nameComponent = componentManager->createNameComponent(id);
-	auto moveEventComponent = componentManager->createMoveEventComponent(id);
-	auto soundComponent = componentManager->createSoundComponent(id);
-	auto animationComponent = componentManager->createAnimationComponent(id);
+	auto& moveComponent = componentManager->createMoveComponent(id);
+	auto& inputComponent = componentManager->createInputComponent(id);
+	auto& sizeComponent = componentManager->createSizeComponent(id);
+	auto& renderComponent = componentManager->createRenderComponent(id);
+	auto& nameComponent = componentManager->createNameComponent(id);
+	auto& moveEventComponent = componentManager->createMoveEventComponent(id);
+	auto& soundComponent = componentManager->createSoundComponent(id);
+	auto& animationComponent = componentManager->createAnimationComponent(id);
 	componentManager->createHealthComponent(id);
 	componentManager->createRemoveComponent(id);
 	componentManager->createAttackComponent(id);
-	auto commandComponent = componentManager->createCommandComponent(id);
+	auto& commandComponent = componentManager->createCommandComponent(id);
 
 	//If you'd like to change default initialization-data in a component
 	//Just save a pointer to the component like above and modify it like bellow
 	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/playerv3_front.png");
-	renderComponent->zindex_base = 1;
-	renderComponent->xoffset = -10;
-	renderComponent->yoffset = -10;
+	renderComponent.zindex_base = 1;
+	renderComponent.xoffset = -10;
+	renderComponent.yoffset = -10;
 
-	moveComponent->pos.x = data.xpos;
-	moveComponent->pos.y = data.ypos;
-	moveComponent->vel.x = 200;
-	moveComponent->vel.y = 200;
+	moveComponent.pos.x = data.xpos;
+	moveComponent.pos.y = data.ypos;
+	moveComponent.vel.x = 200;
+	moveComponent.vel.y = 200;
 
 	//Width of a player is 20x20
-	sizeComponent->width = 20;
-	sizeComponent->height = 20;
+	sizeComponent.width = 20;
+	sizeComponent.height = 20;
 
-	nameComponent->name = "player";
+	nameComponent.name = "player";
 
-	soundComponent->walk.path = "./resources/sounds/walking.wav";
-	soundComponent->walk.duration = 250;
+	soundComponent.walk.path = "./resources/sounds/walking.wav";
+	soundComponent.walk.duration = 250;
 
-	animationComponent->idle.north.frames.push_back("./resources/images/playerv3_back.png");
-	animationComponent->idle.northEast.frames.push_back("./resources/images/playerv3_back.png");
-	animationComponent->idle.east.frames.push_back("./resources/images/playerv3_right.png");
-	animationComponent->idle.southEast.frames.push_back("./resources/images/playerv3_front.png");
-	animationComponent->idle.south.frames.push_back("./resources/images/playerv3_front.png");
-	animationComponent->idle.southWest.frames.push_back("./resources/images/playerv3_front.png");
-	animationComponent->idle.west.frames.push_back("./resources/images/playerv3_left.png");
-	animationComponent->idle.northWest.frames.push_back("./resources/images/playerv3_back.png");
+	animationComponent.idle.north.frames.push_back("./resources/images/playerv3_back.png");
+	animationComponent.idle.northEast.frames.push_back("./resources/images/playerv3_back.png");
+	animationComponent.idle.east.frames.push_back("./resources/images/playerv3_right.png");
+	animationComponent.idle.southEast.frames.push_back("./resources/images/playerv3_front.png");
+	animationComponent.idle.south.frames.push_back("./resources/images/playerv3_front.png");
+	animationComponent.idle.southWest.frames.push_back("./resources/images/playerv3_front.png");
+	animationComponent.idle.west.frames.push_back("./resources/images/playerv3_left.png");
+	animationComponent.idle.northWest.frames.push_back("./resources/images/playerv3_back.png");
 
-	animationComponent->walking.north.frames.push_back("./resources/images/playerv3_back.png");
-	animationComponent->walking.northEast.frames.push_back("./resources/images/playerv3_back.png");
-	animationComponent->walking.northWest.frames.push_back("./resources/images/playerv3_back.png");
-	animationComponent->walking.east.frames.push_back("./resources/images/playerv3_right.png");
-	animationComponent->walking.west.frames.push_back("./resources/images/playerv3_left.png");
+	animationComponent.walking.north.frames.push_back("./resources/images/playerv3_back.png");
+	animationComponent.walking.northEast.frames.push_back("./resources/images/playerv3_back.png");
+	animationComponent.walking.northWest.frames.push_back("./resources/images/playerv3_back.png");
+	animationComponent.walking.east.frames.push_back("./resources/images/playerv3_right.png");
+	animationComponent.walking.west.frames.push_back("./resources/images/playerv3_left.png");
 
-	animationComponent->walking.southWest.frames.push_back("./resources/images/playerv3_front_run1.png");
-	animationComponent->walking.southWest.frames.push_back("./resources/images/playerv3_front_run2.png");
-	animationComponent->walking.southWest.frames.push_back("./resources/images/playerv3_front_run3.png");
-	animationComponent->walking.southWest.frames.push_back("./resources/images/playerv3_front_run4.png");
+	animationComponent.walking.southWest.frames.push_back("./resources/images/playerv3_front_run1.png");
+	animationComponent.walking.southWest.frames.push_back("./resources/images/playerv3_front_run2.png");
+	animationComponent.walking.southWest.frames.push_back("./resources/images/playerv3_front_run3.png");
+	animationComponent.walking.southWest.frames.push_back("./resources/images/playerv3_front_run4.png");
 
-	animationComponent->walking.south.frames.push_back("./resources/images/playerv3_front_run1.png");
-	animationComponent->walking.south.frames.push_back("./resources/images/playerv3_front_run2.png");
-	animationComponent->walking.south.frames.push_back("./resources/images/playerv3_front_run3.png");
-	animationComponent->walking.south.frames.push_back("./resources/images/playerv3_front_run4.png");
+	animationComponent.walking.south.frames.push_back("./resources/images/playerv3_front_run1.png");
+	animationComponent.walking.south.frames.push_back("./resources/images/playerv3_front_run2.png");
+	animationComponent.walking.south.frames.push_back("./resources/images/playerv3_front_run3.png");
+	animationComponent.walking.south.frames.push_back("./resources/images/playerv3_front_run4.png");
 
-	animationComponent->walking.southEast.frames.push_back("./resources/images/playerv3_front_run1.png");
-	animationComponent->walking.southEast.frames.push_back("./resources/images/playerv3_front_run2.png");
-	animationComponent->walking.southEast.frames.push_back("./resources/images/playerv3_front_run3.png");
-	animationComponent->walking.southEast.frames.push_back("./resources/images/playerv3_front_run4.png");
+	animationComponent.walking.southEast.frames.push_back("./resources/images/playerv3_front_run1.png");
+	animationComponent.walking.southEast.frames.push_back("./resources/images/playerv3_front_run2.png");
+	animationComponent.walking.southEast.frames.push_back("./resources/images/playerv3_front_run3.png");
+	animationComponent.walking.southEast.frames.push_back("./resources/images/playerv3_front_run4.png");
 
-	moveEventComponent->addCommand(new ActivateId(id, "RenderSystem", systemManager));
-	moveEventComponent->addCommand(new ActivateId(id, "CollisionSystem", systemManager));
-	moveEventComponent->addCommand(new ActivateId(id, "TextureHashGridSystem", systemManager));
-	moveEventComponent->addCommand(new ActivateId(id, "SizeHashGridSystem", systemManager));
-	moveEventComponent->addCommand(new PlaySound(static_cast<SoundSystem*>(systemManager->getSystem("SoundSystem")), soundComponent->walk));
+	moveEventComponent.addCommand(new ActivateId(id, "RenderSystem", systemManager));
+	moveEventComponent.addCommand(new ActivateId(id, "CollisionSystem", systemManager));
+	moveEventComponent.addCommand(new ActivateId(id, "TextureHashGridSystem", systemManager));
+	moveEventComponent.addCommand(new ActivateId(id, "SizeHashGridSystem", systemManager));
+	moveEventComponent.addCommand(new PlaySound(static_cast<SoundSystem*>(systemManager->getSystem("SoundSystem")), soundComponent.walk));
 
-	inputComponent->bindings[119] = 1;
-	inputComponent->bindings[100] = 2;
-	inputComponent->bindings[97] = 3;
-	inputComponent->bindings[115] = 4;
-	inputComponent->bindings[32] = 5;
+	inputComponent.bindings[119] = 1;
+	inputComponent.bindings[100] = 2;
+	inputComponent.bindings[97] = 3;
+	inputComponent.bindings[115] = 4;
+	inputComponent.bindings[32] = 5;
 
-	commandComponent->commands[1] = {
+	commandComponent[1] = {
 		new AddIdToSystem(id, "MoveSystem", systemManager),
 	};
 
-	commandComponent->commands[2] = {
+	commandComponent[2] = {
 		new AddIdToSystem(id, "MoveSystem", systemManager),
 	};
 
-	commandComponent->commands[3] = {
+	commandComponent[3] = {
 		new AddIdToSystem(id, "MoveSystem", systemManager),
 	};
 
-	commandComponent->commands[4] = {
+	commandComponent[4] = {
 		new AddIdToSystem(id, "MoveSystem", systemManager),
 	};
 
-	commandComponent->commands[5] = {
+	commandComponent[5] = {
 		new ActivateId(id, "AttackSystem", systemManager),
 	};
 
@@ -167,26 +167,26 @@ ID EntityManager::createFatMan() {
 ID EntityManager::createTree() {
 	auto id = idManager->acquireId();
 
-	auto moveComponent = componentManager->createMoveComponent(id);
+	auto& moveComponent = componentManager->createMoveComponent(id);
 	componentManager->createInputComponent(id);
-	auto sizeComponent = componentManager->createSizeComponent(id);
-	RenderComponent* renderComponent = componentManager->createRenderComponent(id);
-	auto nameComponent = componentManager->createNameComponent(id);
+	auto& sizeComponent = componentManager->createSizeComponent(id);
+	auto& renderComponent = componentManager->createRenderComponent(id);
+	auto& nameComponent = componentManager->createNameComponent(id);
 
 	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/SmallTree.png");
-	renderComponent->zindex_base = 1;
-	renderComponent->xoffset = -24;
-	renderComponent->yoffset = -54;
+	renderComponent.zindex_base = 1;
+	renderComponent.xoffset = -24;
+	renderComponent.yoffset = -54;
 
-	moveComponent->pos.x = 100;
-	moveComponent->pos.y = 100;
-	moveComponent->oldPos.x = 100;
-	moveComponent->oldPos.y = 100;
+	moveComponent.pos.x = 100;
+	moveComponent.pos.y = 100;
+	moveComponent.oldPos.x = 100;
+	moveComponent.oldPos.y = 100;
 
-	sizeComponent->width = 36;
-	sizeComponent->height = 10;
+	sizeComponent.width = 36;
+	sizeComponent.height = 10;
 
-	nameComponent->name = "tree";
+	nameComponent.name = "tree";
 
 	entities[id] = {
 		systemManager->getSystem("RenderSystem"),
@@ -205,17 +205,17 @@ ID EntityManager::createTile() {
 
 	componentManager->createMoveComponent(id);
 	componentManager->createTileComponent(id);
-	auto sizeComponent = componentManager->createSizeComponent(id);
-	auto rc = componentManager->createRenderComponent(id);
-	auto nameComponent = componentManager->createNameComponent(id);
+	auto& sizeComponent = componentManager->createSizeComponent(id);
+	auto& rc = componentManager->createRenderComponent(id);
+	auto& nameComponent = componentManager->createNameComponent(id);
 
 	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/grass.bmp");
-	rc->zindex_base = 0;
+	rc.zindex_base = 0;
 
-	sizeComponent->width = 20;
-	sizeComponent->height = 20;
+	sizeComponent.width = 20;
+	sizeComponent.height = 20;
 
-	nameComponent->name = "tile";
+	nameComponent.name = "tile";
 
 	entities[id] = {
 		systemManager->getSystem("RenderSystem"),

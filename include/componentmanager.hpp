@@ -36,44 +36,44 @@ class ComponentManager {
     unordered_map<ID, AttackComponent> attackComponents;
     unordered_map<ID, CommandComponent> commandComponents;
 
-	constexpr MoveComponent* createMoveComponent(ID id) {
-        return &(moveComponents[id] = MoveComponent());
+	constexpr MoveComponent& createMoveComponent(ID id) {
+        return moveComponents[id] = MoveComponent();
     }
-	constexpr RenderComponent* createRenderComponent(ID id) {
-        return &(renderComponents[id] = RenderComponent());
+	constexpr RenderComponent& createRenderComponent(ID id) {
+        return renderComponents[id] = RenderComponent();
     }
-	constexpr InputComponent* createInputComponent(ID id) {
-        return &(inputComponents[id] = InputComponent());
+	constexpr InputComponent& createInputComponent(ID id) {
+        return inputComponents[id] = InputComponent();
     }
-	constexpr TileComponent* createTileComponent(ID id) {
-        return &(tileComponents[id] = TileComponent());
+	constexpr TileComponent& createTileComponent(ID id) {
+        return tileComponents[id] = TileComponent();
     }
-    constexpr SizeComponent* createSizeComponent(ID id) {
-        return &(sizeComponents[id] = SizeComponent());
+    constexpr SizeComponent& createSizeComponent(ID id) {
+        return sizeComponents[id] = SizeComponent();
     }
-    constexpr NameComponent* createNameComponent(ID id) {
-        return &(nameComponents[id] = NameComponent());
+    constexpr NameComponent& createNameComponent(ID id) {
+        return nameComponents[id] = NameComponent();
     }
-    constexpr MoveEventComponent* createMoveEventComponent(ID id) {
-        return &(moveEventComponents[id] = MoveEventComponent());
+    constexpr MoveEventComponent& createMoveEventComponent(ID id) {
+        return moveEventComponents[id] = MoveEventComponent();
     }
-    constexpr SoundComponent* createSoundComponent(ID id) {
-        return &(soundComponents[id] = SoundComponent());
+    constexpr SoundComponent& createSoundComponent(ID id) {
+        return soundComponents[id] = SoundComponent();
     }
-    constexpr AnimationComponent* createAnimationComponent(ID id) {
-        return &(animationComponents[id] = AnimationComponent());
+    constexpr AnimationComponent& createAnimationComponent(ID id) {
+        return animationComponents[id] = AnimationComponent();
     }
-    constexpr HealthComponent* createHealthComponent(ID id) {
-        return &(healthComponents[id] = HealthComponent());
+    constexpr HealthComponent& createHealthComponent(ID id) {
+        return healthComponents[id] = HealthComponent();
     }
-    constexpr RemoveComponent* createRemoveComponent(ID id) {
-        return &(removeComponents[id] = RemoveComponent());
+    constexpr RemoveComponent& createRemoveComponent(ID id) {
+        return removeComponents[id] = RemoveComponent();
     }
-    constexpr AttackComponent* createAttackComponent(ID id) {
-        return &(attackComponents[id] = AttackComponent());
+    constexpr AttackComponent& createAttackComponent(ID id) {
+        return attackComponents[id] = AttackComponent();
     }
-    constexpr CommandComponent* createCommandComponent(ID id) {
-        return &(commandComponents[id] = CommandComponent());
+    constexpr CommandComponent& createCommandComponent(ID id) {
+        return commandComponents[id] = CommandComponent();
     }
 
     void clearComponents(ID id);
