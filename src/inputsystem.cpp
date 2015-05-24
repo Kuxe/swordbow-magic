@@ -1,5 +1,6 @@
 #include "inputsystem.hpp"
 #include "componentmanager.hpp"
+#include "icommand.hpp"
 
 #include <iostream>
 

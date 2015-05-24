@@ -11,6 +11,7 @@
 #include "rendersystem.hpp"
 #include "hashgridsystem.hpp"
 #include "collisionsystem.hpp"
+#include "icommand.hpp"
 #include <math.h>
 
 using namespace std;
@@ -39,6 +40,7 @@ void MoveSystem::update() {
 	for(auto id : ids) {
 		auto& mc = componentManager->moveComponents.at(id);
 		auto& ic = componentManager->inputComponents.at(id);
+		auto& cc = componentManager->commandComponents.at(id);
 		mc.oldPos.x = mc.pos.x;
 		mc.oldPos.y = mc.pos.y;
 
@@ -69,7 +71,9 @@ void MoveSystem::update() {
 		//Whenever an entity has been moved by something or moved by itself...
 		if(!(mc.pos.x == mc.oldPos.x && mc.pos.y == mc.oldPos.y)) {
 			//Then it moved. Sherlock
-			componentManager->moveEventComponents.at(id).happen();
+			for(auto command : cc[7]) {
+				command->execute();
+			}
 		}
 	}
 }

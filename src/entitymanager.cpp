@@ -46,11 +46,9 @@ ID EntityManager::createFatMan(FatManData data) {
 	auto& sizeComponent = componentManager->createSizeComponent(id);
 	auto& renderComponent = componentManager->createRenderComponent(id);
 	auto& nameComponent = componentManager->createNameComponent(id);
-	auto& moveEventComponent = componentManager->createMoveEventComponent(id);
 	auto& soundComponent = componentManager->createSoundComponent(id);
 	auto& animationComponent = componentManager->createAnimationComponent(id);
 	componentManager->createHealthComponent(id);
-	componentManager->createRemoveComponent(id);
 	componentManager->createAttackComponent(id);
 	auto& commandComponent = componentManager->createCommandComponent(id);
 
@@ -105,12 +103,6 @@ ID EntityManager::createFatMan(FatManData data) {
 	animationComponent.walking.southEast.frames.push_back("./resources/images/playerv3_front_run3.png");
 	animationComponent.walking.southEast.frames.push_back("./resources/images/playerv3_front_run4.png");
 
-	moveEventComponent.addCommand(new ActivateId(id, "RenderSystem", systemManager));
-	moveEventComponent.addCommand(new ActivateId(id, "CollisionSystem", systemManager));
-	moveEventComponent.addCommand(new ActivateId(id, "TextureHashGridSystem", systemManager));
-	moveEventComponent.addCommand(new ActivateId(id, "SizeHashGridSystem", systemManager));
-	moveEventComponent.addCommand(new PlaySound(static_cast<SoundSystem*>(systemManager->getSystem("SoundSystem")), soundComponent.walk));
-
 	inputComponent.bindings[119] = 1;
 	inputComponent.bindings[100] = 2;
 	inputComponent.bindings[97] = 3;
@@ -139,6 +131,14 @@ ID EntityManager::createFatMan(FatManData data) {
 
 	commandComponent[6] = {
 		new PlaySound(static_cast<SoundSystem*>(systemManager->getSystem("SoundSystem")), SoundComponent::Sound {"./resources/sounds/bloodsplatter.wav"}),
+	};
+
+	commandComponent[7] = {
+		new ActivateId(id, "RenderSystem", systemManager),
+		new ActivateId(id, "CollisionSystem", systemManager),
+		new ActivateId(id, "TextureHashGridSystem", systemManager),
+		new ActivateId(id, "SizeHashGridSystem", systemManager),
+		new PlaySound(static_cast<SoundSystem*>(systemManager->getSystem("SoundSystem")), soundComponent.walk),
 	};
 
 	//Tell the entity what systems belongs to

@@ -1,10 +1,10 @@
 #include "removesystem.hpp"
 #include <iostream>
-#include "removecomponent.hpp"
 #include "componentmanager.hpp"
 #include "entitymanager.hpp"
 #include <queue>
 #include "systemmanager.hpp"
+#include "icommand.hpp"
 
 using std::cout;
 using std::endl;
