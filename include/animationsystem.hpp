@@ -12,13 +12,17 @@ private:
     unordered_set<ID> ids;
 
 public:
+
+    enum Animation {
+        bloodsplatter,
+    };
+
     void add(ID id);
     void remove(ID id);
     void update();
     unsigned int count() const;
     const string getIdentifier() const;
     void activateId(ID id);
-    void updateAnimation(ID id, AnimationComponent::Animation* const animation) const;
 };
 
 #endif //ANIMATIONSYSTEM_HPP

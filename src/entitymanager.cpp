@@ -17,6 +17,7 @@
 #include "removeidfromsystem.hpp"
 #include "playsound.hpp"
 #include "soundsystem.hpp"
+#include "createbloodsplatter.hpp"
 
 using namespace std;
 
@@ -36,7 +37,7 @@ const unsigned int& EntityManager::getId() {
 	return *ids.find(id);
 }
 
-ID EntityManager::createFatMan(FatManData data) {
+ID EntityManager::createFatMan(const glm::vec2& position) {
 	//Get unique ID
 	auto id = getId();
 
@@ -56,11 +57,10 @@ ID EntityManager::createFatMan(FatManData data) {
 	//Just save a pointer to the component like above and modify it like bellow
 	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/playerv3_front.png");
 	renderComponent.zindex_base = 1;
-	renderComponent.xoffset = -10;
-	renderComponent.yoffset = -10;
+	renderComponent.xoffset = -7;
+	renderComponent.yoffset = -7;
 
-	moveComponent.pos.x = data.xpos;
-	moveComponent.pos.y = data.ypos;
+	moveComponent.pos = position;
 	moveComponent.vel.x = 200;
 	moveComponent.vel.y = 200;
 
@@ -103,6 +103,8 @@ ID EntityManager::createFatMan(FatManData data) {
 	animationComponent.walking.southEast.frames.push_back("./resources/images/playerv3_front_run3.png");
 	animationComponent.walking.southEast.frames.push_back("./resources/images/playerv3_front_run4.png");
 
+	animationComponent.state = &animationComponent.idle.south;
+
 	inputComponent.bindings[119] = CommandComponent::Event::MOVE_UP;
 	inputComponent.bindings[100] = CommandComponent::Event::MOVE_RIGHT;
 	inputComponent.bindings[97] = CommandComponent::Event::MOVE_DOWN;
@@ -131,6 +133,7 @@ ID EntityManager::createFatMan(FatManData data) {
 
 	commandComponent[CommandComponent::Event::ON_DEATH] = {
 		new PlaySound(static_cast<SoundSystem*>(systemManager->getSystem("SoundSystem")), SoundComponent::Sound {"./resources/sounds/bloodsplatter.wav"}),
+		new CreateBloodsplatter(this, id),
 	};
 
 	commandComponent[CommandComponent::Event::ON_MOVE] = {
@@ -229,6 +232,53 @@ ID EntityManager::createTile() {
 	for(auto a : entities.at(id)) {
 		a->add(id);
 	}
+	return id;
+}
+
+ID EntityManager::createBloodSplatter(const glm::vec2& position) {
+	auto id = idManager->acquireId();
+	auto& mc = componentManager->createMoveComponent(id);
+	auto& rc = componentManager->createRenderComponent(id);
+	auto& nc = componentManager->createNameComponent(id);
+	auto& ac = componentManager->createAnimationComponent(id);
+	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/bloodsplatter1_11.png");
+
+	rc.xoffset = -10;
+	rc.yoffset = -10;
+	rc.zindex_base = 1;
+
+	mc.pos = position;
+
+	nc.name = "bloodsplatter";
+
+	ac.bloodsplatter.duration = 25;
+	ac.bloodsplatter.looping = false;
+
+	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_1.png");
+	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_2.png");
+	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_3.png");
+	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_4.png");
+	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_5.png");
+	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_6.png");
+	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_7.png");
+	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_8.png");
+	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_9.png");
+	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_10.png");
+	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_11.png");
+
+	/** CRASHING ON THIS **/
+	ac.state = &ac.bloodsplatter;
+
+	entities[id] = {
+		systemManager->getSystem("RenderSystem"),
+		systemManager->getSystem("TextureHashGridSystem"),
+		systemManager->getSystem("AnimationSystem"),
+	};
+
+	for(auto system : entities.at(id)) {
+		system->add(id);
+	}
+
 	return id;
 }
 

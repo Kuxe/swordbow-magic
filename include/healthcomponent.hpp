@@ -2,7 +2,7 @@
 #define HEALTHCOMPONENT_HPP
 
 struct HealthComponent {
-    int health = 10;
+    int health = 2;
 };
 
 #endif //HEALTHCOMPONENT_HPP

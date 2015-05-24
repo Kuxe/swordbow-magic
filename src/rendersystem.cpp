@@ -108,6 +108,18 @@ RenderSystem::RenderSystem() {
             "./resources/images/playerv3_front_run2.png",
             "./resources/images/playerv3_front_run3.png",
             "./resources/images/playerv3_front_run4.png",
+
+            "./resources/images/bloodsplatter1_1.png",
+            "./resources/images/bloodsplatter1_2.png",
+            "./resources/images/bloodsplatter1_3.png",
+            "./resources/images/bloodsplatter1_4.png",
+            "./resources/images/bloodsplatter1_5.png",
+            "./resources/images/bloodsplatter1_6.png",
+            "./resources/images/bloodsplatter1_7.png",
+            "./resources/images/bloodsplatter1_8.png",
+            "./resources/images/bloodsplatter1_9.png",
+            "./resources/images/bloodsplatter1_10.png",
+            "./resources/images/bloodsplatter1_11.png",
             }
         )
     {

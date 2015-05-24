@@ -6,6 +6,7 @@
 #include <unordered_set>
 #include <string>
 #include <vector>
+#include <glm/glm.hpp>
 
 using namespace std;
 
@@ -39,13 +40,11 @@ class EntityManager {
 	EntityManager(SystemManager* systemManager, ComponentManager* componentManager, IdManager* idManager);
     const unsigned int& getId();
 
-    struct FatManData {
-        float xpos, ypos;
-    };
 	ID createFatMan();
-    ID createFatMan(FatManData data);
+    ID createFatMan(const glm::vec2& position);
 	ID createTree();
 	ID createTile();
+    ID createBloodSplatter(const glm::vec2& position);
 	void remove(ID id);
 
     void registerIdToSystem(const string systemIdentifier, ID id);

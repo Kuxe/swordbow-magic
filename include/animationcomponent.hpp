@@ -14,8 +14,10 @@ public:
     public:
         vector<string> frames;
         unsigned short currentFrame = 0;
-        std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
+        std::chrono::high_resolution_clock::time_point startTime;
         unsigned int duration = 150; //duration per frame in milliseconds
+        bool looping = true;
+        bool firstLoop = true;
     };
 
     //Groups animations in different directions together
@@ -33,6 +35,7 @@ public:
 
     AnimationGroup idle;
     AnimationGroup walking;
+    Animation bloodsplatter;
 
     Animation* state;
 };
