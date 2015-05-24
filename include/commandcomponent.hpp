@@ -14,18 +14,11 @@ class ICommand;
 //If an entity should WALK_UP, it iterates over
 //the linked list (forward_list) on that key, executing the
 //ICommands (such as addIdToSystem)
-class CommandComponent {
-public:
-    /*enum Command {
-        WALK_UP,
-        WALK_RIGHT,
-        WALK_DOWN,
-        WALK_LEFT,
-        ATTACK,
-    };*/
-    int command;
-
-    unordered_map<int, forward_list<ICommand*> > commands;
+struct CommandComponent {
+    unordered_map<unsigned int, forward_list<ICommand*> > commands;
+    constexpr inline forward_list<ICommand*>& operator [](unsigned int index) {
+        return commands[index];
+    }
 };
 
 
