@@ -4,6 +4,7 @@
 #include "soundsystem.hpp"
 #include "systemmanager.hpp"
 #include "soundcomponent.hpp"
+#include "namecomponent.hpp"
 
 #include <iostream>
 using namespace std;
@@ -61,12 +62,16 @@ void AttackSystem::update() {
             //Will be set to true if something was actually hit
             //Is checked when playing a default 'hurt' sound
             bool somethingWasHurt = false;
-
-            //... if so, apply attack damage on the impactarea
+            
             for(auto attackedId : hashgrid->query(impactArea)) {
-                auto& hc = componentManager->healthComponents.at(attackedId); //FIXME: What happens if theres no healthcomponent at id?
-                hc.health -= ac.damage;
-                somethingWasHurt = true;
+
+                //Only apply damage to entities that has a healthcomponent
+                auto hcit = componentManager->healthComponents.find(attackedId);
+                if(hcit != componentManager->healthComponents.end()) {
+                    auto& hc = get<1>(*hcit);
+                    hc.health -= ac.damage;
+                    somethingWasHurt = true;
+                }
             }
 
             if(somethingWasHurt) {
