@@ -42,10 +42,13 @@ void MoveSystem::update() {
 		mc.oldPos.x = mc.pos.x;
 		mc.oldPos.y = mc.pos.y;
 
-		mc.dir.x = ic.d - ic.a;
-		mc.dir.y = ic.s - ic.w;
+		//If no key was pressed
+		if(ic.d != 0 || ic.a != 0 || ic.s != 0 || ic.w != 0) {
+			mc.dir.x = ic.d - ic.a;
+			mc.dir.y = ic.s - ic.w;
+		}
 
-		mc.vel = mc.dir;
+		mc.vel = {ic.d - ic.a, ic.s - ic.w};
 
 		//If some input was recieved which caused a move (mc.vel isn't of length 0)
 		if(glm::length(mc.vel) > 0) {
@@ -58,6 +61,9 @@ void MoveSystem::update() {
 
 			//Finally update position
 			mc.pos += mc.vel;
+
+			//It might be handy to normalize the dir for other systems
+			mc.dir = normalize(mc.dir);
 		}
 
 		//Whenever an entity has been moved by something or moved by itself...

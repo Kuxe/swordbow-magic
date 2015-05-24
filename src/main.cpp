@@ -75,8 +75,8 @@ int main(int argc, char** argv) {
 	systemManager.add(&removeSystem);
 
 	//Create ids
-	auto playerId = entityManager.createFatMan({50, 50});
-	auto botId = entityManager.createFatMan({10, 10});
+	auto playerId = entityManager.createFatMan({20, 20});
+	auto botId = entityManager.createFatMan({50, 50});
 
 	//Populate world with... world
 	World world(&entityManager);

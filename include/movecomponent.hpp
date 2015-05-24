@@ -6,7 +6,7 @@ struct MoveComponent {
     glm::vec2 pos;
     glm::vec2 oldPos;
     glm::vec2 vel;
-    glm::vec2 dir;
+    glm::vec2 dir {0, 1};
     float maxVelLength;
 
 	MoveComponent(

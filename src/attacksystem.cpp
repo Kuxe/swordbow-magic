@@ -23,16 +23,26 @@ void AttackSystem::update() {
     while(!activeIds.empty()) {
         auto id = activeIds.front(); activeIds.pop();
         auto& ac = componentManager->attackComponents.at(id);
+        auto& mc = componentManager->moveComponents.at(id);
 
         //The id is active, that means it attacked.
         //First, calculate what the absolute impact area is
         //from the relative impact area, ie the area that
         //the entity attacked taking the entities position into account
 
-        //TODO: This should (of course) depend on position of entity
-        //currently theres just damage-blow to everything within a
-        //box in top the left corner...
-        SpatialIndexer::Rect impactArea {10, 10, 10, 10};
+        //Calculate impactarea of a blow/strike
+        //In words: Draw a vector of length 'weaponLength' from the center of the
+        //entity in it's facing direction. Place a box with the size of ac.impactArea
+        //with the tip of the vector as the box's center
+        float x = mc.pos.x + ac.impactArea.x + mc.dir.x*ac.weaponLength - ac.impactArea.w/2;
+        float y = mc.pos.y + ac.impactArea.y + mc.dir.y*ac.weaponLength - ac.impactArea.h/2;
+        if(x < 0 || y < 0) return; //If someone tries to strike outside of world, disallow the strike
+
+        const SpatialIndexer::Rect impactArea {
+            (unsigned int)x,
+            (unsigned int)y,
+            ac.impactArea.w,
+            ac.impactArea.h };
 
         //So the entity probably attacked within some area
         //Query that area, for all entities that can be damaged
