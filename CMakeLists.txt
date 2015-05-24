@@ -10,6 +10,7 @@ add_executable(swordbow-magic
     src/attacksystem.cpp
     src/camerasystem.cpp
     src/collisionsystem.cpp
+    src/commandcomponent.cpp
     src/componentmanager.cpp
     src/deltatime.cpp
     src/entitymanager.cpp

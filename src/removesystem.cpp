@@ -25,6 +25,7 @@ void RemoveSystem::remove(ID id) {
 void RemoveSystem::update() {
     while(!activeIds.empty()) {
         auto id = activeIds.front(); activeIds.pop();
+        auto& cc = componentManager->commandComponents.at(id);
 
         //1. If component have any last wishes, such as exploding or playing death sound
         //This would be the place to ensure that will happen
@@ -34,9 +35,7 @@ void RemoveSystem::update() {
         static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->renderArea(spatialIndexer->getBoundingBox(id));
 
         //Execute whatever last wishes the entity has
-        for(auto command : componentManager->commandComponents.at(id)[6]) {
-            command->execute();
-        }
+        cc.execute(CommandComponent::Event::ON_DEATH);
 
         //2. Kill the entity completely, not a single trace of it should exist beyond this point
         //(pushing it onto doomedIds to prevent iterator invalidations, it gets removed later)

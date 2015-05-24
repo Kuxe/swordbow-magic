@@ -15,10 +15,21 @@ class ICommand;
 //the linked list (forward_list) on that key, executing the
 //ICommands (such as addIdToSystem)
 struct CommandComponent {
+    enum Event {
+        MOVE_UP,
+        MOVE_RIGHT,
+        MOVE_DOWN,
+        MOVE_LEFT,
+        ATTACK,
+        ON_DEATH,
+        ON_MOVE
+    };
+
     unordered_map<unsigned int, forward_list<ICommand*> > commands;
     constexpr inline forward_list<ICommand*>& operator [](unsigned int index) {
         return commands[index];
     }
+    void execute(const Event& event);
 };
 
 

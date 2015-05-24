@@ -103,37 +103,37 @@ ID EntityManager::createFatMan(FatManData data) {
 	animationComponent.walking.southEast.frames.push_back("./resources/images/playerv3_front_run3.png");
 	animationComponent.walking.southEast.frames.push_back("./resources/images/playerv3_front_run4.png");
 
-	inputComponent.bindings[119] = 1;
-	inputComponent.bindings[100] = 2;
-	inputComponent.bindings[97] = 3;
-	inputComponent.bindings[115] = 4;
-	inputComponent.bindings[32] = 5;
+	inputComponent.bindings[119] = CommandComponent::Event::MOVE_UP;
+	inputComponent.bindings[100] = CommandComponent::Event::MOVE_RIGHT;
+	inputComponent.bindings[97] = CommandComponent::Event::MOVE_DOWN;
+	inputComponent.bindings[115] = CommandComponent::Event::MOVE_LEFT;
+	inputComponent.bindings[32] = CommandComponent::Event::ATTACK;
 
-	commandComponent[1] = {
+	commandComponent[CommandComponent::Event::MOVE_UP] = {
 		new AddIdToSystem(id, "MoveSystem", systemManager),
 	};
 
-	commandComponent[2] = {
+	commandComponent[CommandComponent::Event::MOVE_RIGHT] = {
 		new AddIdToSystem(id, "MoveSystem", systemManager),
 	};
 
-	commandComponent[3] = {
+	commandComponent[CommandComponent::Event::MOVE_DOWN] = {
 		new AddIdToSystem(id, "MoveSystem", systemManager),
 	};
 
-	commandComponent[4] = {
+	commandComponent[CommandComponent::Event::MOVE_LEFT] = {
 		new AddIdToSystem(id, "MoveSystem", systemManager),
 	};
 
-	commandComponent[5] = {
+	commandComponent[CommandComponent::Event::ATTACK] = {
 		new ActivateId(id, "AttackSystem", systemManager),
 	};
 
-	commandComponent[6] = {
+	commandComponent[CommandComponent::Event::ON_DEATH] = {
 		new PlaySound(static_cast<SoundSystem*>(systemManager->getSystem("SoundSystem")), SoundComponent::Sound {"./resources/sounds/bloodsplatter.wav"}),
 	};
 
-	commandComponent[7] = {
+	commandComponent[CommandComponent::Event::ON_MOVE] = {
 		new ActivateId(id, "RenderSystem", systemManager),
 		new ActivateId(id, "CollisionSystem", systemManager),
 		new ActivateId(id, "TextureHashGridSystem", systemManager),

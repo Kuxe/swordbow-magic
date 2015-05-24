@@ -68,12 +68,9 @@ void MoveSystem::update() {
 			mc.dir = normalize(mc.dir);
 		}
 
-		//Whenever an entity has been moved by something or moved by itself...
+		//Do something defined by the entity if the entity moved
 		if(!(mc.pos.x == mc.oldPos.x && mc.pos.y == mc.oldPos.y)) {
-			//Then it moved. Sherlock
-			for(auto command : cc[7]) {
-				command->execute();
-			}
+			cc.execute(CommandComponent::Event::ON_MOVE);
 		}
 	}
 }
