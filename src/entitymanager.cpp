@@ -137,6 +137,10 @@ ID EntityManager::createFatMan(FatManData data) {
 		new ActivateId(id, "AttackSystem", systemManager),
 	};
 
+	commandComponent[6] = {
+		new PlaySound(static_cast<SoundSystem*>(systemManager->getSystem("SoundSystem")), SoundComponent::Sound {"./resources/sounds/bloodsplatter.wav"}),
+	};
+
 	//Tell the entity what systems belongs to
 	entities[id] = {
 		systemManager->getSystem("RenderSystem"),
