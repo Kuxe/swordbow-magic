@@ -11,6 +11,7 @@
 #include "rendersystem.hpp"
 #include "hashgridsystem.hpp"
 #include "collisionsystem.hpp"
+#include <math.h>
 
 using namespace std;
 
@@ -40,8 +41,24 @@ void MoveSystem::update() {
 		auto& ic = componentManager->inputComponents.at(id);
 		mc.oldPos.x = mc.pos.x;
 		mc.oldPos.y = mc.pos.y;
-		mc.pos.x += ((ic.d * mc.vel.x) - (ic.a * mc.vel.x)) * deltaTime->delta();
-		mc.pos.y += ((ic.s * mc.vel.y) - (ic.w * mc.vel.y)) * deltaTime->delta();
+
+		mc.dir.x = ic.d - ic.a;
+		mc.dir.y = ic.s - ic.w;
+
+		mc.vel = mc.dir;
+
+		//If some input was recieved which caused a move (mc.vel isn't of length 0)
+		if(glm::length(mc.vel) > 0) {
+			//Set it to appropiate length
+			mc.vel = glm::normalize(mc.vel);
+			mc.vel *= mc.maxVelLength;
+
+			//Adjust for dt
+			mc.vel *= deltaTime->delta();
+
+			//Finally update position
+			mc.pos += mc.vel;
+		}
 
 		//Whenever an entity has been moved by something or moved by itself...
 		if(!(mc.pos.x == mc.oldPos.x && mc.pos.y == mc.oldPos.y)) {

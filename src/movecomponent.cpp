@@ -1,10 +1,10 @@
 #include "movecomponent.hpp"
 
 MoveComponent::MoveComponent(
-	const Point& pos,
-	const Point& oldPos,
-	const Vector2& vel)
+	const glm::vec2& pos,
+	const glm::vec2& oldPos,
+	const float maxVelLength)
 	:
 	pos(pos),
 	oldPos(pos),
-	vel(vel) { }
+	maxVelLength(maxVelLength) { }
