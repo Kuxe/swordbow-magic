@@ -28,8 +28,6 @@ using namespace std;
 int main(int argc, char** argv) {
 	bool running = true;
 
-	SDL_Init(0);
-
 	DeltaTime deltaTime;
 
 	ComponentManager componentManager;
@@ -107,8 +105,6 @@ int main(int argc, char** argv) {
 		systemManager.update();
 		deltaTime.stop();
 	}
-
-	SDL_Quit();
 
 	return 0;
 }
