@@ -197,7 +197,7 @@ void RenderSystem::update() {
 	}
 
     while(!drawQueue.empty()) {
-        const auto& drawArea = drawQueue.front(); drawQueue.pop();
+        const auto& drawArea = drawQueue.front();
 
         //Make sure all overlapping ids have their part in the intersection area
     	//are redrawn
@@ -225,6 +225,9 @@ void RenderSystem::update() {
     				}
     			);
     	}
+
+        //Dont move this piece of code. A reference to this element is used above!
+        drawQueue.pop();
     }
 
     //Draw to worldTexture
