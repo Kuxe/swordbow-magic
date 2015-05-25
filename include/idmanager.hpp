@@ -1,6 +1,7 @@
 #ifndef IDMANAGER_H
 #define IDMANAGER_H
 #include <stack>
+#include <math.h>
 #include <climits>
 
 using std::stack;
@@ -12,7 +13,8 @@ typedef unsigned int ID;
 **/
 class IdManager {
 private:
-    static constexpr ID MAX_IDS = 65536;
+
+    static constexpr ID MAX_IDS = 2 << 24;
     stack<ID> freeIds;
 
 public:

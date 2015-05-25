@@ -4,6 +4,7 @@
 using namespace std;
 
 IdManager::IdManager() {
+	cout << "Available IDs: " << MAX_IDS << ", IdManager memory footprint: " << MAX_IDS * sizeof(ID) / 1048576 << "MB" << endl;
 	for(unsigned int freeId = MAX_IDS-1; freeId > 0; freeId--) {
 		freeIds.push(freeId);
 	}
