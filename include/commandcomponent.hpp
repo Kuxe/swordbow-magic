@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <forward_list>
+#include "icommand.hpp"
 
 using std::unordered_map;
 using std::forward_list;
@@ -24,6 +25,14 @@ struct CommandComponent {
         ON_DEATH,
         ON_MOVE
     };
+
+    virtual ~CommandComponent() {
+        for(auto list : commands) {
+            for(auto command : list.second) {
+                delete command;
+            }
+        }
+    }
 
     unordered_map<unsigned int, forward_list<ICommand*> > commands;
     constexpr inline forward_list<ICommand*>& operator [](unsigned int index) {
