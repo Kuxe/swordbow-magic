@@ -18,8 +18,6 @@ class RenderComponent {
  	float xoffset = 0;
  	float yoffset = 0;
 	TextureData textureData;
-    SDL_Rect cliprect;
-    SDL_Rect oldCliprect;
 
 	//is set to y+height during runtime
 	//used in painters algorithm
@@ -30,10 +28,6 @@ class RenderComponent {
 	//(typically) constant value. Used to force something
 	//to be rendered before or after whatever is governed by zindex
 	float zindex_base = 0;
-
- 	//If false, this entity won't re-render
- 	//Note that it might still be visible if nothing was rendered above it
- 	bool doRender = true;
 };
 
 #endif //RENDERCOMPONENT_H

@@ -13,9 +13,9 @@ public:
     class Animation {
     public:
         vector<string> frames;
-        unsigned short currentFrame = 0;
+        unsigned char currentFrame = 0;
         std::chrono::high_resolution_clock::time_point startTime;
-        unsigned int duration = 150; //duration per frame in milliseconds
+        unsigned short duration = 150; //duration per frame in milliseconds
         bool looping = true;
         bool firstLoop = true;
     };
