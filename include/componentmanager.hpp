@@ -66,6 +66,21 @@ class ComponentManager {
         return commandComponents[id] = CommandComponent();
     }
 
+    static constexpr uint sizePerEntity() {
+        return
+            sizeof(MoveComponent) +
+            sizeof(RenderComponent) +
+            sizeof(InputComponent) +
+            sizeof(TileComponent) +
+            sizeof(SizeComponent) +
+            sizeof(NameComponent) +
+            sizeof(SoundComponent) +
+            sizeof(AnimationComponent) +
+            sizeof(HealthComponent) +
+            sizeof(AttackComponent) +
+            sizeof(CommandComponent);
+    }
+
     void clearComponents(ID id);
 };
 

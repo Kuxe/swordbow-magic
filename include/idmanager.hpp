@@ -13,11 +13,10 @@ typedef unsigned int ID;
 **/
 class IdManager {
 private:
-
-    static constexpr ID MAX_IDS = 2 << 24;
     stack<ID> freeIds;
 
 public:
+    static constexpr ID MAX_IDS = 2 << 24;
     IdManager();
     unsigned int acquireId();
     void releaseId(ID id);
