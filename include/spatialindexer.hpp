@@ -26,21 +26,6 @@ class SpatialIndexer {
 		};
 
 		/**
-		 *	An entity is spatially represented as a rect with an ID
-		 **/
-		struct Entity {
-			Rect rect;
-			ID id;
-
-			inline bool operator==(const Entity& rhs) const {
-				return rect == rhs.rect && id == rhs.id;
-			}
-			inline bool operator!=(const Entity& rhs) const {
-				return !(*this == rhs);
-			}
-		};
-
-		/**
 		 *	A collision consists of two ID's that collided
 		**/
 		struct Overlap {
