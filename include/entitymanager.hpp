@@ -42,9 +42,10 @@ class EntityManager {
 
 	ID createFatMan();
     ID createFatMan(const glm::vec2& position);
-	ID createTree();
+    ID createTree(const glm::vec2& position);
 	ID createTile();
     ID createBloodSplatter(const glm::vec2& position);
+    ID createFlower(const glm::vec2& position, const char color);
 	void remove(ID id);
 
     void registerIdToSystem(const string systemIdentifier, ID id);

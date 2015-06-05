@@ -94,7 +94,7 @@ RenderSystem::RenderSystem() {
     for(auto path :{
             "./resources/images/HelloWorld.bmp",
             "./resources/images/player.bmp",
-            "./resources/images/grass.bmp",
+            "./resources/images/grass.png",
 			"./resources/images/SmallTree.png",
             "./resources/images/playerv2.png",
 
@@ -120,6 +120,11 @@ RenderSystem::RenderSystem() {
             "./resources/images/bloodsplatter1_9.png",
             "./resources/images/bloodsplatter1_10.png",
             "./resources/images/bloodsplatter1_11.png",
+
+            "./resources/images/yellow_flower.png",
+            "./resources/images/green_flower.png",
+            "./resources/images/violet_flower.png",
+            "./resources/images/blue_flower.png",
             }
         )
     {

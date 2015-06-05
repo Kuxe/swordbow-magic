@@ -1,13 +1,17 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+#include "noisebrush.hpp"
+
 typedef unsigned int ID;
 
 class EntityManager;
 class World {
  private:
-	static constexpr short NUM_TILES = 16;
-	static constexpr unsigned char TILE_SIZE = 20;
+    static constexpr short SEED = 0;
+	static constexpr short NUM_TILES = 256;
+	static constexpr unsigned char TILE_SIZE = 32;
+
 	ID tiles[NUM_TILES][NUM_TILES];
 
 	EntityManager* entityManager;

@@ -22,6 +22,7 @@ add_executable(swordbow-magic
     src/main.cpp
     src/movecomponent.cpp
     src/movesystem.cpp
+    src/noisebrush.cpp
     src/playsound.cpp
     src/removesystem.cpp
     src/rendersystem.cpp

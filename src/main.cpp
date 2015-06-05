@@ -98,18 +98,6 @@ int main(int argc, char** argv) {
 	//Populate world with... world
 	World world(&entityManager);
 
-	for(int y = 1; y <= 3; y++) {
-		for(int x = 1; x <= 3; x++) {
-			auto tree = entityManager.createTree();
-			auto& treeMc = componentManager.moveComponents.at(tree);
-			treeMc.pos.x = 20 + x * 70;
-			treeMc.pos.y = 20 + y * 70;
-			treeMc.oldPos.x = 20 + x * 70;
-			treeMc.oldPos.y = 20 + y * 70;
-
-		}
-	}
-
 	//Keystroke events should change the input component of the player
 	entityManager.registerIdToSystem("KeyboardSystem", playerId);
 

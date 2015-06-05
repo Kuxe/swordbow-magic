@@ -171,7 +171,7 @@ ID EntityManager::createFatMan() {
 	return createFatMan({10, 10});
 }
 
-ID EntityManager::createTree() {
+ID EntityManager::createTree(const glm::vec2& position) {
 	auto id = idManager->acquireId();
 
 	auto& moveComponent = componentManager->createMoveComponent(id);
@@ -185,10 +185,8 @@ ID EntityManager::createTree() {
 	renderComponent.xoffset = -24;
 	renderComponent.yoffset = -54;
 
-	moveComponent.pos.x = 100;
-	moveComponent.pos.y = 100;
-	moveComponent.oldPos.x = 100;
-	moveComponent.oldPos.y = 100;
+	moveComponent.pos = position;
+	moveComponent.oldPos = moveComponent.pos;
 
 	sizeComponent.width = 36;
 	sizeComponent.height = 10;
@@ -216,11 +214,11 @@ ID EntityManager::createTile() {
 	auto& rc = componentManager->createRenderComponent(id);
 	auto& nameComponent = componentManager->createNameComponent(id);
 
-	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/grass.bmp");
+	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/grass.png");
 	rc.zindex_base = 0;
 
-	sizeComponent.width = 20;
-	sizeComponent.height = 20;
+	sizeComponent.width = 32;
+	sizeComponent.height = 32;
 
 	nameComponent.name = "tile";
 
@@ -273,6 +271,52 @@ ID EntityManager::createBloodSplatter(const glm::vec2& position) {
 		systemManager->getSystem("RenderSystem"),
 		systemManager->getSystem("TextureHashGridSystem"),
 		systemManager->getSystem("AnimationSystem"),
+	};
+
+	for(auto system : entities.at(id)) {
+		system->add(id);
+	}
+
+	return id;
+}
+
+ID EntityManager::createFlower(const glm::vec2& position, const char color) {
+	auto id = idManager->acquireId();
+	auto& mc = componentManager->createMoveComponent(id);
+	auto& rc = componentManager->createRenderComponent(id);
+	auto& nc = componentManager->createNameComponent(id);
+
+	string flowercolor = "";
+
+	//Set image corresponding to color
+	switch(color) {
+		case 0: {
+			flowercolor = "./resources/images/yellow_flower.png";
+		} break;
+		case 1: {
+			flowercolor = "./resources/images/blue_flower.png";
+		} break;
+		case 2: {
+			flowercolor = "./resources/images/violet_flower.png";
+		} break;
+		case 3: {
+			flowercolor = "./resources/images/green_flower.png";
+		} break;
+	}
+	
+	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, flowercolor);
+
+	rc.xoffset = -1;
+	rc.yoffset = -5;
+	rc.zindex_base = 1;
+
+	mc.pos = position;
+
+	nc.name = "flower";
+
+	entities[id] = {
+		systemManager->getSystem("RenderSystem"),
+		systemManager->getSystem("TextureHashGridSystem"),
 	};
 
 	for(auto system : entities.at(id)) {
