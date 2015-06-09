@@ -191,8 +191,13 @@ void RenderSystem::update() {
     //All drawareas saved from previous frame should be drawn this frame
 	drawQueue.swap(previousDrawAreas);
 
+
+    //Cap the amount of IDs getting rendered each frame
+    //this is only a quick-fix to ensure no program-freeze
+    //when initially rendering the whole world
+    char allowedRendersThisFrame = 32;
 	//For all activeIds in rendersystem...
-	while(!activeIds.empty()) {
+	while(!activeIds.empty() && allowedRendersThisFrame-- > 0 ) {
 		//Draw everything within the activeIds texturearea
         auto drawArea = spatialIndexer->getBoundingBox(activeIds.front());
 		drawQueue.push(drawArea); activeIds.pop();
@@ -245,6 +250,12 @@ void RenderSystem::update() {
     //Put the fps on tmp (text->surface->tmp->fontTexture->default render target)
     const std::string str = std::to_string((int)(1/deltaTime->delta())) + "fps";
     printText(Text(str, 0, 0, {231, 195, 175}));
+
+    //If all active ids werent rendered this frame, warn
+    if(allowedRendersThisFrame <= 0) {
+        const std::string str = "WARNING: renderer is lagging behind";
+        printText(Text(str, 0, 20, {255, 55, 55}));
+    }
 
     //Render all texts
     renderTexts();
