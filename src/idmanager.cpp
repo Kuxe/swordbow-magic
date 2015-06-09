@@ -5,17 +5,23 @@ using namespace std;
 
 IdManager::IdManager() {
 	cout << "Available IDs: " << MAX_IDS << ", IdManager memory footprint: " << MAX_IDS * sizeof(ID) / 1048576 << "MB" << endl;
-	for(unsigned int freeId = MAX_IDS-1; freeId > 0; freeId--) {
-		freeIds.push(freeId);
-	}
 }
 
 unsigned int IdManager::acquireId() {
-	if(freeIds.empty()) {
+
+	//If any ID has been returned, reuse it
+	if(!freeIds.empty()) {
+		const ID recycledId = freeIds.top(); freeIds.pop();
+		return recycledId;
+	}
+
+	//Else get next free id;
+	static ID id = 0;
+	id += 1;
+	if(id == MAX_IDS) {
 		cout << "Error: Ran out of free ids (idmanager.cpp). Either increase the amount of freeIds or reduce entities in world." << endl;
 	}
-	const auto acquiredId = freeIds.top(); freeIds.pop();
-	return acquiredId;
+	return id;
 }
 
 void IdManager::releaseId(unsigned int releasedId) {
