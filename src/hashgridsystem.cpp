@@ -70,7 +70,7 @@ void HashGridSystem::removeFromCells(const ID id) {
 }
 
 void HashGridSystem::removeFromCellsOldBoundingBox(const ID id) {
-	const auto bb = boundingBox->getBoundingBox(id);
+	const auto bb = boundingBox->getOldBoundingBox(id);
 
 	//Remove ID in all cells which previously contained this ID
 	for(unsigned int y = bb.y/side; y <= (bb.y + bb.h)/side; y++) {
