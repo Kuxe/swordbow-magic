@@ -92,11 +92,12 @@ int main(int argc, char** argv) {
 	systemManager.add(&removeSystem);
 
 	//Create ids
-	auto playerId = entityManager.createFatMan({20, 20});
-	auto botId = entityManager.createFatMan({50, 50});
+	auto playerId = entityManager.createFatMan({0, 0});
+	//auto botId = entityManager.createFatMan({50, 50});
 
 	//Populate world with... world
 	World world(&entityManager);
+	world.createDebugWorld();
 
 	//Keystroke events should change the input component of the player
 	entityManager.registerIdToSystem("KeyboardSystem", playerId);
