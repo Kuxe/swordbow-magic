@@ -17,6 +17,8 @@ class World {
 	EntityManager* entityManager;
  public:
 	explicit World(EntityManager* entityManager);
+    void createWorld();
+    void createDebugWorld();
 
 };
 

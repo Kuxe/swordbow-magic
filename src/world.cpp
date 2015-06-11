@@ -11,8 +11,9 @@ using namespace std;
 
 World::World(EntityManager* entityManager) :
 		entityManager(entityManager)
-	{
+	{ }
 
+void World::createWorld() {
 	//Place tiles in world
 	for(short y = 0; y < NUM_TILES; y++) {
 		for(short x = 0; x < NUM_TILES; x++) {
@@ -86,4 +87,45 @@ World::World(EntityManager* entityManager) :
 			}
 		}
 	}
+}
+
+void World::createDebugWorld() {
+	//Place tiles in world
+	const char NUM_TILES = 8;
+	for(short y = 0; y < NUM_TILES; y++) {
+		for(short x = 0; x < NUM_TILES; x++) {
+			auto id  = entityManager->createTile();
+			tiles[x][y] = id;
+
+			//Align tiles into a grid, spatially
+			auto& mc = entityManager->componentManager->moveComponents.at(id);
+			mc.pos.x = x * TILE_SIZE;
+			mc.pos.y = y * TILE_SIZE;
+			mc.oldPos.x = x * TILE_SIZE;
+			mc.oldPos.y = y * TILE_SIZE;
+
+			auto sc = entityManager->componentManager->sizeComponents.at(id);
+			sc.width = TILE_SIZE;
+			sc.height = TILE_SIZE;
+		}
+	}
+	/*
+	//This tree might be invisible
+	entityManager->createTree({100, 50});
+
+	//This tree (leftmost) probably doesnt get skewed when walking past it
+	entityManager->createTree({100, 100});
+
+	//Leaves of this tree probably get skewed if walking behind them
+	entityManager->createTree({150.0123f, 127.01f});
+
+	//This flower (leftmost) probably doesnt get skewed when walking past it
+	entityManager->createFlower({50, 150}, 0);
+
+	//This flower will probably get skewed if walking past it
+	entityManager->createFlower({100.0123f, 177.01f}, 0);*/
+
+
+
+
 }
