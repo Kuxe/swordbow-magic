@@ -54,8 +54,8 @@ class RenderSystem : public ISystem {
 	CameraSystem* cameraSystem;
 
 
-	static constexpr ushort SCREEN_WIDTH = 640;
-	static constexpr ushort SCREEN_HEIGHT = 480;
+	static constexpr ushort SCREEN_WIDTH = 1920 / 4;
+	static constexpr ushort SCREEN_HEIGHT = 1080 / 4;
 
 	SDL_Renderer* renderer = nullptr;
 	SDL_Window* window = nullptr;
