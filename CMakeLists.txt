@@ -63,7 +63,9 @@ TARGET_LINK_LIBRARIES(swordbow-magic game)
 #Create a test-executable using Catch
 add_executable(swordbow-magic-test
     catch/src/config.cpp
-    catch/src/hashgridsystem_test.cpp)
+    catch/src/hashgridsystem_test.cpp
+    catch/src/rect_test.cpp
+)
 
 #What linker flags are required for swordbow-magic-test?
 TARGET_LINK_LIBRARIES(swordbow-magic-test game)

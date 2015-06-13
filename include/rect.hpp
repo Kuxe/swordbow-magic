@@ -1,13 +1,18 @@
 #ifndef RECT_HPP
 #define RECT_HPP
 #include <ostream>
+#include <cmath>
 
 struct Rect {
-    float x, y;
-    float w, h;
+    float x, y, w, h;
 
     constexpr inline bool operator==(const Rect& rhs) const {
-        return x == rhs.x && y == rhs.y && w == rhs.w && h == rhs.h;
+        constexpr float EPSILON = 0.00001f;
+        return
+            std::fabs(x - rhs.x) < EPSILON &&
+            std::fabs(y - rhs.y) < EPSILON &&
+            std::fabs(w - rhs.w) < EPSILON &&
+            std::fabs(h - rhs.h) < EPSILON;
     }
     constexpr inline bool operator!=(const Rect& rhs) const {
         return !(*this == rhs);
@@ -27,13 +32,29 @@ struct Rect {
                 a.y >= b.y + b.h);
     }
 
+    static constexpr inline const float& max(const float& a, const float& b) {
+        return a > b ? a : b;
+    }
+
+    static constexpr inline const float& min(const float& a, const float& b) {
+        return a < b ? a : b;
+    }
+
+    //Returns {0, 0, 0, 0} if there was no intersection
     static constexpr inline const Rect getIntersection(const Rect& a, const Rect& b) {
-        //TODO: This can probably be optimized
-        const float x = a.x > b.x ? a.x : b.x;
-        const float y = a.y > b.y ? a.y : b.y;
-        const float w = (a.x + a.w) < (b.x + b.w) ? a.x + a.w - x : b.x + b.w - x;
-        const float h = (a.y + a.h) < (b.y + b.h) ? a.y + a.h - y : b.y + b.h - y;
-        return {x, y, w, h};
+        //If a intersects b...
+        return intersect(a, b) ?
+
+        //Then return intersection area
+            Rect{
+                max(a.x, b.x),
+                max(a.y, b.y),
+                min(a.x + a.w, b.x + b.w) - max(a.x, b.x),
+                min(a.y + a.h, b.y + b.h) - max(a.y, b.y)
+            }
+
+        //Otherwise return {0, 0, 0, 0}
+            : Rect{0, 0, 0, 0};
     }
 
     friend std::ostream& operator<< (std::ostream& stream, const Rect& rect);
