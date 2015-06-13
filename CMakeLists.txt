@@ -41,6 +41,7 @@ add_library(game SHARED
     src/movesystem.cpp
     src/noisebrush.cpp
     src/playsound.cpp
+    src/rect.cpp
     src/removesystem.cpp
     src/rendersystem.cpp
     src/sizeboundingbox.cpp
