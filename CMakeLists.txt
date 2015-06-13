@@ -5,7 +5,25 @@ project(swordbow-magic)
 #Binary should be in root folder
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
 
-add_executable(swordbow-magic
+INCLUDE(FindPkgConfig)
+
+#Find SDL2 dependencies
+PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
+PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image)
+PKG_SEARCH_MODULE(SDL2TTF REQUIRED SDL2_ttf)
+PKG_SEARCH_MODULE(SDL2MIXER REQUIRED SDL2_mixer)
+
+#Flags for compiler and linker
+SET(CMAKE_CXX_COMPILER "clang++")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++14")
+
+#What include directories are there?..:
+include_directories(./include/ ./catch/ ${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS} ${SDL2MIXER_INCLUDE_DIRS})
+
+#Create a library containing game-functionality
+#game-executable and test-executable uses this library
+#Want to re-use *.o files in both game-exec and test-exec...
+add_library(game SHARED
     src/animationsystem.cpp
     src/attacksystem.cpp
     src/camerasystem.cpp
@@ -19,7 +37,6 @@ add_executable(swordbow-magic
     src/idmanager.cpp
     src/inputsystem.cpp
     src/keyboardsystem.cpp
-    src/main.cpp
     src/movecomponent.cpp
     src/movesystem.cpp
     src/noisebrush.cpp
@@ -31,30 +48,24 @@ add_executable(swordbow-magic
     src/systemmanager.cpp
     src/text.cpp
     src/textureboundingbox.cpp
-    src/world.cpp)
+    src/world.cpp
+    )
 
-INCLUDE(FindPkgConfig)
+TARGET_LINK_LIBRARIES(game ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES} ${SDL2MIXER_LIBRARIES})
 
-#Find SDL2 dependencies
-PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
-PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image)
-PKG_SEARCH_MODULE(SDL2TTF REQUIRED SDL2_ttf)
-PKG_SEARCH_MODULE(SDL2MIXER REQUIRED SDL2_mixer)
+#Create a game-executable
+add_executable(swordbow-magic src/main.cpp)
 
-#Flags for compiler and linker
-SET(CMAKE_CXX_COMPILER "/usr/bin/clang++")
-SET(COMPILE_FLAGS "-g -std=c++14")
+#What linker flags are required for swordbow-magic?
+TARGET_LINK_LIBRARIES(swordbow-magic game)
 
-#Append flags for compiler and linker to cmake variables
-#(the compiler uses the cmake variables)
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMPILE_FLAGS}")
-SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${LINK_FLAGS}")
+#Create a test-executable using Catch
+add_executable(swordbow-magic-test
+    catch/src/config.cpp
+    catch/src/hashgridsystem_test.cpp)
 
-#What include directories are there?..:
-include_directories(./include/ ${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS} ${SDL2MIXER_INCLUDE_DIRS})
-
-#What linker flags are required?..:
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES} ${SDL2MIXER_LIBRARIES})
+#What linker flags are required for swordbow-magic-test?
+TARGET_LINK_LIBRARIES(swordbow-magic-test game)
 
 #Run "make run" to run the binary
 add_custom_target(run

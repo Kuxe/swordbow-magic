@@ -63,6 +63,9 @@ Makefile
 #executable
 swordbow-magic
 
+#Catch executable
+swordbow-magic-test
+
 #clang_complete
 .clang_complete
 
