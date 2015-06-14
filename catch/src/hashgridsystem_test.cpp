@@ -79,8 +79,8 @@ TEST_CASE("HashGridSystem") {
         auto bb = hg.getBoundingBox(player);
         auto queryids = hg.query(bb);
 
-        //There should be 3 entities within the query of dummysquare
-        REQUIRE(queryids.size() == 3);
+        //There should be 2 entities within the query of dummysquare
+        REQUIRE(queryids.size() == 2);
         for(auto id : queryids) {
             cout << cm.nameComponents.at(id).name << endl;
         }
@@ -100,8 +100,50 @@ TEST_CASE("HashGridSystem") {
         auto bb = hg.getBoundingBox(player);
         auto queryids = hg.query(bb);
 
-        //There should be 3 entities within the query of dummysquare
-        REQUIRE(queryids.size() == 3);
+        //There should be 2 entities within the query of dummysquare
+        REQUIRE(queryids.size() == 2);
+        for(auto id : queryids) {
+            cout << cm.nameComponents.at(id).name << endl;
+        }
+    }
+
+    SECTION("Query partially contained area of entity TRY3") {
+        auto tile1 = entityManager.createTile();
+        auto tile2 = entityManager.createTile();
+        cm.moveComponents.at(player).pos = {16.0f, 31.506195f};
+        cm.moveComponents.at(tile1).pos = {0.0f, 0.0f};
+        cm.moveComponents.at(tile2).pos = {0.0f, 32.0f};
+
+        dt.start();
+        sm.update();
+        dt.stop();
+
+        auto bb = hg.getBoundingBox(player);
+        auto queryids = hg.query(bb);
+
+        //There should be 2 entities within the query of dummysquare
+        REQUIRE(queryids.size() == 2);
+        for(auto id : queryids) {
+            cout << cm.nameComponents.at(id).name << endl;
+        }
+    }
+
+    SECTION("Query partially contained area of entity TRY4") {
+        auto tile1 = entityManager.createTile();
+        auto tile2 = entityManager.createTile();
+        cm.moveComponents.at(player).pos = {16.0f, 31.076195f};
+        cm.moveComponents.at(tile1).pos = {0.0f, 0.0f};
+        cm.moveComponents.at(tile2).pos = {0.0f, 32.0f};
+
+        dt.start();
+        sm.update();
+        dt.stop();
+
+        auto bb = hg.getBoundingBox(player);
+        auto queryids = hg.query(bb);
+
+        //There should be 2 entities within the query of dummysquare
+        REQUIRE(queryids.size() == 2);
         for(auto id : queryids) {
             cout << cm.nameComponents.at(id).name << endl;
         }

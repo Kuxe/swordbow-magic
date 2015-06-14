@@ -228,15 +228,19 @@ void RenderSystem::update() {
     		//Only draw that portion of the texture that intersects
     		calculateZIndex(id);
 
-            const auto clipSource = intersectionToClipSource(
-                intersection,
-                mc.pos,
-                rc.xoffset, rc.yoffset
-            );
+            const SDL_Rect clipSource = {
+                int(intersection.x) - int(mc.pos.x) - int(rc.xoffset),
+                int(intersection.y) - int(mc.pos.y) - int(rc.yoffset),
+                int(intersection.w),
+                int(intersection.h)
+            };
 
-            const auto clipDestination = intersectionToClipDestination(
-                intersection
-            );
+            const SDL_Rect clipDestination = {
+                (int)intersection.x,
+                (int)intersection.y,
+                (int)intersection.w,
+                (int)intersection.h
+            };
 
             const RenderData renderData = {
                 id, &rc, rc.textureData, clipSource, clipDestination

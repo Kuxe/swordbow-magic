@@ -72,5 +72,15 @@ TEST_CASE("Rect") {
         b =         {0.0f, 0.0f, 32.0f, 32.0f};
         expected =  {0.0f, 31.947388f, 1.0f, 32.0f - 31.947388f};
         REQUIRE(Rect::getIntersection(a, b) == expected);
+
+        a =         {99.227234, 175.708984f, 1.0f, 1.0f};
+        b =         {99.0123f, 174.01f, 3.0f, 5.0f};
+        expected =  {99.227234, 175.708984f, 1.0f, 1.0f};
+        REQUIRE(Rect::getIntersection(a, b) == expected);
+
+        a =         {100.0123f - 1, 177.01f - 5, 3.0f, 5.0f};
+        b =         {99.0f, 175.0f, 1.0f, 1.0f};
+        expected =  {99.0123f, 175.0f, 100.0f - 99.0123f, 1.0f};
+        REQUIRE(Rect::getIntersection(a, b) == expected);
     }
 }

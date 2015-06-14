@@ -13,7 +13,6 @@
 #include "spatialindexer.hpp"
 #include "heap.hpp"
 #include "text.hpp"
-#include "glm/vec2.hpp"
 
 using namespace std;
 
@@ -82,43 +81,6 @@ class RenderSystem : public ISystem {
 	void setCameraSystem(CameraSystem* cameraSystem);
 	void setImage(ID id, string path);
 	void printText(const Text& text);
-
-	//Converts a intersection (rectangle in space)
-	//to a clip source (where to clip an image for rendering)
-	//giving the clip rect for the image within the intersection
-	static inline SDL_Rect intersectionToClipSource(
-	    	const Rect& intersection,
-	    	const glm::vec2& pos,
-	    	const float xoffset, const float yoffset) {
-
-		int x = intersection.x - pos.x - xoffset;
-		int y = intersection.y - pos.y - yoffset;
-
-		float xdiff = intersection.x - pos.x - xoffset - (float)x;
-		float ydiff = intersection.y - pos.y - yoffset - (float)y;
-
-		int w = (intersection.w + xdiff);
-		int h = (intersection.h + ydiff);
-		return {x, y, w, h};
-	}
-
-	//Converts a intersection (rectangle in space)
-	//to a clip source (where to clip an image for rendering)
-	//giving the clip rect for the image within the intersection
-	static inline SDL_Rect intersectionToClipDestination(
-	    const Rect& intersection) {
-
-			int x = intersection.x;
-			int y = intersection.y;
-
-			float xdiff = intersection.x - (float)x;
-			float ydiff = intersection.y - (float)y;
-
-			int w = (intersection.w + xdiff);
-			int h = (intersection.h + ydiff);
-
-	        return {x, y, w, h};
-	}
 
 	//Forces a redraw within an area
 	void inline constexpr renderArea(const Rect& area) {
