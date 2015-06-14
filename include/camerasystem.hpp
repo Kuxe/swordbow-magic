@@ -23,7 +23,6 @@ public:
     unsigned int count() const;
     const string getIdentifier() const;
     void activateId(ID id);
-    void setRenderSystem(RenderSystem* renderSystem);
     SDL_Rect& getCamera();
 };
 

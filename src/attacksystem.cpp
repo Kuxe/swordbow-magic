@@ -42,9 +42,9 @@ void AttackSystem::update() {
         float y = mc.pos.y + ac.impactArea.y + mc.dir.y*ac.weaponLength - ac.impactArea.h/2;
         if(x < 0 || y < 0) return; //If someone tries to strike outside of world, disallow the strike
 
-        const SpatialIndexer::Rect impactArea {
-            (unsigned int)x,
-            (unsigned int)y,
+        const Rect impactArea {
+            x,
+            y,
             ac.impactArea.w,
             ac.impactArea.h };
 
@@ -62,7 +62,7 @@ void AttackSystem::update() {
             //Will be set to true if something was actually hit
             //Is checked when playing a default 'hurt' sound
             bool somethingWasHurt = false;
-            
+
             for(auto attackedId : hashgrid->query(impactArea)) {
 
                 //Only apply damage to entities that has a healthcomponent

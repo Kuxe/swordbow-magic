@@ -125,6 +125,9 @@ RenderSystem::RenderSystem() {
             "./resources/images/green_flower.png",
             "./resources/images/violet_flower.png",
             "./resources/images/blue_flower.png",
+
+            "./resources/images/testsquare10x10.png",
+            "./resources/images/testsquare1x1.png",
             }
         )
     {
@@ -186,7 +189,7 @@ void RenderSystem::update() {
 	auto spatialIndexer = dynamic_cast<SpatialIndexer*>(systemManager->getSystem("TextureHashGridSystem"));
 
     //Will contain all rectangles where a redraw is required
-    queue<SpatialIndexer::Rect> drawQueue;
+    queue<Rect> drawQueue;
 
     //All drawareas saved from previous frame should be drawn this frame
 	drawQueue.swap(previousDrawAreas);
@@ -218,22 +221,28 @@ void RenderSystem::update() {
     		auto& rc = componentManager->renderComponents.at(id);
 
     		//Get the intersection between an entity within drawarea and the drawarea
-    		const auto intersectionArea = spatialIndexer->getIntersectionArea(drawArea, spatialIndexer->getBoundingBox(id));
+    		const auto intersection = Rect::getIntersection(
+                drawArea, spatialIndexer->getBoundingBox(id)
+            );
 
     		//Only draw that portion of the texture that intersects
     		calculateZIndex(id);
-    		pq.insert({id, &rc, rc.textureData, {
-    				(int)(intersectionArea.x - mc.pos.x - rc.xoffset),
-    				(int)(intersectionArea.y - mc.pos.y - rc.yoffset),
-    				(int)intersectionArea.w,
-    				(int)intersectionArea.h }, {
-    				(int)intersectionArea.x,
-    				(int)intersectionArea.y,
-    				(int)intersectionArea.w,
-    				(int)intersectionArea.h}
 
-    				}
-    			);
+            const auto clipSource = intersectionToClipSource(
+                intersection,
+                mc.pos,
+                rc.xoffset, rc.yoffset
+            );
+
+            const auto clipDestination = intersectionToClipDestination(
+                intersection
+            );
+
+            const RenderData renderData = {
+                id, &rc, rc.textureData, clipSource, clipDestination
+            };
+
+    		pq.insert(renderData);
     	}
 
         //Dont move this piece of code. A reference to this element is used above!

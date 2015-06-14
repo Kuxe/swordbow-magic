@@ -11,6 +11,8 @@
 using std::cout;
 using std::endl;
 
+constexpr float EPSILON = 0.00001f;
+
 HashGridSystem::HashGridSystem(
 	ComponentManager* componentManager,
 	BoundingBox* boundingBox,
@@ -43,8 +45,8 @@ void HashGridSystem::addToCells(const ID id) {
 	const auto bb = boundingBox->getBoundingBox(id);
 
 	//Place ID in all cells which partially or completely contains the ID
-	for(unsigned int y = bb.y/side; y <= (bb.y + bb.h)/side; y++) {
-		for(unsigned int x = bb.x/side; x <= (bb.x + bb.w)/side; x++) {
+	for(unsigned int y = bb.y/side; y < (bb.y + bb.h)/side; y++) {
+		for(unsigned int x = bb.x/side; x < (bb.x + bb.w)/side; x++) {
 			if(y*width + x < cellsCapacity) {
 				cells[y*width + x].insert(id);
 			} else {
@@ -58,8 +60,8 @@ void HashGridSystem::removeFromCells(const ID id) {
 	const auto bb = boundingBox->getBoundingBox(id);
 
 	//Remove ID in all cells which previously contained this ID
-	for(unsigned int y = bb.y/side; y <= (bb.y + bb.h)/side; y++) {
-		for(unsigned int x = bb.x/side; x <= (bb.x + bb.w)/side; x++) {
+	for(unsigned int y = bb.y/side; y < (bb.y + bb.h)/side; y++) {
+		for(unsigned int x = bb.x/side; x < (bb.x + bb.w)/side; x++) {
 			if(cells[y*width + x].erase(id) == 0) {
 				/*cout << "ERROR: hashgrid tried to erase id " << *id << " from cell " << y*width + x << " but the ID wasn't there." << endl;
 				cout << "Strange things may happen from now on, because the ID could remain in cells ";
@@ -73,8 +75,8 @@ void HashGridSystem::removeFromCellsOldBoundingBox(const ID id) {
 	const auto bb = boundingBox->getOldBoundingBox(id);
 
 	//Remove ID in all cells which previously contained this ID
-	for(unsigned int y = bb.y/side; y <= (bb.y + bb.h)/side; y++) {
-		for(unsigned int x = bb.x/side; x <= (bb.x + bb.w)/side; x++) {
+	for(unsigned int y = bb.y/side; y < (bb.y + bb.h)/side; y++) {
+		for(unsigned int x = bb.x/side; x < (bb.x + bb.w)/side; x++) {
 			if(cells[y*width + x].erase(id) == 0) {
 				/*cout << "ERROR: hashgrid tried to erase id " << *id << " from cell " << y*width + x << " but the ID wasn't there." << endl;
 				cout << "Strange things may happen from now on, because the ID could remain in cells ";
@@ -101,12 +103,16 @@ unordered_set<ID> HashGridSystem::query(const Rect& queryArea) const {
 	unordered_set<ID> queryIds;
 
 	//Loop through all cells in which this ID is partly or fully contained
-	for(unsigned int y = queryArea.y/side; y <= (queryArea.y + queryArea.h)/side; y++) {
-		for(unsigned int x = queryArea.x/side; x <= (queryArea.x + queryArea.w)/side; x++) {
+	for(unsigned int y = queryArea.y/side; y < (queryArea.y + queryArea.h)/side; y++) {
+		for(unsigned int x = queryArea.x/side; x < (queryArea.x + queryArea.w)/side; x++) {
 
 			//For all ids in the same cells as this one..
 			for(auto otherId : cells[y*width + x]) {
-				if(intersect(queryArea, boundingBox->getBoundingBox(otherId))) {
+				auto bb = boundingBox->getBoundingBox(otherId);
+				if(Rect::intersect(queryArea, bb)) {
+					//cout << "{" << queryArea.x << ", " << queryArea.y << ", " << queryArea.w << ", " << queryArea.h << "}";
+					//cout << " intersects ";
+					//cout << "{" << bb.x << ", " << bb.y << ", " << bb.w << ", " << bb.h << "}" << endl;
 					queryIds.insert(otherId);
 				}
 			}
@@ -115,11 +121,7 @@ unordered_set<ID> HashGridSystem::query(const Rect& queryArea) const {
 	return queryIds;
 }
 
-unordered_set<ID> HashGridSystem::getNearbyIds(const ID id) const {
-	return unordered_set<ID>();
-}
-
-SpatialIndexer::Rect HashGridSystem::getBoundingBox(ID id) const {
+Rect HashGridSystem::getBoundingBox(ID id) const {
 	return boundingBox->getBoundingBox(id);
 }
 

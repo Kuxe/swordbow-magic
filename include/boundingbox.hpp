@@ -16,8 +16,8 @@ public:
 
     BoundingBox(const ComponentManager* const componentManager) :
         componentManager(componentManager) {}
-    virtual const SpatialIndexer::Rect getBoundingBox(ID id) const = 0;
-    virtual const SpatialIndexer::Rect getOldBoundingBox(ID id) const = 0;
+    virtual const Rect getBoundingBox(ID id) const = 0;
+    virtual const Rect getOldBoundingBox(ID id) const = 0;
     virtual const string getSystemName() const = 0;
 };
 

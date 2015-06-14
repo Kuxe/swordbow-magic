@@ -46,6 +46,7 @@ class EntityManager {
 	ID createTile();
     ID createBloodSplatter(const glm::vec2& position);
     ID createFlower(const glm::vec2& position, const char color);
+    ID createDummySquare(const glm::vec2& poisiton);
 	void remove(ID id);
 
     void registerIdToSystem(const string systemIdentifier, ID id);

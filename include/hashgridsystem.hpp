@@ -36,9 +36,9 @@ class HashGridSystem : public SpatialIndexer, public ISystem {
 		HashGridSystem(
 			ComponentManager* componentManager,
 			BoundingBox* boundingBox,
-			const unsigned int worldWidth = 16384,
-			const unsigned int worldHeight = 16384,
-			const unsigned int side = 64);
+			const unsigned int worldWidth = 512,
+			const unsigned int worldHeight = 512,
+			const unsigned int side = 32);
 
 		virtual ~HashGridSystem();
 
@@ -46,28 +46,7 @@ class HashGridSystem : public SpatialIndexer, public ISystem {
 		virtual void remove(ID id);
 		virtual unordered_set<ID> overlaps(const ID id) const;
 		virtual unordered_set<ID> query(const Rect& queryArea) const ;
-		virtual unordered_set<ID> getNearbyIds(const ID id) const;
-
-		/**
-		 *	Bounding-box test
-		 **/
-		inline bool intersect(const SpatialIndexer::Rect& a, const SpatialIndexer::Rect& b) const {
-			return !(a.x + a.w < b.x || a.x > b.x + b.w || a.y + a.h < b.y || a.y > b.y + b.h);
-		}
-
-		inline SpatialIndexer::Rect getIntersectionArea(
-			const SpatialIndexer::Rect& a,
-			const SpatialIndexer::Rect& b) const {
-
-			//TODO: This can probably be optimized
-			const unsigned int x = a.x >= b.x ? a.x : b.x;
-			const unsigned int y = a.y >= b.y ? a.y : b.y;
-			const unsigned int w = (a.x + a.w) <= (b.x + b.w) ? a.x + a.w - x : b.x + b.w - x;
-			const unsigned int h = (a.y + a.h) <= (b.y + b.h) ? a.y + a.h - y : b.y + b.h - y;
-			return {x, y, w, h};
-		}
-
-		inline SpatialIndexer::Rect getBoundingBox(const ID id) const;
+		inline Rect getBoundingBox(const ID id) const;
 
 		void activateId(ID id);
 

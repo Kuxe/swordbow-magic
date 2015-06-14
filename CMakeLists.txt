@@ -65,6 +65,7 @@ add_executable(swordbow-magic-test
     catch/src/config.cpp
     catch/src/hashgridsystem_test.cpp
     catch/src/rect_test.cpp
+    catch/src/rendersystem_test.cpp
 )
 
 #What linker flags are required for swordbow-magic-test?

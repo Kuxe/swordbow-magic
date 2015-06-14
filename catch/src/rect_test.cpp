@@ -60,6 +60,17 @@ TEST_CASE("Rect") {
         //Some weird intersection
         a =         {1.3f, 1.6f, 0.3f, 3.9f};
         b =         {0.4f, 2.1f, 1.1f, 1.7f};
-        expected =  {1.5f, 2.1f, 0.1f, 3.8f};
+        expected =  {1.3f, 2.1f, 0.2f, 1.7f};
+        REQUIRE(Rect::getIntersection(a, b) == expected);
+
+        a =         {0.0f, 31.947388f, 1.0f, 1.0f};
+        b =         {0.0f, 32.0f, 32.0f, 32.0f};
+        expected =  {0.0f, 32.0f, 1.0f, 31.947388f + 1.0f - 32.0f};
+        REQUIRE(Rect::getIntersection(a, b) == expected);
+
+        a =         {0.0f, 31.947388f, 1.0f, 1.0f};
+        b =         {0.0f, 0.0f, 32.0f, 32.0f};
+        expected =  {0.0f, 31.947388f, 1.0f, 32.0f - 31.947388f};
+        REQUIRE(Rect::getIntersection(a, b) == expected);
     }
 }

@@ -303,7 +303,7 @@ ID EntityManager::createFlower(const glm::vec2& position, const char color) {
 			flowercolor = "./resources/images/green_flower.png";
 		} break;
 	}
-	
+
 	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, flowercolor);
 
 	rc.xoffset = -1;
@@ -317,6 +317,63 @@ ID EntityManager::createFlower(const glm::vec2& position, const char color) {
 	entities[id] = {
 		systemManager->getSystem("RenderSystem"),
 		systemManager->getSystem("TextureHashGridSystem"),
+	};
+
+	for(auto system : entities.at(id)) {
+		system->add(id);
+	}
+
+	return id;
+}
+
+ID EntityManager::createDummySquare(const glm::vec2& position) {
+	auto id = idManager->acquireId();
+	auto& mc = componentManager->createMoveComponent(id);
+	auto& rc = componentManager->createRenderComponent(id);
+	auto& ic = componentManager->createInputComponent(id);
+	auto& nc = componentManager->createNameComponent(id);
+	auto& cc = componentManager->createCommandComponent(id);
+	auto& ac = componentManager->createAnimationComponent(id);
+
+	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/testsquare1x1.png");
+
+	mc.maxVelLength = 4.0f;
+
+	rc.xoffset = 0;
+	rc.yoffset = 0;
+	rc.zindex_base = 1;
+
+	mc.pos = position;
+
+	nc.name = "testsquare1x1";
+
+	cc[CommandComponent::Event::MOVE_UP] = {
+		new AddIdToSystem(id, "MoveSystem", systemManager),
+	};
+
+	cc[CommandComponent::Event::MOVE_RIGHT] = {
+		new AddIdToSystem(id, "MoveSystem", systemManager),
+	};
+
+	cc[CommandComponent::Event::MOVE_DOWN] = {
+		new AddIdToSystem(id, "MoveSystem", systemManager),
+	};
+
+	cc[CommandComponent::Event::MOVE_LEFT] = {
+		new AddIdToSystem(id, "MoveSystem", systemManager),
+	};
+
+	cc[CommandComponent::Event::ON_MOVE] = {
+		new ActivateId(id, "RenderSystem", systemManager),
+		new ActivateId(id, "TextureHashGridSystem", systemManager),
+	};
+
+	//Tell the entity what systems belongs to
+	entities[id] = {
+		systemManager->getSystem("RenderSystem"),
+		systemManager->getSystem("MoveSystem"),
+		systemManager->getSystem("TextureHashGridSystem"),
+		systemManager->getSystem("InputSystem"),
 	};
 
 	for(auto system : entities.at(id)) {

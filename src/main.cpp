@@ -22,6 +22,8 @@
 #include "attacksystem.hpp"
 #include "inputsystem.hpp"
 #include "camerasystem.hpp"
+#include <assert.h>
+#include <glm/ext.hpp>
 
 using namespace std;
 
@@ -92,7 +94,7 @@ int main(int argc, char** argv) {
 	systemManager.add(&removeSystem);
 
 	//Create ids
-	auto playerId = entityManager.createFatMan({0, 0});
+	auto playerId = entityManager.createFatMan({0.0f, 0});
 	//auto botId = entityManager.createFatMan({50, 50});
 
 	//Populate world with... world
