@@ -36,9 +36,9 @@ class HashGridSystem : public SpatialIndexer, public ISystem {
 		HashGridSystem(
 			ComponentManager* componentManager,
 			BoundingBox* boundingBox,
-			const unsigned int worldWidth = 512,
-			const unsigned int worldHeight = 512,
-			const unsigned int side = 32);
+			const unsigned int worldWidth = 32768,
+			const unsigned int worldHeight = 32786,
+			const unsigned int side = 64);
 
 		virtual ~HashGridSystem();
 

@@ -99,7 +99,7 @@ int main(int argc, char** argv) {
 
 	//Populate world with... world
 	World world(&entityManager);
-	world.createDebugWorld();
+	world.createWorld();
 
 	//Keystroke events should change the input component of the player
 	entityManager.registerIdToSystem("KeyboardSystem", playerId);
