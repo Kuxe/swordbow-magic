@@ -2,12 +2,14 @@
 #define WORLD_H
 
 #include "noisebrush.hpp"
+#include "glm/vec2.hpp"
+#include <string>
 
 typedef unsigned int ID;
 
 class EntityManager;
 class World {
- private:
+private:
     static constexpr short SEED = 0;
 	static constexpr short NUM_TILES = 256;
 	static constexpr unsigned char TILE_SIZE = 32;
@@ -15,8 +17,11 @@ class World {
 	ID tiles[NUM_TILES][NUM_TILES];
 
 	EntityManager* entityManager;
- public:
-	explicit World(EntityManager* entityManager);
+
+    void placeWater();
+
+public:
+    explicit World(EntityManager* entityManager);
     void createWorld();
     void createDebugWorld();
 

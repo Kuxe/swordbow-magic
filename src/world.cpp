@@ -13,11 +13,15 @@ World::World(EntityManager* entityManager) :
 		entityManager(entityManager)
 	{ }
 
+void World::placeLake() {
+
+}
+
 void World::createWorld() {
-	//Place tiles in world
+	//Fill world with grass
 	for(short y = 0; y < NUM_TILES; y++) {
 		for(short x = 0; x < NUM_TILES; x++) {
-			auto id  = entityManager->createTile();
+			auto id  = entityManager->createGrassTile();
 			tiles[x][y] = id;
 
 			//Align tiles into a grid, spatially
@@ -33,9 +37,9 @@ void World::createWorld() {
 		}
 	}
 
+	std::default_random_engine generator;
 
 	//Generate some flower-fields of different colors throughout the map
-	std::default_random_engine generator;
 	std::uniform_real_distribution<double> uniformx(0.0, NUM_TILES * TILE_SIZE);
 	std::uniform_real_distribution<double> uniformy(0.0, NUM_TILES * TILE_SIZE);
 	std::normal_distribution<double> flowerNumDistribution(100.0, 50.0);
@@ -87,6 +91,15 @@ void World::createWorld() {
 			}
 		}
 	}
+
+	//Place some stones
+	std::uniform_real_distribution<double> stoneUniformx(0.0, NUM_TILES * TILE_SIZE);
+	std::uniform_real_distribution<double> stoneUniformy(0.0, NUM_TILES * TILE_SIZE);
+
+	const uint NUM_STONES = 100;
+	for(uint i = 0; i < NUM_STONES; i++) {
+		entityManager->createStone({uniformx(generator), uniformy(generator)});
+	}
 }
 
 void World::createDebugWorld() {
@@ -94,7 +107,7 @@ void World::createDebugWorld() {
 	const char NUM_TILES = 8;
 	for(short y = 0; y < NUM_TILES; y++) {
 		for(short x = 0; x < NUM_TILES; x++) {
-			auto id  = entityManager->createTile();
+			auto id  = entityManager->createGrassTile();
 			tiles[x][y] = id;
 
 			//Align tiles into a grid, spatially

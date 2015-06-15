@@ -205,7 +205,7 @@ ID EntityManager::createTree(const glm::vec2& position) {
 	}
 	return id;
 }
-ID EntityManager::createTile() {
+ID EntityManager::createGrassTile() {
 	auto id = idManager->acquireId();
 
 	componentManager->createMoveComponent(id);
@@ -220,7 +220,38 @@ ID EntityManager::createTile() {
 	sizeComponent.width = 32;
 	sizeComponent.height = 32;
 
-	nameComponent.name = "tile";
+	nameComponent.name = "grasstile";
+
+	entities[id] = {
+		systemManager->getSystem("RenderSystem"),
+		systemManager->getSystem("TextureHashGridSystem"),
+	};
+
+	for(auto a : entities.at(id)) {
+		a->add(id);
+	}
+	return id;
+}
+
+ID EntityManager::createWaterTile(const glm::vec2& position) {
+	auto id = idManager->acquireId();
+
+	auto& mc = componentManager->createMoveComponent(id);
+	componentManager->createTileComponent(id);
+	auto& sizeComponent = componentManager->createSizeComponent(id);
+	auto& rc = componentManager->createRenderComponent(id);
+	auto& nameComponent = componentManager->createNameComponent(id);
+
+	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/water.png");
+	rc.zindex_base = 0;
+
+	mc.pos = position;
+	mc.oldPos = mc.pos;
+
+	sizeComponent.width = 32;
+	sizeComponent.height = 32;
+
+	nameComponent.name = "watertile";
 
 	entities[id] = {
 		systemManager->getSystem("RenderSystem"),
@@ -374,6 +405,42 @@ ID EntityManager::createDummySquare(const glm::vec2& position) {
 		systemManager->getSystem("MoveSystem"),
 		systemManager->getSystem("TextureHashGridSystem"),
 		systemManager->getSystem("InputSystem"),
+	};
+
+	for(auto system : entities.at(id)) {
+		system->add(id);
+	}
+
+	return id;
+}
+
+ID EntityManager::createStone(const glm::vec2& position) {
+	auto id = idManager->acquireId();
+	auto& mc = componentManager->createMoveComponent(id);
+	auto& rc = componentManager->createRenderComponent(id);
+	auto& sc = componentManager->createSizeComponent(id);
+	auto& nc = componentManager->createNameComponent(id);
+
+
+	mc.pos = position;
+	mc.oldPos = mc.pos;
+
+	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/stone1.png");
+	rc.xoffset = -7;
+	rc.yoffset = -12;
+	rc.zindex_base = 1;
+
+	sc.width = 28;
+	sc.height = 15;
+
+	nc.name = "stone";
+
+
+	entities[id] = {
+		systemManager->getSystem("RenderSystem"),
+		systemManager->getSystem("TextureHashGridSystem"),
+		systemManager->getSystem("CollisionSystem"),
+		systemManager->getSystem("SizeHashGridSystem"),
 	};
 
 	for(auto system : entities.at(id)) {

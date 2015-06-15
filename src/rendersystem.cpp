@@ -128,6 +128,11 @@ RenderSystem::RenderSystem() {
 
             "./resources/images/testsquare10x10.png",
             "./resources/images/testsquare1x1.png",
+
+            "./resources/images/stone1.png",
+
+            "./resources/images/water.png",
+
             }
         )
     {
