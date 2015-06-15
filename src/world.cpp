@@ -13,10 +13,6 @@ World::World(EntityManager* entityManager) :
 		entityManager(entityManager)
 	{ }
 
-void World::placeLake() {
-
-}
-
 void World::createWorld() {
 	//Fill world with grass
 	for(short y = 0; y < NUM_TILES; y++) {

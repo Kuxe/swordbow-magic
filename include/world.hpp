@@ -17,9 +17,7 @@ private:
 	ID tiles[NUM_TILES][NUM_TILES];
 
 	EntityManager* entityManager;
-
-    void placeWater();
-
+    
 public:
     explicit World(EntityManager* entityManager);
     void createWorld();
