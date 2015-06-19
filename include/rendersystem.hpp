@@ -13,6 +13,7 @@
 #include "spatialindexer.hpp"
 #include "heap.hpp"
 #include "text.hpp"
+#include "renderdata.hpp"
 
 using namespace std;
 
@@ -25,25 +26,6 @@ class SpatialIndexer;
 typedef unsigned int ID;
 
 class CameraSystem;
-
-struct TextureData {
-	SDL_Texture* texture;
-	unsigned int width;
-	unsigned int height;
-};
-
-struct RenderData {
-	ID id;
-	RenderComponent* renderComponent;
-	TextureData textureData;
-	SDL_Rect cliprect;
-	SDL_Rect target;
-
-	inline bool operator< (const RenderData& rhs) const;
-    inline bool operator> (const RenderData& rhs) const;
-    inline bool operator<=(const RenderData& rhs) const;
-    inline bool operator>=(const RenderData& rhs) const;
-};
 
 class RenderSystem : public ISystem {
  private:
@@ -76,7 +58,6 @@ class RenderSystem : public ISystem {
 	unsigned int count() const;
 	void render(const RenderData& rd) const;
 	const string getIdentifier() const;
-	void calculateZIndex(ID id);
 	void activateId(ID id);
 	void setCameraSystem(CameraSystem* cameraSystem);
 	void setImage(ID id, string path);

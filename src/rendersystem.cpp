@@ -17,18 +17,6 @@
 
 using namespace std;
 
-bool RenderData::operator< (const RenderData& rhs) const {
-    return
-        renderComponent->zindex_base == rhs.renderComponent->zindex_base ?
-        renderComponent->zindex < rhs.renderComponent->zindex :
-        renderComponent->zindex_base < rhs.renderComponent->zindex_base;
-}
-
-bool RenderData::operator> (const RenderData& rhs) const { return rhs < *this; }
-bool RenderData::operator<=(const RenderData& rhs) const { return !(*this > rhs); }
-bool RenderData::operator>=(const RenderData& rhs) const { return !(*this < rhs); }
-
-
 RenderSystem::RenderSystem() {
 	//Initialize SDL
     if(SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
@@ -230,9 +218,6 @@ void RenderSystem::update() {
                 drawArea, spatialIndexer->getBoundingBox(id)
             );
 
-    		//Only draw that portion of the texture that intersects
-    		calculateZIndex(id);
-
             const SDL_Rect clipSource = {
                 int(intersection.x) - int(mc.pos.x) - int(rc.xoffset),
                 int(intersection.y) - int(mc.pos.y) - int(rc.yoffset),
@@ -248,7 +233,8 @@ void RenderSystem::update() {
             };
 
             const RenderData renderData = {
-                id, &rc, rc.textureData, clipSource, clipDestination
+                rc.textureData, clipSource, clipDestination,
+                (int)rc.zindex_base, (int)(mc.pos.y + rc.textureData.height + rc.yoffset)
             };
 
     		pq.insert(renderData);
@@ -296,12 +282,6 @@ void RenderSystem::render(const RenderData& rd) const {
 
 const string RenderSystem::getIdentifier() const {
 	return "RenderSystem";
-}
-
-void RenderSystem::calculateZIndex(ID id) {
-	auto& rc = componentManager->renderComponents.at(id);
-	auto& mc = componentManager->moveComponents.at(id);
-	rc.zindex = mc.pos.y + rc.textureData.height + rc.yoffset;
 }
 
 void RenderSystem::activateId(ID id) {
