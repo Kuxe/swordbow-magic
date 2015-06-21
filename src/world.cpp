@@ -42,7 +42,7 @@ void World::createWorld() {
 		//Create flowerfields by creating some noisebrushes uniformly
 		//throughout the map
 		const glm::vec2 randomPoint(uniformx(generator), uniformy(generator));
-		NoiseBrush noise(randomPoint, fieldRadiusDistribution(generator), 1, SEED);
+		NoiseBrush noise(randomPoint, fieldRadiusDistribution(generator), 1);
 
 		//For each flowerfield, place some random amounts of flowers
 		const int NUM_FLOWERS = flowerNumDistribution(generator);
@@ -65,7 +65,7 @@ void World::createWorld() {
 		//Create forests by creating some noisebrushes uniformly
 		//throughout the map
 		const glm::vec2 randomPoint(uniformx(generator), uniformy(generator));
-		NoiseBrush noise(randomPoint, forestRadiusDistribution(generator), 1, SEED);
+		NoiseBrush noise(randomPoint, forestRadiusDistribution(generator), 1);
 
 		//For each forest, place some random amounts of trees
 		const int NUM_TREES = treeNumDistribution(generator);
