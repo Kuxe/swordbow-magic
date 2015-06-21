@@ -114,6 +114,9 @@ void World::createDebugWorld() {
 	//This flower will probably get skewed if walking past it
 	entityManager->createFlower({100.0123f, 177.01f}, 0);
 
+	//test stuff on this guy
+	entityManager->createFatMan({250, 250});
+
 
 
 
