@@ -5,8 +5,6 @@
 
 struct RenderData {
 
-	//TODO: make members const, need to sort out
-	//implicitly deleted copy-assignment before that
 	TextureData textureData;
 	SDL_Rect cliprect;
 	SDL_Rect target;
