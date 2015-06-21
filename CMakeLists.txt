@@ -44,6 +44,7 @@ add_library(game SHARED
     src/playsound.cpp
     src/rect.cpp
     src/removesystem.cpp
+    src/renderer.cpp
     src/rendersystem.cpp
     src/server.cpp
     src/servernetworksystem.cpp

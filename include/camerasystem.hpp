@@ -2,21 +2,18 @@
 #define CAMERASYSTEM_HPP
 
 #include <SDL2/SDL.h>
-#include <unordered_set>
 #include "isystem.hpp"
 
-using std::unordered_set;
-
 typedef unsigned int ID;
-class RenderSystem;
+class Renderer;
 class CameraSystem : public ISystem {
 private:
     ID cameraSource = 0;
-    RenderSystem* renderSystem;
+    Renderer* renderer;
     SDL_Rect camera;
 
 public:
-    CameraSystem(RenderSystem* renderSystem);
+    CameraSystem(Renderer* renderer);
     void add(ID id);
     void remove(ID id);
     void update();

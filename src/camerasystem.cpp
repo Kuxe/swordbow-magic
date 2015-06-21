@@ -1,8 +1,9 @@
 #include "camerasystem.hpp"
 #include "componentmanager.hpp"
+#include "renderer.hpp"
 
-CameraSystem::CameraSystem(RenderSystem* renderSystem) :
-    renderSystem(renderSystem),
+CameraSystem::CameraSystem(Renderer* renderer) :
+    renderer(renderer),
     camera{0, 0, 640, 480} {
 
 }
@@ -15,13 +16,13 @@ void CameraSystem::remove(ID id) {
 }
 void CameraSystem::update() {
     if(cameraSource != 0) {
-        const auto& cameraXpos = componentManager->moveComponents.at(cameraSource).pos.x - renderSystem->getScreenWidth()/2;
-    	const auto& cameraYpos = componentManager->moveComponents.at(cameraSource).pos.y - renderSystem->getScreenHeight()/2;
+        const auto& cameraXpos = componentManager->moveComponents.at(cameraSource).pos.x - renderer->getScreenWidth()/2;
+    	const auto& cameraYpos = componentManager->moveComponents.at(cameraSource).pos.y - renderer->getScreenHeight()/2;
     	camera = {
     		cameraXpos < 0 ? 0 : (int)cameraXpos,
     		cameraYpos < 0 ? 0 : (int)cameraYpos,
-            renderSystem->getScreenWidth(),
-            renderSystem->getScreenHeight()
+            renderer->getScreenWidth(),
+            renderer->getScreenHeight()
     	};
     }
 }

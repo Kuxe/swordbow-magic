@@ -29,6 +29,7 @@
 #include "servernetworksystem.hpp"
 #include <assert.h>
 #include <glm/ext.hpp>
+#include "renderer.hpp"
 
 class Server {
 private:
@@ -58,6 +59,8 @@ private:
 	CameraSystem cameraSystem;
 	KeyboardSystem keyboardSystem;
 	ServerNetworkSystem serverNetworkSystem;
+
+    Renderer renderer;
 
 public:
     Server(int argc, char** argv);

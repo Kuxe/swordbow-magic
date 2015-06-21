@@ -2,7 +2,7 @@
 
 Server::Server(int argc, char** argv) :
 		systemManager(&componentManager, &deltaTime),
-		textureBoundingBox(&componentManager, &renderSystem),
+		textureBoundingBox(&componentManager, &renderer),
 		sizeBoundingBox(&componentManager),
 		entityManager(&systemManager, &componentManager, &idManager),
 		textureHashGridSystem(&componentManager, &textureBoundingBox),
@@ -10,13 +10,11 @@ Server::Server(int argc, char** argv) :
 		collisionSystem(&sizeHashGridSystem),
 		removeSystem(&entityManager),
 		attackSystem(&sizeHashGridSystem),
-		cameraSystem(&renderSystem),
-		keyboardSystem(&running) {
+		cameraSystem(&renderer),
+		keyboardSystem(&running),
+		renderSystem(&renderer) {
 
 	printGeneralInfo();
-
-	//Couple systems where neccesary
-	renderSystem.setCameraSystem(&cameraSystem);
 
 	//Add systems to systemmanager
 	systemManager.add(&keyboardSystem);
@@ -36,7 +34,6 @@ Server::Server(int argc, char** argv) :
 
 	//Create ids
 	auto playerId = entityManager.createFatMan({0.0f, 0});
-	//auto botId = entityManager.createFatMan({50, 50});
 
 	//Populate world with... world
 	World world(&entityManager);
@@ -60,7 +57,16 @@ Server::Server(int argc, char** argv) :
 void Server::run() {
     while(running) {
 		deltaTime.start();
+
+		//Run the entity-component-system
 		systemManager.update();
+
+		//Extract renderdatas from the ECS and shove them into the renderer
+		renderer.render(
+			renderSystem.getDrawPriorityQueue(),
+			cameraSystem.getCamera()
+		);
+
 		deltaTime.stop();
 	}
 }
