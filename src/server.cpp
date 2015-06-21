@@ -13,6 +13,8 @@ Server::Server(int argc, char** argv) :
 		cameraSystem(&renderSystem),
 		keyboardSystem(&running) {
 
+	printGeneralInfo();
+
 	//Couple systems where neccesary
 	renderSystem.setCameraSystem(&cameraSystem);
 

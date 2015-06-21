@@ -27,6 +27,7 @@ add_library(game SHARED
     src/animationsystem.cpp
     src/attacksystem.cpp
     src/camerasystem.cpp
+    src/client.cpp
     src/collisionsystem.cpp
     src/commandcomponent.cpp
     src/componentmanager.cpp
