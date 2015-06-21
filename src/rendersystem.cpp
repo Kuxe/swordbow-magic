@@ -205,10 +205,6 @@ void RenderSystem::update() {
     while(!drawQueue.empty()) {
         const auto& drawArea = drawQueue.front();
 
-        //Make sure all overlapping ids have their part in the intersection area
-    	//are redrawn
-    	auto spatialIndexer = dynamic_cast<SpatialIndexer*>(systemManager->getSystem("TextureHashGridSystem"));
-
     	for(auto id : spatialIndexer->query(drawArea)) {
     		auto& mc = componentManager->moveComponents.at(id);
     		auto& rc = componentManager->renderComponents.at(id);
