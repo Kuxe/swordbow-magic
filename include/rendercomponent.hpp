@@ -17,7 +17,6 @@ class RenderComponent {
  	string imagePath = "UNSET";
  	float xoffset = 0;
  	float yoffset = 0;
-	TextureData textureData;
 
 	//is set to y+height during runtime
 	//used in painters algorithm

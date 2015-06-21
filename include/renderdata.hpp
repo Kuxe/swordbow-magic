@@ -1,39 +1,39 @@
 #ifndef RENDERDATA_HPP
 #define RENDERDATA_HPP
 
-#include "texturedata.hpp"
+#include <string>
 
 struct RenderData {
 
-	TextureData textureData;
+	std::string texturePath;
 	SDL_Rect cliprect;
 	SDL_Rect target;
     int zindex_base;
     int zindex;
 
-    constexpr RenderData(
-        const TextureData& textureData,
+    RenderData(
+        const string& texturePath,
         const SDL_Rect& cliprect,
         const SDL_Rect& target,
         const int zindex_base,
         const int zindex
     ) :
-    textureData(textureData),
+	texturePath(texturePath),
     cliprect(cliprect),
     target(target),
     zindex_base(zindex_base),
     zindex(zindex) { }
 
-    constexpr RenderData(const RenderData& rhs) :
-        RenderData(rhs.textureData,
+    RenderData(const RenderData& rhs) :
+        RenderData(rhs.texturePath,
         rhs.cliprect,
         rhs.target,
         rhs.zindex_base,
         rhs.zindex) { }
 
-		constexpr RenderData() :
+	RenderData() :
 		RenderData{
-			{nullptr, 0, 0},
+			{"NO TEXTUREPATH SET", 0, 0},
 			{0, 0, 0, 0},
 			{0, 0, 0, 0},
 			(0),

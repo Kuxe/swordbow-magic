@@ -14,6 +14,7 @@
 #include "heap.hpp"
 #include "text.hpp"
 #include "renderdata.hpp"
+#include "texturedata.hpp"
 
 using namespace std;
 
@@ -62,6 +63,7 @@ class RenderSystem : public ISystem {
 	void setCameraSystem(CameraSystem* cameraSystem);
 	void setImage(ID id, string path);
 	void printText(const Text& text);
+    const unordered_map<string, TextureData>& getTextureDatas() const;
 
 	//Forces a redraw within an area
 	void inline constexpr renderArea(const Rect& area) {

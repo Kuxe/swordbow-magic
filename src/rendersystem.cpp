@@ -228,9 +228,11 @@ void RenderSystem::update() {
                 (int)intersection.h
             };
 
+            const TextureData& textureData = textureDatas.at(rc.imagePath);
+
             const RenderData renderData = {
-                rc.textureData, clipSource, clipDestination,
-                (int)rc.zindex_base, (int)(mc.pos.y + rc.textureData.height + rc.yoffset)
+                rc.imagePath, clipSource, clipDestination,
+                (int)rc.zindex_base, (int)(mc.pos.y + textureData.height + rc.yoffset)
             };
 
     		pq.insert(renderData);
@@ -273,7 +275,7 @@ unsigned int RenderSystem::count() const {
 }
 
 void RenderSystem::render(const RenderData& rd) const {
-    SDL_RenderCopy(renderer, rd.textureData.texture, &rd.cliprect, &rd.target);
+    SDL_RenderCopy(renderer, textureDatas.at(rd.texturePath).texture, &rd.cliprect, &rd.target);
 }
 
 const string RenderSystem::getIdentifier() const {
@@ -294,7 +296,6 @@ void RenderSystem::setCameraSystem(CameraSystem* cameraSystem) {
 void RenderSystem::setImage(ID id, string path) {
 	auto& rc = componentManager->renderComponents.at(id);
 	rc.imagePath = path;
-	rc.textureData = textureDatas.at(path);
     activateId(id);
 }
 
@@ -321,3 +322,17 @@ void RenderSystem::renderTexts() {
         SDL_DestroyTexture(tmpTexture);
     }
 }
+
+const unordered_map<string, TextureData>& RenderSystem::getTextureDatas() const {
+    return textureDatas;
+}
+
+
+
+
+
+
+
+
+
+//

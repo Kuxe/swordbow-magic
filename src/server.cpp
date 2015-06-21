@@ -2,7 +2,7 @@
 
 Server::Server(int argc, char** argv) :
 		systemManager(&componentManager, &deltaTime),
-		textureBoundingBox(&componentManager),
+		textureBoundingBox(&componentManager, &renderSystem),
 		sizeBoundingBox(&componentManager),
 		entityManager(&systemManager, &componentManager, &idManager),
 		textureHashGridSystem(&componentManager, &textureBoundingBox),
