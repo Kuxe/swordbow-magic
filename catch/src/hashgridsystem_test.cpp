@@ -45,11 +45,9 @@ TEST_CASE("HashGridSystem") {
 	entityManager.registerIdToSystem("CameraSystem", player);
 
     SECTION("Query fully contained area of entity") {
-        auto tile1 = entityManager.createGrassTile();
-        auto tile2 = entityManager.createGrassTile();
+        auto tile1 = entityManager.createGrassTile({0.0f, 0.0f});
+        auto tile2 = entityManager.createGrassTile({0.0f, 32.0f});
         cm.moveComponents.at(player).pos = {16.0f, 16.947388f};
-        cm.moveComponents.at(tile1).pos = {0.0f, 0.0f};
-        cm.moveComponents.at(tile2).pos = {0.0f, 32.0f};
 
         dt.start();
         sm.update();
@@ -66,11 +64,9 @@ TEST_CASE("HashGridSystem") {
     }
 
     SECTION("Query partially contained area of entity TRY1") {
-        auto tile1 = entityManager.createGrassTile();
-        auto tile2 = entityManager.createGrassTile();
+        auto tile1 = entityManager.createGrassTile({0.0f, 0.0f});
+        auto tile2 = entityManager.createGrassTile({0.0f, 32.0f});
         cm.moveComponents.at(player).pos = {16.0f, 31.947388f};
-        cm.moveComponents.at(tile1).pos = {0.0f, 0.0f};
-        cm.moveComponents.at(tile2).pos = {0.0f, 32.0f};
 
         dt.start();
         sm.update();
@@ -87,11 +83,9 @@ TEST_CASE("HashGridSystem") {
     }
 
     SECTION("Query partially contained area of entity TRY2") {
-        auto tile1 = entityManager.createGrassTile();
-        auto tile2 = entityManager.createGrassTile();
+        auto tile1 = entityManager.createGrassTile({0.0f, 0.0f});
+        auto tile2 = entityManager.createGrassTile({0.0f, 32.0f});
         cm.moveComponents.at(player).pos = {16.0f, 31.076195f};
-        cm.moveComponents.at(tile1).pos = {0.0f, 0.0f};
-        cm.moveComponents.at(tile2).pos = {0.0f, 32.0f};
 
         dt.start();
         sm.update();
@@ -108,11 +102,9 @@ TEST_CASE("HashGridSystem") {
     }
 
     SECTION("Query partially contained area of entity TRY3") {
-        auto tile1 = entityManager.createGrassTile();
-        auto tile2 = entityManager.createGrassTile();
+        auto tile1 = entityManager.createGrassTile({0.0f, 0.0f});
+        auto tile2 = entityManager.createGrassTile({0.0f, 32.0f});
         cm.moveComponents.at(player).pos = {16.0f, 31.506195f};
-        cm.moveComponents.at(tile1).pos = {0.0f, 0.0f};
-        cm.moveComponents.at(tile2).pos = {0.0f, 32.0f};
 
         dt.start();
         sm.update();
@@ -129,11 +121,9 @@ TEST_CASE("HashGridSystem") {
     }
 
     SECTION("Query partially contained area of entity TRY4") {
-        auto tile1 = entityManager.createGrassTile();
-        auto tile2 = entityManager.createGrassTile();
+        auto tile1 = entityManager.createGrassTile({0.0f, 0.0f});
+        auto tile2 = entityManager.createGrassTile({0.0f, 32.0f});
         cm.moveComponents.at(player).pos = {16.0f, 31.076195f};
-        cm.moveComponents.at(tile1).pos = {0.0f, 0.0f};
-        cm.moveComponents.at(tile2).pos = {0.0f, 32.0f};
 
         dt.start();
         sm.update();
