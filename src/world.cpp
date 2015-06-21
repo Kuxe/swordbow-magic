@@ -17,19 +17,9 @@ void World::createWorld() {
 	//Fill world with grass
 	for(short y = 0; y < NUM_TILES; y++) {
 		for(short x = 0; x < NUM_TILES; x++) {
-			auto id  = entityManager->createGrassTile();
-			tiles[x][y] = id;
-
-			//Align tiles into a grid, spatially
-			auto& mc = entityManager->componentManager->moveComponents.at(id);
-			mc.pos.x = x * TILE_SIZE;
-			mc.pos.y = y * TILE_SIZE;
-			mc.oldPos.x = x * TILE_SIZE;
-			mc.oldPos.y = y * TILE_SIZE;
-
-			auto sc = entityManager->componentManager->sizeComponents.at(id);
-			sc.width = TILE_SIZE;
-			sc.height = TILE_SIZE;
+			tiles[x][y] = entityManager->createGrassTile(
+				{x * TILE_SIZE, y * TILE_SIZE}
+			);
 		}
 	}
 
@@ -103,22 +93,12 @@ void World::createDebugWorld() {
 	const char NUM_TILES = 8;
 	for(short y = 0; y < NUM_TILES; y++) {
 		for(short x = 0; x < NUM_TILES; x++) {
-			auto id  = entityManager->createGrassTile();
-			tiles[x][y] = id;
-
-			//Align tiles into a grid, spatially
-			auto& mc = entityManager->componentManager->moveComponents.at(id);
-			mc.pos.x = x * TILE_SIZE;
-			mc.pos.y = y * TILE_SIZE;
-			mc.oldPos.x = x * TILE_SIZE;
-			mc.oldPos.y = y * TILE_SIZE;
-
-			auto sc = entityManager->componentManager->sizeComponents.at(id);
-			sc.width = TILE_SIZE;
-			sc.height = TILE_SIZE;
+			tiles[x][y] = entityManager->createGrassTile(
+				{x * TILE_SIZE, y * TILE_SIZE}
+			);
 		}
 	}
-	/*
+
 	//This tree might be invisible
 	entityManager->createTree({100, 50});
 
@@ -132,7 +112,7 @@ void World::createDebugWorld() {
 	entityManager->createFlower({50, 150}, 0);
 
 	//This flower will probably get skewed if walking past it
-	entityManager->createFlower({100.0123f, 177.01f}, 0);*/
+	entityManager->createFlower({100.0123f, 177.01f}, 0);
 
 
 

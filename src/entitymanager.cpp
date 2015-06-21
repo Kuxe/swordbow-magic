@@ -205,17 +205,20 @@ ID EntityManager::createTree(const glm::vec2& position) {
 	}
 	return id;
 }
-ID EntityManager::createGrassTile() {
+ID EntityManager::createGrassTile(const glm::vec2& position) {
 	auto id = idManager->acquireId();
 
-	componentManager->createMoveComponent(id);
-	componentManager->createTileComponent(id);
+	auto& mc = componentManager->createMoveComponent(id);
+	auto& tc = componentManager->createTileComponent(id);
 	auto& sizeComponent = componentManager->createSizeComponent(id);
 	auto& rc = componentManager->createRenderComponent(id);
 	auto& nameComponent = componentManager->createNameComponent(id);
 
 	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/grass.png");
 	rc.zindex_base = 0;
+
+	mc.pos = position;
+	mc.oldPos = mc.pos;
 
 	sizeComponent.width = 32;
 	sizeComponent.height = 32;
