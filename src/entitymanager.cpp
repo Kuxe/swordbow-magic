@@ -13,21 +13,26 @@
 #include "namecomponent.hpp"
 #include "hashgridsystem.hpp"
 #include "activateid.hpp"
+#include "activateidonclients.hpp"
 #include "addidtosystem.hpp"
 #include "removeidfromsystem.hpp"
 #include "playsound.hpp"
 #include "soundsystem.hpp"
 #include "createbloodsplatter.hpp"
 
+#include "client.hpp"
+
 using namespace std;
 
 EntityManager::EntityManager(
 	SystemManager* systemManager,
 	ComponentManager* componentManager,
-	IdManager* idManager) :
+	IdManager* idManager,
+	std::unordered_map<Client*, ID>* clients) :
 	systemManager(systemManager),
 	componentManager(componentManager),
-	idManager(idManager) {
+	idManager(idManager),
+	clients(clients) {
 
 }
 
@@ -55,7 +60,7 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 
 	//If you'd like to change default initialization-data in a component
 	//Just save a pointer to the component like above and modify it like bellow
-	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/playerv3_front.png");
+	renderComponent.imagePath = "./resources/images/playerv3_front.png";
 	renderComponent.zindex_base = 1;
 	renderComponent.xoffset = -7;
 	renderComponent.yoffset = -7;
@@ -137,33 +142,25 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 	};
 
 	commandComponent[CommandComponent::Event::ON_MOVE] = {
-		new ActivateId(id, "RenderSystem", systemManager),
+		//Perhaps use a "new ActivateIdOnClients(id, "RenderSystem")"?
+		new ActivateIdOnClients(id, "RenderSystem", systemManager, clients),
 		new ActivateId(id, "CollisionSystem", systemManager),
-		new ActivateId(id, "TextureHashGridSystem", systemManager),
+		new ActivateIdOnClients(id, "TextureHashGridSystem", systemManager, clients),
 		new ActivateId(id, "SizeHashGridSystem", systemManager),
 		new PlaySound(static_cast<SoundSystem*>(systemManager->getSystem("SoundSystem")), soundComponent.walk),
 	};
 
-	//Tell the entity what systems belongs to
-	entities[id] = {
-		systemManager->getSystem("RenderSystem"),
-		systemManager->getSystem("MoveSystem"),
-		systemManager->getSystem("CollisionSystem"),
-		systemManager->getSystem("TextureHashGridSystem"),
-		systemManager->getSystem("SizeHashGridSystem"),
-		systemManager->getSystem("AnimationSystem"),
-		systemManager->getSystem("HealthSystem"),
-		systemManager->getSystem("RemoveSystem"),
-		systemManager->getSystem("AttackSystem"),
-		systemManager->getSystem("InputSystem"),
-	};
+	registerIdToSystem(id, "MoveSystem");
+	registerIdToSystem(id, "CollisionSystem");
+	registerIdToSystem(id, "SizeHashGridSystem");
+	registerIdToSystem(id, "HealthSystem");
+	registerIdToSystem(id, "RemoveSystem");
+	registerIdToSystem(id, "AttackSystem");
+	registerIdToSystem(id, "InputSystem");
+	registerIdToRemoteSystem(id, "RenderSystem");
+	registerIdToRemoteSystem(id, "TextureHashGridSystem");
+	registerIdToRemoteSystem(id, "AnimationSystem");
 
-
-
-	//Insert this entity into the systems
-	for(auto a : entities.at(id)) {
-		a->add(id);
-	}
 	return id;
 }
 
@@ -180,7 +177,7 @@ ID EntityManager::createTree(const glm::vec2& position) {
 	auto& renderComponent = componentManager->createRenderComponent(id);
 	auto& nameComponent = componentManager->createNameComponent(id);
 
-	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/SmallTree.png");
+	renderComponent.imagePath = "./resources/images/SmallTree.png";
 	renderComponent.zindex_base = 1;
 	renderComponent.xoffset = -24;
 	renderComponent.yoffset = -54;
@@ -193,16 +190,11 @@ ID EntityManager::createTree(const glm::vec2& position) {
 
 	nameComponent.name = "tree";
 
-	entities[id] = {
-		systemManager->getSystem("RenderSystem"),
-		systemManager->getSystem("CollisionSystem"),
-		systemManager->getSystem("TextureHashGridSystem"),
-		systemManager->getSystem("SizeHashGridSystem"),
-	};
+	registerIdToSystem(id, "CollisionSystem");
+	registerIdToSystem(id, "SizeHashGridSystem");
+	registerIdToRemoteSystem(id, "RenderSystem");
+	registerIdToRemoteSystem(id, "TextureHashGridSystem");
 
-	for(auto a : entities.at(id)) {
-		a->add(id);
-	}
 	return id;
 }
 ID EntityManager::createGrassTile(const glm::vec2& position) {
@@ -214,7 +206,7 @@ ID EntityManager::createGrassTile(const glm::vec2& position) {
 	auto& rc = componentManager->createRenderComponent(id);
 	auto& nameComponent = componentManager->createNameComponent(id);
 
-	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/grass.png");
+	rc.imagePath = "./resources/images/grass.png";
 	rc.zindex_base = 0;
 
 	mc.pos = position;
@@ -225,14 +217,10 @@ ID EntityManager::createGrassTile(const glm::vec2& position) {
 
 	nameComponent.name = "grasstile";
 
-	entities[id] = {
-		systemManager->getSystem("RenderSystem"),
-		systemManager->getSystem("TextureHashGridSystem"),
-	};
+	//Systems on clients need to be aware of these
+	registerIdToRemoteSystem(id, "RenderSystem");
+	registerIdToRemoteSystem(id, "TextureHashGridSystem");
 
-	for(auto a : entities.at(id)) {
-		a->add(id);
-	}
 	return id;
 }
 
@@ -245,7 +233,7 @@ ID EntityManager::createWaterTile(const glm::vec2& position) {
 	auto& rc = componentManager->createRenderComponent(id);
 	auto& nameComponent = componentManager->createNameComponent(id);
 
-	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/water.png");
+	rc.imagePath = "./resources/images/water.png";
 	rc.zindex_base = 0;
 
 	mc.pos = position;
@@ -256,14 +244,9 @@ ID EntityManager::createWaterTile(const glm::vec2& position) {
 
 	nameComponent.name = "watertile";
 
-	entities[id] = {
-		systemManager->getSystem("RenderSystem"),
-		systemManager->getSystem("TextureHashGridSystem"),
-	};
+	registerIdToRemoteSystem(id, "RenderSystem");
+	registerIdToRemoteSystem(id, "TextureHashGridSystem");
 
-	for(auto a : entities.at(id)) {
-		a->add(id);
-	}
 	return id;
 }
 
@@ -273,8 +256,8 @@ ID EntityManager::createBloodSplatter(const glm::vec2& position) {
 	auto& rc = componentManager->createRenderComponent(id);
 	auto& nc = componentManager->createNameComponent(id);
 	auto& ac = componentManager->createAnimationComponent(id);
-	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/bloodsplatter1_11.png");
 
+	rc.imagePath = "./resources/images/bloodsplatter1_11.png";
 	rc.xoffset = -10;
 	rc.yoffset = -10;
 	rc.zindex_base = 1;
@@ -298,18 +281,11 @@ ID EntityManager::createBloodSplatter(const glm::vec2& position) {
 	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_10.png");
 	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_11.png");
 
-	/** CRASHING ON THIS **/
 	ac.state = &ac.bloodsplatter;
 
-	entities[id] = {
-		systemManager->getSystem("RenderSystem"),
-		systemManager->getSystem("TextureHashGridSystem"),
-		systemManager->getSystem("AnimationSystem"),
-	};
-
-	for(auto system : entities.at(id)) {
-		system->add(id);
-	}
+	registerIdToRemoteSystem(id, "RenderSystem");
+	registerIdToRemoteSystem(id, "TextureHashGridSystem");
+	registerIdToRemoteSystem(id, "AnimationSystem");
 
 	return id;
 }
@@ -338,8 +314,7 @@ ID EntityManager::createFlower(const glm::vec2& position, const char color) {
 		} break;
 	}
 
-	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, flowercolor);
-
+	rc.imagePath = flowercolor;
 	rc.xoffset = -1;
 	rc.yoffset = -5;
 	rc.zindex_base = 1;
@@ -348,14 +323,8 @@ ID EntityManager::createFlower(const glm::vec2& position, const char color) {
 
 	nc.name = "flower";
 
-	entities[id] = {
-		systemManager->getSystem("RenderSystem"),
-		systemManager->getSystem("TextureHashGridSystem"),
-	};
-
-	for(auto system : entities.at(id)) {
-		system->add(id);
-	}
+	registerIdToRemoteSystem(id, "RenderSystem");
+	registerIdToRemoteSystem(id, "TextureHashGridSystem");
 
 	return id;
 }
@@ -369,7 +338,7 @@ ID EntityManager::createDummySquare(const glm::vec2& position) {
 	auto& cc = componentManager->createCommandComponent(id);
 	auto& ac = componentManager->createAnimationComponent(id);
 
-	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/testsquare1x1.png");
+	rc.imagePath = "./resources/images/testsquare1x1.png";
 
 	mc.maxVelLength = 4.0f;
 
@@ -398,21 +367,14 @@ ID EntityManager::createDummySquare(const glm::vec2& position) {
 	};
 
 	cc[CommandComponent::Event::ON_MOVE] = {
-		new ActivateId(id, "RenderSystem", systemManager),
-		new ActivateId(id, "TextureHashGridSystem", systemManager),
+		new ActivateIdOnClients(id, "RenderSystem", systemManager, clients),
+		new ActivateIdOnClients(id, "TextureHashGridSystem", systemManager, clients),
 	};
 
-	//Tell the entity what systems belongs to
-	entities[id] = {
-		systemManager->getSystem("RenderSystem"),
-		systemManager->getSystem("MoveSystem"),
-		systemManager->getSystem("TextureHashGridSystem"),
-		systemManager->getSystem("InputSystem"),
-	};
-
-	for(auto system : entities.at(id)) {
-		system->add(id);
-	}
+	registerIdToSystem(id, "MoveSystem");
+	registerIdToSystem(id, "InputSystem");
+	registerIdToRemoteSystem(id, "RenderSystem");
+	registerIdToRemoteSystem(id, "TextureHashGridSystem");
 
 	return id;
 }
@@ -428,7 +390,7 @@ ID EntityManager::createStone(const glm::vec2& position) {
 	mc.pos = position;
 	mc.oldPos = mc.pos;
 
-	static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->setImage(id, "./resources/images/stone1.png");
+	rc.imagePath = "./resources/images/stone1.png";
 	rc.xoffset = -7;
 	rc.yoffset = -12;
 	rc.zindex_base = 1;
@@ -438,39 +400,61 @@ ID EntityManager::createStone(const glm::vec2& position) {
 
 	nc.name = "stone";
 
-
-	entities[id] = {
-		systemManager->getSystem("RenderSystem"),
-		systemManager->getSystem("TextureHashGridSystem"),
-		systemManager->getSystem("CollisionSystem"),
-		systemManager->getSystem("SizeHashGridSystem"),
-	};
-
-	for(auto system : entities.at(id)) {
-		system->add(id);
-	}
+	registerIdToSystem(id, "CollisionSystem");
+	registerIdToSystem(id, "SizeHashGridSystem");
+	registerIdToRemoteSystem(id, "RenderSystem");
+	registerIdToRemoteSystem(id, "TextureHashGridSystem");
 
 	return id;
 }
 
 void EntityManager::remove(ID id) {
-	//1. Remove from systemManager
-	for(auto system : entities.at(id)) {
+	//1. Remove from server systemManager
+	for(auto system : entityServerSystemMap.at(id)) {
 		system->remove(id);
 	}
+	entityServerSystemMap.erase(id);
 
-	//Remove from entitymanager
-	entities.erase(id);
+	//2. Remove from clients systemManagers
+	for(auto systemIdentifier : entityClientSystemMap.at(id)) {
+		for(auto it : *clients) {
+			Client* client = it.first;
+			client->removeIdFromSystem(id, systemIdentifier);
+		}
+	}
+	entityClientSystemMap.erase(id);
 
-	//2. Remove from componentManager
+	//3. Remove from componentManager
 	componentManager->clearComponents(id);
 
-	//3. ReleaseId to idmanager
+	//4. ReleaseId to idmanager
 	idManager->releaseId(id);
 }
 
-void EntityManager::registerIdToSystem(const string systemIdentifier, ID id) {
+void EntityManager::registerIdToSystem(ID id, const string systemIdentifier) {
 	auto system = systemManager->getSystem(systemIdentifier);
-	entities.at(id).push_back(system);
+	entityServerSystemMap[id].push_back(system);
 	system->add(id);
 }
+
+void EntityManager::registerIdToRemoteSystem(ID id, const string systemIdentifier) {
+	entityClientSystemMap[id].push_back(systemIdentifier);
+	for(auto it : *clients) {
+		Client* client = it.first;
+		client->registerIdToSystem(id, systemIdentifier);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+//

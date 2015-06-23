@@ -32,7 +32,7 @@ class RenderSystem : public ISystem {
 private:
 	unordered_set<ID> ids;
 	queue<ID> activeIds;
-    heap<RenderData> pq;
+    priority_queue<RenderData> pq;
 	queue<Rect> previousDrawAreas;
 
     Renderer* renderer;
@@ -48,9 +48,8 @@ public:
 	unsigned int count() const;
 	const string getIdentifier() const;
 	void activateId(ID id);
-	void setImage(ID id, string path);
 	void printText(const Text& text);
-    heap<RenderData>& getDrawPriorityQueue();
+    priority_queue<RenderData>& getDrawPriorityQueue();
 
 	//Forces a redraw within an area
 	void inline constexpr renderArea(const Rect& area) {

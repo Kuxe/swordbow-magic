@@ -1,5 +1,6 @@
 #include "server.hpp"
 #include "client.hpp"
+#include <thread>
 
 int main(int argc, char** argv) {
 
@@ -9,9 +10,28 @@ int main(int argc, char** argv) {
 	if(argc > 1 && strcmp(argv[1], "client") == 0) {
 		Client client(argc, argv);
 		client.run();
-	} else {
+	} else if (argc > 1 && strcmp(argv[1], "server") == 0) {
 		Server server(argc, argv);
 		server.run();
+	} else if(argc > 1 && strcmp(argv[1], "threads") == 0) {
+		Server server(argc, argv);
+		Client client(argc, argv);
+		client.connect(&server);
+
+		std::thread serverThread(&Server::run, &server);
+		std::thread clientThread(&Client::run, &client);
+
+		serverThread.join();
+		clientThread.join();
+	} else {
+		Server server(argc, argv);
+		Client client(argc, argv);
+		client.connect(&server);
+
+		while(server.running && client.running) {
+			server.step();
+			client.step();
+		}
 	}
 	return 0;
 }

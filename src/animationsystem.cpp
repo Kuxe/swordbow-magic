@@ -29,9 +29,11 @@ void AnimationSystem::update() {
             //Check if it's time to display the next frame
             if(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - animation->startTime).count() > animation->duration) {
                 auto rs = static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"));
+                auto& rc = componentManager->renderComponents.at(id);
 
                 //It was time. Update the image associated with this entity
-                rs->setImage(id, animation->frames[animation->currentFrame]);
+                rc.imagePath = animation->frames[animation->currentFrame];
+                rs->activateId(id);
 
                 //Update the animation
                 animation->currentFrame += 1;

@@ -34,7 +34,7 @@ public:
     Renderer();
     ~Renderer();
     const unordered_map<string, TextureData>& getTextureDatas() const;
-    void render(heap<RenderData>& pq, const SDL_Rect& camera);
+    void render(priority_queue<RenderData>& pq, const SDL_Rect& camera);
     void printText(const Text& text);
     static constexpr ushort getScreenWidth() { return SCREEN_WIDTH; }
     static constexpr ushort getScreenHeight() { return SCREEN_HEIGHT; }

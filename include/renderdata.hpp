@@ -43,8 +43,8 @@ struct RenderData {
     constexpr bool operator< (const RenderData& rhs) const {
         return
             zindex_base == rhs.zindex_base ?
-            zindex < rhs.zindex :
-            zindex_base < rhs.zindex_base;
+            zindex > rhs.zindex :
+            zindex_base > rhs.zindex_base;
     }
     constexpr bool operator> (const RenderData& rhs) const { return rhs < *this; }
     constexpr bool operator<=(const RenderData& rhs) const { return !(*this > rhs); }

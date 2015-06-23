@@ -86,7 +86,7 @@ void RenderSystem::update() {
                 (int)rc.zindex_base, (int)(mc.pos.y + textureData.height + rc.yoffset)
             };
 
-    		pq.insert(renderData);
+    		pq.push(renderData);
     	}
 
         //Dont move this piece of code. A reference to this element is used above!
@@ -119,17 +119,11 @@ void RenderSystem::activateId(ID id) {
 	}
 }
 
-void RenderSystem::setImage(ID id, string path) {
-	auto& rc = componentManager->renderComponents.at(id);
-	rc.imagePath = path;
-    activateId(id);
-}
-
 void RenderSystem::printText(const Text& text) {
     renderer->printText(text);
 }
 
-heap<RenderData>& RenderSystem::getDrawPriorityQueue() {
+priority_queue<RenderData>& RenderSystem::getDrawPriorityQueue() {
     return pq;
 }
 

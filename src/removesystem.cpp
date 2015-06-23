@@ -31,8 +31,8 @@ void RemoveSystem::update() {
         //This would be the place to ensure that will happen
 
         //Make sure entity disappears visually on removal
-        auto spatialIndexer = dynamic_cast<SpatialIndexer*>(systemManager->getSystem("TextureHashGridSystem"));
-        static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->renderArea(spatialIndexer->getBoundingBox(id));
+        //auto spatialIndexer = dynamic_cast<SpatialIndexer*>(systemManager->getSystem("TextureHashGridSystem"));
+        //static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"))->renderArea(spatialIndexer->getBoundingBox(id));
 
         //Execute whatever last wishes the entity has
         cc.execute(CommandComponent::Event::ON_DEATH);

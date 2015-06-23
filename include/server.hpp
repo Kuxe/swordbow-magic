@@ -6,7 +6,7 @@
 #include <SDL2/SDL.h>
 #include "animationsystem.hpp"
 #include "deltatime.hpp"
-#include "keyboardsystem.hpp"
+//#include "keyboardsystem.hpp"
 #include "componentmanager.hpp"
 #include "systemmanager.hpp"
 #include "idmanager.hpp"
@@ -30,41 +30,55 @@
 #include <assert.h>
 #include <glm/ext.hpp>
 #include "renderer.hpp"
+#include <unordered_map>
+#include "inputdata.hpp"
 
+typedef unsigned int ID;
+
+class Client;
 class Server {
 private:
-    bool running = true;
-
     DeltaTime deltaTime;
 
 	ComponentManager componentManager;
 	SystemManager systemManager;
-	TextureBoundingBox textureBoundingBox;
+	//TextureBoundingBox textureBoundingBox;
 	SizeBoundingBox sizeBoundingBox;
 	IdManager idManager;
 	EntityManager entityManager;
 
 	//Declare systems
-	HashGridSystem textureHashGridSystem;
+	//HashGridSystem textureHashGridSystem;
 	HashGridSystem sizeHashGridSystem;
 	MoveSystem moveSystem;
-	RenderSystem renderSystem;
+	//RenderSystem renderSystem;
 	CollisionSystem collisionSystem;
 	SoundSystem soundSystem;
-	AnimationSystem animationSystem;
+	//AnimationSystem animationSystem;
 	HealthSystem healthSystem;
 	RemoveSystem removeSystem;
 	AttackSystem attackSystem;
 	InputSystem inputSystem;
-	CameraSystem cameraSystem;
-	KeyboardSystem keyboardSystem;
+	//CameraSystem cameraSystem;
+	//KeyboardSystem keyboardSystem;
 	ServerNetworkSystem serverNetworkSystem;
 
-    Renderer renderer;
+    std::unordered_map<Client*, ID> clients;
+
+    void inputDataToInputComponent(Client* client, InputData& data);
 
 public:
+    bool running = true;
+
     Server(int argc, char** argv);
+    void onConnect(Client* client);
+    void onDisconnect(Client* client);
     void run();
+    void terminate();
+    void step();
+
+    void send();
+    void recv(Client* client, InputData inputData);
 
     constexpr void printGeneralInfo() {
     	using std::cout;

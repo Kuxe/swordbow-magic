@@ -19,6 +19,7 @@ class SystemManager;
 class ComponentManager;
 class IdManager;
 class ISystem;
+class Client;
 
 typedef unsigned int ID;
 
@@ -30,14 +31,25 @@ class EntityManager {
 		(except for looping through all systems and searching for ID, removing it
 		if it exits, but that's a slow bruteforce-approach)
 	*/
- 	unordered_map<unsigned int, vector<ISystem*> > entities;
+ 	unordered_map<unsigned int, vector<ISystem*> > entityServerSystemMap;
+    unordered_map<unsigned int, vector<std::string> > entityClientSystemMap;
     unordered_set<unsigned int> ids;
 
 	SystemManager* systemManager;
 	ComponentManager* componentManager;
 	IdManager* idManager;
 
-	EntityManager(SystemManager* systemManager, ComponentManager* componentManager, IdManager* idManager);
+    //If entitymanager creates anything, it need to inform all clients connected
+    //to the parent server that a new entity was created and it belongs to
+    //"these" systems (eg RenderSystem and TextureHashGridSystem)
+    std::unordered_map<Client*, ID>* clients;
+
+	EntityManager(
+        SystemManager* systemManager,
+        ComponentManager* componentManager,
+        IdManager* idManager,
+        std::unordered_map<Client*, ID>* clients
+    );
     const unsigned int& getId();
 
 	ID createFatMan();
@@ -51,7 +63,8 @@ class EntityManager {
     ID createStone(const glm::vec2& position);
 	void remove(ID id);
 
-    void registerIdToSystem(const string systemIdentifier, ID id);
+    void registerIdToSystem(ID id, const string systemIdentifier);
+    void registerIdToRemoteSystem(ID id, const string systemIdentifier);
 };
 
 #endif //ENTITYMANAGER_H

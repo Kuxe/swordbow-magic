@@ -4,8 +4,8 @@
 class SDL_Teture;
 struct TextureData {
     SDL_Texture* texture;
-	unsigned int width;
-	unsigned int height;
+	int width;
+	int height;
 
     constexpr TextureData() :
         texture(nullptr),
@@ -14,8 +14,8 @@ struct TextureData {
 
     constexpr TextureData(
         SDL_Texture* texture,
-        const unsigned int width,
-        const unsigned int height
+        const int width,
+        const int height
     ) :
     texture(texture),
     width(width),

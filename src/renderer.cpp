@@ -121,16 +121,7 @@ Renderer::Renderer() {
                 SDL_FreeSurface(rawImage);
                 int w, h;
                 SDL_QueryTexture(texture, NULL, NULL, &w, &h);
-                textureDatas.insert(
-                    make_pair(
-                        path,
-                        TextureData{
-                            texture,
-                            (unsigned int)w,
-                            (unsigned int)h
-                        }
-                    )
-                );
+                textureDatas.insert({path, {texture, w, h}});
             }
         }
     }
@@ -152,18 +143,34 @@ Renderer::~Renderer() {
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-void Renderer::render(heap<RenderData>& pq, const SDL_Rect& camera) {
+void Renderer::render(priority_queue<RenderData>& pq, const SDL_Rect& camera) {
     SDL_SetRenderTarget(renderer, worldTexture);
 
-    while(!pq.isEmpty()) {
-        const auto renderData = pq.poll();
+    while(!pq.empty()) {
+        const auto renderData = pq.top();
         SDL_RenderCopy(
             renderer,
             textureDatas.at(renderData.texturePath).texture,
             &renderData.cliprect,
             &renderData.target
         );
+        pq.pop();
 	};
+
+
+    /**
+
+    //Put the fps on tmp (text->surface->tmp->fontTexture->default render target)
+    const std::string str = std::to_string((int)(1/deltaTime->delta())) + "fps";
+    printText(Text(str, 0, 0, {231, 195, 175}));
+
+    //If all active ids werent rendered this frame, warn
+    if(allowedRendersThisFrame <= 0) {
+        const std::string str = "WARNING: renderer is lagging behind";
+        printText(Text(str, 0, 20, {255, 55, 55}));
+    }
+
+    **/
 
     //Render all texts
     renderTexts();
@@ -203,7 +210,6 @@ void Renderer::renderTexts() {
 const unordered_map<string, TextureData>& Renderer::getTextureDatas() const {
     return textureDatas;
 }
-
 
 
 
