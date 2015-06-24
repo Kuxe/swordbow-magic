@@ -137,7 +137,10 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 	};
 
 	commandComponent[CommandComponent::Event::ON_DEATH] = {
-		new PlaySound(static_cast<SoundSystem*>(systemManager->getSystem("SoundSystem")), SoundComponent::Sound {"./resources/sounds/bloodsplatter.wav"}),
+		new PlaySound(
+			SoundComponent::Sound {"./resources/sounds/bloodsplatter.wav"},
+			clients
+		),
 		new CreateBloodsplatter(this, id),
 	};
 
@@ -147,7 +150,7 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 		new ActivateId(id, "CollisionSystem", systemManager),
 		new ActivateIdOnClients(id, "TextureHashGridSystem", systemManager, clients),
 		new ActivateId(id, "SizeHashGridSystem", systemManager),
-		new PlaySound(static_cast<SoundSystem*>(systemManager->getSystem("SoundSystem")), soundComponent.walk),
+		new PlaySound(soundComponent.walk, clients),
 	};
 
 	registerIdToSystem(id, "MoveSystem");
@@ -283,6 +286,15 @@ ID EntityManager::createBloodSplatter(const glm::vec2& position) {
 
 	ac.state = &ac.bloodsplatter;
 
+	//FIXME: These are getting registered on remote systems.
+	//It could be possible that the remote systems iterate
+	//over registered entities BEFORE the remote client
+	//got the components, which would cause a segfault
+	//This is probably the case when killing a character
+	//which emits a new entity (blood). That blood is getting
+	//registered to client, client iterate over it and
+	//fetches movecomponent before
+	//server did send movecomponent of that id to client
 	registerIdToRemoteSystem(id, "RenderSystem");
 	registerIdToRemoteSystem(id, "TextureHashGridSystem");
 	registerIdToRemoteSystem(id, "AnimationSystem");

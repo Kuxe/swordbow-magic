@@ -4,16 +4,22 @@
 #include "icommand.hpp"
 #include <string>
 #include "soundcomponent.hpp"
+#include <unordered_map>
 
-using std::string;
+typedef unsigned int ID;
 
-class SoundSystem;
+class Client;
+
+/** Used when server should tell all clients to play a sound **/
 class PlaySound : public ICommand {
 private:
-    SoundSystem* soundSystem;
     SoundComponent::Sound sound;
+    std::unordered_map<Client*, ID>* clients;
 public:
-    PlaySound(SoundSystem* soundSystem, const SoundComponent::Sound& soundPath);
+    PlaySound(
+        const SoundComponent::Sound& soundPath,
+        std::unordered_map<Client*, ID>* clients
+    );
     void execute();
 };
 

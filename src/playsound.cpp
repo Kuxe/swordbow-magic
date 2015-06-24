@@ -1,10 +1,16 @@
 #include "playsound.hpp"
-#include "soundsystem.hpp"
+#include "client.hpp"
 
-PlaySound::PlaySound(SoundSystem* soundSystem, const SoundComponent::Sound& sound) :
-    soundSystem(soundSystem),
-    sound(sound) { }
+PlaySound::PlaySound(
+    const SoundComponent::Sound& sound,
+    unordered_map<Client*, ID>* clients
+    ) :
+    sound(sound),
+    clients(clients) { }
 
 void PlaySound::execute() {
-    soundSystem->playSound(sound);
+    for(auto it : *clients) {
+        Client* client = it.first;
+        client->playSound(sound);
+    }
 }

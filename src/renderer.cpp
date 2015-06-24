@@ -144,6 +144,7 @@ Renderer::~Renderer() {
 }
 
 void Renderer::render(priority_queue<RenderData>& pq, const SDL_Rect& camera) {
+
     SDL_SetRenderTarget(renderer, worldTexture);
 
     while(!pq.empty()) {
@@ -156,21 +157,6 @@ void Renderer::render(priority_queue<RenderData>& pq, const SDL_Rect& camera) {
         );
         pq.pop();
 	};
-
-
-    /**
-
-    //Put the fps on tmp (text->surface->tmp->fontTexture->default render target)
-    const std::string str = std::to_string((int)(1/deltaTime->delta())) + "fps";
-    printText(Text(str, 0, 0, {231, 195, 175}));
-
-    //If all active ids werent rendered this frame, warn
-    if(allowedRendersThisFrame <= 0) {
-        const std::string str = "WARNING: renderer is lagging behind";
-        printText(Text(str, 0, 20, {255, 55, 55}));
-    }
-
-    **/
 
     //Render all texts
     renderTexts();

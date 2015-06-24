@@ -19,10 +19,9 @@ int main(int argc, char** argv) {
 		client.connect(&server);
 
 		std::thread serverThread(&Server::run, &server);
-		std::thread clientThread(&Client::run, &client);
+		client.run(); //It seems that SDL must be on main thread
 
 		serverThread.join();
-		clientThread.join();
 	} else {
 		Server server(argc, argv);
 		Client client(argc, argv);

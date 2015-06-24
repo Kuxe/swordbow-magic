@@ -11,10 +11,12 @@
 #include "animationsystem.hpp"
 #include "camerasystem.hpp"
 #include "textureboundingbox.hpp"
+#include "soundsystem.hpp"
 
 #include <SDL2/SDL.h>
 #include <glm/vec2.hpp>
 #include <queue>
+#include <mutex>
 
 typedef unsigned int ID;
 
@@ -31,15 +33,15 @@ private:
     TextureBoundingBox textureBoundingBox;
 
     //Client-side systems
-    RenderSystem renderSystem;
     HashGridSystem textureHashGridSystem;
     AnimationSystem animationSystem;
+    RenderSystem renderSystem;
     CameraSystem cameraSystem;
-
+    SoundSystem soundSystem;
 
     Renderer renderer;
 
-    SDL_Rect camera;
+    std::mutex componentsMutex;
 
 public:
     bool running = true;
@@ -57,11 +59,17 @@ public:
         unordered_map<ID, MoveComponent> moveComponents,
         unordered_map<ID, RenderComponent> renderComponents,
         unordered_map<ID, AnimationComponent> animationComponents,
-        glm::vec2& pos);
+        unordered_map<ID, SoundComponent> soundComponents,
+        glm::vec2 pos);
 
     void registerIdToSystem(ID id, string);
     void removeIdFromSystem(ID id, string);
     void activateId(ID id, std::string systemIdentifier);
+
+    //How the ECS handles sounds should maybe be redesigned...
+    //Redesigning in such a way that sounds are entities to would
+    //make this function bellow obsolete. Which is nice.
+    void playSound(SoundComponent::Sound sound);
 };
 
 #endif //CLIENT_HPP

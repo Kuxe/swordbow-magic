@@ -15,7 +15,7 @@ PKG_SEARCH_MODULE(SDL2MIXER REQUIRED SDL2_mixer)
 
 #Flags for compiler and linker
 SET(CMAKE_CXX_COMPILER "clang++")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++14")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -pthread -std=c++14")
 
 #What include directories are there?..:
 include_directories(./include/ ./catch/ ${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS} ${SDL2MIXER_INCLUDE_DIRS})

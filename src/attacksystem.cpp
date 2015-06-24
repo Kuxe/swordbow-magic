@@ -78,7 +78,11 @@ void AttackSystem::update() {
                 //Play a default 'hurt'-sound for
                 auto soundPath = "./resources/sounds/hurt.wav";
                 SoundComponent::Sound hurtSound =  {soundPath};
-                static_cast<SoundSystem*>(systemManager->getSystem("SoundSystem"))->playSound(hurtSound);
+
+                //TODO: Broadcast to clients instead of trying to play in server
+                //because that will crash since there is no server-side soundsystem
+                //anymore
+                //static_cast<SoundSystem*>(systemManager->getSystem("SoundSystem"))->playSound(hurtSound);
             }
         }
 

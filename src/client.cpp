@@ -10,10 +10,16 @@ Client::Client(int argc, char** argv) :
         renderSystem(&renderer),
         cameraSystem(&renderer) {
 
+    cout << "\n--** STARTING CLIENT **--" << endl;
+
     systemManager.add(&textureHashGridSystem);
     systemManager.add(&renderSystem);
     systemManager.add(&animationSystem);
     systemManager.add(&cameraSystem);
+    systemManager.add(&soundSystem);
+
+    //Play some sweet music
+	soundSystem.playMusic("./resources/sounds/naturesounds.ogg");
 }
 
 void Client::connect(Server* server) {
@@ -67,12 +73,17 @@ void Client::step() {
         send({presses, releases});
     }
 
+    /** CRITICAL SECTION **/
+    componentsMutex.lock();
+
     /** Update client-side ECS **/
     systemManager.update();
 
+    /** END OF CRITICAL SECTION **/
+    componentsMutex.unlock();
+
     /** Pass output from rendersystem to renderer **/
     renderer.render(renderSystem.getDrawPriorityQueue(), cameraSystem.getCamera());
-
 
     deltaTime.stop();
 }
@@ -85,7 +96,11 @@ void Client::recv(
         unordered_map<ID, MoveComponent> moveComponents,
         unordered_map<ID, RenderComponent> renderComponents,
         unordered_map<ID, AnimationComponent> animationComponents,
-        glm::vec2& pos) {
+        unordered_map<ID, SoundComponent> soundComponents,
+        glm::vec2 pos) {
+
+    //Only allow updating components if they're not in use by something else
+    componentsMutex.lock();
 
     //This is much more copying than neccesary. It is sufficient
     //to only pass into recv() some lists:
@@ -95,18 +110,33 @@ void Client::recv(
     componentManager.moveComponents = moveComponents;
     componentManager.renderComponents = renderComponents;
     componentManager.animationComponents = animationComponents;
+    componentManager.soundComponents = soundComponents;
+
+    //Now its OK to update client-ecs!
+    componentsMutex.unlock();
 }
 
 void Client::registerIdToSystem(ID id, std::string systemIdentifier) {
+    componentsMutex.lock();
     systemManager.getSystem(systemIdentifier)->add(id);
+    componentsMutex.unlock();
 }
 
 void Client::removeIdFromSystem(ID id, std::string systemIdentifier) {
+    componentsMutex.lock();
+    cout << "client: removing " << id << " from " << systemIdentifier << endl;
     systemManager.getSystem(systemIdentifier)->remove(id);
+    componentsMutex.unlock();
 }
 
 void Client::activateId(ID id, std::string systemIdentifier) {
+    componentsMutex.lock();
     systemManager.getSystem(systemIdentifier)->activateId(id);
+    componentsMutex.unlock();
+}
+
+void Client::playSound(SoundComponent::Sound sound) {
+    soundSystem.playSound(sound);
 }
 
 

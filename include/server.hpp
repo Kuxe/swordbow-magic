@@ -3,10 +3,7 @@
 
 #include "server.hpp"
 #include <iostream>
-#include <SDL2/SDL.h>
-#include "animationsystem.hpp"
 #include "deltatime.hpp"
-//#include "keyboardsystem.hpp"
 #include "componentmanager.hpp"
 #include "systemmanager.hpp"
 #include "idmanager.hpp"
@@ -14,24 +11,17 @@
 #include "movesystem.hpp"
 #include "rendersystem.hpp"
 #include "movecomponent.hpp"
-#include "rendercomponent.hpp"
 #include "world.hpp"
 #include "hashgridsystem.hpp"
 #include "collisionsystem.hpp"
-#include "textureboundingbox.hpp"
 #include "sizeboundingbox.hpp"
-#include "soundsystem.hpp"
 #include "healthsystem.hpp"
 #include "removesystem.hpp"
 #include "attacksystem.hpp"
 #include "inputsystem.hpp"
-#include "camerasystem.hpp"
-#include "servernetworksystem.hpp"
-#include <assert.h>
-#include <glm/ext.hpp>
-#include "renderer.hpp"
 #include <unordered_map>
 #include "inputdata.hpp"
+#include <mutex>
 
 typedef unsigned int ID;
 
@@ -42,28 +32,22 @@ private:
 
 	ComponentManager componentManager;
 	SystemManager systemManager;
-	//TextureBoundingBox textureBoundingBox;
 	SizeBoundingBox sizeBoundingBox;
 	IdManager idManager;
 	EntityManager entityManager;
 
 	//Declare systems
-	//HashGridSystem textureHashGridSystem;
 	HashGridSystem sizeHashGridSystem;
 	MoveSystem moveSystem;
-	//RenderSystem renderSystem;
 	CollisionSystem collisionSystem;
-	SoundSystem soundSystem;
-	//AnimationSystem animationSystem;
 	HealthSystem healthSystem;
 	RemoveSystem removeSystem;
 	AttackSystem attackSystem;
 	InputSystem inputSystem;
-	//CameraSystem cameraSystem;
-	//KeyboardSystem keyboardSystem;
-	ServerNetworkSystem serverNetworkSystem;
 
     std::unordered_map<Client*, ID> clients;
+
+    std::mutex componentsMutex;
 
     void inputDataToInputComponent(Client* client, InputData& data);
 
@@ -78,6 +62,7 @@ public:
     void step();
 
     void send();
+    void send(Client* client);
     void recv(Client* client, InputData inputData);
 
     constexpr void printGeneralInfo() {

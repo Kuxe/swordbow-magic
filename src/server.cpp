@@ -10,6 +10,8 @@ Server::Server(int argc, char** argv) :
 		removeSystem(&entityManager),
 		attackSystem(&sizeHashGridSystem) {
 
+	cout << "\n--** STARTING SERVER **--" << endl;
+
 	printGeneralInfo();
 
 	//Add systems to systemmanager
@@ -17,11 +19,9 @@ Server::Server(int argc, char** argv) :
 	systemManager.add(&moveSystem);
 	systemManager.add(&sizeHashGridSystem);
 	systemManager.add(&collisionSystem);
-	systemManager.add(&soundSystem);
 	systemManager.add(&attackSystem);
 	systemManager.add(&healthSystem);
 	systemManager.add(&removeSystem);
-	systemManager.add(&serverNetworkSystem);
 
 	//Populate world with... world
 	World world(&entityManager);
@@ -31,9 +31,6 @@ Server::Server(int argc, char** argv) :
 	} else {
 		world.createDebugWorld();
 	}
-
-	//Play some sweet music
-	soundSystem.playMusic("./resources/sounds/naturesounds.ogg");
 }
 
 void Server::run() {
@@ -50,7 +47,9 @@ void Server::step() {
 	deltaTime.start();
 
 	//Run the entity-component-system
+	componentsMutex.lock();
 	systemManager.update();
+	componentsMutex.unlock();
 
 	//Broadcast new gamestate to clients
 	send();
@@ -78,6 +77,9 @@ void Server::onConnect(Client* client) {
 			client->registerIdToSystem(id, systemIdentifier);
 		}
 	}
+
+	//Client should get a copy of components
+	send(client);
 }
 
 void Server::onDisconnect(Client* client) {
@@ -85,24 +87,31 @@ void Server::onDisconnect(Client* client) {
 	clients.erase(client);
 }
 
+void Server::send(Client* client) {
+	auto id = clients.at(client);
+	const auto& mc = componentManager.moveComponents.at(id);
+	client->recv(
+		componentManager.moveComponents,
+		componentManager.renderComponents,
+		componentManager.animationComponents,
+		componentManager.soundComponents,
+		mc.pos
+	);
+}
+
 void Server::send() {
 	for(auto it : clients) {
-		Client* client = it.first;
-		auto id = clients.at(client);
-		auto& mc = componentManager.moveComponents.at(id);
-		client->recv(
-			componentManager.moveComponents,
-			componentManager.renderComponents,
-			componentManager.animationComponents,
-			mc.pos
-		);
+		send(it.first);
 	}
 }
 
 void Server::recv(Client* client, InputData inputData) {
+	componentsMutex.lock();
 
 	//Alter the inputcomponent of id belonging to client
 	inputDataToInputComponent(client, inputData);
+
+	componentsMutex.unlock();
 }
 
 void Server::inputDataToInputComponent(Client* client, InputData& data) {
