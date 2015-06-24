@@ -26,7 +26,15 @@ Server::Server(int argc, char** argv) :
 	//Populate world with... world
 	World world(&entityManager);
 
-	if(argc > 1 && strcmp(argv[1], "bigworld") == 0) {
+
+	bool bigworld = false;
+	for(int i = 0; i < argc; i++) {
+		if(strcmp(argv[i], "bigworld") == 0) {
+			bigworld = true;
+			break;
+		}
+	}
+	if(bigworld) {
 		world.createWorld();
 	} else {
 		world.createDebugWorld();
