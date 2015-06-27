@@ -1,7 +1,7 @@
 #ifndef COMPONENTMANAGER_H
 #define COMPONENTMANAGER_H
 
-#include <unordered_map>
+#include "components.hpp"
 #include "animationcomponent.hpp"
 #include "movecomponent.hpp"
 #include "rendercomponent.hpp"
@@ -20,49 +20,74 @@ typedef unsigned int ID;
 
 class ComponentManager {
  public:
-	unordered_map<ID, MoveComponent> moveComponents;
-	unordered_map<ID, RenderComponent> renderComponents;
-	unordered_map<ID, InputComponent> inputComponents;
-	unordered_map<ID, TileComponent> tileComponents;
-	unordered_map<ID, SizeComponent> sizeComponents;
-    unordered_map<ID, NameComponent> nameComponents;
-    unordered_map<ID, SoundComponent> soundComponents;
-    unordered_map<ID, AnimationComponent> animationComponents;
-    unordered_map<ID, HealthComponent> healthComponents;
-    unordered_map<ID, AttackComponent> attackComponents;
-    unordered_map<ID, CommandComponent> commandComponents;
+	Components<MoveComponent> moveComponents;
+	Components<RenderComponent> renderComponents;
+	Components<InputComponent> inputComponents;
+	Components<TileComponent> tileComponents;
+	Components<SizeComponent> sizeComponents;
+    Components<NameComponent> nameComponents;
+    Components<SoundComponent> soundComponents;
+    Components<AnimationComponent> animationComponents;
+    Components<HealthComponent> healthComponents;
+    Components<AttackComponent> attackComponents;
+    Components<CommandComponent> commandComponents;
 
-	constexpr MoveComponent& createMoveComponent(ID id) {
+	constexpr MoveComponent& createMoveComponent(const ID id) {
+        //I must have different ways of creating components here because
+        //some components are server-side
+        //some components are client-side and
+        //some components are both client and server-side
+        //Thus componentmanager needs to know what goes where.
+
+        //I only want to initialize the objects once.
+        //Therefore the component must be initialized here or before, because
+        //it must be initialized before I add it to server-side
+        //componentmanagers or client-side componentmanagers.
+
+        //So I could either:
+
+        //1. Pass by value (constructing inside the call to createMoveComponent)
+        //2. Pass by reference, (initializing local temps in entitymanager create-methods)
+
+        //I already tried constructing object inside the call to createMoveComponent, but
+        //that was a hassle. So next try is to pass already initialized objects
+        //by reference. These methods could then be named something like
+        //"storeMoveComponent" as opposed to
+        //"createMoveComponent"
+
+        //Drawback: entitymanager create methods become larger and more difficult
+        //to maintain
+
         return moveComponents[id] = MoveComponent();
     }
-	constexpr RenderComponent& createRenderComponent(ID id) {
+	constexpr RenderComponent& createRenderComponent(const ID id) {    
         return renderComponents[id] = RenderComponent();
     }
-	constexpr InputComponent& createInputComponent(ID id) {
+	constexpr InputComponent& createInputComponent(const ID id) {
         return inputComponents[id] = InputComponent();
     }
-	constexpr TileComponent& createTileComponent(ID id) {
+	constexpr TileComponent& createTileComponent(const ID id) {
         return tileComponents[id] = TileComponent();
     }
-    constexpr SizeComponent& createSizeComponent(ID id) {
+    constexpr SizeComponent& createSizeComponent(const ID id) {
         return sizeComponents[id] = SizeComponent();
     }
-    constexpr NameComponent& createNameComponent(ID id) {
+    constexpr NameComponent& createNameComponent(const ID id) {
         return nameComponents[id] = NameComponent();
     }
-    constexpr SoundComponent& createSoundComponent(ID id) {
+    constexpr SoundComponent& createSoundComponent(const ID id) {
         return soundComponents[id] = SoundComponent();
     }
-    constexpr AnimationComponent& createAnimationComponent(ID id) {
+    constexpr AnimationComponent& createAnimationComponent(const ID id) {
         return animationComponents[id] = AnimationComponent();
     }
-    constexpr HealthComponent& createHealthComponent(ID id) {
+    constexpr HealthComponent& createHealthComponent(const ID id) {
         return healthComponents[id] = HealthComponent();
     }
-    constexpr AttackComponent& createAttackComponent(ID id) {
+    constexpr AttackComponent& createAttackComponent(const ID id) {
         return attackComponents[id] = AttackComponent();
     }
-    constexpr CommandComponent& createCommandComponent(ID id) {
+    constexpr CommandComponent& createCommandComponent(const ID id) {
         return commandComponents[id] = CommandComponent();
     }
 

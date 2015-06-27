@@ -1,6 +1,7 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
+#include "components.hpp"
 #include "deltatime.hpp"
 #include "renderer.hpp"
 #include "inputdata.hpp"
@@ -56,10 +57,10 @@ public:
     //These simulates real send and recv
     void send(InputData inputData);
     void recv(
-        unordered_map<ID, MoveComponent> moveComponents,
-        unordered_map<ID, RenderComponent> renderComponents,
-        unordered_map<ID, AnimationComponent> animationComponents,
-        unordered_map<ID, SoundComponent> soundComponents,
+        Components<MoveComponent> moveComponents,
+        Components<RenderComponent> renderComponents,
+        Components<AnimationComponent> animationComponents,
+        Components<SoundComponent> soundComponents,
         glm::vec2 pos);
 
     void registerIdToSystem(ID id, string);

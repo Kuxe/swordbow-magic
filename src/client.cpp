@@ -93,10 +93,10 @@ void Client::send(InputData inputData) {
 }
 
 void Client::recv(
-        unordered_map<ID, MoveComponent> moveComponents,
-        unordered_map<ID, RenderComponent> renderComponents,
-        unordered_map<ID, AnimationComponent> animationComponents,
-        unordered_map<ID, SoundComponent> soundComponents,
+        Components<MoveComponent> moveComponents,
+        Components<RenderComponent> renderComponents,
+        Components<AnimationComponent> animationComponents,
+        Components<SoundComponent> soundComponents,
         glm::vec2 pos) {
 
     //Only allow updating components if they're not in use by something else
