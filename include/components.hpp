@@ -17,7 +17,7 @@ public:
         container.insert(pair);
     }
 
-    void sync(const Components<T>& components) {
+    void sync(Components<T>& components) {
         for(auto it : components) {
             container[it.first] = components[it.first];
         }
