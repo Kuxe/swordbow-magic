@@ -7,6 +7,7 @@ Server::Server(int argc, char** argv) :
 		entityManager(&systemManager, &componentManager, &idManager, &clients),
 		sizeHashGridSystem(&componentManager, &sizeBoundingBox),
 		collisionSystem(&sizeHashGridSystem),
+		animationSystem(&clients),
 		removeSystem(&entityManager),
 		attackSystem(&sizeHashGridSystem) {
 

@@ -6,7 +6,13 @@ struct MoveComponent {
     glm::vec2 pos;
     glm::vec2 oldPos;
     glm::vec2 vel;
-    glm::vec2 dir {0, 1};
+
+    //Default dir to something that could be considered undefined
+    //this is neccesary because in AnimationSystem different animations
+    //are selected if direction is set to anything but 0,0. This used to
+    //cause segfault for bloodsplatter because bloodsplatter doesnt have
+    //any "north" animation
+    glm::vec2 dir {0, 0};
     float maxVelLength;
 
 	MoveComponent(

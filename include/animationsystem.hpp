@@ -4,14 +4,17 @@
 #include <unordered_set>
 #include "isystem.hpp"
 #include "animationcomponent.hpp"
+#include <unordered_map>
 
-using std::unordered_set;
-
+class Client;
 class AnimationSystem : public ISystem {
 private:
-    unordered_set<ID> ids;
+    std::unordered_set<ID> ids;
+    std::unordered_map<Client*, ID>* clients;
 
 public:
+
+    AnimationSystem(std::unordered_map<Client*, ID>* clients);
 
     enum Animation {
         bloodsplatter,

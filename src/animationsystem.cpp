@@ -2,9 +2,13 @@
 #include <iostream>
 #include "componentmanager.hpp"
 #include "systemmanager.hpp"
+#include "client.hpp"
 
 using std::cout;
 using std::endl;
+
+AnimationSystem::AnimationSystem(unordered_map<Client*, ID>* clients) :
+    clients(clients) { }
 
 void AnimationSystem::add(ID id) {
     ids.insert(id);
@@ -23,6 +27,8 @@ void AnimationSystem::update() {
         auto& mc = componentManager->moveComponents.at(id);
 
         //create a unique number for each possible direction
+        //if its an entity without direction, such as bloodsplatter, it will be 0
+        //and neither switch-statement will occur.
 		const char dirhash = mc.dir.x * 2 + mc.dir.y * 3;
 
 		//If this entity is moving, play animation in correct direction
@@ -107,6 +113,11 @@ void AnimationSystem::update() {
                 //Frame 1, 2, 3, 4 ... n, 0 <- on that zero. First loop is done!
                 if(animation->currentFrame == 0) {
                     animation->firstLoop = false;
+                }
+
+                //Tell all clients to activate this id on their rendersystems
+                for(auto it : *clients) {
+                    it.first->activateId(id, "RenderSystem");
                 }
             }
         }
