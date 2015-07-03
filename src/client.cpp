@@ -102,9 +102,8 @@ void Client::recv(
     //to only pass into recv() some lists:
     //  *A list of movecomponents that changed
     //  *A list of rendercomponents that changed
-    //  *A list of animationComponents that changed
-    componentManager.moveComponents = moveComponents;
-    componentManager.renderComponents = renderComponents;
+    componentManager.moveComponents.sync(moveComponents);
+    componentManager.renderComponents.sync(renderComponents);
 
     //Now its OK to update client-ecs!
     componentsMutex.unlock();

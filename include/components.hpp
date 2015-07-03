@@ -17,6 +17,12 @@ public:
         container.insert(pair);
     }
 
+    void sync(const Components<T>& components) {
+        for(auto it : components) {
+            container[it.first] = components[it.first];
+        }
+    }
+
     Components<T, Container>& operator=(Components<T, Container> components) {
         container.swap(components.container);
         return *this;
@@ -38,7 +44,11 @@ public:
         return container.find(id);
     }
 
-    constexpr auto end() {
+    constexpr auto begin() const {
+        return container.begin();
+    }
+
+    constexpr auto end() const {
         return container.end();
     }
 
