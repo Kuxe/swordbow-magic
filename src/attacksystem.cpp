@@ -4,12 +4,14 @@
 #include "systemmanager.hpp"
 #include "soundcomponent.hpp"
 #include "namecomponent.hpp"
+#include "client.hpp"
 
 #include <iostream>
 using namespace std;
 
-AttackSystem::AttackSystem(HashGridSystem* hashgrid) :
-    hashgrid(hashgrid) {
+AttackSystem::AttackSystem(HashGridSystem* hashgrid, unordered_map<Client*, ID>* clients) :
+    hashgrid(hashgrid),
+    clients(clients) {
 
 }
 
@@ -78,10 +80,10 @@ void AttackSystem::update() {
                 auto soundPath = "./resources/sounds/hurt.wav";
                 SoundComponent::Sound hurtSound =  {soundPath};
 
-                //TODO: Broadcast to clients instead of trying to play in server
-                //because that will crash since there is no server-side soundsystem
-                //anymore
-                //static_cast<SoundSystem*>(systemManager->getSystem("SoundSystem"))->playSound(hurtSound);
+                //Broadcast hurtsound to all clients
+                for(auto it : *clients) {
+                    it.first->playSound(hurtSound);
+                }
             }
         }
 

@@ -2,20 +2,21 @@
 #define ATTACKSYSTEM_HPP
 
 #include <unordered_set>
+#include <unordered_map>
 #include <queue>
 #include "isystem.hpp"
 
-using std::unordered_set;
-
 class HashGridSystem;
+class Client;
 class AttackSystem : public ISystem {
 private:
-    unordered_set<ID> ids;
+    std::unordered_set<ID> ids;
+    unordered_map<Client*, ID>* clients;
     queue<ID> activeIds;
     HashGridSystem* hashgrid;
 
 public:
-    AttackSystem(HashGridSystem* hashGrid);
+    AttackSystem(HashGridSystem* hashGrid, std::unordered_map<Client*, ID>* clients);
 
     void add(ID id);
     void remove(ID id);
