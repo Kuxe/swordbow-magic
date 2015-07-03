@@ -103,7 +103,6 @@ void Server::send(Client* client) {
 	client->recv(
 		componentManager.moveComponents,
 		componentManager.renderComponents,
-		componentManager.soundComponents,
 		mc.pos
 	);
 }

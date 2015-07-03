@@ -49,7 +49,7 @@ add_library(game SHARED
     src/server.cpp
     src/servernetworksystem.cpp
     src/sizeboundingbox.cpp
-    src/soundsystem.cpp
+    src/soundengine.cpp
     src/systemmanager.cpp
     src/text.cpp
     src/textureboundingbox.cpp

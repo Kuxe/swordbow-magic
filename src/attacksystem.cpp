@@ -1,7 +1,6 @@
 #include "attacksystem.hpp"
 #include "hashgridsystem.hpp"
 #include "componentmanager.hpp"
-#include "soundsystem.hpp"
 #include "systemmanager.hpp"
 #include "soundcomponent.hpp"
 #include "namecomponent.hpp"

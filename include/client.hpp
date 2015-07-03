@@ -11,7 +11,7 @@
 #include "hashgridsystem.hpp"
 #include "camerasystem.hpp"
 #include "textureboundingbox.hpp"
-#include "soundsystem.hpp"
+#include "soundengine.hpp"
 
 #include <SDL2/SDL.h>
 #include <glm/vec2.hpp>
@@ -36,7 +36,7 @@ private:
     HashGridSystem textureHashGridSystem;
     RenderSystem renderSystem;
     CameraSystem cameraSystem;
-    SoundSystem soundSystem;
+    SoundEngine soundEngine;
 
     Renderer renderer;
 
@@ -57,7 +57,6 @@ public:
     void recv(
         Components<MoveComponent> moveComponents,
         Components<RenderComponent> renderComponents,
-        Components<SoundComponent> soundComponents,
         glm::vec2 pos);
 
     void registerIdToSystem(ID id, string);

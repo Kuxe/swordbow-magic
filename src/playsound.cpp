@@ -11,6 +11,12 @@ PlaySound::PlaySound(
 void PlaySound::execute() {
     for(auto it : *clients) {
         Client* client = it.first;
-        client->playSound(sound);
+
+        //chrono is nasty
+        const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - sound.startTime).count();
+        if(elapsed > sound.duration) {
+            sound.startTime = std::chrono::high_resolution_clock::now();
+            client->playSound(sound);
+        }
     }
 }

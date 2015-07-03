@@ -15,10 +15,9 @@ Client::Client(int argc, char** argv) :
     systemManager.add(&textureHashGridSystem);
     systemManager.add(&renderSystem);
     systemManager.add(&cameraSystem);
-    systemManager.add(&soundSystem);
 
     //Play some sweet music
-	soundSystem.playMusic("./resources/sounds/naturesounds.ogg");
+	soundEngine.playMusic("./resources/sounds/naturesounds.ogg");
 }
 
 void Client::connect(Server* server) {
@@ -94,7 +93,6 @@ void Client::send(InputData inputData) {
 void Client::recv(
         Components<MoveComponent> moveComponents,
         Components<RenderComponent> renderComponents,
-        Components<SoundComponent> soundComponents,
         glm::vec2 pos) {
 
     //Only allow updating components if they're not in use by something else
@@ -107,7 +105,6 @@ void Client::recv(
     //  *A list of animationComponents that changed
     componentManager.moveComponents = moveComponents;
     componentManager.renderComponents = renderComponents;
-    componentManager.soundComponents = soundComponents;
 
     //Now its OK to update client-ecs!
     componentsMutex.unlock();
@@ -133,7 +130,7 @@ void Client::activateId(ID id, std::string systemIdentifier) {
 }
 
 void Client::playSound(SoundComponent::Sound sound) {
-    soundSystem.playSound(sound);
+    soundEngine.playSound(sound);
 }
 
 
