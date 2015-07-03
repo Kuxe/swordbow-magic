@@ -20,6 +20,71 @@ void AnimationSystem::remove(ID id) {
 void AnimationSystem::update() {
     for(auto id : ids) {
         auto& ac = componentManager->animationComponents.at(id);
+        auto& mc = componentManager->moveComponents.at(id);
+
+        //create a unique number for each possible direction
+		const char dirhash = mc.dir.x * 2 + mc.dir.y * 3;
+
+		//If this entity is moving, play animation in correct direction
+		if(glm::length(mc.vel) > 0) {
+			switch(dirhash) {
+				case -3: {
+					ac.state = &ac.walking.north;
+				} break;
+				case -1: {
+					ac.state = &ac.walking.northEast;
+				} break;
+				case 2: {
+					ac.state = &ac.walking.east;
+				} break;
+				case 5: {
+					ac.state = &ac.walking.southEast;
+				} break;
+				case 3: {
+					ac.state = &ac.walking.south;
+				} break;
+				case 1: {
+					ac.state = &ac.walking.southWest;
+				} break;
+				case -2: {
+					ac.state = &ac.walking.west;
+				} break;
+				case -5: {
+					ac.state = &ac.walking.northWest;
+				} break;
+			}
+		}
+
+		//Else this entity is standing still. Play idle animation in correct direction
+		else {
+			switch(dirhash) {
+				case -3: {
+					ac.state = &ac.idle.north;
+				} break;
+				case -1: {
+					ac.state = &ac.idle.northEast;
+				} break;
+				case 2: {
+					ac.state = &ac.idle.east;
+				} break;
+				case 5: {
+					ac.state = &ac.idle.southEast;
+				} break;
+				case 3: {
+					ac.state = &ac.idle.south;
+				} break;
+				case 1: {
+					ac.state = &ac.idle.southWest;
+				} break;
+				case -2: {
+					ac.state = &ac.idle.west;
+				} break;
+				case -5: {
+					ac.state = &ac.idle.northWest;
+				} break;
+			}
+		}
+
         auto& animation = ac.state;
 
         //Only play animation if it's a looping animation or the first time
@@ -27,13 +92,12 @@ void AnimationSystem::update() {
         if(animation->looping || animation->firstLoop) {
 
             //Check if it's time to display the next frame
-            if(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - animation->startTime).count() > animation->duration) {
-                auto rs = static_cast<RenderSystem*>(systemManager->getSystem("RenderSystem"));
+            const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - animation->startTime).count();
+            if(elapsed > animation->duration) {
                 auto& rc = componentManager->renderComponents.at(id);
 
                 //It was time. Update the image associated with this entity
                 rc.imagePath = animation->frames[animation->currentFrame];
-                rs->activateId(id);
 
                 //Update the animation
                 animation->currentFrame += 1;

@@ -162,7 +162,7 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 	registerIdToSystem(id, "InputSystem");
 	registerIdToRemoteSystem(id, "RenderSystem");
 	registerIdToRemoteSystem(id, "TextureHashGridSystem");
-	registerIdToRemoteSystem(id, "AnimationSystem");
+	registerIdToSystem(id, "AnimationSystem");
 
 	return id;
 }
@@ -297,7 +297,7 @@ ID EntityManager::createBloodSplatter(const glm::vec2& position) {
 	//server did send movecomponent of that id to client
 	registerIdToRemoteSystem(id, "RenderSystem");
 	registerIdToRemoteSystem(id, "TextureHashGridSystem");
-	registerIdToRemoteSystem(id, "AnimationSystem");
+	registerIdToSystem(id, "AnimationSystem");
 
 	return id;
 }

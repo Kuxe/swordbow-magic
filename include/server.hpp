@@ -19,6 +19,7 @@
 #include "removesystem.hpp"
 #include "attacksystem.hpp"
 #include "inputsystem.hpp"
+#include "animationsystem.hpp"
 #include <unordered_map>
 #include "inputdata.hpp"
 #include <mutex>
@@ -44,6 +45,7 @@ private:
 	RemoveSystem removeSystem;
 	AttackSystem attackSystem;
 	InputSystem inputSystem;
+    AnimationSystem animationSystem;
 
     std::unordered_map<Client*, ID> clients;
 

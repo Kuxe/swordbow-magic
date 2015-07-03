@@ -41,7 +41,6 @@ void MoveSystem::update() {
 		auto& mc = componentManager->moveComponents.at(id);
 		auto& ic = componentManager->inputComponents.at(id);
 		auto& cc = componentManager->commandComponents.at(id);
-		auto& ac = componentManager->animationComponents.at(id);
 		mc.oldPos.x = mc.pos.x;
 		mc.oldPos.y = mc.pos.y;
 
@@ -67,75 +66,6 @@ void MoveSystem::update() {
 
 			//It might be handy to normalize the dir for other systems
 			mc.dir = normalize(mc.dir);
-		}
-
-		//create a unique number for each possible direction
-		const char dirhash = mc.dir.x * 2 + mc.dir.y * 3;
-
-		//FIXME: This, bellow, assumes that any member of movesystem also is animating it's
-		//movement, which isn't quite right... It cant be inside animationsystem
-		//though since this piece of logic always selects idle animation if
-		//the entity doesn't move, which is unwanted behavior in some situations
-		//for entities that doesn't move...
-
-		//If this entity is moving, play animation in correct direction
-		if(glm::length(mc.vel) > 0) {
-			switch(dirhash) {
-				case -3: {
-					ac.state = &ac.walking.north;
-				} break;
-				case -1: {
-					ac.state = &ac.walking.northEast;
-				} break;
-				case 2: {
-					ac.state = &ac.walking.east;
-				} break;
-				case 5: {
-					ac.state = &ac.walking.southEast;
-				} break;
-				case 3: {
-					ac.state = &ac.walking.south;
-				} break;
-				case 1: {
-					ac.state = &ac.walking.southWest;
-				} break;
-				case -2: {
-					ac.state = &ac.walking.west;
-				} break;
-				case -5: {
-					ac.state = &ac.walking.northWest;
-				} break;
-			}
-		}
-
-		//Else this entity is standing still. Play idle animation in correct direction
-		else {
-			switch(dirhash) {
-				case -3: {
-					ac.state = &ac.idle.north;
-				} break;
-				case -1: {
-					ac.state = &ac.idle.northEast;
-				} break;
-				case 2: {
-					ac.state = &ac.idle.east;
-				} break;
-				case 5: {
-					ac.state = &ac.idle.southEast;
-				} break;
-				case 3: {
-					ac.state = &ac.idle.south;
-				} break;
-				case 1: {
-					ac.state = &ac.idle.southWest;
-				} break;
-				case -2: {
-					ac.state = &ac.idle.west;
-				} break;
-				case -5: {
-					ac.state = &ac.idle.northWest;
-				} break;
-			}
 		}
 
 		//Do something defined by the entity if the entity moved

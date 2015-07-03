@@ -17,6 +17,7 @@ Server::Server(int argc, char** argv) :
 	//Add systems to systemmanager
 	systemManager.add(&inputSystem);
 	systemManager.add(&moveSystem);
+	systemManager.add(&animationSystem);
 	systemManager.add(&sizeHashGridSystem);
 	systemManager.add(&collisionSystem);
 	systemManager.add(&attackSystem);
@@ -101,7 +102,6 @@ void Server::send(Client* client) {
 	client->recv(
 		componentManager.moveComponents,
 		componentManager.renderComponents,
-		componentManager.animationComponents,
 		componentManager.soundComponents,
 		mc.pos
 	);

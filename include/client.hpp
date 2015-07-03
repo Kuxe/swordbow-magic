@@ -9,7 +9,6 @@
 #include "systemmanager.hpp"
 #include "rendersystem.hpp"
 #include "hashgridsystem.hpp"
-#include "animationsystem.hpp"
 #include "camerasystem.hpp"
 #include "textureboundingbox.hpp"
 #include "soundsystem.hpp"
@@ -35,7 +34,6 @@ private:
 
     //Client-side systems
     HashGridSystem textureHashGridSystem;
-    AnimationSystem animationSystem;
     RenderSystem renderSystem;
     CameraSystem cameraSystem;
     SoundSystem soundSystem;
@@ -59,7 +57,6 @@ public:
     void recv(
         Components<MoveComponent> moveComponents,
         Components<RenderComponent> renderComponents,
-        Components<AnimationComponent> animationComponents,
         Components<SoundComponent> soundComponents,
         glm::vec2 pos);
 

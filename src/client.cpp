@@ -14,7 +14,6 @@ Client::Client(int argc, char** argv) :
 
     systemManager.add(&textureHashGridSystem);
     systemManager.add(&renderSystem);
-    systemManager.add(&animationSystem);
     systemManager.add(&cameraSystem);
     systemManager.add(&soundSystem);
 
@@ -95,7 +94,6 @@ void Client::send(InputData inputData) {
 void Client::recv(
         Components<MoveComponent> moveComponents,
         Components<RenderComponent> renderComponents,
-        Components<AnimationComponent> animationComponents,
         Components<SoundComponent> soundComponents,
         glm::vec2 pos) {
 
@@ -109,7 +107,6 @@ void Client::recv(
     //  *A list of animationComponents that changed
     componentManager.moveComponents = moveComponents;
     componentManager.renderComponents = renderComponents;
-    componentManager.animationComponents = animationComponents;
     componentManager.soundComponents = soundComponents;
 
     //Now its OK to update client-ecs!
