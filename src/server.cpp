@@ -18,7 +18,8 @@ Server::Server(int argc, char** argv) :
 	//Add systems to systemmanager
 	systemManager.add(&inputSystem);
 	systemManager.add(&moveSystem);
-	systemManager.add(&diffSystem);
+	systemManager.add(&moveDiffSystem);
+	systemManager.add(&renderDiffSystem);
 	systemManager.add(&animationSystem);
 	systemManager.add(&sizeHashGridSystem);
 	systemManager.add(&collisionSystem);
@@ -106,13 +107,6 @@ void Server::send(Client* client) {
 		componentManager.renderComponents,
 		mc.pos
 	);
-
-	static bool first = true;
-	if(first) {
-		for(auto it : componentManager.moveComponents) {
-			auto mc = it.second;
-		}
-	}
 }
 
 void Server::send() {
@@ -126,16 +120,9 @@ void Server::sendDiff(Client* client) {
 	const auto& mc = componentManager.moveComponents.at(id);
 	client->recv(
 		componentManager.moveComponentsDiff,
-		componentManager.renderComponents,
+		componentManager.renderComponentsDiff,
 		mc.pos
 	);
-
-	static bool first = true;
-	if(first) {
-		for(auto it : componentManager.moveComponentsDiff) {
-			auto mc = it.second;
-		}
-	}
 }
 
 void Server::sendDiff() {

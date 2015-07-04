@@ -1,26 +1,25 @@
-#include "diffsystem.hpp"
+#include "movediffsystem.hpp"
 #include "componentmanager.hpp"
 
-
-void DiffSystem::add(ID id) {
+void MoveDiffSystem::add(ID id) {
     ids.push(id);
 }
-void DiffSystem::remove(ID id) {
+void MoveDiffSystem::remove(ID id) {
 
 }
-void DiffSystem::update() {
+void MoveDiffSystem::update() {
     componentManager->moveComponentsDiff.clear();
     while(!ids.empty()) {
         const auto id = ids.front(); ids.pop();
         componentManager->moveComponentsDiff.insert({id, componentManager->moveComponents.at(id)});
     }
 }
-unsigned int DiffSystem::count() const {
+unsigned int MoveDiffSystem::count() const {
     return ids.size();
 }
-const string DiffSystem::getIdentifier() const {
-    return "DiffSystem";
+const string MoveDiffSystem::getIdentifier() const {
+    return "MoveDiffSystem";
 }
-void DiffSystem::activateId(ID id) {
+void MoveDiffSystem::activateId(ID id) {
     add(id);
 }

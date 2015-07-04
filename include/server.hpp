@@ -20,7 +20,8 @@
 #include "attacksystem.hpp"
 #include "inputsystem.hpp"
 #include "animationsystem.hpp"
-#include "diffsystem.hpp"
+#include "movediffsystem.hpp"
+#include "renderdiffsystem.hpp"
 #include <unordered_map>
 #include "inputdata.hpp"
 #include <mutex>
@@ -47,7 +48,8 @@ private:
 	AttackSystem attackSystem;
 	InputSystem inputSystem;
     AnimationSystem animationSystem;
-    DiffSystem diffSystem;
+    MoveDiffSystem moveDiffSystem;
+    RenderDiffSystem renderDiffSystem;
 
     std::unordered_map<Client*, ID> clients;
 

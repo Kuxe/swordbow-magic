@@ -19,7 +19,7 @@ using namespace std;
 void MoveSystem::add(ID id) {
 	ids.insert(id);
 	activeIds.insert(id);
-	systemManager->getSystem("DiffSystem")->add(id);
+	systemManager->getSystem("MoveDiffSystem")->add(id);
 }
 
 void MoveSystem::remove(ID id) {
@@ -73,7 +73,7 @@ void MoveSystem::update() {
 		if(!(mc.pos.x == mc.oldPos.x && mc.pos.y == mc.oldPos.y)) {
 			cc.execute(CommandComponent::Event::ON_MOVE);
 
-			systemManager->getSystem("DiffSystem")->add(id);
+			systemManager->getSystem("MoveDiffSystem")->add(id);
 		}
 	}
 }

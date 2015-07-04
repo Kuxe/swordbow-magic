@@ -33,7 +33,6 @@ add_library(game SHARED
     src/commandcomponent.cpp
     src/componentmanager.cpp
     src/deltatime.cpp
-    src/diffsystem.cpp
     src/entitymanager.cpp
     src/hashgridsystem.cpp
     src/healthsystem.cpp
@@ -41,11 +40,13 @@ add_library(game SHARED
     src/inputsystem.cpp
     src/keyboardsystem.cpp
     src/movecomponent.cpp
+    src/movediffsystem.cpp
     src/movesystem.cpp
     src/noisebrush.cpp
     src/playsound.cpp
     src/rect.cpp
     src/removesystem.cpp
+    src/renderdiffsystem.cpp
     src/renderer.cpp
     src/rendersystem.cpp
     src/server.cpp

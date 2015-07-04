@@ -12,6 +12,7 @@ AnimationSystem::AnimationSystem(unordered_map<Client*, ID>* clients) :
 
 void AnimationSystem::add(ID id) {
     ids.insert(id);
+    systemManager->getSystem("RenderDiffSystem")->add(id);
 }
 void AnimationSystem::remove(ID id) {
     if(ids.find(id) == ids.end()) {
@@ -119,6 +120,11 @@ void AnimationSystem::update() {
                 for(auto it : *clients) {
                     it.first->activateId(id, "RenderSystem");
                 }
+
+                //Since the rendercomponent changed, add this id to
+                //RenderDiffSystem so that the network can send only the
+                //changed rendercomponents
+                systemManager->getSystem("RenderDiffSystem")->add(id);
             }
         }
     }

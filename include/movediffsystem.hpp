@@ -1,12 +1,12 @@
-#ifndef DIFFSYSTEM_HPP
-#define DIFFSYSTEM_HPP
+#ifndef MOVEDIFFSYSTEM_HPP
+#define MOVEDIFFSYSTEM_HPP
 
 #include "isystem.hpp"
 #include <queue>
 
 typedef unsigned int ID;
 
-class DiffSystem : public ISystem {
+class MoveDiffSystem : public ISystem {
     std::queue<ID> ids;
 public:
     void add(ID id);
@@ -17,4 +17,4 @@ public:
     void activateId(ID id);
 };
 
-#endif //DIFFSYSTEM_HPP
+#endif //MOVEDIFFSYSTEM_HPP

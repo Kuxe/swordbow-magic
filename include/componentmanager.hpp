@@ -33,12 +33,13 @@ class ComponentManager {
     Components<CommandComponent> commandComponents;
 
     Components<MoveComponent> moveComponentsDiff;
+    Components<RenderComponent> renderComponentsDiff;
 
 	constexpr MoveComponent& createMoveComponent(const ID id) {
         return moveComponents[id] = moveComponentsDiff[id] = MoveComponent();
     }
 	constexpr RenderComponent& createRenderComponent(const ID id) {
-        return renderComponents[id] = RenderComponent();
+        return renderComponents[id] = renderComponentsDiff[id] = RenderComponent();
     }
 	constexpr InputComponent& createInputComponent(const ID id) {
         return inputComponents[id] = InputComponent();
