@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 
 Client::Client(int argc, char** argv) :
+        renderer(argc, argv),
         systemManager(&componentManager, &deltaTime),
         textureBoundingBox(&componentManager, &renderer),
         textureHashGridSystem(&componentManager, &textureBoundingBox),

@@ -31,7 +31,7 @@ private:
     void renderTexts();
 
 public:
-    Renderer();
+    Renderer(int argc, char** argv);
     ~Renderer();
     const unordered_map<string, TextureData>& getTextureDatas() const;
     void render(priority_queue<RenderData>& pq, const SDL_Rect& camera);

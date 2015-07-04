@@ -1,7 +1,7 @@
 #include "renderer.hpp"
 #include "heap.hpp"
 
-Renderer::Renderer() {
+Renderer::Renderer(int argc, char** argv) {
     //Initialize SDL
     if(SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
     {
@@ -18,7 +18,19 @@ Renderer::Renderer() {
         if(!window) {
             cout << "ERROR: Window could not be created! SDL_Error: " << SDL_GetError() << endl;
         } else {
-            renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+
+            //Flags for renderer to be used
+            int rendererFlags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE;
+
+            //Determine if vsync was passed as argument
+        	for(int i = 0; i < argc; i++) {
+        		if(strcmp(argv[i], "vsync") == 0) {
+                    rendererFlags |= SDL_RENDERER_PRESENTVSYNC;
+        			break;
+        		}
+        	}
+
+            renderer = SDL_CreateRenderer(window, -1, rendererFlags);
             if(!renderer) {
                 cout << "ERROR: Renderer could not be created! SDL_Error: " << SDL_GetError() << endl;
             } else {
