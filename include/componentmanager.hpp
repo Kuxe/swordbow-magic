@@ -32,35 +32,12 @@ class ComponentManager {
     Components<AttackComponent> attackComponents;
     Components<CommandComponent> commandComponents;
 
+    Components<MoveComponent> moveComponentsDiff;
+
 	constexpr MoveComponent& createMoveComponent(const ID id) {
-        //I must have different ways of creating components here because
-        //some components are server-side
-        //some components are client-side and
-        //some components are both client and server-side
-        //Thus componentmanager needs to know what goes where.
-
-        //I only want to initialize the objects once.
-        //Therefore the component must be initialized here or before, because
-        //it must be initialized before I add it to server-side
-        //componentmanagers or client-side componentmanagers.
-
-        //So I could either:
-
-        //1. Pass by value (constructing inside the call to createMoveComponent)
-        //2. Pass by reference, (initializing local temps in entitymanager create-methods)
-
-        //I already tried constructing object inside the call to createMoveComponent, but
-        //that was a hassle. So next try is to pass already initialized objects
-        //by reference. These methods could then be named something like
-        //"storeMoveComponent" as opposed to
-        //"createMoveComponent"
-
-        //Drawback: entitymanager create methods become larger and more difficult
-        //to maintain
-
-        return moveComponents[id] = MoveComponent();
+        return moveComponents[id] = moveComponentsDiff[id] = MoveComponent();
     }
-	constexpr RenderComponent& createRenderComponent(const ID id) {    
+	constexpr RenderComponent& createRenderComponent(const ID id) {
         return renderComponents[id] = RenderComponent();
     }
 	constexpr InputComponent& createInputComponent(const ID id) {

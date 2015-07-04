@@ -18,6 +18,7 @@ Server::Server(int argc, char** argv) :
 	//Add systems to systemmanager
 	systemManager.add(&inputSystem);
 	systemManager.add(&moveSystem);
+	systemManager.add(&diffSystem);
 	systemManager.add(&animationSystem);
 	systemManager.add(&sizeHashGridSystem);
 	systemManager.add(&collisionSystem);
@@ -62,7 +63,7 @@ void Server::step() {
 	componentsMutex.unlock();
 
 	//Broadcast new gamestate to clients
-	send();
+	sendDiff();
 
 	deltaTime.stop();
 }
@@ -88,7 +89,7 @@ void Server::onConnect(Client* client) {
 		}
 	}
 
-	//Client should get a copy of components
+	//Client should get a copy of all components
 	send(client);
 }
 
@@ -105,11 +106,41 @@ void Server::send(Client* client) {
 		componentManager.renderComponents,
 		mc.pos
 	);
+
+	static bool first = true;
+	if(first) {
+		for(auto it : componentManager.moveComponents) {
+			auto mc = it.second;
+		}
+	}
 }
 
 void Server::send() {
 	for(auto it : clients) {
 		send(it.first);
+	}
+}
+
+void Server::sendDiff(Client* client) {
+	auto id = clients.at(client);
+	const auto& mc = componentManager.moveComponents.at(id);
+	client->recv(
+		componentManager.moveComponentsDiff,
+		componentManager.renderComponents,
+		mc.pos
+	);
+
+	static bool first = true;
+	if(first) {
+		for(auto it : componentManager.moveComponentsDiff) {
+			auto mc = it.second;
+		}
+	}
+}
+
+void Server::sendDiff() {
+	for(auto it : clients) {
+		sendDiff(it.first);
 	}
 }
 

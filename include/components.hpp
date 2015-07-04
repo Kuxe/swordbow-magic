@@ -32,6 +32,10 @@ public:
         return container[id];
     }
 
+    constexpr const T& operator[](const ID id) const {
+        return container[id];
+    }
+
     constexpr T& at(const ID id) {
         return container.at(id);
     }
@@ -54,6 +58,14 @@ public:
 
     constexpr auto erase(const ID id) {
         return container.erase(id);
+    }
+
+    constexpr void clear() {
+        container.clear();
+    }
+
+    constexpr auto size() const {
+        return container.size();
     }
 };
 

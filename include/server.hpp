@@ -20,6 +20,7 @@
 #include "attacksystem.hpp"
 #include "inputsystem.hpp"
 #include "animationsystem.hpp"
+#include "diffsystem.hpp"
 #include <unordered_map>
 #include "inputdata.hpp"
 #include <mutex>
@@ -46,6 +47,7 @@ private:
 	AttackSystem attackSystem;
 	InputSystem inputSystem;
     AnimationSystem animationSystem;
+    DiffSystem diffSystem;
 
     std::unordered_map<Client*, ID> clients;
 
@@ -65,6 +67,8 @@ public:
 
     void send();
     void send(Client* client);
+    void sendDiff();
+    void sendDiff(Client* client);
     void recv(Client* client, InputData inputData);
 
     constexpr void printGeneralInfo() {
