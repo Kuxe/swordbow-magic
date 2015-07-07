@@ -82,7 +82,8 @@ void AttackSystem::update() {
 
                 //Broadcast hurtsound to all clients
                 for(auto it : *clients) {
-                    it.first->playSound(hurtSound);
+                    //TODO: Figure out how to send sound over network
+                    //it.first->playSound(hurtSound);
                 }
             }
         }

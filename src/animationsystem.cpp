@@ -118,7 +118,8 @@ void AnimationSystem::update() {
 
                 //Tell all clients to activate this id on their rendersystems
                 for(auto it : *clients) {
-                    it.first->activateId(id, "RenderSystem");
+                    //TODO: Figure out how to activate ids on clients
+                    //it.first->activateId(id, "RenderSystem");
                 }
 
                 //Since the rendercomponent changed, add this id to

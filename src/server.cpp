@@ -15,6 +15,9 @@ Server::Server(int argc, char** argv) :
 
 	printGeneralInfo();
 
+	constexpr short port = 47293;
+	socket.open(port);
+
 	//Add systems to systemmanager
 	systemManager.add(&inputSystem);
 	systemManager.add(&moveSystem);
@@ -45,6 +48,10 @@ Server::Server(int argc, char** argv) :
 	}
 }
 
+Server::~Server() {
+	socket.close();
+}
+
 void Server::run() {
     while(running) {
 		step();
@@ -57,6 +64,8 @@ void Server::terminate() {
 
 void Server::step() {
 	deltaTime.start();
+
+	//TODO: Receive data from clients
 
 	//Run the entity-component-system
 	componentsMutex.lock();
@@ -78,7 +87,8 @@ void Server::onConnect(Client* client) {
 		}
 	);
 
-	client->registerIdToSystem(fatManId, "CameraSystem");
+	//TODO: Figure out how to register ids to systems on clients
+	//client->registerIdToSystem(fatManId, "CameraSystem");
 
 	//Whenever a client connects, tell the client what entities
 	//should be in what systems on the client-side
@@ -86,7 +96,8 @@ void Server::onConnect(Client* client) {
 		auto id = tuple.first;
 		vector<std::string>& systems = tuple.second;
 		for(std::string systemIdentifier : systems) {
-			client->registerIdToSystem(id, systemIdentifier);
+			//TODO: Figure out how to register id to systems on clients
+			//client->registerIdToSystem(id, systemIdentifier);
 		}
 	}
 
@@ -102,11 +113,8 @@ void Server::onDisconnect(Client* client) {
 void Server::send(Client* client) {
 	auto id = clients.at(client);
 	const auto& mc = componentManager.moveComponents.at(id);
-	client->recv(
-		componentManager.moveComponents,
-		componentManager.renderComponents,
-		mc.pos
-	);
+
+	//TODO: Send moveComponents, renderComponents and position of client (no diff)
 }
 
 void Server::send() {
@@ -118,11 +126,7 @@ void Server::send() {
 void Server::sendDiff(Client* client) {
 	auto id = clients.at(client);
 	const auto& mc = componentManager.moveComponents.at(id);
-	client->recv(
-		componentManager.moveComponentsDiff,
-		componentManager.renderComponentsDiff,
-		mc.pos
-	);
+	//TODO: Send moveComponents, renderComponents and position of client (diff)
 }
 
 void Server::sendDiff() {
@@ -211,7 +215,11 @@ void Server::inputDataToInputComponent(Client* client, InputData& data) {
 	inputSystem.activateId(id);
 }
 
-
+int main(int argc, char** argv) {
+	Server server(argc, argv);
+	server.run();
+	return 0;
+}
 
 
 

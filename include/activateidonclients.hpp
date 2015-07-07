@@ -34,7 +34,8 @@ public:
     void execute() {
         for(auto it : *clients) {
             Client* client = it.first;
-            client->activateId(id, systemIdentifier);
+            //TODO: Figure out how to activate ids on clients
+            //client->activateId(id, systemIdentifier);
         }
     }
 };

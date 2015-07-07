@@ -28,7 +28,6 @@ add_library(game SHARED
     src/animationsystem.cpp
     src/attacksystem.cpp
     src/camerasystem.cpp
-    src/client.cpp
     src/collisionsystem.cpp
     src/commandcomponent.cpp
     src/componentmanager.cpp
@@ -49,9 +48,9 @@ add_library(game SHARED
     src/renderdiffsystem.cpp
     src/renderer.cpp
     src/rendersystem.cpp
-    src/server.cpp
     src/servernetworksystem.cpp
     src/sizeboundingbox.cpp
+    src/socket.cpp
     src/soundengine.cpp
     src/systemmanager.cpp
     src/text.cpp
@@ -61,11 +60,17 @@ add_library(game SHARED
 
 TARGET_LINK_LIBRARIES(game ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES} ${SDL2MIXER_LIBRARIES})
 
-#Create a game-executable
-add_executable(swordbow-magic src/main.cpp)
+#Create a client-executable
+add_executable(swordbow-magic-client src/client.cpp)
 
-#What linker flags are required for swordbow-magic?
-TARGET_LINK_LIBRARIES(swordbow-magic game)
+#What linker flags are required for swordbow-magic-client?
+TARGET_LINK_LIBRARIES(swordbow-magic-client game)
+
+#Create a client-executable
+add_executable(swordbow-magic-server src/server.cpp)
+
+#What linker flags are required for swordbow-magic-server?
+TARGET_LINK_LIBRARIES(swordbow-magic-server game)
 
 #Create a test-executable using Catch
 add_executable(swordbow-magic-test
@@ -78,21 +83,20 @@ add_executable(swordbow-magic-test
 #What linker flags are required for swordbow-magic-test?
 TARGET_LINK_LIBRARIES(swordbow-magic-test game)
 
-#Run "make run" to run the binary
-add_custom_target(run
-    COMMAND swordbow-magic
-    DEPENDS swordbow-magic
+#Run "make run_client" to build and run the client
+add_custom_target(run_client
+    COMMAND swordbow-magic-client
+    DEPENDS swordbow-magic-client
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+)
+
+#Run "make run_server" to build and run the server
+add_custom_target(run_server
+    COMMAND swordbow-magic-server
+    DEPENDS swordbow-magic-server
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
 )
 
 add_custom_target(rum
     COMMAND echo Yarr!
 )
-
-add_custom_target(profile
-    COMMAND rm -f ./callgrind.out.* && valgrind --tool=callgrind ./swordbow-magic && kcachegrind callgrind.out.*
-    DEPENDS swordbow-magic
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-)
-
-install(TARGETS swordbow-magic DESTINATION bin)

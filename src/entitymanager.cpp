@@ -430,7 +430,8 @@ void EntityManager::remove(ID id) {
 	for(auto systemIdentifier : entityClientSystemMap.at(id)) {
 		for(auto it : *clients) {
 			Client* client = it.first;
-			client->removeIdFromSystem(id, systemIdentifier);
+			//TODO: Figure out how to remvoe ids from systems on clients
+			//client->removeIdFromSystem(id, systemIdentifier);
 		}
 	}
 	entityClientSystemMap.erase(id);
@@ -452,7 +453,8 @@ void EntityManager::registerIdToRemoteSystem(ID id, const string systemIdentifie
 	entityClientSystemMap[id].push_back(systemIdentifier);
 	for(auto it : *clients) {
 		Client* client = it.first;
-		client->registerIdToSystem(id, systemIdentifier);
+		//TODO: Figure out how to register ids to systems on clients
+		//client->registerIdToSystem(id, systemIdentifier);
 	}
 }
 

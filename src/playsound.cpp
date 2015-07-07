@@ -16,7 +16,8 @@ void PlaySound::execute() {
         const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - sound.startTime).count();
         if(elapsed > sound.duration) {
             sound.startTime = std::chrono::high_resolution_clock::now();
-            client->playSound(sound);
+            //TODO: Figure out how to send sound over network
+            //client->playSound(sound);
         }
     }
 }

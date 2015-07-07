@@ -2,6 +2,8 @@
 #include "server.hpp"
 #include <iostream>
 #include <SDL2/SDL.h>
+#include "messagetypes.hpp"
+#include "packet.hpp"
 
 Client::Client(int argc, char** argv) :
         renderer(argc, argv),
@@ -13,6 +15,9 @@ Client::Client(int argc, char** argv) :
 
     cout << "\n--** STARTING CLIENT **--" << endl;
 
+    constexpr short port = 47294;
+    socket.open(port);
+
     systemManager.add(&textureHashGridSystem);
     systemManager.add(&renderSystem);
     systemManager.add(&cameraSystem);
@@ -21,22 +26,29 @@ Client::Client(int argc, char** argv) :
 	soundEngine.playMusic("./resources/sounds/naturesounds.ogg");
 }
 
+Client::~Client() {
+    socket.close();
+}
+
 void Client::connect(Server* server) {
     //Send connect-request to server to connect
     this->server = server;
-    server->onConnect(this);
+
+    //TODO: Figure out how to send connect-request to server
+    //server->onConnect(this);
 }
 
 void Client::disconnect(Server* server) {
     //Send disconnect-request to server
-    server->onDisconnect(this);
+
+    //TODO: Figure out how to send disconnect-request to server
+    //server->onDisconnect(this);
 }
 
 void Client::run() {
     while(running) {
         step();
     }
-    server->terminate(); //If client is shutdown, kill server too for now
 }
 
 void Client::step() {
@@ -69,7 +81,83 @@ void Client::step() {
 
     //If user either pressed or released a key
     if( !(presses.empty() && releases.empty()) ) {
-        send({presses, releases});
+
+        //Assemble the InputData that should be sent into a packet
+        const InputData inputData{presses, releases};
+        const Packet<InputData> packet {
+            stringhash("swordbow-magic"),
+            MESSAGE_TYPE::INPUTDATA,
+            inputData,
+            sizeof(inputData)
+        };
+
+        //Send that packet to 127.0.0.1:47293
+        constexpr unsigned short SERVER_PORT = 47293;
+        socket.send({127, 0, 0, 1, SERVER_PORT}, &packet, sizeof(packet));
+    }
+
+    //Receive data from server...
+    IpAddress server;
+    unsigned char type;
+    int bytesRead;
+    socket.receive(server, type, bytesRead);
+
+    //If any data was received, check its type and take appropiate action
+    if(bytesRead > 0) {
+        auto packet = (Packet<unsigned char*>*)socket.getBuffer();
+
+        switch(packet->getType()) {
+
+            case MESSAGE_TYPE::MOVECOMPONENTS: {
+                //All movecomponents were received - handle it
+                auto typedPacket = (Packet<Components<MoveComponent>>*)socket.getBuffer();
+                componentManager.moveComponents.sync(typedPacket->getData());
+            } break;
+
+            case MESSAGE_TYPE::RENDERCOMPONENTS: {
+                //All rendercomponents were received - handle it
+                auto typedPacket = (Packet<Components<RenderComponent>>*)socket.getBuffer();
+                componentManager.renderComponents.sync(typedPacket->getData());
+            } break;
+
+            case MESSAGE_TYPE::MOVECOMPONENTSDIFF: {
+                //Diff movecomponents were received - handle it
+                auto typedPacket = (Packet<Components<MoveComponent>>*)socket.getBuffer();
+                componentManager.moveComponents.sync(typedPacket->getData());
+            } break;
+
+            case MESSAGE_TYPE::RENDERCOMPONENTSDIFF: {
+                //Diff rendercomponents were received - handle it
+                auto typedPacket = (Packet<Components<RenderComponent>>*)socket.getBuffer();
+                componentManager.renderComponents.sync(typedPacket->getData());
+            } break;
+
+            case MESSAGE_TYPE::PLAY_SOUND: {
+                auto typedPacket = (Packet<SoundComponent::Sound>*)socket.getBuffer();
+                soundEngine.playSound(typedPacket->getData());
+            } break;
+
+            case MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM: {
+                auto typedPacket = (Packet<std::pair<ID, std::string>>*)socket.getBuffer();
+                const auto& id = typedPacket->getData().first;
+                const auto& systemIdentifier = typedPacket->getData().second;
+                systemManager.getSystem(systemIdentifier)->add(id);
+            } break;
+
+            case MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM: {
+                auto typedPacket = (Packet<std::pair<ID, std::string>>*)socket.getBuffer();
+                const auto& id = typedPacket->getData().first;
+                const auto& systemIdentifier = typedPacket->getData().second;
+                systemManager.getSystem(systemIdentifier)->remove(id);
+            }
+
+            case MESSAGE_TYPE::ACTIVATE_ID: {
+                auto typedPacket = (Packet<std::pair<ID, std::string>>*)socket.getBuffer();
+                const auto& id = typedPacket->getData().first;
+                const auto& systemIdentifier = typedPacket->getData().second;
+                systemManager.getSystem(systemIdentifier)->activateId(id);
+            }
+        }
     }
 
     /** CRITICAL SECTION **/
@@ -87,53 +175,10 @@ void Client::step() {
     deltaTime.stop();
 }
 
-void Client::send(InputData inputData) {
-    server->recv(this, inputData);
+int main(int argc, char** argv) {
+    Client client(argc, argv);
+    client.run();
 }
-
-void Client::recv(
-        Components<MoveComponent> moveComponents,
-        Components<RenderComponent> renderComponents,
-        glm::vec2 pos) {
-
-    //Only allow updating components if they're not in use by something else
-    componentsMutex.lock();
-
-    //This is much more copying than neccesary. It is sufficient
-    //to only pass into recv() some lists:
-    //  *A list of movecomponents that changed
-    //  *A list of rendercomponents that changed
-    componentManager.moveComponents.sync(moveComponents);
-    componentManager.renderComponents.sync(renderComponents);
-
-    //Now its OK to update client-ecs!
-    componentsMutex.unlock();
-}
-
-void Client::registerIdToSystem(ID id, std::string systemIdentifier) {
-    componentsMutex.lock();
-    systemManager.getSystem(systemIdentifier)->add(id);
-    componentsMutex.unlock();
-}
-
-void Client::removeIdFromSystem(ID id, std::string systemIdentifier) {
-    componentsMutex.lock();
-    cout << "client: removing " << id << " from " << systemIdentifier << endl;
-    systemManager.getSystem(systemIdentifier)->remove(id);
-    componentsMutex.unlock();
-}
-
-void Client::activateId(ID id, std::string systemIdentifier) {
-    componentsMutex.lock();
-    systemManager.getSystem(systemIdentifier)->activateId(id);
-    componentsMutex.unlock();
-}
-
-void Client::playSound(SoundComponent::Sound sound) {
-    soundEngine.playSound(sound);
-}
-
-
 
 
 

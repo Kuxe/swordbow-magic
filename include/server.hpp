@@ -25,6 +25,7 @@
 #include <unordered_map>
 #include "inputdata.hpp"
 #include <mutex>
+#include "socket.hpp"
 
 typedef unsigned int ID;
 
@@ -55,12 +56,15 @@ private:
 
     std::mutex componentsMutex;
 
+    Socket socket;
+
     void inputDataToInputComponent(Client* client, InputData& data);
 
 public:
     bool running = true;
 
     Server(int argc, char** argv);
+    ~Server();
     void onConnect(Client* client);
     void onDisconnect(Client* client);
     void run();
