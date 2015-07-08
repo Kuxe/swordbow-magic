@@ -83,16 +83,21 @@ add_executable(swordbow-magic-test
 #What linker flags are required for swordbow-magic-test?
 TARGET_LINK_LIBRARIES(swordbow-magic-test game)
 
-#Run "make run_client" to build and run the client
-add_custom_target(run_client
-    COMMAND swordbow-magic-client
+#Run "make buildclient" to build the client
+add_custom_target(buildclient
     DEPENDS swordbow-magic-client
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
 )
 
-#Run "make run_server" to build and run the server
-add_custom_target(run_server
-    COMMAND swordbow-magic-server
+#Run "make buildserver" to build the server
+add_custom_target(buildserver
+    DEPENDS swordbow-magic-server
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+)
+
+#Run "make build" to build client and server
+add_custom_target(build
+    DEPENDS swordbow-magic-client
     DEPENDS swordbow-magic-server
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
 )
