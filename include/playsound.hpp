@@ -2,7 +2,6 @@
 #define PLAYSOUND_HPP
 
 #include "icommand.hpp"
-#include <string>
 #include "soundcomponent.hpp"
 #include <unordered_map>
 

@@ -3,7 +3,6 @@
 
 #include "noisebrush.hpp"
 #include "glm/vec2.hpp"
-#include <string>
 
 typedef unsigned int ID;
 

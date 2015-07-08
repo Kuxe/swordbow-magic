@@ -2,7 +2,6 @@
 #define PACKET_HPP
 
 #include <functional>
-#include <string>
 #include <type_traits>
 
 constexpr int stringhash(const char* str, int h = 0) {

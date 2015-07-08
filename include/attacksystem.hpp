@@ -12,8 +12,8 @@ class Socket;
 class AttackSystem : public ISystem {
 private:
     std::unordered_set<ID> ids;
-    unordered_map<unsigned int, ID>* clients;
-    queue<ID> activeIds;
+    std::unordered_map<unsigned int, ID>* clients;
+    std::queue<ID> activeIds;
     HashGridSystem* hashgrid;
     Socket* socket;
 

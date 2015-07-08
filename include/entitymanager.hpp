@@ -4,7 +4,6 @@
 #include <time.h>
 #include <unordered_map>
 #include <unordered_set>
-#include <string>
 #include <vector>
 #include <glm/glm.hpp>
 #include "systemidentifiers.hpp"

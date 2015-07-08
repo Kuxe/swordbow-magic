@@ -109,8 +109,8 @@ void Server::onConnect(unsigned int client, unsigned short port) {
 	clients.insert({client, fatManId});
 
 	//Make the client aware of its ID and register the ID to client camerasytem
-	const std::pair<ID, std::string> data {fatManId, "CameraSystem"};
-	auto cameraPacket = Packet<std::pair<ID, std::string>> {
+	const std::pair<ID, System> data {fatManId, System::CAMERA};
+	auto cameraPacket = Packet<std::pair<ID, System>> {
 		stringhash("swordbow-magic"),
 		MESSAGE_TYPE::CONNECT,
 		data,

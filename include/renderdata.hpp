@@ -1,7 +1,6 @@
 #ifndef RENDERDATA_HPP
 #define RENDERDATA_HPP
 
-#include <string>
 #include "imageidentifiers.hpp"
 
 struct RenderData {

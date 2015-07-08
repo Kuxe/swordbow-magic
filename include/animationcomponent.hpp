@@ -2,7 +2,6 @@
 #define ANIMATIONCOMPONENT_HPP
 
 #include <vector>
-#include <string>
 #include <chrono>
 #include "imageidentifiers.hpp"
 

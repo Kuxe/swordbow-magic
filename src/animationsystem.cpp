@@ -125,8 +125,8 @@ void AnimationSystem::update() {
                 //Tell all clients to activate this id on their rendersystems
                 for(auto it : *clients) {
                     constexpr unsigned short port = 47294;
-                    const std::pair<ID, std::string> data {id, "RenderSystem"};
-                    auto packet = Packet<std::pair<ID, std::string>> {
+                    const std::pair<ID, System> data {id, System::RENDER};
+                    auto packet = Packet<std::pair<ID, System>> {
                 		stringhash("swordbow-magic"),
                 		MESSAGE_TYPE::ACTIVATE_ID,
                 		data,

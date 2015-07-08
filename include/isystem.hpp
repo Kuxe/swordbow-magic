@@ -1,10 +1,7 @@
 #ifndef ISYSTEM_H
 #define ISYSTEM_H
 
-#include <string>
 #include "systemidentifiers.hpp"
-
-using namespace std;
 
 class ComponentManager;
 class DeltaTime;
