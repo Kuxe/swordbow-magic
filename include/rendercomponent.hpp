@@ -3,14 +3,6 @@
 
 #include <string>
 
-using namespace std;
-
-//This include is really ugly. Need it because HashGrid
-//depends on width of textures. HashGrid uses rendercomponent
-//to acquire these textures. So rendercomponent must have a copy
-//of texturedata. Definition of texturedata is in rendersystem.
-#include "rendersystem.hpp"
-
 //Class containing render-relevant data (such as image identifier)
 class RenderComponent {
  public:
