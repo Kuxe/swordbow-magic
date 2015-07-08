@@ -79,10 +79,10 @@ void RenderSystem::update() {
                 (int)intersection.h
             };
 
-            const TextureData& textureData = renderer->getTextureDatas().at(rc.imagePath);
+            const TextureData& textureData = renderer->getTextureDatas().at(rc.image);
 
             const RenderData renderData = {
-                rc.imagePath, clipSource, clipDestination,
+                rc.image, clipSource, clipDestination,
                 (int)rc.zindex_base, (int)(mc.pos.y + textureData.height + rc.yoffset)
             };
 

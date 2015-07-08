@@ -15,7 +15,7 @@ TextureBoundingBox::TextureBoundingBox(
 const Rect TextureBoundingBox::getBoundingBox(ID id) const {
     auto& mc = componentManager->moveComponents.at(id);
     auto& rc = componentManager->renderComponents.at(id);
-    auto& textureData = renderer->getTextureDatas().at(rc.imagePath);
+    auto& textureData = renderer->getTextureDatas().at(rc.image);
     return Rect {
         floor(mc.pos.x + rc.xoffset),
         floor(mc.pos.y + rc.yoffset),
@@ -27,7 +27,7 @@ const Rect TextureBoundingBox::getBoundingBox(ID id) const {
 const Rect TextureBoundingBox::getOldBoundingBox(ID id) const {
     auto& mc = componentManager->moveComponents.at(id);
     auto& rc = componentManager->renderComponents.at(id);
-    auto& textureData = renderer->getTextureDatas().at(rc.imagePath);
+    auto& textureData = renderer->getTextureDatas().at(rc.image);
     return Rect {
         floor(mc.oldPos.x + rc.xoffset),
         floor(mc.oldPos.y + rc.yoffset),

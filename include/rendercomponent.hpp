@@ -1,12 +1,12 @@
 #ifndef RENDERCOMPONENT_H
 #define RENDERCOMPONENT_H
 
-#include <string>
+#include "imageidentifiers.hpp"
 
 //Class containing render-relevant data (such as image identifier)
 class RenderComponent {
  public:
- 	string imagePath = "UNSET";
+ 	Image image = Image::UNDEFINED;
  	float xoffset = 0;
  	float yoffset = 0;
 

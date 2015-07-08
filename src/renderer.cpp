@@ -74,55 +74,54 @@ Renderer::Renderer(int argc, char** argv) {
         }
     }
 
-    //We want to access surfaces by their image path later on, so store paths right away
-    for(auto path :{
-            "./resources/images/HelloWorld.bmp",
-            "./resources/images/player.bmp",
-            "./resources/images/grass.png",
-			"./resources/images/SmallTree.png",
-            "./resources/images/playerv2.png",
+    const vector<std::pair<Image, const char*>> pairs {
+        {Image::HELLO_WORLD, "./resources/images/HelloWorld.bmp"},
+        {Image::PLAYER, "./resources/images/player.bmp"},
+        {Image::GRASS, "./resources/images/grass.png"},
+        {Image::SMALL_TREE, "./resources/images/SmallTree.png"},
+        {Image::PLAYER_V2, "./resources/images/playerv2.png"},
 
 
-            "./resources/images/playerv3_front.png",
-            "./resources/images/playerv3_back.png",
-            "./resources/images/playerv3_left.png",
-            "./resources/images/playerv3_right.png",
+        {Image::PLAYER_V3_FRONT, "./resources/images/playerv3_front.png"},
+        {Image::PLAYER_V3_BACK, "./resources/images/playerv3_back.png"},
+        {Image::PLAYER_V3_LEFT, "./resources/images/playerv3_left.png"},
+        {Image::PLAYER_V3_RIGHT, "./resources/images/playerv3_right.png"},
 
-            "./resources/images/playerv3_front_run1.png",
-            "./resources/images/playerv3_front_run2.png",
-            "./resources/images/playerv3_front_run3.png",
-            "./resources/images/playerv3_front_run4.png",
+        {Image::PLAYER_V3_FRONT_RUN1, "./resources/images/playerv3_front_run1.png"},
+        {Image::PLAYER_V3_FRONT_RUN2, "./resources/images/playerv3_front_run2.png"},
+        {Image::PLAYER_V3_FRONT_RUN3, "./resources/images/playerv3_front_run3.png"},
+        {Image::PLAYER_V3_FRONT_RUN4, "./resources/images/playerv3_front_run4.png"},
 
-            "./resources/images/bloodsplatter1_1.png",
-            "./resources/images/bloodsplatter1_2.png",
-            "./resources/images/bloodsplatter1_3.png",
-            "./resources/images/bloodsplatter1_4.png",
-            "./resources/images/bloodsplatter1_5.png",
-            "./resources/images/bloodsplatter1_6.png",
-            "./resources/images/bloodsplatter1_7.png",
-            "./resources/images/bloodsplatter1_8.png",
-            "./resources/images/bloodsplatter1_9.png",
-            "./resources/images/bloodsplatter1_10.png",
-            "./resources/images/bloodsplatter1_11.png",
+        {Image::BLOODSPLATTER_1_1, "./resources/images/bloodsplatter1_1.png"},
+        {Image::BLOODSPLATTER_1_2, "./resources/images/bloodsplatter1_2.png"},
+        {Image::BLOODSPLATTER_1_3, "./resources/images/bloodsplatter1_3.png"},
+        {Image::BLOODSPLATTER_1_4, "./resources/images/bloodsplatter1_4.png"},
+        {Image::BLOODSPLATTER_1_5, "./resources/images/bloodsplatter1_5.png"},
+        {Image::BLOODSPLATTER_1_6, "./resources/images/bloodsplatter1_6.png"},
+        {Image::BLOODSPLATTER_1_7, "./resources/images/bloodsplatter1_7.png"},
+        {Image::BLOODSPLATTER_1_8, "./resources/images/bloodsplatter1_8.png"},
+        {Image::BLOODSPLATTER_1_9, "./resources/images/bloodsplatter1_9.png"},
+        {Image::BLOODSPLATTER_1_10, "./resources/images/bloodsplatter1_10.png"},
+        {Image::BLOODSPLATTER_1_11, "./resources/images/bloodsplatter1_11.png"},
 
-            "./resources/images/yellow_flower.png",
-            "./resources/images/green_flower.png",
-            "./resources/images/violet_flower.png",
-            "./resources/images/blue_flower.png",
+        {Image::YELLOW_FLOWER, "./resources/images/yellow_flower.png"},
+        {Image::GREEN_FLOWER, "./resources/images/green_flower.png"},
+        {Image::VIOLET_FLOWER, "./resources/images/violet_flower.png"},
+        {Image::BLUE_FLOWER, "./resources/images/blue_flower.png"},
 
-            "./resources/images/testsquare10x10.png",
-            "./resources/images/testsquare1x1.png",
+        {Image::TEST_SQUARE_10x10, "./resources/images/testsquare10x10.png"},
+        {Image::TEST_SQUARE_1x1, "./resources/images/testsquare1x1.png"},
 
-            "./resources/images/stone1.png",
+        {Image::STONE_1, "./resources/images/stone1.png"},
 
-            "./resources/images/water.png",
+        {Image::WATER, "./resources/images/water.png"},
+    };
 
-            }
-        )
-    {
-        SDL_Surface* rawImage = IMG_Load(path);
+    //Bind each texture with a value in Image and load the texture
+    for(auto pair : pairs) {
+        SDL_Surface* rawImage = IMG_Load(pair.second);
         if(!rawImage) {
-            cout << "ERROR: Couldn't load image on: " << path << endl;
+            cout << "ERROR: Couldn't load image on: " << pair.second << endl;
         } else {
             //Make purple parts of images transparent by using color keying
             SDL_SetColorKey(rawImage, SDL_TRUE, SDL_MapRGB( rawImage->format, 0xFF, 0x00, 0xFF ));
@@ -133,7 +132,7 @@ Renderer::Renderer(int argc, char** argv) {
                 SDL_FreeSurface(rawImage);
                 int w, h;
                 SDL_QueryTexture(texture, NULL, NULL, &w, &h);
-                textureDatas.insert({path, {texture, w, h}});
+                textureDatas.insert({pair.first, {texture, w, h}});
             }
         }
     }
@@ -163,7 +162,7 @@ void Renderer::render(priority_queue<RenderData>& pq, const SDL_Rect& camera) {
         const auto renderData = pq.top();
         SDL_RenderCopy(
             renderer,
-            textureDatas.at(renderData.texturePath).texture,
+            textureDatas.at(renderData.image).texture,
             &renderData.cliprect,
             &renderData.target
         );
@@ -205,7 +204,7 @@ void Renderer::renderTexts() {
     }
 }
 
-const unordered_map<string, TextureData>& Renderer::getTextureDatas() const {
+const unordered_map<Image, TextureData, std::hash<int>>& Renderer::getTextureDatas() const {
     return textureDatas;
 }
 

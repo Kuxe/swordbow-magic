@@ -110,7 +110,7 @@ void AnimationSystem::update() {
                 auto& rc = componentManager->renderComponents.at(id);
 
                 //It was time. Update the image associated with this entity
-                rc.imagePath = animation->frames[animation->currentFrame];
+                rc.image = animation->frames[animation->currentFrame];
 
                 //Update the animation
                 animation->currentFrame += 1;

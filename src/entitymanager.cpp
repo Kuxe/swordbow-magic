@@ -61,7 +61,7 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 
 	//If you'd like to change default initialization-data in a component
 	//Just save a pointer to the component like above and modify it like bellow
-	renderComponent.imagePath = "./resources/images/playerv3_front.png";
+	renderComponent.image = Image::PLAYER_V3_FRONT;
 	renderComponent.zindex_base = 1;
 	renderComponent.xoffset = -7;
 	renderComponent.yoffset = -7;
@@ -79,35 +79,35 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 	soundComponent.walk.path = "./resources/sounds/walking.wav";
 	soundComponent.walk.duration = 250;
 
-	animationComponent.idle.north.frames.push_back("./resources/images/playerv3_back.png");
-	animationComponent.idle.northEast.frames.push_back("./resources/images/playerv3_back.png");
-	animationComponent.idle.east.frames.push_back("./resources/images/playerv3_right.png");
-	animationComponent.idle.southEast.frames.push_back("./resources/images/playerv3_front.png");
-	animationComponent.idle.south.frames.push_back("./resources/images/playerv3_front.png");
-	animationComponent.idle.southWest.frames.push_back("./resources/images/playerv3_front.png");
-	animationComponent.idle.west.frames.push_back("./resources/images/playerv3_left.png");
-	animationComponent.idle.northWest.frames.push_back("./resources/images/playerv3_back.png");
+	animationComponent.idle.north.frames.push_back(Image::PLAYER_V3_BACK);
+	animationComponent.idle.northEast.frames.push_back(Image::PLAYER_V3_BACK);
+	animationComponent.idle.east.frames.push_back(Image::PLAYER_V3_RIGHT);
+	animationComponent.idle.southEast.frames.push_back(Image::PLAYER_V3_FRONT);
+	animationComponent.idle.south.frames.push_back(Image::PLAYER_V3_FRONT);
+	animationComponent.idle.southWest.frames.push_back(Image::PLAYER_V3_FRONT);
+	animationComponent.idle.west.frames.push_back(Image::PLAYER_V3_LEFT);
+	animationComponent.idle.northWest.frames.push_back(Image::PLAYER_V3_BACK);
 
-	animationComponent.walking.north.frames.push_back("./resources/images/playerv3_back.png");
-	animationComponent.walking.northEast.frames.push_back("./resources/images/playerv3_back.png");
-	animationComponent.walking.northWest.frames.push_back("./resources/images/playerv3_back.png");
-	animationComponent.walking.east.frames.push_back("./resources/images/playerv3_right.png");
-	animationComponent.walking.west.frames.push_back("./resources/images/playerv3_left.png");
+	animationComponent.walking.north.frames.push_back(Image::PLAYER_V3_BACK);
+	animationComponent.walking.northEast.frames.push_back(Image::PLAYER_V3_BACK);
+	animationComponent.walking.northWest.frames.push_back(Image::PLAYER_V3_BACK);
+	animationComponent.walking.east.frames.push_back(Image::PLAYER_V3_RIGHT);
+	animationComponent.walking.west.frames.push_back(Image::PLAYER_V3_LEFT);
 
-	animationComponent.walking.southWest.frames.push_back("./resources/images/playerv3_front_run1.png");
-	animationComponent.walking.southWest.frames.push_back("./resources/images/playerv3_front_run2.png");
-	animationComponent.walking.southWest.frames.push_back("./resources/images/playerv3_front_run3.png");
-	animationComponent.walking.southWest.frames.push_back("./resources/images/playerv3_front_run4.png");
+	animationComponent.walking.southWest.frames.push_back(Image::PLAYER_V3_FRONT_RUN1);
+	animationComponent.walking.southWest.frames.push_back(Image::PLAYER_V3_FRONT_RUN2);
+	animationComponent.walking.southWest.frames.push_back(Image::PLAYER_V3_FRONT_RUN3);
+	animationComponent.walking.southWest.frames.push_back(Image::PLAYER_V3_FRONT_RUN4);
 
-	animationComponent.walking.south.frames.push_back("./resources/images/playerv3_front_run1.png");
-	animationComponent.walking.south.frames.push_back("./resources/images/playerv3_front_run2.png");
-	animationComponent.walking.south.frames.push_back("./resources/images/playerv3_front_run3.png");
-	animationComponent.walking.south.frames.push_back("./resources/images/playerv3_front_run4.png");
+	animationComponent.walking.south.frames.push_back(Image::PLAYER_V3_FRONT_RUN1);
+	animationComponent.walking.south.frames.push_back(Image::PLAYER_V3_FRONT_RUN2);
+	animationComponent.walking.south.frames.push_back(Image::PLAYER_V3_FRONT_RUN3);
+	animationComponent.walking.south.frames.push_back(Image::PLAYER_V3_FRONT_RUN4);
 
-	animationComponent.walking.southEast.frames.push_back("./resources/images/playerv3_front_run1.png");
-	animationComponent.walking.southEast.frames.push_back("./resources/images/playerv3_front_run2.png");
-	animationComponent.walking.southEast.frames.push_back("./resources/images/playerv3_front_run3.png");
-	animationComponent.walking.southEast.frames.push_back("./resources/images/playerv3_front_run4.png");
+	animationComponent.walking.southEast.frames.push_back(Image::PLAYER_V3_FRONT_RUN1);
+	animationComponent.walking.southEast.frames.push_back(Image::PLAYER_V3_FRONT_RUN2);
+	animationComponent.walking.southEast.frames.push_back(Image::PLAYER_V3_FRONT_RUN3);
+	animationComponent.walking.southEast.frames.push_back(Image::PLAYER_V3_FRONT_RUN4);
 
 	animationComponent.state = &animationComponent.idle.south;
 
@@ -182,7 +182,7 @@ ID EntityManager::createTree(const glm::vec2& position) {
 	auto& renderComponent = componentManager->createRenderComponent(id);
 	auto& nameComponent = componentManager->createNameComponent(id);
 
-	renderComponent.imagePath = "./resources/images/SmallTree.png";
+	renderComponent.image = Image::SMALL_TREE;
 	renderComponent.zindex_base = 1;
 	renderComponent.xoffset = -24;
 	renderComponent.yoffset = -54;
@@ -211,7 +211,7 @@ ID EntityManager::createGrassTile(const glm::vec2& position) {
 	auto& rc = componentManager->createRenderComponent(id);
 	auto& nameComponent = componentManager->createNameComponent(id);
 
-	rc.imagePath = "./resources/images/grass.png";
+	rc.image = Image::GRASS;
 	rc.zindex_base = 0;
 
 	mc.pos = position;
@@ -238,7 +238,7 @@ ID EntityManager::createWaterTile(const glm::vec2& position) {
 	auto& rc = componentManager->createRenderComponent(id);
 	auto& nameComponent = componentManager->createNameComponent(id);
 
-	rc.imagePath = "./resources/images/water.png";
+	rc.image = Image::WATER;
 	rc.zindex_base = 0;
 
 	mc.pos = position;
@@ -262,7 +262,7 @@ ID EntityManager::createBloodSplatter(const glm::vec2& position) {
 	auto& nc = componentManager->createNameComponent(id);
 	auto& ac = componentManager->createAnimationComponent(id);
 
-	rc.imagePath = "./resources/images/bloodsplatter1_11.png";
+	rc.image = Image::BLOODSPLATTER_1_11;
 	rc.xoffset = -10;
 	rc.yoffset = -10;
 	rc.zindex_base = 1;
@@ -274,17 +274,17 @@ ID EntityManager::createBloodSplatter(const glm::vec2& position) {
 	ac.bloodsplatter.duration = 25;
 	ac.bloodsplatter.looping = false;
 
-	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_1.png");
-	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_2.png");
-	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_3.png");
-	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_4.png");
-	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_5.png");
-	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_6.png");
-	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_7.png");
-	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_8.png");
-	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_9.png");
-	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_10.png");
-	ac.bloodsplatter.frames.push_back("./resources/images/bloodsplatter1_11.png");
+	ac.bloodsplatter.frames.push_back(Image::BLOODSPLATTER_1_1);
+	ac.bloodsplatter.frames.push_back(Image::BLOODSPLATTER_1_2);
+	ac.bloodsplatter.frames.push_back(Image::BLOODSPLATTER_1_3);
+	ac.bloodsplatter.frames.push_back(Image::BLOODSPLATTER_1_4);
+	ac.bloodsplatter.frames.push_back(Image::BLOODSPLATTER_1_5);
+	ac.bloodsplatter.frames.push_back(Image::BLOODSPLATTER_1_6);
+	ac.bloodsplatter.frames.push_back(Image::BLOODSPLATTER_1_7);
+	ac.bloodsplatter.frames.push_back(Image::BLOODSPLATTER_1_8);
+	ac.bloodsplatter.frames.push_back(Image::BLOODSPLATTER_1_9);
+	ac.bloodsplatter.frames.push_back(Image::BLOODSPLATTER_1_10);
+	ac.bloodsplatter.frames.push_back(Image::BLOODSPLATTER_1_11);
 
 	ac.state = &ac.bloodsplatter;
 
@@ -310,25 +310,25 @@ ID EntityManager::createFlower(const glm::vec2& position, const char color) {
 	auto& rc = componentManager->createRenderComponent(id);
 	auto& nc = componentManager->createNameComponent(id);
 
-	string flowercolor = "";
+	Image flowercolor = Image::UNDEFINED;
 
 	//Set image corresponding to color
 	switch(color) {
 		case 0: {
-			flowercolor = "./resources/images/yellow_flower.png";
+			flowercolor = Image::YELLOW_FLOWER;
 		} break;
 		case 1: {
-			flowercolor = "./resources/images/blue_flower.png";
+			flowercolor = Image::BLUE_FLOWER;
 		} break;
 		case 2: {
-			flowercolor = "./resources/images/violet_flower.png";
+			flowercolor = Image::VIOLET_FLOWER;
 		} break;
 		case 3: {
-			flowercolor = "./resources/images/green_flower.png";
+			flowercolor = Image::GREEN_FLOWER;
 		} break;
 	}
 
-	rc.imagePath = flowercolor;
+	rc.image = flowercolor;
 	rc.xoffset = -1;
 	rc.yoffset = -5;
 	rc.zindex_base = 1;
@@ -352,7 +352,7 @@ ID EntityManager::createDummySquare(const glm::vec2& position) {
 	auto& cc = componentManager->createCommandComponent(id);
 	auto& ac = componentManager->createAnimationComponent(id);
 
-	rc.imagePath = "./resources/images/testsquare1x1.png";
+	rc.image = Image::TEST_SQUARE_1x1;
 
 	mc.maxVelLength = 4.0f;
 
@@ -404,7 +404,7 @@ ID EntityManager::createStone(const glm::vec2& position) {
 	mc.pos = position;
 	mc.oldPos = mc.pos;
 
-	rc.imagePath = "./resources/images/stone1.png";
+	rc.image = Image::STONE_1;
 	rc.xoffset = -7;
 	rc.yoffset = -12;
 	rc.zindex_base = 1;
