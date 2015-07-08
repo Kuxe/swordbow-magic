@@ -1,15 +1,17 @@
 #include "server.hpp"
 #include "client.hpp"
+#include "packet.hpp"
+#include "messagetypes.hpp"
 
 Server::Server(int argc, char** argv) :
 		systemManager(&componentManager, &deltaTime),
 		sizeBoundingBox(&componentManager),
-		entityManager(&systemManager, &componentManager, &idManager, &clients),
+		entityManager(&systemManager, &componentManager, &idManager, &clients, &socket),
 		sizeHashGridSystem(&componentManager, &sizeBoundingBox),
 		collisionSystem(&sizeHashGridSystem),
 		removeSystem(&entityManager),
-		animationSystem(&clients),
-		attackSystem(&sizeHashGridSystem, &clients) {
+		animationSystem(&clients, &socket),
+		attackSystem(&sizeHashGridSystem, &clients, &socket) {
 
 	cout << "\n--** STARTING SERVER **--" << endl;
 
@@ -65,7 +67,31 @@ void Server::terminate() {
 void Server::step() {
 	deltaTime.start();
 
-	//TODO: Receive data from clients
+	//Receive data from server...
+    IpAddress client;
+    unsigned char type;
+    int bytesRead;
+    socket.receive(client, type, bytesRead);
+
+	//If any data was received, check its type and take appropiate action
+    if(bytesRead > 0) {
+        auto packet = (Packet<unsigned char*>*)socket.getBuffer();
+
+        switch(packet->getType()) {
+			case MESSAGE_TYPE::CONNECT: {
+				onConnect(client.getAddress(), client.getPort());
+			} break;
+
+			case MESSAGE_TYPE::DISCONNECT: {
+				onDisconnect(client.getAddress());
+			} break;
+
+			case MESSAGE_TYPE::INPUTDATA: {
+				const auto typedPacket = (Packet<InputData>*)socket.getBuffer();
+				inputDataToInputComponent(client.getAddress(), typedPacket->getData());
+			}
+        }
+	}
 
 	//Run the entity-component-system
 	componentsMutex.lock();
@@ -78,17 +104,20 @@ void Server::step() {
 	deltaTime.stop();
 }
 
-void Server::onConnect(Client* client) {
+void Server::onConnect(unsigned int client, unsigned short port) {
 	auto fatManId = entityManager.createFatMan({0.0f, 0.0f});
-	clients.insert(
-		{
-			client,
-			fatManId
-		}
-	);
+	clients.insert({client, fatManId});
 
-	//TODO: Figure out how to register ids to systems on clients
-	//client->registerIdToSystem(fatManId, "CameraSystem");
+	//Make the client aware of its ID and register the ID to client camerasytem
+	const std::pair<ID, std::string> data {fatManId, "CameraSystem"};
+	auto cameraPacket = Packet<std::pair<ID, std::string>> {
+		stringhash("swordbow-magic"),
+		MESSAGE_TYPE::CONNECT,
+		data,
+		sizeof(data)
+	};
+
+	socket.send({client, port}, &cameraPacket, sizeof(cameraPacket));
 
 	//Whenever a client connects, tell the client what entities
 	//should be in what systems on the client-side
@@ -96,55 +125,81 @@ void Server::onConnect(Client* client) {
 		auto id = tuple.first;
 		vector<std::string>& systems = tuple.second;
 		for(std::string systemIdentifier : systems) {
-			//TODO: Figure out how to register id to systems on clients
-			//client->registerIdToSystem(id, systemIdentifier);
+			const std::pair<ID, std::string> data {id, systemIdentifier};
+			auto packet = Packet<std::pair<ID, std::string>> {
+				stringhash("swordbow-magic"),
+				MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM,
+				data,
+				sizeof(data)
+			};
+			socket.send({client, port}, &packet, sizeof(packet));
 		}
 	}
 
 	//Client should get a copy of all components
-	send(client);
+	send(client, port);
 }
 
-void Server::onDisconnect(Client* client) {
+void Server::onDisconnect(unsigned int client) {
 	entityManager.remove(clients.at(client));
 	clients.erase(client);
 }
 
-void Server::send(Client* client) {
-	auto id = clients.at(client);
-	const auto& mc = componentManager.moveComponents.at(id);
+void Server::send(unsigned int client, unsigned short port) {
+	auto mcpacket = Packet<Components<MoveComponent>> {
+		stringhash("swordbow-magic"),
+		MESSAGE_TYPE::MOVECOMPONENTS,
+		componentManager.moveComponents,
+		sizeof(componentManager.moveComponents)
+	};
+	socket.send({client, port}, &mcpacket, sizeof(mcpacket));
 
-	//TODO: Send moveComponents, renderComponents and position of client (no diff)
+	auto rcpacket = Packet<Components<RenderComponent>> {
+		stringhash("swordbow-magic"),
+		MESSAGE_TYPE::RENDERCOMPONENTS,
+		componentManager.renderComponents,
+		sizeof(componentManager.renderComponents)
+	};
+	socket.send({client, port}, &rcpacket, sizeof(rcpacket));
 }
 
 void Server::send() {
+	//TODO: if clients were to hold IpAddress instead of unsigned int (address)
+	//clients could have other ports than 47294
+	constexpr unsigned short clientPort = 47294;
 	for(auto it : clients) {
-		send(it.first);
+		send(it.first, clientPort);
 	}
 }
 
-void Server::sendDiff(Client* client) {
-	auto id = clients.at(client);
-	const auto& mc = componentManager.moveComponents.at(id);
-	//TODO: Send moveComponents, renderComponents and position of client (diff)
+void Server::sendDiff(unsigned int client, unsigned short port) {
+	auto mcpacket = Packet<Components<MoveComponent>> {
+		stringhash("swordbow-magic"),
+		MESSAGE_TYPE::MOVECOMPONENTSDIFF,
+		componentManager.moveComponentsDiff,
+		sizeof(componentManager.moveComponentsDiff)
+	};
+	socket.send({client, port}, &mcpacket, sizeof(mcpacket));
+
+	auto rcpacket = Packet<Components<RenderComponent>> {
+		stringhash("swordbow-magic"),
+		MESSAGE_TYPE::RENDERCOMPONENTSDIFF,
+		componentManager.renderComponentsDiff,
+		sizeof(componentManager.renderComponentsDiff)
+	};
+	socket.send({client, port}, &rcpacket, sizeof(rcpacket));
 }
 
 void Server::sendDiff() {
+	//TODO: if clients were to hold IpAddress instead of unsigned int (address)
+	//clients could have other ports than 47294
+	constexpr unsigned short clientPort = 47294;
 	for(auto it : clients) {
-		sendDiff(it.first);
+		sendDiff(it.first, clientPort);
 	}
 }
 
-void Server::recv(Client* client, InputData inputData) {
-	componentsMutex.lock();
-
-	//Alter the inputcomponent of id belonging to client
-	inputDataToInputComponent(client, inputData);
-
-	componentsMutex.unlock();
-}
-
-void Server::inputDataToInputComponent(Client* client, InputData& data) {
+void Server::inputDataToInputComponent(unsigned int client, InputData& data) {
 	//Get id of client
 	auto id = clients.at(client);
 	auto& ic = componentManager.inputComponents.at(id);
@@ -209,9 +264,6 @@ void Server::inputDataToInputComponent(Client* client, InputData& data) {
 		}
 	}
 
-
-	//Since this method recv() was called in the first place, the entity
-	//of this client should be activated in the inputsystem
 	inputSystem.activateId(id);
 }
 

@@ -52,30 +52,29 @@ private:
     MoveDiffSystem moveDiffSystem;
     RenderDiffSystem renderDiffSystem;
 
-    std::unordered_map<Client*, ID> clients;
+    std::unordered_map<unsigned int, ID> clients;
 
     std::mutex componentsMutex;
 
     Socket socket;
 
-    void inputDataToInputComponent(Client* client, InputData& data);
+    void inputDataToInputComponent(unsigned int client, InputData& data);
 
 public:
     bool running = true;
 
     Server(int argc, char** argv);
     ~Server();
-    void onConnect(Client* client);
-    void onDisconnect(Client* client);
+    void onConnect(unsigned int client, unsigned short port);
+    void onDisconnect(unsigned int client);
     void run();
     void terminate();
     void step();
 
     void send();
-    void send(Client* client);
+    void send(unsigned int client, unsigned short port);
     void sendDiff();
-    void sendDiff(Client* client);
-    void recv(Client* client, InputData inputData);
+    void sendDiff(unsigned int client, unsigned short port);
 
     constexpr void printGeneralInfo() {
     	using std::cout;

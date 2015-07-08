@@ -3,6 +3,8 @@
 
 #include "icommand.hpp"
 #include "client.hpp"
+#include "messagetypes.hpp"
+#include "packet.hpp"
 
 class SystemManager;
 typedef unsigned int ID;
@@ -17,25 +19,31 @@ class ActivateIdOnClients : public ICommand {
 private:
     const string systemIdentifier;
     const ID id;
-    SystemManager* const systemManager;
-    std::unordered_map<Client*, ID>* clients;
+    Socket* socket;
+    std::unordered_map<unsigned int, ID>* clients;
 
 public:
     ActivateIdOnClients(
             ID id,
             const string& systemIdentifier,
-            SystemManager* const systemManager,
-            std::unordered_map<Client*, ID>* clients) :
+            Socket* socket,
+            std::unordered_map<unsigned int, ID>* clients) :
         systemIdentifier(systemIdentifier),
         id(id),
-        systemManager(systemManager),
+        socket(socket),
         clients(clients) { }
 
     void execute() {
         for(auto it : *clients) {
-            Client* client = it.first;
-            //TODO: Figure out how to activate ids on clients
-            //client->activateId(id, systemIdentifier);
+            constexpr unsigned short port = 47294;
+            const std::pair<ID, std::string> data {id, systemIdentifier};
+            auto packet = Packet<std::pair<ID, std::string>> {
+        		stringhash("swordbow-magic"),
+        		MESSAGE_TYPE::ACTIVATE_ID,
+        		data,
+        		sizeof(data)
+        	};
+        	socket->send({it.first, port}, &packet, sizeof(packet));
         }
     }
 };

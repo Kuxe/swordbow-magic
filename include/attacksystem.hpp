@@ -8,15 +8,20 @@
 
 class HashGridSystem;
 class Client;
+class Socket;
 class AttackSystem : public ISystem {
 private:
     std::unordered_set<ID> ids;
-    unordered_map<Client*, ID>* clients;
+    unordered_map<unsigned int, ID>* clients;
     queue<ID> activeIds;
     HashGridSystem* hashgrid;
+    Socket* socket;
 
 public:
-    AttackSystem(HashGridSystem* hashGrid, std::unordered_map<Client*, ID>* clients);
+    AttackSystem(
+        HashGridSystem* hashGrid,
+        std::unordered_map<unsigned int, ID>* clients,
+        Socket* socket);
 
     void add(ID id);
     void remove(ID id);

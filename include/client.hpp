@@ -26,8 +26,6 @@ class Client {
 private:
     SDL_Event event;
 
-    Server* server;
-
     DeltaTime deltaTime;
     ComponentManager componentManager;
     SystemManager systemManager;
@@ -44,6 +42,7 @@ private:
     std::mutex componentsMutex;
 
     Socket socket;
+    IpAddress server;
 
 public:
     bool running = true;
@@ -51,8 +50,8 @@ public:
     Client(int argc, char** argv);
     ~Client();
 
-    void connect(Server* server);
-    void disconnect(Server* server);
+    void connect(const IpAddress& server);
+    void disconnect();
     void run();
     void step();
 };

@@ -30,19 +30,33 @@ Client::~Client() {
     socket.close();
 }
 
-void Client::connect(Server* server) {
-    //Send connect-request to server to connect
+void Client::connect(const IpAddress& server) {
+
     this->server = server;
 
-    //TODO: Figure out how to send connect-request to server
-    //server->onConnect(this);
+    //Connect-request packet
+    const Packet<bool> packet {
+        stringhash("swordbow-magic"),
+        MESSAGE_TYPE::CONNECT,
+        true,
+        sizeof(sizeof(bool))
+    };
+
+    socket.send(server, &packet, sizeof(packet));
 }
 
-void Client::disconnect(Server* server) {
-    //Send disconnect-request to server
+void Client::disconnect() {
+    //Disconnect-request packet
+    const Packet<bool> packet {
+        stringhash("swordbow-magic"),
+        MESSAGE_TYPE::DISCONNECT,
+        true,
+        sizeof(sizeof(bool))
+    };
 
-    //TODO: Figure out how to send disconnect-request to server
-    //server->onDisconnect(this);
+    socket.send(server, &packet, sizeof(packet));
+
+    server = IpAddress(0, 0, 0, 0, 0); //Indicate not connected to any server
 }
 
 void Client::run() {
@@ -177,7 +191,9 @@ void Client::step() {
 
 int main(int argc, char** argv) {
     Client client(argc, argv);
+    client.connect({127, 0, 0, 1, 47293});
     client.run();
+    client.disconnect();
 }
 
 

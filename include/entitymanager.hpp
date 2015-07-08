@@ -20,6 +20,7 @@ class ComponentManager;
 class IdManager;
 class ISystem;
 class Client;
+class Socket;
 
 typedef unsigned int ID;
 
@@ -42,13 +43,17 @@ class EntityManager {
     //If entitymanager creates anything, it need to inform all clients connected
     //to the parent server that a new entity was created and it belongs to
     //"these" systems (eg RenderSystem and TextureHashGridSystem)
-    std::unordered_map<Client*, ID>* clients;
+    std::unordered_map<unsigned int, ID>* clients;
+
+    //Required during creation for some commands
+    Socket* socket;
 
 	EntityManager(
         SystemManager* systemManager,
         ComponentManager* componentManager,
         IdManager* idManager,
-        std::unordered_map<Client*, ID>* clients
+        std::unordered_map<unsigned int, ID>* clients,
+        Socket* socket
     );
     const unsigned int& getId();
 

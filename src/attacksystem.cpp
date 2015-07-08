@@ -5,13 +5,20 @@
 #include "soundcomponent.hpp"
 #include "namecomponent.hpp"
 #include "client.hpp"
+#include "socket.hpp"
+#include "packet.hpp"
+#include "messagetypes.hpp"
 
 #include <iostream>
 using namespace std;
 
-AttackSystem::AttackSystem(HashGridSystem* hashgrid, unordered_map<Client*, ID>* clients) :
+AttackSystem::AttackSystem(
+    HashGridSystem* hashgrid,
+    unordered_map<unsigned int, ID>* clients,
+    Socket* socket) :
     hashgrid(hashgrid),
-    clients(clients) {
+    clients(clients),
+    socket(socket) {
 
 }
 
@@ -82,8 +89,14 @@ void AttackSystem::update() {
 
                 //Broadcast hurtsound to all clients
                 for(auto it : *clients) {
-                    //TODO: Figure out how to send sound over network
-                    //it.first->playSound(hurtSound);
+                    constexpr unsigned short port = 47294;
+                    auto packet = Packet<SoundComponent::Sound> {
+                		stringhash("swordbow-magic"),
+                		MESSAGE_TYPE::PLAY_SOUND,
+                		hurtSound,
+                		sizeof(hurtSound)
+                	};
+                	socket->send({it.first, port}, &packet, sizeof(packet));
                 }
             }
         }

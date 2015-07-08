@@ -9,16 +9,19 @@
 typedef unsigned int ID;
 
 class Client;
+class Socket;
 
 /** Used when server should tell all clients to play a sound **/
 class PlaySound : public ICommand {
 private:
     SoundComponent::Sound sound;
-    std::unordered_map<Client*, ID>* clients;
+    std::unordered_map<unsigned int, ID>* clients;
+    Socket* socket;
 public:
     PlaySound(
         const SoundComponent::Sound& soundPath,
-        std::unordered_map<Client*, ID>* clients
+        std::unordered_map<unsigned int, ID>* clients,
+        Socket* socket
     );
     void execute();
 };

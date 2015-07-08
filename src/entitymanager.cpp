@@ -27,11 +27,13 @@ EntityManager::EntityManager(
 	SystemManager* systemManager,
 	ComponentManager* componentManager,
 	IdManager* idManager,
-	std::unordered_map<Client*, ID>* clients) :
+	std::unordered_map<unsigned int, ID>* clients,
+	Socket* socket) :
 	systemManager(systemManager),
 	componentManager(componentManager),
 	idManager(idManager),
-	clients(clients) {
+	clients(clients),
+	socket(socket) {
 
 }
 
@@ -138,18 +140,19 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 	commandComponent[CommandComponent::Event::ON_DEATH] = {
 		new PlaySound(
 			SoundComponent::Sound {"./resources/sounds/bloodsplatter.wav"},
-			clients
+			clients,
+			socket
 		),
 		new CreateBloodsplatter(this, id),
 	};
 
 	commandComponent[CommandComponent::Event::ON_MOVE] = {
 		//Perhaps use a "new ActivateIdOnClients(id, "RenderSystem")"?
-		new ActivateIdOnClients(id, "RenderSystem", systemManager, clients),
+		new ActivateIdOnClients(id, "RenderSystem", socket, clients),
 		new ActivateId(id, "CollisionSystem", systemManager),
-		new ActivateIdOnClients(id, "TextureHashGridSystem", systemManager, clients),
+		new ActivateIdOnClients(id, "TextureHashGridSystem", socket, clients),
 		new ActivateId(id, "SizeHashGridSystem", systemManager),
-		new PlaySound(soundComponent.walk, clients),
+		new PlaySound(soundComponent.walk, clients, socket),
 	};
 
 	registerIdToSystem(id, "MoveSystem");
@@ -378,8 +381,8 @@ ID EntityManager::createDummySquare(const glm::vec2& position) {
 	};
 
 	cc[CommandComponent::Event::ON_MOVE] = {
-		new ActivateIdOnClients(id, "RenderSystem", systemManager, clients),
-		new ActivateIdOnClients(id, "TextureHashGridSystem", systemManager, clients),
+		new ActivateIdOnClients(id, "RenderSystem", socket, clients),
+		new ActivateIdOnClients(id, "TextureHashGridSystem", socket, clients),
 	};
 
 	registerIdToSystem(id, "MoveSystem");
@@ -429,9 +432,15 @@ void EntityManager::remove(ID id) {
 	//2. Remove from clients systemManagers
 	for(auto systemIdentifier : entityClientSystemMap.at(id)) {
 		for(auto it : *clients) {
-			Client* client = it.first;
-			//TODO: Figure out how to remvoe ids from systems on clients
-			//client->removeIdFromSystem(id, systemIdentifier);
+			constexpr unsigned short port = 47294;
+			const std::pair<ID, std::string> data {id, systemIdentifier};
+			auto packet = Packet<std::pair<ID, std::string>> {
+				stringhash("swordbow-magic"),
+				MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM,
+				data,
+				sizeof(data)
+			};
+			socket->send({it.first, port}, &packet, sizeof(packet));
 		}
 	}
 	entityClientSystemMap.erase(id);
@@ -452,9 +461,15 @@ void EntityManager::registerIdToSystem(ID id, const string systemIdentifier) {
 void EntityManager::registerIdToRemoteSystem(ID id, const string systemIdentifier) {
 	entityClientSystemMap[id].push_back(systemIdentifier);
 	for(auto it : *clients) {
-		Client* client = it.first;
-		//TODO: Figure out how to register ids to systems on clients
-		//client->registerIdToSystem(id, systemIdentifier);
+		constexpr unsigned short port = 47294;
+		const std::pair<ID, std::string> data {id, systemIdentifier};
+		auto packet = Packet<std::pair<ID, std::string>> {
+			stringhash("swordbow-magic"),
+			MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM,
+			data,
+			sizeof(data)
+		};
+		socket->send({it.first, port}, &packet, sizeof(packet));
 	}
 }
 

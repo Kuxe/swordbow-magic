@@ -3,12 +3,18 @@
 #include "componentmanager.hpp"
 #include "systemmanager.hpp"
 #include "client.hpp"
+#include "socket.hpp"
+#include "packet.hpp"
+#include "messagetypes.hpp"
 
 using std::cout;
 using std::endl;
 
-AnimationSystem::AnimationSystem(unordered_map<Client*, ID>* clients) :
-    clients(clients) { }
+AnimationSystem::AnimationSystem(
+    unordered_map<unsigned int, ID>* clients,
+    Socket* socket) :
+    clients(clients),
+    socket(socket) { }
 
 void AnimationSystem::add(ID id) {
     ids.insert(id);
@@ -118,8 +124,15 @@ void AnimationSystem::update() {
 
                 //Tell all clients to activate this id on their rendersystems
                 for(auto it : *clients) {
-                    //TODO: Figure out how to activate ids on clients
-                    //it.first->activateId(id, "RenderSystem");
+                    constexpr unsigned short port = 47294;
+                    const std::pair<ID, std::string> data {id, "RenderSystem"};
+                    auto packet = Packet<std::pair<ID, std::string>> {
+                		stringhash("swordbow-magic"),
+                		MESSAGE_TYPE::ACTIVATE_ID,
+                		data,
+                		sizeof(data)
+                	};
+                	socket->send({it.first, port}, &packet, sizeof(packet));
                 }
 
                 //Since the rendercomponent changed, add this id to
