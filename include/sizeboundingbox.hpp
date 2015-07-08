@@ -8,7 +8,7 @@ public:
     SizeBoundingBox(const ComponentManager* const componentManager);
     const Rect getBoundingBox(ID id) const;
     const Rect getOldBoundingBox(ID id) const;
-    const string getSystemName() const;
+    const System getSystemName() const;
 };
 
 #endif //SIZEBOUNDINGBOX_H

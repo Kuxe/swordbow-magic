@@ -15,6 +15,10 @@ void SystemManager::add(ISystem* system) {
 	system->componentManager = componentManager;
 	system->deltaTime = deltaTime;
 	system->systemManager = this;
+
+	static SYSTEM_IDENTIFIER sysid = 1;
+	system->sysid = sysid++;
+
 	systemByIdentifiers.insert({system->getIdentifier(), system});
 }
 void SystemManager::remove(ISystem* system) {
@@ -29,7 +33,7 @@ void SystemManager::update() {
 	}
 }
 
-ISystem* SystemManager::getSystem(string identifier) {
+ISystem* SystemManager::getSystem(System identifier) {
 	ISystem* system;
 	try {
 		system = systemByIdentifiers.at(identifier);

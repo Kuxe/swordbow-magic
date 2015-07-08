@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include "messagetypes.hpp"
 #include "packet.hpp"
+#include "systemidentifiers.hpp"
 
 Client::Client(int argc, char** argv) :
         renderer(argc, argv),
@@ -152,21 +153,21 @@ void Client::step() {
             } break;
 
             case MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM: {
-                auto typedPacket = (Packet<std::pair<ID, std::string>>*)socket.getBuffer();
+                auto typedPacket = (Packet<std::pair<ID, System>>*)socket.getBuffer();
                 const auto& id = typedPacket->getData().first;
                 const auto& systemIdentifier = typedPacket->getData().second;
                 systemManager.getSystem(systemIdentifier)->add(id);
             } break;
 
             case MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM: {
-                auto typedPacket = (Packet<std::pair<ID, std::string>>*)socket.getBuffer();
+                auto typedPacket = (Packet<std::pair<ID, System>>*)socket.getBuffer();
                 const auto& id = typedPacket->getData().first;
                 const auto& systemIdentifier = typedPacket->getData().second;
                 systemManager.getSystem(systemIdentifier)->remove(id);
             }
 
             case MESSAGE_TYPE::ACTIVATE_ID: {
-                auto typedPacket = (Packet<std::pair<ID, std::string>>*)socket.getBuffer();
+                auto typedPacket = (Packet<std::pair<ID, System>>*)socket.getBuffer();
                 const auto& id = typedPacket->getData().first;
                 const auto& systemIdentifier = typedPacket->getData().second;
                 systemManager.getSystem(systemIdentifier)->activateId(id);

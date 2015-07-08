@@ -52,7 +52,7 @@ class HashGridSystem : public SpatialIndexer, public ISystem {
 
 		void update();
 		unsigned int count() const;
-		const string getIdentifier() const;
+		const System getIdentifier() const;
 };
 
 

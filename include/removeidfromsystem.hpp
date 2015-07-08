@@ -2,21 +2,22 @@
 #define REMOVEIDFROMSYSTEM_H
 
 #include "icommand.hpp"
+#include "systemidentifiers.hpp"
 
 class RemoveIdFromSystem : public ICommand {
 private:
-    const string systemIdentifier;
+    const System system;
     const ID id;
     SystemManager* const systemManager;
 
 public:
-    RemoveIdFromSystem(ID id, const string& systemIdentifier, SystemManager* const systemManager) :
-        systemIdentifier(systemIdentifier),
+    RemoveIdFromSystem(ID id, System system, SystemManager* const systemManager) :
+        system(system),
         id(id),
         systemManager(systemManager) { }
 
     void execute() {
-        systemManager->getSystem(systemIdentifier)->remove(id);
+        systemManager->getSystem(system)->remove(id);
     }
 };
 

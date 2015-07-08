@@ -149,6 +149,6 @@ void HashGridSystem::update() {
 unsigned int HashGridSystem::count() const {
 	return ids.size();
 }
-const string HashGridSystem::getIdentifier() const {
+const System HashGridSystem::getIdentifier() const {
 	return boundingBox->getSystemName();
 }

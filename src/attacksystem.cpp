@@ -106,8 +106,8 @@ void AttackSystem::update() {
 unsigned int AttackSystem::count() const {
     return ids.size();
 }
-const string AttackSystem::getIdentifier() const {
-    return "AttackSystem";
+const System AttackSystem::getIdentifier() const {
+    return System::ATTACK;
 }
 void AttackSystem::activateId(ID id) {
     if(ids.find(id) == ids.end()) {

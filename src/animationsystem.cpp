@@ -18,7 +18,7 @@ AnimationSystem::AnimationSystem(
 
 void AnimationSystem::add(ID id) {
     ids.insert(id);
-    systemManager->getSystem("RenderDiffSystem")->add(id);
+    systemManager->getSystem(System::RENDERDIFF)->add(id);
 }
 void AnimationSystem::remove(ID id) {
     if(ids.find(id) == ids.end()) {
@@ -138,7 +138,7 @@ void AnimationSystem::update() {
                 //Since the rendercomponent changed, add this id to
                 //RenderDiffSystem so that the network can send only the
                 //changed rendercomponents
-                systemManager->getSystem("RenderDiffSystem")->add(id);
+                systemManager->getSystem(System::RENDERDIFF)->add(id);
             }
         }
     }
@@ -146,8 +146,8 @@ void AnimationSystem::update() {
 unsigned int AnimationSystem::count() const {
     return ids.size();
 }
-const string AnimationSystem::getIdentifier() const {
-    return "AnimationSystem";
+const System AnimationSystem::getIdentifier() const {
+    return System::ANIMATION;
 }
 void AnimationSystem::activateId(ID id) {
     //Why would this method be required for AnimationSystem?

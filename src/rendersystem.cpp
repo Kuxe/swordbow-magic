@@ -30,7 +30,7 @@ void RenderSystem::remove(ID id) {
 }
 
 void RenderSystem::update() {
-	auto spatialIndexer = dynamic_cast<SpatialIndexer*>(systemManager->getSystem("TextureHashGridSystem"));
+	auto spatialIndexer = dynamic_cast<SpatialIndexer*>(systemManager->getSystem(System::HASHGRID_TEXTURE));
 
     //Will contain all rectangles where a redraw is required
     queue<Rect> drawQueue;
@@ -108,8 +108,8 @@ unsigned int RenderSystem::count() const {
 	return ids.size();
 }
 
-const string RenderSystem::getIdentifier() const {
-	return "RenderSystem";
+const System RenderSystem::getIdentifier() const {
+	return System::RENDER;
 }
 
 void RenderSystem::activateId(ID id) {

@@ -29,8 +29,8 @@ void CameraSystem::update() {
 unsigned int CameraSystem::count() const {
     return cameraSource > 0;
 }
-const string CameraSystem::getIdentifier() const {
-    return "CameraSystem";
+const System CameraSystem::getIdentifier() const {
+    return System::CAMERA;
 }
 void CameraSystem::activateId(ID id) {
 

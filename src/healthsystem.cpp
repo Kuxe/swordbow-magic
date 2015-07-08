@@ -23,15 +23,15 @@ void HealthSystem::update() {
 
         //Check if id is dead
         if(hc.health <= 0) {
-            systemManager->getSystem("RemoveSystem")->activateId(id);
+            systemManager->getSystem(System::REMOVE)->activateId(id);
         }
     }
 }
 unsigned int HealthSystem::count() const {
     return ids.size();
 }
-const string HealthSystem::getIdentifier() const {
-    return "HealthSystem";
+const System HealthSystem::getIdentifier() const {
+    return System::HEALTH;
 }
 void HealthSystem::activateId(ID id) {
 

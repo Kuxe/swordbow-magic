@@ -2,6 +2,7 @@
 #define ISYSTEM_H
 
 #include <string>
+#include "systemidentifiers.hpp"
 
 using namespace std;
 
@@ -10,12 +11,14 @@ class DeltaTime;
 class SystemManager;
 
 typedef unsigned int ID;
+typedef unsigned char SYSTEM_IDENTIFIER;
 
 //Not entierly an interface. It's an abstract class.
 class ISystem {
  public:
  	DeltaTime* deltaTime;
  	ComponentManager* componentManager;
+    SYSTEM_IDENTIFIER sysid;
 
      virtual ~ISystem() { }
 
@@ -27,7 +30,7 @@ class ISystem {
  	virtual void remove(ID id) = 0;
 	virtual void update() = 0;
 	virtual unsigned int count() const = 0; //How many entities are present within the system?
-	virtual const string getIdentifier() const = 0; //Naming convention is "RenderSystem", "MoveSystem" etc..
+	virtual const System getIdentifier() const = 0; //Naming convention is "RenderSystem", "MoveSystem" etc..
     virtual void activateId(ID id) = 0;
     bool active = true;
 };

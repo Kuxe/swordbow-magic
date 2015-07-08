@@ -123,10 +123,10 @@ void Server::onConnect(unsigned int client, unsigned short port) {
 	//should be in what systems on the client-side
 	for(auto tuple : entityManager.entityClientSystemMap) {
 		auto id = tuple.first;
-		vector<std::string>& systems = tuple.second;
-		for(std::string systemIdentifier : systems) {
-			const std::pair<ID, std::string> data {id, systemIdentifier};
-			auto packet = Packet<std::pair<ID, std::string>> {
+		vector<System>& systems = tuple.second;
+		for(System system : systems) {
+			const std::pair<ID, System> data {id, system};
+			auto packet = Packet<std::pair<ID, System>> {
 				stringhash("swordbow-magic"),
 				MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM,
 				data,

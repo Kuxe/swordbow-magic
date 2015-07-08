@@ -1,6 +1,7 @@
 #ifndef ACTIVATEID_H
 
 #include "icommand.hpp"
+#include "systemidentifiers.hpp"
 
 class SystemManager;
 typedef unsigned int ID;
@@ -20,18 +21,18 @@ typedef unsigned int ID;
  **/
 class ActivateId : public ICommand {
 private:
-    const string systemIdentifier;
+    const System system;
     const ID id;
     SystemManager* const systemManager;
 
 public:
-    ActivateId(ID id, const string& systemIdentifier, SystemManager* const systemManager) :
-        systemIdentifier(systemIdentifier),
+    ActivateId(ID id, System system, SystemManager* const systemManager) :
+        system(system),
         id(id),
         systemManager(systemManager) { }
 
     void execute() {
-        systemManager->getSystem(systemIdentifier)->activateId(id);
+        systemManager->getSystem(system)->activateId(id);
     }
 };
 

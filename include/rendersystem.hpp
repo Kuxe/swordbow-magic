@@ -46,7 +46,7 @@ public:
 	void remove(ID id);
 	void update();
 	unsigned int count() const;
-	const string getIdentifier() const;
+	const System getIdentifier() const;
 	void activateId(ID id);
 	void printText(const Text& text);
     priority_queue<RenderData>& getDrawPriorityQueue();

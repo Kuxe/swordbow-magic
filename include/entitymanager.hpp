@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <glm/glm.hpp>
+#include "systemidentifiers.hpp"
 
 using namespace std;
 
@@ -33,7 +34,7 @@ class EntityManager {
 		if it exits, but that's a slow bruteforce-approach)
 	*/
  	unordered_map<unsigned int, vector<ISystem*> > entityServerSystemMap;
-    unordered_map<unsigned int, vector<std::string> > entityClientSystemMap;
+    unordered_map<unsigned int, vector<System> > entityClientSystemMap;
     unordered_set<unsigned int> ids;
 
 	SystemManager* systemManager;
@@ -68,8 +69,8 @@ class EntityManager {
     ID createStone(const glm::vec2& position);
 	void remove(ID id);
 
-    void registerIdToSystem(ID id, const string systemIdentifier);
-    void registerIdToRemoteSystem(ID id, const string systemIdentifier);
+    void registerIdToSystem(ID id, System system);
+    void registerIdToRemoteSystem(ID id, System system);
 };
 
 #endif //ENTITYMANAGER_H

@@ -35,8 +35,8 @@ unsigned int CollisionSystem::count() const {
 	return ids.size();
 }
 
-const string CollisionSystem::getIdentifier() const {
-	return "CollisionSystem";
+const System CollisionSystem::getIdentifier() const {
+	return System::COLLISION;
 }
 
 void CollisionSystem::activateId(ID id) {

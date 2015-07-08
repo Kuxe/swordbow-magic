@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <vector>
+#include "systemidentifiers.hpp"
 
 using namespace std;
 
@@ -21,11 +22,11 @@ class SystemManager {
  	ComponentManager* const componentManager;
  	DeltaTime* const deltaTime;
 	vector<ISystem*> systems;
-	unordered_map<string, ISystem*> systemByIdentifiers;
+	unordered_map<System, ISystem*, std::hash<int>> systemByIdentifiers;
 	void add(ISystem* system);
 	void remove(ISystem* system);
 	void update();
-	ISystem* getSystem(string identifier);
+	ISystem* getSystem(System identifier);
 };
 
 #endif //SYSTEMMANGER_H

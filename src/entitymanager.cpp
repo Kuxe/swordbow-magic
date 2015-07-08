@@ -118,23 +118,23 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 	inputComponent.bindings[32] = CommandComponent::Event::ATTACK;
 
 	commandComponent[CommandComponent::Event::MOVE_UP] = {
-		new AddIdToSystem(id, "MoveSystem", systemManager),
+		new AddIdToSystem(id, System::MOVE, systemManager),
 	};
 
 	commandComponent[CommandComponent::Event::MOVE_RIGHT] = {
-		new AddIdToSystem(id, "MoveSystem", systemManager),
+		new AddIdToSystem(id, System::MOVE, systemManager),
 	};
 
 	commandComponent[CommandComponent::Event::MOVE_DOWN] = {
-		new AddIdToSystem(id, "MoveSystem", systemManager),
+		new AddIdToSystem(id, System::MOVE, systemManager),
 	};
 
 	commandComponent[CommandComponent::Event::MOVE_LEFT] = {
-		new AddIdToSystem(id, "MoveSystem", systemManager),
+		new AddIdToSystem(id, System::MOVE, systemManager),
 	};
 
 	commandComponent[CommandComponent::Event::ATTACK] = {
-		new ActivateId(id, "AttackSystem", systemManager),
+		new ActivateId(id, System::ATTACK, systemManager),
 	};
 
 	commandComponent[CommandComponent::Event::ON_DEATH] = {
@@ -148,23 +148,23 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 
 	commandComponent[CommandComponent::Event::ON_MOVE] = {
 		//Perhaps use a "new ActivateIdOnClients(id, "RenderSystem")"?
-		new ActivateIdOnClients(id, "RenderSystem", socket, clients),
-		new ActivateId(id, "CollisionSystem", systemManager),
-		new ActivateIdOnClients(id, "TextureHashGridSystem", socket, clients),
-		new ActivateId(id, "SizeHashGridSystem", systemManager),
+		new ActivateIdOnClients(id, System::RENDER, socket, clients),
+		new ActivateId(id, System::COLLISION, systemManager),
+		new ActivateIdOnClients(id, System::HASHGRID_TEXTURE, socket, clients),
+		new ActivateId(id, System::HASHGRID_SIZE, systemManager),
 		new PlaySound(soundComponent.walk, clients, socket),
 	};
 
-	registerIdToSystem(id, "MoveSystem");
-	registerIdToSystem(id, "CollisionSystem");
-	registerIdToSystem(id, "SizeHashGridSystem");
-	registerIdToSystem(id, "HealthSystem");
-	registerIdToSystem(id, "RemoveSystem");
-	registerIdToSystem(id, "AttackSystem");
-	registerIdToSystem(id, "InputSystem");
-	registerIdToRemoteSystem(id, "RenderSystem");
-	registerIdToRemoteSystem(id, "TextureHashGridSystem");
-	registerIdToSystem(id, "AnimationSystem");
+	registerIdToSystem(id, System::MOVE);
+	registerIdToSystem(id, System::COLLISION);
+	registerIdToSystem(id, System::HASHGRID_SIZE);
+	registerIdToSystem(id, System::HEALTH);
+	registerIdToSystem(id, System::REMOVE);
+	registerIdToSystem(id, System::ATTACK);
+	registerIdToSystem(id, System::INPUT);
+	registerIdToRemoteSystem(id, System::RENDER);
+	registerIdToRemoteSystem(id, System::HASHGRID_TEXTURE);
+	registerIdToSystem(id, System::ANIMATION);
 
 	return id;
 }
@@ -195,10 +195,10 @@ ID EntityManager::createTree(const glm::vec2& position) {
 
 	nameComponent.name = "tree";
 
-	registerIdToSystem(id, "CollisionSystem");
-	registerIdToSystem(id, "SizeHashGridSystem");
-	registerIdToRemoteSystem(id, "RenderSystem");
-	registerIdToRemoteSystem(id, "TextureHashGridSystem");
+	registerIdToSystem(id, System::COLLISION);
+	registerIdToSystem(id, System::HASHGRID_SIZE);
+	registerIdToRemoteSystem(id, System::RENDER);
+	registerIdToRemoteSystem(id, System::HASHGRID_TEXTURE);
 
 	return id;
 }
@@ -223,8 +223,8 @@ ID EntityManager::createGrassTile(const glm::vec2& position) {
 	nameComponent.name = "grasstile";
 
 	//Systems on clients need to be aware of these
-	registerIdToRemoteSystem(id, "RenderSystem");
-	registerIdToRemoteSystem(id, "TextureHashGridSystem");
+	registerIdToRemoteSystem(id, System::RENDER);
+	registerIdToRemoteSystem(id, System::HASHGRID_TEXTURE);
 
 	return id;
 }
@@ -249,8 +249,8 @@ ID EntityManager::createWaterTile(const glm::vec2& position) {
 
 	nameComponent.name = "watertile";
 
-	registerIdToRemoteSystem(id, "RenderSystem");
-	registerIdToRemoteSystem(id, "TextureHashGridSystem");
+	registerIdToRemoteSystem(id, System::RENDER);
+	registerIdToRemoteSystem(id, System::HASHGRID_TEXTURE);
 
 	return id;
 }
@@ -297,9 +297,9 @@ ID EntityManager::createBloodSplatter(const glm::vec2& position) {
 	//registered to client, client iterate over it and
 	//fetches movecomponent before
 	//server did send movecomponent of that id to client
-	registerIdToRemoteSystem(id, "RenderSystem");
-	registerIdToRemoteSystem(id, "TextureHashGridSystem");
-	registerIdToSystem(id, "AnimationSystem");
+	registerIdToRemoteSystem(id, System::RENDER);
+	registerIdToRemoteSystem(id, System::HASHGRID_TEXTURE);
+	registerIdToSystem(id, System::ANIMATION);
 
 	return id;
 }
@@ -337,8 +337,8 @@ ID EntityManager::createFlower(const glm::vec2& position, const char color) {
 
 	nc.name = "flower";
 
-	registerIdToRemoteSystem(id, "RenderSystem");
-	registerIdToRemoteSystem(id, "TextureHashGridSystem");
+	registerIdToRemoteSystem(id, System::RENDER);
+	registerIdToRemoteSystem(id, System::HASHGRID_TEXTURE);
 
 	return id;
 }
@@ -365,30 +365,30 @@ ID EntityManager::createDummySquare(const glm::vec2& position) {
 	nc.name = "testsquare1x1";
 
 	cc[CommandComponent::Event::MOVE_UP] = {
-		new AddIdToSystem(id, "MoveSystem", systemManager),
+		new AddIdToSystem(id, System::MOVE, systemManager),
 	};
 
 	cc[CommandComponent::Event::MOVE_RIGHT] = {
-		new AddIdToSystem(id, "MoveSystem", systemManager),
+		new AddIdToSystem(id, System::MOVE, systemManager),
 	};
 
 	cc[CommandComponent::Event::MOVE_DOWN] = {
-		new AddIdToSystem(id, "MoveSystem", systemManager),
+		new AddIdToSystem(id, System::MOVE, systemManager),
 	};
 
 	cc[CommandComponent::Event::MOVE_LEFT] = {
-		new AddIdToSystem(id, "MoveSystem", systemManager),
+		new AddIdToSystem(id, System::MOVE, systemManager),
 	};
 
 	cc[CommandComponent::Event::ON_MOVE] = {
-		new ActivateIdOnClients(id, "RenderSystem", socket, clients),
-		new ActivateIdOnClients(id, "TextureHashGridSystem", socket, clients),
+		new ActivateIdOnClients(id, System::RENDER, socket, clients),
+		new ActivateIdOnClients(id, System::HASHGRID_TEXTURE, socket, clients),
 	};
 
-	registerIdToSystem(id, "MoveSystem");
-	registerIdToSystem(id, "InputSystem");
-	registerIdToRemoteSystem(id, "RenderSystem");
-	registerIdToRemoteSystem(id, "TextureHashGridSystem");
+	registerIdToSystem(id, System::MOVE);
+	registerIdToSystem(id, System::INPUT);
+	registerIdToRemoteSystem(id, System::RENDER);
+	registerIdToRemoteSystem(id, System::HASHGRID_TEXTURE);
 
 	return id;
 }
@@ -414,10 +414,10 @@ ID EntityManager::createStone(const glm::vec2& position) {
 
 	nc.name = "stone";
 
-	registerIdToSystem(id, "CollisionSystem");
-	registerIdToSystem(id, "SizeHashGridSystem");
-	registerIdToRemoteSystem(id, "RenderSystem");
-	registerIdToRemoteSystem(id, "TextureHashGridSystem");
+	registerIdToSystem(id, System::COLLISION);
+	registerIdToSystem(id, System::HASHGRID_SIZE);
+	registerIdToRemoteSystem(id, System::RENDER);
+	registerIdToRemoteSystem(id, System::HASHGRID_TEXTURE);
 
 	return id;
 }
@@ -433,8 +433,8 @@ void EntityManager::remove(ID id) {
 	for(auto systemIdentifier : entityClientSystemMap.at(id)) {
 		for(auto it : *clients) {
 			constexpr unsigned short port = 47294;
-			const std::pair<ID, std::string> data {id, systemIdentifier};
-			auto packet = Packet<std::pair<ID, std::string>> {
+			const std::pair<ID, System> data {id, systemIdentifier};
+			auto packet = Packet<std::pair<ID, System>> {
 				stringhash("swordbow-magic"),
 				MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM,
 				data,
@@ -452,18 +452,18 @@ void EntityManager::remove(ID id) {
 	idManager->releaseId(id);
 }
 
-void EntityManager::registerIdToSystem(ID id, const string systemIdentifier) {
-	auto system = systemManager->getSystem(systemIdentifier);
-	entityServerSystemMap[id].push_back(system);
-	system->add(id);
+void EntityManager::registerIdToSystem(ID id, System system) {
+	auto systemptr = systemManager->getSystem(system);
+	entityServerSystemMap[id].push_back(systemptr);
+	systemptr->add(id);
 }
 
-void EntityManager::registerIdToRemoteSystem(ID id, const string systemIdentifier) {
-	entityClientSystemMap[id].push_back(systemIdentifier);
+void EntityManager::registerIdToRemoteSystem(ID id, System system) {
+	entityClientSystemMap[id].push_back(system);
 	for(auto it : *clients) {
 		constexpr unsigned short port = 47294;
-		const std::pair<ID, std::string> data {id, systemIdentifier};
-		auto packet = Packet<std::pair<ID, std::string>> {
+		const std::pair<ID, System> data {id, system};
+		auto packet = Packet<std::pair<ID, System>> {
 			stringhash("swordbow-magic"),
 			MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM,
 			data,

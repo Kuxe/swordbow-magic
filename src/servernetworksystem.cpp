@@ -20,8 +20,8 @@ unsigned int ServerNetworkSystem::count() const {
     return 0;
 }
 
-const std::string ServerNetworkSystem::getIdentifier() const {
-    return "ServerNetworkSystem";
+const System ServerNetworkSystem::getIdentifier() const {
+    return System::SERVERNETWORK;
 }
 
 void ServerNetworkSystem::activateId(ID id) {

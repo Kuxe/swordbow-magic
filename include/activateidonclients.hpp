@@ -17,7 +17,7 @@ typedef unsigned int ID;
  **/
 class ActivateIdOnClients : public ICommand {
 private:
-    const string systemIdentifier;
+    const System system;
     const ID id;
     Socket* socket;
     std::unordered_map<unsigned int, ID>* clients;
@@ -25,10 +25,10 @@ private:
 public:
     ActivateIdOnClients(
             ID id,
-            const string& systemIdentifier,
+            System system,
             Socket* socket,
             std::unordered_map<unsigned int, ID>* clients) :
-        systemIdentifier(systemIdentifier),
+        system(system),
         id(id),
         socket(socket),
         clients(clients) { }
@@ -36,8 +36,8 @@ public:
     void execute() {
         for(auto it : *clients) {
             constexpr unsigned short port = 47294;
-            const std::pair<ID, std::string> data {id, systemIdentifier};
-            auto packet = Packet<std::pair<ID, std::string>> {
+            const std::pair<ID, System> data {id, system};
+            auto packet = Packet<std::pair<ID, System>> {
         		stringhash("swordbow-magic"),
         		MESSAGE_TYPE::ACTIVATE_ID,
         		data,

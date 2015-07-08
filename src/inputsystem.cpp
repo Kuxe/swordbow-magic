@@ -40,8 +40,8 @@ void InputSystem::update() {
 unsigned int InputSystem::count() const {
     return ids.size();
 }
-const string InputSystem::getIdentifier() const {
-    return "InputSystem";
+const System InputSystem::getIdentifier() const {
+    return System::INPUT;
 }
 void InputSystem::activateId(ID id) {
     if(ids.find(id) == ids.end()) {

@@ -5,18 +5,18 @@
 
 class AddIdToSystem : public ICommand {
 private:
-    const string systemIdentifier;
+    const System system;
     const ID id;
     SystemManager* const systemManager;
 
 public:
-    AddIdToSystem(ID id, const string& systemIdentifier, SystemManager* const systemManager) :
-        systemIdentifier(systemIdentifier),
+    AddIdToSystem(ID id, System system, SystemManager* const systemManager) :
+        system(system),
         id(id),
         systemManager(systemManager) { }
 
     void execute() {
-        systemManager->getSystem(systemIdentifier)->add(id);
+        systemManager->getSystem(system)->add(id);
     }
 };
 

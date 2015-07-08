@@ -1,10 +1,8 @@
 #ifndef BOUNDINGBOX_H
 #define BOUNDINGBOX_H
 
-#include <string>
 #include "spatialindexer.hpp"
-
-using std::string;
+#include "systemidentifiers.hpp"
 
 class ComponentManager;
 
@@ -18,7 +16,7 @@ public:
         componentManager(componentManager) {}
     virtual const Rect getBoundingBox(ID id) const = 0;
     virtual const Rect getOldBoundingBox(ID id) const = 0;
-    virtual const string getSystemName() const = 0;
+    virtual const System getSystemName() const = 0;
 };
 
 
