@@ -82,7 +82,7 @@ unsigned int MoveSystem::count() const {
 	return ids.size();
 }
 
-const System MoveSystem::getIdentifier() const {
+const System::Identifier MoveSystem::getIdentifier() const {
 	return System::MOVE;
 }
 

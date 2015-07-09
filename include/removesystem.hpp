@@ -24,7 +24,7 @@ public:
     void remove(ID id);
     void update();
     unsigned int count() const;
-    const System getIdentifier() const;
+    const System::Identifier getIdentifier() const;
     void activateId(ID id);
 };
 

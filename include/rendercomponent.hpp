@@ -6,7 +6,7 @@
 //Class containing render-relevant data (such as image identifier)
 class RenderComponent {
  public:
- 	Image image = Image::UNDEFINED;
+ 	Image::Identifier image = Image::UNDEFINED;
  	float xoffset = 0;
  	float yoffset = 0;
 

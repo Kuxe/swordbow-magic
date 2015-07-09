@@ -33,7 +33,7 @@ void SystemManager::update() {
 	}
 }
 
-ISystem* SystemManager::getSystem(System identifier) {
+ISystem* SystemManager::getSystem(System::Identifier identifier) {
 	ISystem* system;
 	try {
 		system = systemByIdentifiers.at(identifier);

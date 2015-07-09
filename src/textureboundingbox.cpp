@@ -36,6 +36,6 @@ const Rect TextureBoundingBox::getOldBoundingBox(ID id) const {
     };
 }
 
-const System TextureBoundingBox::getSystemName() const {
+const System::Identifier TextureBoundingBox::getSystemName() const {
     return System::HASHGRID_TEXTURE;
 }

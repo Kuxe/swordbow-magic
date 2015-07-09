@@ -20,7 +20,7 @@ unsigned int ServerNetworkSystem::count() const {
     return 0;
 }
 
-const System ServerNetworkSystem::getIdentifier() const {
+const System::Identifier ServerNetworkSystem::getIdentifier() const {
     return System::SERVERNETWORK;
 }
 

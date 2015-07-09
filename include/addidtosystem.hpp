@@ -5,12 +5,12 @@
 
 class AddIdToSystem : public ICommand {
 private:
-    const System system;
+    const System::Identifier system;
     const ID id;
     SystemManager* const systemManager;
 
 public:
-    AddIdToSystem(ID id, System system, SystemManager* const systemManager) :
+    AddIdToSystem(ID id, System::Identifier system, SystemManager* const systemManager) :
         system(system),
         id(id),
         systemManager(systemManager) { }

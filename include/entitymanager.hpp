@@ -33,7 +33,7 @@ class EntityManager {
 		if it exits, but that's a slow bruteforce-approach)
 	*/
  	unordered_map<unsigned int, vector<ISystem*> > entityServerSystemMap;
-    unordered_map<unsigned int, vector<System> > entityClientSystemMap;
+    unordered_map<unsigned int, vector<System::Identifier> > entityClientSystemMap;
     unordered_set<unsigned int> ids;
 
 	SystemManager* systemManager;
@@ -68,8 +68,8 @@ class EntityManager {
     ID createStone(const glm::vec2& position);
 	void remove(ID id);
 
-    void registerIdToSystem(ID id, System system);
-    void registerIdToRemoteSystem(ID id, System system);
+    void registerIdToSystem(ID id, System::Identifier system);
+    void registerIdToRemoteSystem(ID id, System::Identifier system);
 };
 
 #endif //ENTITYMANAGER_H

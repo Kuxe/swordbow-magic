@@ -24,7 +24,7 @@ Client::Client(int argc, char** argv) :
     systemManager.add(&cameraSystem);
 
     //Play some sweet music
-	soundEngine.playMusic("./resources/sounds/naturesounds.ogg");
+	soundEngine.playMusic(Music::NATURE_SOUNDS);
 }
 
 Client::~Client() {
@@ -148,26 +148,26 @@ void Client::step() {
             } break;
 
             case MESSAGE_TYPE::PLAY_SOUND: {
-                auto typedPacket = (Packet<SoundComponent::Sound>*)socket.getBuffer();
+                auto typedPacket = (Packet<SoundComponent::SoundData>*)socket.getBuffer();
                 soundEngine.playSound(typedPacket->getData());
             } break;
 
             case MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM: {
-                auto typedPacket = (Packet<std::pair<ID, System>>*)socket.getBuffer();
+                auto typedPacket = (Packet<std::pair<ID, System::Identifier>>*)socket.getBuffer();
                 const auto& id = typedPacket->getData().first;
                 const auto& systemIdentifier = typedPacket->getData().second;
                 systemManager.getSystem(systemIdentifier)->add(id);
             } break;
 
             case MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM: {
-                auto typedPacket = (Packet<std::pair<ID, System>>*)socket.getBuffer();
+                auto typedPacket = (Packet<std::pair<ID, System::Identifier>>*)socket.getBuffer();
                 const auto& id = typedPacket->getData().first;
                 const auto& systemIdentifier = typedPacket->getData().second;
                 systemManager.getSystem(systemIdentifier)->remove(id);
             }
 
             case MESSAGE_TYPE::ACTIVATE_ID: {
-                auto typedPacket = (Packet<std::pair<ID, System>>*)socket.getBuffer();
+                auto typedPacket = (Packet<std::pair<ID, System::Identifier>>*)socket.getBuffer();
                 const auto& id = typedPacket->getData().first;
                 const auto& systemIdentifier = typedPacket->getData().second;
                 systemManager.getSystem(systemIdentifier)->activateId(id);

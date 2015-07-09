@@ -28,6 +28,6 @@ const Rect SizeBoundingBox::getOldBoundingBox(ID id) const {
     };
 }
 
-const System SizeBoundingBox::getSystemName() const {
+const System::Identifier SizeBoundingBox::getSystemName() const {
     return System::HASHGRID_SIZE;
 }

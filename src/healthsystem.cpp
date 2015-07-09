@@ -30,7 +30,7 @@ void HealthSystem::update() {
 unsigned int HealthSystem::count() const {
     return ids.size();
 }
-const System HealthSystem::getIdentifier() const {
+const System::Identifier HealthSystem::getIdentifier() const {
     return System::HEALTH;
 }
 void HealthSystem::activateId(ID id) {

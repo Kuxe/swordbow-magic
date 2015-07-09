@@ -17,7 +17,7 @@ void RenderDiffSystem::update() {
 unsigned int RenderDiffSystem::count() const {
     return ids.size();
 }
-const System RenderDiffSystem::getIdentifier() const {
+const System::Identifier RenderDiffSystem::getIdentifier() const {
     return System::RENDERDIFF;
 }
 void RenderDiffSystem::activateId(ID id) {

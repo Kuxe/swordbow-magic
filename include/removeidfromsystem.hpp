@@ -6,12 +6,12 @@
 
 class RemoveIdFromSystem : public ICommand {
 private:
-    const System system;
+    const System::Identifier system;
     const ID id;
     SystemManager* const systemManager;
 
 public:
-    RemoveIdFromSystem(ID id, System system, SystemManager* const systemManager) :
+    RemoveIdFromSystem(ID id, System::Identifier system, SystemManager* const systemManager) :
         system(system),
         id(id),
         systemManager(systemManager) { }

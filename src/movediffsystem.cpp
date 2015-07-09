@@ -17,7 +17,7 @@ void MoveDiffSystem::update() {
 unsigned int MoveDiffSystem::count() const {
     return ids.size();
 }
-const System MoveDiffSystem::getIdentifier() const {
+const System::Identifier MoveDiffSystem::getIdentifier() const {
     return System::MOVEDIFF;
 }
 void MoveDiffSystem::activateId(ID id) {

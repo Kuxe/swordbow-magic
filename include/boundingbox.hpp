@@ -16,7 +16,7 @@ public:
         componentManager(componentManager) {}
     virtual const Rect getBoundingBox(ID id) const = 0;
     virtual const Rect getOldBoundingBox(ID id) const = 0;
-    virtual const System getSystemName() const = 0;
+    virtual const System::Identifier getSystemName() const = 0;
 };
 
 

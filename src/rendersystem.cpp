@@ -108,7 +108,7 @@ unsigned int RenderSystem::count() const {
 	return ids.size();
 }
 
-const System RenderSystem::getIdentifier() const {
+const System::Identifier RenderSystem::getIdentifier() const {
 	return System::RENDER;
 }
 

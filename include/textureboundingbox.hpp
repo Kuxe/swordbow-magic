@@ -14,7 +14,7 @@ public:
     );
     const Rect getBoundingBox(ID id) const;
     const Rect getOldBoundingBox(ID id) const;
-    const System getSystemName() const;
+    const System::Identifier getSystemName() const;
 };
 
 #endif //TEXTUREDBOUNDINGBOX_H

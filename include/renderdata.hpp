@@ -5,14 +5,14 @@
 
 struct RenderData {
 
-	Image image;
+	Image::Identifier image;
 	SDL_Rect cliprect;
 	SDL_Rect target;
     int zindex_base;
     int zindex;
 
     RenderData(
-        Image image,
+        Image::Identifier image,
         const SDL_Rect& cliprect,
         const SDL_Rect& target,
         const int zindex_base,

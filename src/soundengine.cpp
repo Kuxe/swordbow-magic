@@ -1,6 +1,7 @@
 #include "soundengine.hpp"
 #include <iostream>
 #include <chrono>
+#include <string>
 
 using std::cout;
 using std::endl;
@@ -13,13 +14,15 @@ SoundEngine::SoundEngine() {
         cout << "ERROR: Couldn't initialize SDL_mixer " << Mix_GetError() << ")! I dont know what will happen!" << endl;
     }
 
+    std::pair<Music::Identifier, const char*> musicPairs [] {
+        {Music::NATURE_SOUNDS, "./resources/sounds/naturesounds.ogg"}
+    };
+
     //Load musics and store them in music map
-    for(auto musicPath : {
-            "./resources/sounds/naturesounds.ogg",
-        }) {
-        auto music = Mix_LoadMUS(musicPath);
-        if(!music) cout << "ERROR: Couldn't load music " << musicPath << " (" << Mix_GetError() << ")" << endl;
-        musics.insert({musicPath, music});
+    for(auto pair : musicPairs) {
+        auto music = Mix_LoadMUS(pair.second);
+        if(!music) cout << "ERROR: Couldn't load music " << pair.second << " (" << Mix_GetError() << ")" << endl;
+        musics.insert({pair.first, music});
     }
 
     //Check for pusleaudio audio-driver and warn about it
@@ -29,21 +32,21 @@ SoundEngine::SoundEngine() {
     }
 
     //Load sounds and store them in sound map
-    const string soundPaths[] {
-        "./resources/sounds/walking.wav",
-        "./resources/sounds/hurt.wav",
-        "./resources/sounds/bloodsplatter.wav"
+    const std::pair<Sound::Identifier, const char*> soundPairs[] {
+        {Sound::WALKING, "./resources/sounds/walking.wav"},
+        {Sound::HURT, "./resources/sounds/hurt.wav"},
+        {Sound::BLOODSPLATTER, "./resources/sounds/bloodsplatter.wav"}
     };
     unsigned char channelNumber = 0; //Will overflow if number of channels > 255
 
-    for(auto soundPath : soundPaths) {
-        auto sound = Mix_LoadWAV(soundPath.c_str());
-        if(!sound) cout << "ERROR: Couldn't load sound " << soundPath << " (" << Mix_GetError() << ")" << endl;
-        sounds.insert(make_pair(soundPath, sound));
+    for(auto pair : soundPairs) {
+        auto sound = Mix_LoadWAV(pair.second);
+        if(!sound) cout << "ERROR: Couldn't load sound " << pair.second << " (" << Mix_GetError() << ")" << endl;
+        sounds.insert({pair.first, sound});
         channels.insert({sound, channelNumber++});
     }
 
-    auto soundPathsSize = sizeof(soundPaths) / sizeof(string);
+    auto soundPathsSize = sizeof(soundPairs) / sizeof(std::pair<Sound::Identifier, const char*>);
     Mix_AllocateChannels(soundPathsSize); //One channel per sound
 
 }
@@ -67,16 +70,16 @@ SoundEngine::~SoundEngine() {
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
 }
 
-void SoundEngine::playMusic(const string& musicPath) const {
-    Mix_PlayMusic(musics.at(musicPath), -1);
+void SoundEngine::playMusic(Music::Identifier music) const {
+    Mix_PlayMusic(musics.at(music), -1);
 }
 
-void SoundEngine::playSound(SoundComponent::Sound& scSound) const {
-    auto sound = sounds.at(scSound.path); //Soundfile on soundPath
+void SoundEngine::playSound(SoundComponent::SoundData& scSound) const {
+    auto sound = sounds.at(scSound.sound); //Soundfile on soundPath
     auto channel = channels.at(sound); //Channel that the soundfile is played on
     Mix_PlayChannel(channel, sound, 0);
 }
 
-void SoundEngine::stopSound(SoundComponent::Sound& sound) const {
-    Mix_HaltChannel(channels.at(sounds.at(sound.path)));
+void SoundEngine::stopSound(SoundComponent::SoundData& sound) const {
+    Mix_HaltChannel(channels.at(sounds.at(sound.sound)));
 }

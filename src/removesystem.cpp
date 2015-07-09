@@ -45,7 +45,7 @@ void RemoveSystem::update() {
 unsigned int RemoveSystem::count() const {
     return ids.size();
 }
-const System RemoveSystem::getIdentifier() const {
+const System::Identifier RemoveSystem::getIdentifier() const {
     return System::REMOVE;
 }
 void RemoveSystem::activateId(ID id) {

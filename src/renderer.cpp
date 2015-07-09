@@ -74,7 +74,7 @@ Renderer::Renderer(int argc, char** argv) {
         }
     }
 
-    const vector<std::pair<Image, const char*>> pairs {
+    const vector<std::pair<Image::Identifier, const char*>> pairs {
         {Image::HELLO_WORLD, "./resources/images/HelloWorld.bmp"},
         {Image::PLAYER, "./resources/images/player.bmp"},
         {Image::GRASS, "./resources/images/grass.png"},
@@ -204,7 +204,7 @@ void Renderer::renderTexts() {
     }
 }
 
-const unordered_map<Image, TextureData, std::hash<int>>& Renderer::getTextureDatas() const {
+const unordered_map<Image::Identifier, TextureData, std::hash<int>>& Renderer::getTextureDatas() const {
     return textureDatas;
 }
 

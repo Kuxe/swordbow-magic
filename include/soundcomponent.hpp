@@ -3,8 +3,7 @@
 
 #include <string>
 #include <chrono>
-
-using std::string;
+#include "soundidentifiers.hpp"
 
 //This class should *maybe* be split into different components
 //Not all entities that make sounds can play walk sounds,
@@ -12,16 +11,16 @@ using std::string;
 //walking-sounds. Trees don't need another string for walking.
 //Waste of memory. Sufficient for now.
 struct SoundComponent {
-    struct Sound {
-        string path;
+    struct SoundData {
+        Sound::Identifier sound;
         std::chrono::high_resolution_clock::time_point startTime;
         unsigned int duration = 1000; //in milliseconds
 
-        Sound(const string& path = "PATH TO SOUNDFILE NOT SET!") : path(path) {}
+        SoundData(Sound::Identifier sound = Sound::UNDEFINED) : sound(sound) {}
     };
 
     //Paths to different sounds
-    Sound walk;
+    SoundData walk;
 };
 
 #endif //SOUNDCOMPONENT_H

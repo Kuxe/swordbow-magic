@@ -13,12 +13,12 @@ class Socket;
 /** Used when server should tell all clients to play a sound **/
 class PlaySound : public ICommand {
 private:
-    SoundComponent::Sound sound;
+    SoundComponent::SoundData sound;
     std::unordered_map<unsigned int, ID>* clients;
     Socket* socket;
 public:
     PlaySound(
-        const SoundComponent::Sound& soundPath,
+        SoundComponent::SoundData sound,
         std::unordered_map<unsigned int, ID>* clients,
         Socket* socket
     );

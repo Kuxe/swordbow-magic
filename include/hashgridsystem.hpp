@@ -52,7 +52,7 @@ class HashGridSystem : public SpatialIndexer, public ISystem {
 
 		void update();
 		unsigned int count() const;
-		const System getIdentifier() const;
+		const System::Identifier getIdentifier() const;
 };
 
 

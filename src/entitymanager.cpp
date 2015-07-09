@@ -76,7 +76,7 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 
 	nameComponent.name = "player";
 
-	soundComponent.walk.path = "./resources/sounds/walking.wav";
+	soundComponent.walk.sound = Sound::WALKING;
 	soundComponent.walk.duration = 250;
 
 	animationComponent.idle.north.frames.push_back(Image::PLAYER_V3_BACK);
@@ -139,7 +139,7 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 
 	commandComponent[CommandComponent::Event::ON_DEATH] = {
 		new PlaySound(
-			SoundComponent::Sound {"./resources/sounds/bloodsplatter.wav"},
+			SoundComponent::SoundData {Sound::BLOODSPLATTER},
 			clients,
 			socket
 		),
@@ -310,7 +310,7 @@ ID EntityManager::createFlower(const glm::vec2& position, const char color) {
 	auto& rc = componentManager->createRenderComponent(id);
 	auto& nc = componentManager->createNameComponent(id);
 
-	Image flowercolor = Image::UNDEFINED;
+	Image::Identifier flowercolor = Image::UNDEFINED;
 
 	//Set image corresponding to color
 	switch(color) {
@@ -433,8 +433,8 @@ void EntityManager::remove(ID id) {
 	for(auto systemIdentifier : entityClientSystemMap.at(id)) {
 		for(auto it : *clients) {
 			constexpr unsigned short port = 47294;
-			const std::pair<ID, System> data {id, systemIdentifier};
-			auto packet = Packet<std::pair<ID, System>> {
+			const std::pair<ID, System::Identifier> data {id, systemIdentifier};
+			auto packet = Packet<std::pair<ID, System::Identifier>> {
 				stringhash("swordbow-magic"),
 				MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM,
 				data,
@@ -452,18 +452,18 @@ void EntityManager::remove(ID id) {
 	idManager->releaseId(id);
 }
 
-void EntityManager::registerIdToSystem(ID id, System system) {
+void EntityManager::registerIdToSystem(ID id, System::Identifier system) {
 	auto systemptr = systemManager->getSystem(system);
 	entityServerSystemMap[id].push_back(systemptr);
 	systemptr->add(id);
 }
 
-void EntityManager::registerIdToRemoteSystem(ID id, System system) {
+void EntityManager::registerIdToRemoteSystem(ID id, System::Identifier system) {
 	entityClientSystemMap[id].push_back(system);
 	for(auto it : *clients) {
 		constexpr unsigned short port = 47294;
-		const std::pair<ID, System> data {id, system};
-		auto packet = Packet<std::pair<ID, System>> {
+		const std::pair<ID, System::Identifier> data {id, system};
+		auto packet = Packet<std::pair<ID, System::Identifier>> {
 			stringhash("swordbow-magic"),
 			MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM,
 			data,

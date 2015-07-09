@@ -21,12 +21,12 @@ typedef unsigned int ID;
  **/
 class ActivateId : public ICommand {
 private:
-    const System system;
+    const System::Identifier system;
     const ID id;
     SystemManager* const systemManager;
 
 public:
-    ActivateId(ID id, System system, SystemManager* const systemManager) :
+    ActivateId(ID id, System::Identifier system, SystemManager* const systemManager) :
         system(system),
         id(id),
         systemManager(systemManager) { }

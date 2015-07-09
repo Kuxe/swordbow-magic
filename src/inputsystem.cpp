@@ -40,7 +40,7 @@ void InputSystem::update() {
 unsigned int InputSystem::count() const {
     return ids.size();
 }
-const System InputSystem::getIdentifier() const {
+const System::Identifier InputSystem::getIdentifier() const {
     return System::INPUT;
 }
 void InputSystem::activateId(ID id) {

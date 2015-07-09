@@ -125,8 +125,8 @@ void AnimationSystem::update() {
                 //Tell all clients to activate this id on their rendersystems
                 for(auto it : *clients) {
                     constexpr unsigned short port = 47294;
-                    const std::pair<ID, System> data {id, System::RENDER};
-                    auto packet = Packet<std::pair<ID, System>> {
+                    const std::pair<ID, System::Identifier> data {id, System::RENDER};
+                    auto packet = Packet<std::pair<ID, System::Identifier>> {
                 		stringhash("swordbow-magic"),
                 		MESSAGE_TYPE::ACTIVATE_ID,
                 		data,
@@ -146,7 +146,7 @@ void AnimationSystem::update() {
 unsigned int AnimationSystem::count() const {
     return ids.size();
 }
-const System AnimationSystem::getIdentifier() const {
+const System::Identifier AnimationSystem::getIdentifier() const {
     return System::ANIMATION;
 }
 void AnimationSystem::activateId(ID id) {

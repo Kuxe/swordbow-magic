@@ -109,8 +109,8 @@ void Server::onConnect(unsigned int client, unsigned short port) {
 	clients.insert({client, fatManId});
 
 	//Make the client aware of its ID and register the ID to client camerasytem
-	const std::pair<ID, System> data {fatManId, System::CAMERA};
-	auto cameraPacket = Packet<std::pair<ID, System>> {
+	const std::pair<ID, System::Identifier> data {fatManId, System::CAMERA};
+	auto cameraPacket = Packet<std::pair<ID, System::Identifier>> {
 		stringhash("swordbow-magic"),
 		MESSAGE_TYPE::CONNECT,
 		data,
@@ -123,10 +123,10 @@ void Server::onConnect(unsigned int client, unsigned short port) {
 	//should be in what systems on the client-side
 	for(auto tuple : entityManager.entityClientSystemMap) {
 		auto id = tuple.first;
-		vector<System>& systems = tuple.second;
-		for(System system : systems) {
-			const std::pair<ID, System> data {id, system};
-			auto packet = Packet<std::pair<ID, System>> {
+		vector<System::Identifier>& systems = tuple.second;
+		for(auto system : systems) {
+			const std::pair<ID, System::Identifier> data {id, system};
+			auto packet = Packet<std::pair<ID, System::Identifier>> {
 				stringhash("swordbow-magic"),
 				MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM,
 				data,

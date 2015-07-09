@@ -84,13 +84,12 @@ void AttackSystem::update() {
 
             if(somethingWasHurt) {
                 //Play a default 'hurt'-sound for
-                auto soundPath = "./resources/sounds/hurt.wav";
-                SoundComponent::Sound hurtSound =  {soundPath};
+                SoundComponent::SoundData hurtSound = {Sound::HURT};
 
                 //Broadcast hurtsound to all clients
                 for(auto it : *clients) {
                     constexpr unsigned short port = 47294;
-                    auto packet = Packet<SoundComponent::Sound> {
+                    auto packet = Packet<SoundComponent::SoundData> {
                 		stringhash("swordbow-magic"),
                 		MESSAGE_TYPE::PLAY_SOUND,
                 		hurtSound,
@@ -106,7 +105,7 @@ void AttackSystem::update() {
 unsigned int AttackSystem::count() const {
     return ids.size();
 }
-const System AttackSystem::getIdentifier() const {
+const System::Identifier AttackSystem::getIdentifier() const {
     return System::ATTACK;
 }
 void AttackSystem::activateId(ID id) {

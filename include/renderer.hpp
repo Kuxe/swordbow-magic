@@ -26,14 +26,14 @@ private:
 	SDL_Texture* worldTexture = nullptr;
 	SDL_Texture* fontTexture = nullptr;
 	TTF_Font* font;
-	std::unordered_map<Image, TextureData, std::hash<int>> textureDatas;
+	std::unordered_map<Image::Identifier, TextureData, std::hash<int>> textureDatas;
 
     void renderTexts();
 
 public:
     Renderer(int argc, char** argv);
     ~Renderer();
-    const unordered_map<Image, TextureData, std::hash<int>>& getTextureDatas() const;
+    const unordered_map<Image::Identifier, TextureData, std::hash<int>>& getTextureDatas() const;
     void render(priority_queue<RenderData>& pq, const SDL_Rect& camera);
     void printText(const Text& text);
     static constexpr ushort getScreenWidth() { return SCREEN_WIDTH; }
