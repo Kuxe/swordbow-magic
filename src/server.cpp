@@ -108,6 +108,9 @@ void Server::onConnect(unsigned int client, unsigned short port) {
 	auto fatManId = entityManager.createFatMan({0.0f, 0.0f});
 	clients.insert({client, fatManId});
 
+	//Client should get a copy of all components
+	send(client, port);
+
 	//Make the client aware of its ID and register the ID to client camerasytem
 	const std::pair<ID, System::Identifier> data {fatManId, System::CAMERA};
 	auto cameraPacket = Packet<std::pair<ID, System::Identifier>> {
@@ -135,9 +138,6 @@ void Server::onConnect(unsigned int client, unsigned short port) {
 			socket.send({client, port}, &packet, sizeof(packet));
 		}
 	}
-
-	//Client should get a copy of all components
-	send(client, port);
 }
 
 void Server::onDisconnect(unsigned int client) {
