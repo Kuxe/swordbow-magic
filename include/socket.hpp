@@ -27,7 +27,7 @@
 class Socket {
 private:
     int socket = 0;
-    unsigned char buffer[256];
+    unsigned char buffer[4096];
 
 
 public:
@@ -119,6 +119,7 @@ public:
 
         sockaddr_in from;
         socklen_t fromLength = sizeof(from);
+
         bytesRead = recvfrom(socket, (char*)buffer, sizeof(buffer), 0, (sockaddr*)&from, &fromLength);
 
         if(bytesRead > 0) {
@@ -132,7 +133,7 @@ public:
             );
 
             //Deserialize contents of buffer into (untyped) tmppacket
-            std::string str((char*)&buffer[0], bytesRead);
+            std::string str((char*)buffer, bytesRead);
             std::istringstream iss(str);
             cereal::PortableBinaryInputArchive pbia(iss);
             Packet<char> tmppacket;
@@ -176,9 +177,9 @@ public:
 
     //Return deserialized buffer
     template<class T>
-    T get(int bytesRead) const {
+    T get(int bytesRead) {
         T object;
-        std::string str((char*)&buffer[0], bytesRead);
+        std::string str((char*)buffer, bytesRead);
         std::istringstream iss(str);
         cereal::PortableBinaryInputArchive pbia(iss);
         pbia(object);
