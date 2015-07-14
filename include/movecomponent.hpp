@@ -22,7 +22,7 @@ struct MoveComponent {
 
     template<class Archive>
     void serialize(Archive& ar) {
-        ar(pos.x, pos.y, oldPos.x, oldPos.y, vel.x, vel.y);
+        ar(pos.x, pos.y, oldPos.x, oldPos.y, vel.x, vel.y, dir.x, dir.y, maxVelLength);
     }
 };
 
