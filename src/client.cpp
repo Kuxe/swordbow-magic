@@ -124,6 +124,12 @@ void Client::step() {
     //If any data was received, check its type and take appropiate action
     if(bytesRead > 0) {
         switch(type) {
+            case MESSAGE_TYPE::CONNECT: {
+                //Got my id. Tell camerasystem to follow that id.
+                auto typedPacket = socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
+                const auto& pair = typedPacket.getData();
+                systemManager.getSystem(pair.second)->add(pair.first);
+            };
             case MESSAGE_TYPE::MOVECOMPONENTS: {
                 //All movecomponents were received - handle it
                 auto typedPacket = socket.get<Packet<Components<MoveComponent>>>(bytesRead);
