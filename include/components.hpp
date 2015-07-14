@@ -67,6 +67,11 @@ public:
     constexpr auto size() const {
         return container.size();
     }
+
+    template<class Archive>
+    constexpr void serialize(Archive& ar) {
+        ar(container);
+    }
 };
 
 #endif //COMPONENTS_HPP

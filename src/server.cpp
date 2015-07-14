@@ -75,9 +75,8 @@ void Server::step() {
 
 	//If any data was received, check its type and take appropiate action
     if(bytesRead > 0) {
-        auto packet = (Packet<unsigned char*>*)socket.getBuffer();
 
-        switch(packet->getType()) {
+        switch(type) {
 			case MESSAGE_TYPE::CONNECT: {
 				onConnect(client.getAddress(), client.getPort());
 			} break;
@@ -87,8 +86,8 @@ void Server::step() {
 			} break;
 
 			case MESSAGE_TYPE::INPUTDATA: {
-				const auto typedPacket = (Packet<InputData>*)socket.getBuffer();
-				inputDataToInputComponent(client.getAddress(), typedPacket->getData());
+				auto typedPacket = socket.get<Packet<InputData>>(bytesRead);
+				inputDataToInputComponent(client.getAddress(), typedPacket.getData());
 			}
         }
 	}
@@ -113,14 +112,16 @@ void Server::onConnect(unsigned int client, unsigned short port) {
 
 	//Make the client aware of its ID and register the ID to client camerasytem
 	const std::pair<ID, System::Identifier> data {fatManId, System::CAMERA};
-	auto cameraPacket = Packet<std::pair<ID, System::Identifier>> {
+
+	using Type = Packet<std::pair<ID, System::Identifier>>;
+	auto cameraPacket = Type {
 		stringhash("swordbow-magic"),
 		MESSAGE_TYPE::CONNECT,
 		data,
 		sizeof(data)
 	};
 
-	socket.send({client, port}, &cameraPacket, sizeof(cameraPacket));
+	socket.send<Type>({client, port}, cameraPacket);
 
 	//Whenever a client connects, tell the client what entities
 	//should be in what systems on the client-side
@@ -129,13 +130,15 @@ void Server::onConnect(unsigned int client, unsigned short port) {
 		vector<System::Identifier>& systems = tuple.second;
 		for(auto system : systems) {
 			const std::pair<ID, System::Identifier> data {id, system};
-			auto packet = Packet<std::pair<ID, System::Identifier>> {
+
+			using Type = Packet<std::pair<ID, System::Identifier>>;
+			auto packet = Type {
 				stringhash("swordbow-magic"),
 				MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM,
 				data,
 				sizeof(data)
 			};
-			socket.send({client, port}, &packet, sizeof(packet));
+			socket.send<Type>({client, port}, packet);
 		}
 	}
 }
@@ -146,21 +149,23 @@ void Server::onDisconnect(unsigned int client) {
 }
 
 void Server::send(unsigned int client, unsigned short port) {
-	auto mcpacket = Packet<Components<MoveComponent>> {
+	using mcType = Packet<Components<MoveComponent>>;
+	auto mcpacket = mcType {
 		stringhash("swordbow-magic"),
 		MESSAGE_TYPE::MOVECOMPONENTS,
 		componentManager.moveComponents,
 		sizeof(componentManager.moveComponents)
 	};
-	socket.send({client, port}, &mcpacket, sizeof(mcpacket));
+	socket.send<mcType>({client, port}, mcpacket);
 
-	auto rcpacket = Packet<Components<RenderComponent>> {
+	using rcType = Packet<Components<RenderComponent>>;
+	auto rcpacket = rcType {
 		stringhash("swordbow-magic"),
 		MESSAGE_TYPE::RENDERCOMPONENTS,
 		componentManager.renderComponents,
 		sizeof(componentManager.renderComponents)
 	};
-	socket.send({client, port}, &rcpacket, sizeof(rcpacket));
+	socket.send<rcType>({client, port}, rcpacket);
 }
 
 void Server::send() {
@@ -173,21 +178,23 @@ void Server::send() {
 }
 
 void Server::sendDiff(unsigned int client, unsigned short port) {
-	auto mcpacket = Packet<Components<MoveComponent>> {
+	using mcType = Packet<Components<MoveComponent>>;
+	auto mcpacket = mcType {
 		stringhash("swordbow-magic"),
 		MESSAGE_TYPE::MOVECOMPONENTSDIFF,
 		componentManager.moveComponentsDiff,
 		sizeof(componentManager.moveComponentsDiff)
 	};
-	socket.send({client, port}, &mcpacket, sizeof(mcpacket));
+	socket.send<mcType>({client, port}, mcpacket);
 
-	auto rcpacket = Packet<Components<RenderComponent>> {
+	using rcType = Packet<Components<RenderComponent>>;
+	auto rcpacket = rcType {
 		stringhash("swordbow-magic"),
 		MESSAGE_TYPE::RENDERCOMPONENTSDIFF,
 		componentManager.renderComponentsDiff,
 		sizeof(componentManager.renderComponentsDiff)
 	};
-	socket.send({client, port}, &rcpacket, sizeof(rcpacket));
+	socket.send<rcType>({client, port}, rcpacket);
 }
 
 void Server::sendDiff() {

@@ -36,26 +36,28 @@ void Client::connect(const IpAddress& server) {
     this->server = server;
 
     //Connect-request packet
-    const Packet<bool> packet {
+    using Type = Packet<bool>;
+    const Type packet {
         stringhash("swordbow-magic"),
         MESSAGE_TYPE::CONNECT,
         true,
         sizeof(sizeof(bool))
     };
 
-    socket.send(server, &packet, sizeof(packet));
+    socket.send<Type>(server, packet);
 }
 
 void Client::disconnect() {
     //Disconnect-request packet
-    const Packet<bool> packet {
+    using Type = Packet<bool>;
+    const Type packet {
         stringhash("swordbow-magic"),
         MESSAGE_TYPE::DISCONNECT,
         true,
         sizeof(sizeof(bool))
     };
 
-    socket.send(server, &packet, sizeof(packet));
+    socket.send<Type>(server, packet);
 
     server = IpAddress(0, 0, 0, 0, 0); //Indicate not connected to any server
 }
@@ -99,7 +101,9 @@ void Client::step() {
 
         //Assemble the InputData that should be sent into a packet
         const InputData inputData{presses, releases};
-        const Packet<InputData> packet {
+
+        using Type = Packet<InputData>;
+        const Type packet {
             stringhash("swordbow-magic"),
             MESSAGE_TYPE::INPUTDATA,
             inputData,
@@ -108,7 +112,7 @@ void Client::step() {
 
         //Send that packet to 127.0.0.1:47293
         constexpr unsigned short SERVER_PORT = 47293;
-        socket.send({127, 0, 0, 1, SERVER_PORT}, &packet, sizeof(packet));
+        socket.send<Type>({127, 0, 0, 1, SERVER_PORT}, packet);
     }
 
     //Receive data from server...
@@ -119,57 +123,54 @@ void Client::step() {
 
     //If any data was received, check its type and take appropiate action
     if(bytesRead > 0) {
-        auto packet = (Packet<unsigned char*>*)socket.getBuffer();
-
-        switch(packet->getType()) {
-
+        switch(type) {
             case MESSAGE_TYPE::MOVECOMPONENTS: {
                 //All movecomponents were received - handle it
-                auto typedPacket = (Packet<Components<MoveComponent>>*)socket.getBuffer();
-                componentManager.moveComponents.sync(typedPacket->getData());
+                auto typedPacket = socket.get<Packet<Components<MoveComponent>>>(bytesRead);
+                componentManager.moveComponents.sync(typedPacket.getData());
             } break;
 
             case MESSAGE_TYPE::RENDERCOMPONENTS: {
                 //All rendercomponents were received - handle it
-                auto typedPacket = (Packet<Components<RenderComponent>>*)socket.getBuffer();
-                componentManager.renderComponents.sync(typedPacket->getData());
+                auto typedPacket = socket.get<Packet<Components<RenderComponent>>>(bytesRead);
+                componentManager.renderComponents.sync(typedPacket.getData());
             } break;
 
             case MESSAGE_TYPE::MOVECOMPONENTSDIFF: {
                 //Diff movecomponents were received - handle it
-                auto typedPacket = (Packet<Components<MoveComponent>>*)socket.getBuffer();
-                componentManager.moveComponents.sync(typedPacket->getData());
+                auto typedPacket = socket.get<Packet<Components<MoveComponent>>>(bytesRead);
+                componentManager.moveComponents.sync(typedPacket.getData());
             } break;
 
             case MESSAGE_TYPE::RENDERCOMPONENTSDIFF: {
                 //Diff rendercomponents were received - handle it
-                auto typedPacket = (Packet<Components<RenderComponent>>*)socket.getBuffer();
-                componentManager.renderComponents.sync(typedPacket->getData());
+                auto typedPacket = socket.get<Packet<Components<RenderComponent>>>(bytesRead);
+                componentManager.renderComponents.sync(typedPacket.getData());
             } break;
 
             case MESSAGE_TYPE::PLAY_SOUND: {
-                auto typedPacket = (Packet<SoundComponent::SoundData>*)socket.getBuffer();
-                soundEngine.playSound(typedPacket->getData());
+                auto typedPacket = socket.get<Packet<SoundComponent::SoundData>>(bytesRead);
+                soundEngine.playSound(typedPacket.getData());
             } break;
 
             case MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM: {
-                auto typedPacket = (Packet<std::pair<ID, System::Identifier>>*)socket.getBuffer();
-                const auto& id = typedPacket->getData().first;
-                const auto& systemIdentifier = typedPacket->getData().second;
+                auto typedPacket = socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
+                const auto& id = typedPacket.getData().first;
+                const auto& systemIdentifier = typedPacket.getData().second;
                 systemManager.getSystem(systemIdentifier)->add(id);
             } break;
 
             case MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM: {
-                auto typedPacket = (Packet<std::pair<ID, System::Identifier>>*)socket.getBuffer();
-                const auto& id = typedPacket->getData().first;
-                const auto& systemIdentifier = typedPacket->getData().second;
+                auto typedPacket = socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
+                const auto& id = typedPacket.getData().first;
+                const auto& systemIdentifier = typedPacket.getData().second;
                 systemManager.getSystem(systemIdentifier)->remove(id);
             }
 
             case MESSAGE_TYPE::ACTIVATE_ID: {
-                auto typedPacket = (Packet<std::pair<ID, System::Identifier>>*)socket.getBuffer();
-                const auto& id = typedPacket->getData().first;
-                const auto& systemIdentifier = typedPacket->getData().second;
+                auto typedPacket = socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
+                const auto& id = typedPacket.getData().first;
+                const auto& systemIdentifier = typedPacket.getData().second;
                 systemManager.getSystem(systemIdentifier)->activateId(id);
             }
         }

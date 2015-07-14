@@ -89,13 +89,15 @@ void AttackSystem::update() {
                 //Broadcast hurtsound to all clients
                 for(auto it : *clients) {
                     constexpr unsigned short port = 47294;
-                    auto packet = Packet<SoundComponent::SoundData> {
+
+                    using Type = Packet<SoundComponent::SoundData>;
+                    auto packet = Type {
                 		stringhash("swordbow-magic"),
                 		MESSAGE_TYPE::PLAY_SOUND,
                 		hurtSound,
                 		sizeof(hurtSound)
                 	};
-                	socket->send({it.first, port}, &packet, sizeof(packet));
+                	socket->send<Type>({it.first, port}, packet);
                 }
             }
         }

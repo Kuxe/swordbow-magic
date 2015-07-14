@@ -21,13 +21,14 @@ void PlaySound::execute() {
         if(elapsed > sound.duration) {
             sound.startTime = std::chrono::high_resolution_clock::now();
             constexpr unsigned short port = 47294;
-            auto packet = Packet<SoundComponent::SoundData> {
+            using Type = Packet<SoundComponent::SoundData>;
+            auto packet = Type {
                 stringhash("swordbow-magic"),
                 MESSAGE_TYPE::PLAY_SOUND,
                 sound,
                 sizeof(sound)
             };
-            socket->send({it.first, port}, &packet, sizeof(packet));
+            socket->send<Type>({it.first, port}, packet);
         }
     }
 }

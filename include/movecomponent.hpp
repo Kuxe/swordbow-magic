@@ -19,6 +19,12 @@ struct MoveComponent {
 		const glm::vec2& = {0, 0},
 		const glm::vec2& = {0, 0},
 		const float maxVelLength = 100.0f);
+
+    template<class Archive>
+    void serialize(Archive& ar) {
+        //FIXME: Figure out how to serialize glm types
+        //ar(pos, oldPos, vel);
+    }
 };
 
 #endif //MOVECOMPONENT_H

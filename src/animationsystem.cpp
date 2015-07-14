@@ -126,13 +126,15 @@ void AnimationSystem::update() {
                 for(auto it : *clients) {
                     constexpr unsigned short port = 47294;
                     const std::pair<ID, System::Identifier> data {id, System::RENDER};
-                    auto packet = Packet<std::pair<ID, System::Identifier>> {
+
+                    using Type = Packet<std::pair<ID, System::Identifier>>;
+                    auto packet = Type {
                 		stringhash("swordbow-magic"),
                 		MESSAGE_TYPE::ACTIVATE_ID,
                 		data,
                 		sizeof(data)
                 	};
-                	socket->send({it.first, port}, &packet, sizeof(packet));
+                	socket->send<Type>({it.first, port}, packet);
                 }
 
                 //Since the rendercomponent changed, add this id to

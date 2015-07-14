@@ -17,6 +17,11 @@ struct SoundComponent {
         unsigned int duration = 1000; //in milliseconds
 
         SoundData(Sound::Identifier sound = Sound::UNDEFINED) : sound(sound) {}
+
+        template<class Archive>
+        void serialize(Archive& ar) {
+            ar(sound, startTime, duration);
+        }
     };
 
     //Paths to different sounds

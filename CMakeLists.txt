@@ -50,7 +50,6 @@ add_library(game SHARED
     src/rendersystem.cpp
     src/servernetworksystem.cpp
     src/sizeboundingbox.cpp
-    src/socket.cpp
     src/soundengine.cpp
     src/systemmanager.cpp
     src/text.cpp

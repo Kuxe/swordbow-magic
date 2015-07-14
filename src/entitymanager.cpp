@@ -434,13 +434,15 @@ void EntityManager::remove(ID id) {
 		for(auto it : *clients) {
 			constexpr unsigned short port = 47294;
 			const std::pair<ID, System::Identifier> data {id, systemIdentifier};
-			auto packet = Packet<std::pair<ID, System::Identifier>> {
+
+			using Type = Packet<std::pair<ID, System::Identifier>>;
+			auto packet = Type {
 				stringhash("swordbow-magic"),
 				MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM,
 				data,
 				sizeof(data)
 			};
-			socket->send({it.first, port}, &packet, sizeof(packet));
+			socket->send<Type>({it.first, port}, packet);
 		}
 	}
 	entityClientSystemMap.erase(id);
@@ -463,13 +465,15 @@ void EntityManager::registerIdToRemoteSystem(ID id, System::Identifier system) {
 	for(auto it : *clients) {
 		constexpr unsigned short port = 47294;
 		const std::pair<ID, System::Identifier> data {id, system};
+
+		using Type = Packet<std::pair<ID, System::Identifier>>;
 		auto packet = Packet<std::pair<ID, System::Identifier>> {
 			stringhash("swordbow-magic"),
 			MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM,
 			data,
 			sizeof(data)
 		};
-		socket->send({it.first, port}, &packet, sizeof(packet));
+		socket->send<Type>({it.first, port}, packet);
 	}
 }
 

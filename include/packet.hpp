@@ -2,6 +2,7 @@
 #define PACKET_HPP
 
 #include <functional>
+#include <string>
 #include <type_traits>
 
 constexpr int stringhash(const char* str, int h = 0) {
@@ -28,22 +29,19 @@ private:
     //typecasted to the correct type
     Data data;
 public:
-
-    constexpr Packet(
-        const unsigned int protocol,
-        unsigned char type,
-        const Data& data,
-        const unsigned int datasize) :
-        protocol(protocol),
-        sequence(nextSequenceNum++),
-        data(data),
-        datasize(datasize),
-        type(type) {
+    constexpr Packet() {}
+    constexpr Packet(const unsigned int protocol, unsigned char type, const Data& data, unsigned int datasize) :
+        protocol(protocol), sequence(nextSequenceNum++), type(type), data(data), datasize(datasize) {
             static_assert(
                 !std::is_pointer<Data>::value,
                 "Sending pointers over network can't work. Try to copy the data pointed to by the pointer instead"
             );
         }
+
+    template<class Archive>
+    void serialize(Archive& ar) {
+        ar(protocol, sequence, datasize, type, data);
+    }
 
     constexpr unsigned int getProtocol() const { return protocol; }
     constexpr unsigned char getSequence() const { return sequence; }

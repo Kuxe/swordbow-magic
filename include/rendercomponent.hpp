@@ -19,6 +19,11 @@ class RenderComponent {
 	//(typically) constant value. Used to force something
 	//to be rendered before or after whatever is governed by zindex
 	float zindex_base = 0;
+
+    template<class Archive>
+    void serialize(Archive& ar) {
+        ar(image, xoffset, yoffset, zindex, zindex_base);
+    }
 };
 
 #endif //RENDERCOMPONENT_H
