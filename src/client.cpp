@@ -129,7 +129,7 @@ void Client::step() {
                 auto typedPacket = socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
                 const auto& pair = typedPacket.getData();
                 systemManager.getSystem(pair.second)->add(pair.first);
-            };
+            } break;
             case MESSAGE_TYPE::MOVECOMPONENTS: {
                 //All movecomponents were received - handle it
                 auto typedPacket = socket.get<Packet<Components<MoveComponent>>>(bytesRead);
