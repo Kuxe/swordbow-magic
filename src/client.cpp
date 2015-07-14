@@ -77,22 +77,25 @@ void Client::step() {
 
     //Fetch all events that ocurred...
     while(SDL_PollEvent(&event) != 0) {
-        //And take appropiate action!
-        switch(event.type) {
-            case SDL_QUIT: {
-                running = false;
-                break;
+        //Dont consider keyrepeat as keypress
+        if(event.key.repeat == 0) {
+            //And take appropiate action!
+            switch(event.type) {
+                case SDL_QUIT: {
+                    running = false;
+                    break;
+                }
+                //If this event was a keydown...
+                case SDL_KEYDOWN: {
+                    presses.push(event.key.keysym.sym);
+                } break;
+
+                //If user released a key
+                case SDL_KEYUP: {
+                    releases.push(event.key.keysym.sym);
+
+                } break;
             }
-            //If this event was a keydown...
-            case SDL_KEYDOWN: {
-                presses.push(event.key.keysym.sym);
-            } break;
-
-            //If user released a key
-            case SDL_KEYUP: {
-                releases.push(event.key.keysym.sym);
-
-            } break;
         }
     }
 
