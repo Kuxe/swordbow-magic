@@ -21,13 +21,7 @@ struct MoveComponent {
 		const float maxVelLength = 100.0f);
 
     template<class Archive>
-    void save(Archive& ar) const {
-        //FIXME: Figure out how to serialize glm types
-        ar(pos.x, pos.y, oldPos.x, oldPos.y, vel.x, vel.y);
-    }
-
-    template<class Archive>
-    void load(Archive& ar) {
+    void serialize(Archive& ar) {
         ar(pos.x, pos.y, oldPos.x, oldPos.y, vel.x, vel.y);
     }
 };
