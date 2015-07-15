@@ -1,8 +1,14 @@
 #ifndef IPADDRESS_HPP
 #define IPADDRESS_HPP
 
+#include <boost/functional/hash.hpp>
+
+//Forward declare
+struct IpAddressHash;
+
 class IpAddress {
 private:
+    friend std::hash<IpAddress>;
     unsigned int address = 0;
     unsigned short port = 0;
 
@@ -42,5 +48,18 @@ public:
         return !(*this == other);
     }
 };
+
+//Hash method for using IpAddress as key in unordered_map
+namespace std {
+    template<>
+    struct hash<IpAddress> {
+        std::size_t operator()(const IpAddress& ipa) const {
+            std::size_t s = 0;
+            boost::hash_combine(s, ipa.address);
+            boost::hash_combine(s, ipa.port);
+            return s;
+        }
+    };
+}
 
 #endif //IPADDRESS_HPP

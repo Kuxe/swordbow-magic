@@ -27,7 +27,7 @@ EntityManager::EntityManager(
 	SystemManager* systemManager,
 	ComponentManager* componentManager,
 	IdManager* idManager,
-	std::unordered_map<unsigned int, ID>* clients,
+	std::unordered_map<IpAddress, ID>* clients,
 	Socket* socket) :
 	systemManager(systemManager),
 	componentManager(componentManager),
@@ -432,7 +432,6 @@ void EntityManager::remove(ID id) {
 	//2. Remove from clients systemManagers
 	for(auto systemIdentifier : entityClientSystemMap.at(id)) {
 		for(auto it : *clients) {
-			constexpr unsigned short port = 47294;
 			const std::pair<ID, System::Identifier> data {id, systemIdentifier};
 
 			using Type = Packet<std::pair<ID, System::Identifier>>;
@@ -442,7 +441,7 @@ void EntityManager::remove(ID id) {
 				data,
 				sizeof(data)
 			};
-			socket->send<Type>({it.first, port}, packet);
+			socket->send<Type>(it.first, packet);
 		}
 	}
 	entityClientSystemMap.erase(id);
@@ -463,7 +462,6 @@ void EntityManager::registerIdToSystem(ID id, System::Identifier system) {
 void EntityManager::registerIdToRemoteSystem(ID id, System::Identifier system) {
 	entityClientSystemMap[id].push_back(system);
 	for(auto it : *clients) {
-		constexpr unsigned short port = 47294;
 		const std::pair<ID, System::Identifier> data {id, system};
 
 		using Type = Packet<std::pair<ID, System::Identifier>>;
@@ -473,7 +471,7 @@ void EntityManager::registerIdToRemoteSystem(ID id, System::Identifier system) {
 			data,
 			sizeof(data)
 		};
-		socket->send<Type>({it.first, port}, packet);
+		socket->send<Type>(it.first, packet);
 	}
 }
 

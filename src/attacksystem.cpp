@@ -14,7 +14,7 @@ using namespace std;
 
 AttackSystem::AttackSystem(
     HashGridSystem* hashgrid,
-    unordered_map<unsigned int, ID>* clients,
+    unordered_map<IpAddress, ID>* clients,
     Socket* socket) :
     hashgrid(hashgrid),
     clients(clients),
@@ -88,8 +88,6 @@ void AttackSystem::update() {
 
                 //Broadcast hurtsound to all clients
                 for(auto it : *clients) {
-                    constexpr unsigned short port = 47294;
-
                     using Type = Packet<SoundComponent::SoundData>;
                     auto packet = Type {
                 		stringhash("swordbow-magic"),
@@ -97,7 +95,7 @@ void AttackSystem::update() {
                 		hurtSound,
                 		sizeof(hurtSound)
                 	};
-                	socket->send<Type>({it.first, port}, packet);
+                	socket->send<Type>(it.first, packet);
                 }
             }
         }

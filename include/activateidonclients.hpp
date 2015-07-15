@@ -20,14 +20,14 @@ private:
     const System::Identifier system;
     const ID id;
     Socket* socket;
-    std::unordered_map<unsigned int, ID>* clients;
+    std::unordered_map<IpAddress, ID>* clients;
 
 public:
     ActivateIdOnClients(
             ID id,
             System::Identifier system,
             Socket* socket,
-            std::unordered_map<unsigned int, ID>* clients) :
+            std::unordered_map<IpAddress, ID>* clients) :
         system(system),
         id(id),
         socket(socket),
@@ -35,7 +35,6 @@ public:
 
     void execute() {
         for(auto it : *clients) {
-            constexpr unsigned short port = 47294;
             const std::pair<ID, System::Identifier> data {id, system};
 
             using Type = Packet<std::tuple<ID, System::Identifier>>;
@@ -45,7 +44,7 @@ public:
         		data,
         		sizeof(data)
         	};
-        	socket->send<Type>({it.first, port}, packet);
+        	socket->send<Type>(it.first, packet);
         }
     }
 };

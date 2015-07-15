@@ -11,7 +11,7 @@ using std::cout;
 using std::endl;
 
 AnimationSystem::AnimationSystem(
-    unordered_map<unsigned int, ID>* clients,
+    unordered_map<IpAddress, ID>* clients,
     Socket* socket) :
     clients(clients),
     socket(socket) { }
@@ -124,7 +124,6 @@ void AnimationSystem::update() {
 
                 //Tell all clients to activate this id on their rendersystems
                 for(auto it : *clients) {
-                    constexpr unsigned short port = 47294;
                     const std::pair<ID, System::Identifier> data {id, System::RENDER};
 
                     using Type = Packet<std::pair<ID, System::Identifier>>;
@@ -134,7 +133,7 @@ void AnimationSystem::update() {
                 		data,
                 		sizeof(data)
                 	};
-                	socket->send<Type>({it.first, port}, packet);
+                	socket->send<Type>(it.first, packet);
                 }
 
                 //Since the rendercomponent changed, add this id to

@@ -4,6 +4,7 @@
 #include "icommand.hpp"
 #include "soundcomponent.hpp"
 #include <unordered_map>
+#include "ipaddress.hpp"
 
 typedef unsigned int ID;
 
@@ -14,12 +15,12 @@ class Socket;
 class PlaySound : public ICommand {
 private:
     SoundComponent::SoundData sound;
-    std::unordered_map<unsigned int, ID>* clients;
+    std::unordered_map<IpAddress, ID>* clients;
     Socket* socket;
 public:
     PlaySound(
         SoundComponent::SoundData sound,
-        std::unordered_map<unsigned int, ID>* clients,
+        std::unordered_map<IpAddress, ID>* clients,
         Socket* socket
     );
     void execute();

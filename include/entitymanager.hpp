@@ -7,6 +7,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include "systemidentifiers.hpp"
+#include "ipaddress.hpp"
 
 using namespace std;
 
@@ -43,7 +44,7 @@ class EntityManager {
     //If entitymanager creates anything, it need to inform all clients connected
     //to the parent server that a new entity was created and it belongs to
     //"these" systems (eg RenderSystem and TextureHashGridSystem)
-    std::unordered_map<unsigned int, ID>* clients;
+    std::unordered_map<IpAddress, ID>* clients;
 
     //Required during creation for some commands
     Socket* socket;
@@ -52,7 +53,7 @@ class EntityManager {
         SystemManager* systemManager,
         ComponentManager* componentManager,
         IdManager* idManager,
-        std::unordered_map<unsigned int, ID>* clients,
+        std::unordered_map<IpAddress, ID>* clients,
         Socket* socket
     );
     const unsigned int& getId();

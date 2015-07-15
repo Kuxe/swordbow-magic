@@ -78,16 +78,16 @@ void Server::step() {
 
         switch(type) {
 			case MESSAGE_TYPE::CONNECT: {
-				onConnect(client.getAddress(), client.getPort());
+				onConnect(client);
 			} break;
 
 			case MESSAGE_TYPE::DISCONNECT: {
-				onDisconnect(client.getAddress());
+				onDisconnect(client);
 			} break;
 
 			case MESSAGE_TYPE::INPUTDATA: {
 				auto typedPacket = socket.get<Packet<InputData>>(bytesRead);
-				inputDataToInputComponent(client.getAddress(), typedPacket.getData());
+				inputDataToInputComponent(client, typedPacket.getData());
 			}
         }
 	}
@@ -103,12 +103,12 @@ void Server::step() {
 	deltaTime.stop();
 }
 
-void Server::onConnect(unsigned int client, unsigned short port) {
+void Server::onConnect(const IpAddress& ipAddress) {
 	auto fatManId = entityManager.createFatMan({0.0f, 0.0f});
-	clients.insert({client, fatManId});
+	clients.insert({ipAddress, fatManId});
 
 	//Client should get a copy of all components
-	send(client, port);
+	send(ipAddress);
 
 	//Make the client aware of its ID and register the ID to client camerasytem
 	const std::pair<ID, System::Identifier> data {fatManId, System::CAMERA};
@@ -121,7 +121,7 @@ void Server::onConnect(unsigned int client, unsigned short port) {
 		sizeof(data)
 	};
 
-	socket.send<Type>({client, port}, cameraPacket);
+	socket.send<Type>(ipAddress, cameraPacket);
 
 	//Whenever a client connects, tell the client what entities
 	//should be in what systems on the client-side
@@ -138,17 +138,17 @@ void Server::onConnect(unsigned int client, unsigned short port) {
 				data,
 				sizeof(data)
 			};
-			socket.send<Type>({client, port}, packet);
+			socket.send<Type>(ipAddress, packet);
 		}
 	}
 }
 
-void Server::onDisconnect(unsigned int client) {
-	entityManager.remove(clients.at(client));
-	clients.erase(client);
+void Server::onDisconnect(const IpAddress& ipAddress) {
+	entityManager.remove(clients.at(ipAddress));
+	clients.erase(ipAddress);
 }
 
-void Server::send(unsigned int client, unsigned short port) {
+void Server::send(const IpAddress& ipAddress) {
 	using mcType = Packet<Components<MoveComponent>>;
 	auto mcpacket = mcType {
 		stringhash("swordbow-magic"),
@@ -156,7 +156,7 @@ void Server::send(unsigned int client, unsigned short port) {
 		componentManager.moveComponents,
 		sizeof(componentManager.moveComponents)
 	};
-	socket.send<mcType>({client, port}, mcpacket);
+	socket.send<mcType>(ipAddress, mcpacket);
 
 	using rcType = Packet<Components<RenderComponent>>;
 	auto rcpacket = rcType {
@@ -165,19 +165,16 @@ void Server::send(unsigned int client, unsigned short port) {
 		componentManager.renderComponents,
 		sizeof(componentManager.renderComponents)
 	};
-	socket.send<rcType>({client, port}, rcpacket);
+	socket.send<rcType>(ipAddress, rcpacket);
 }
 
 void Server::send() {
-	//TODO: if clients were to hold IpAddress instead of unsigned int (address)
-	//clients could have other ports than 47294
-	constexpr unsigned short clientPort = 47294;
 	for(auto it : clients) {
-		send(it.first, clientPort);
+		send(it.first);
 	}
 }
 
-void Server::sendDiff(unsigned int client, unsigned short port) {
+void Server::sendDiff(const IpAddress& ipAddress) {
 	using mcType = Packet<Components<MoveComponent>>;
 	auto mcpacket = mcType {
 		stringhash("swordbow-magic"),
@@ -185,7 +182,7 @@ void Server::sendDiff(unsigned int client, unsigned short port) {
 		componentManager.moveComponentsDiff,
 		sizeof(componentManager.moveComponentsDiff)
 	};
-	socket.send<mcType>({client, port}, mcpacket);
+	socket.send<mcType>(ipAddress, mcpacket);
 
 	using rcType = Packet<Components<RenderComponent>>;
 	auto rcpacket = rcType {
@@ -194,21 +191,18 @@ void Server::sendDiff(unsigned int client, unsigned short port) {
 		componentManager.renderComponentsDiff,
 		sizeof(componentManager.renderComponentsDiff)
 	};
-	socket.send<rcType>({client, port}, rcpacket);
+	socket.send<rcType>(ipAddress, rcpacket);
 }
 
 void Server::sendDiff() {
-	//TODO: if clients were to hold IpAddress instead of unsigned int (address)
-	//clients could have other ports than 47294
-	constexpr unsigned short clientPort = 47294;
 	for(auto it : clients) {
-		sendDiff(it.first, clientPort);
+		sendDiff(it.first);
 	}
 }
 
-void Server::inputDataToInputComponent(unsigned int client, InputData& data) {
+void Server::inputDataToInputComponent(const IpAddress& ipAddress, InputData& data) {
 	//Get id of client
-	auto id = clients.at(client);
+	auto id = clients.at(ipAddress);
 	auto& ic = componentManager.inputComponents.at(id);
 
 	ic.presses = data.presses;

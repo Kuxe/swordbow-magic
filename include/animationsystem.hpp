@@ -5,18 +5,19 @@
 #include "isystem.hpp"
 #include "animationcomponent.hpp"
 #include <unordered_map>
+#include "ipaddress.hpp"
 
 class Client;
 class Socket;
 class AnimationSystem : public ISystem {
 private:
     std::unordered_set<ID> ids;
-    std::unordered_map<unsigned int, ID>* clients;
+    std::unordered_map<IpAddress, ID>* clients;
     Socket* socket;
 
 public:
 
-    AnimationSystem(std::unordered_map<unsigned int, ID>* clients, Socket* socket);
+    AnimationSystem(std::unordered_map<IpAddress, ID>* clients, Socket* socket);
 
     enum Animation {
         bloodsplatter,

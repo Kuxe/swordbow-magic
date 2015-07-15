@@ -6,7 +6,7 @@
 
 PlaySound::PlaySound(
     SoundComponent::SoundData sound,
-    unordered_map<unsigned int, ID>* clients,
+    unordered_map<IpAddress, ID>* clients,
     Socket* socket
     ) :
     sound(sound),
@@ -20,7 +20,6 @@ void PlaySound::execute() {
         const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - sound.startTime).count();
         if(elapsed > sound.duration) {
             sound.startTime = std::chrono::high_resolution_clock::now();
-            constexpr unsigned short port = 47294;
             using Type = Packet<SoundComponent::SoundData>;
             auto packet = Type {
                 stringhash("swordbow-magic"),
@@ -28,7 +27,7 @@ void PlaySound::execute() {
                 sound,
                 sizeof(sound)
             };
-            socket->send<Type>({it.first, port}, packet);
+            socket->send<Type>(it.first, packet);
         }
     }
 }
