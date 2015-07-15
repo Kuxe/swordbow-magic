@@ -166,7 +166,7 @@ public:
                     //TODO: Implement congestion avoidance
 
                 } else {
-                    std::cout << "Got old outdated packet, discarding it" << std::endl;
+                    type = 0; //0 for outdated
                 }
             } else {
                 std::cout << "got packet with illegal protocol " << protocol;

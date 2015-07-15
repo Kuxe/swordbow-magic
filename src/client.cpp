@@ -127,6 +127,10 @@ void Client::step() {
     //If any data was received, check its type and take appropiate action
     if(bytesRead > 0) {
         switch(type) {
+            case MESSAGE_TYPE::OUTDATED: {
+                std::cout << "This packet is outdated, to late! Sluggish!" << endl;
+            } break;
+
             case MESSAGE_TYPE::CONNECT: {
                 //Got my id. Tell camerasystem to follow that id.
                 auto typedPacket = socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
@@ -174,14 +178,21 @@ void Client::step() {
                 const auto& id = typedPacket.getData().first;
                 const auto& systemIdentifier = typedPacket.getData().second;
                 systemManager.getSystem(systemIdentifier)->remove(id);
-            }
+            } break;
 
             case MESSAGE_TYPE::ACTIVATE_ID: {
                 auto typedPacket = socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
                 const auto& id = typedPacket.getData().first;
                 const auto& systemIdentifier = typedPacket.getData().second;
                 systemManager.getSystem(systemIdentifier)->activateId(id);
-            }
+            } break;
+
+            default: {
+                std::cout << "WARNING: Message without proper type received. This is probably a bug." << std::endl;
+                std::cout << "Either client-side handling for that message isn't implemented";
+                std::cout << " or server sent a message with a bogus messagetype";
+                std::cout << " or the messagetype was wrongly altered somewhere" << std::endl;
+            };
         }
     }
 
