@@ -68,6 +68,10 @@ public:
         return container.size();
     }
 
+    constexpr auto empty() const {
+        return container.empty();
+    }
+
     template<class Archive>
     constexpr void serialize(Archive& ar) {
         ar(container);

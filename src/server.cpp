@@ -175,23 +175,31 @@ void Server::send() {
 }
 
 void Server::sendDiff(const IpAddress& ipAddress) {
-	using mcType = Packet<Components<MoveComponent>>;
-	auto mcpacket = mcType {
-		stringhash("swordbow-magic"),
-		MESSAGE_TYPE::MOVECOMPONENTSDIFF,
-		componentManager.moveComponentsDiff,
-		sizeof(componentManager.moveComponentsDiff)
-	};
-	socket.send<mcType>(ipAddress, mcpacket);
 
-	using rcType = Packet<Components<RenderComponent>>;
-	auto rcpacket = rcType {
-		stringhash("swordbow-magic"),
-		MESSAGE_TYPE::RENDERCOMPONENTSDIFF,
-		componentManager.renderComponentsDiff,
-		sizeof(componentManager.renderComponentsDiff)
-	};
-	socket.send<rcType>(ipAddress, rcpacket);
+	//Only send movecomponentsdiff if there actually was a difference
+	//If not for this if-check, then the server would DDOS clients with
+	//emtpy MOVECOMPONENTSDIFF-packets...
+	if(!componentManager.moveComponentsDiff.empty()) {
+		using mcType = Packet<Components<MoveComponent>>;
+		auto mcpacket = mcType {
+			stringhash("swordbow-magic"),
+			MESSAGE_TYPE::MOVECOMPONENTSDIFF,
+			componentManager.moveComponentsDiff,
+			sizeof(componentManager.moveComponentsDiff)
+		};
+		socket.send<mcType>(ipAddress, mcpacket);
+	}
+
+	if(!componentManager.renderComponentsDiff.empty()) {
+		using rcType = Packet<Components<RenderComponent>>;
+		auto rcpacket = rcType {
+			stringhash("swordbow-magic"),
+			MESSAGE_TYPE::RENDERCOMPONENTSDIFF,
+			componentManager.renderComponentsDiff,
+			sizeof(componentManager.renderComponentsDiff)
+		};
+		socket.send<rcType>(ipAddress, rcpacket);
+	}
 }
 
 void Server::sendDiff() {
