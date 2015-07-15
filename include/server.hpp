@@ -32,6 +32,8 @@ typedef unsigned int ID;
 class Client;
 class Server {
 private:
+    Socket socket;
+
     DeltaTime deltaTime;
 
 	ComponentManager componentManager;
@@ -55,8 +57,6 @@ private:
     std::unordered_map<IpAddress, ID> clients;
 
     std::mutex componentsMutex;
-
-    Socket socket;
 
     void inputDataToInputComponent(const IpAddress& ipAddress, InputData& data);
 

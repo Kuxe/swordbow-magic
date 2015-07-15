@@ -24,6 +24,9 @@ typedef unsigned int ID;
 class Server;
 class Client {
 private:
+    Socket socket;
+    IpAddress server;
+
     SDL_Event event;
 
     DeltaTime deltaTime;
@@ -40,9 +43,6 @@ private:
     Renderer renderer;
 
     std::mutex componentsMutex;
-
-    Socket socket;
-    IpAddress server;
 
 public:
     bool running = true;

@@ -7,6 +7,7 @@
 #include "systemidentifiers.hpp"
 
 Client::Client(int argc, char** argv) :
+        socket(Socket("swordbow-magic")),
         renderer(argc, argv),
         systemManager(&componentManager, &deltaTime),
         textureBoundingBox(&componentManager, &renderer),

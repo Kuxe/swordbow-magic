@@ -28,9 +28,13 @@ class Socket {
 private:
     int socket = 0;
     unsigned char buffer[4096];
+    std::string protocolName;
 
 
 public:
+    Socket(std::string protocolName) :
+        protocolName(protocolName) { }
+
     bool open(unsigned short port) {
         //Create a socket and check for failure
         socket = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
@@ -154,7 +158,7 @@ public:
             #endif //NET_DEBUG
 
             //Check if the packet is meant for swordbow-magic (protocol)
-            if(protocol == stringhash("swordbow-magic")) {
+            if(protocol == stringhash(protocolName)) {
                 static int remoteSequence = -1;
 
                 //TODO: Implement sequence-wrap-around and change type of
@@ -170,7 +174,7 @@ public:
                 }
             } else {
                 std::cout << "got packet with illegal protocol " << protocol;
-                std::cout << ", expected " << stringhash("swordbow-magic") << std::endl;
+                std::cout << ", expected " << stringhash(protocolName) << "(" << protocolName << ")" << std::endl;
             }
         }
     }

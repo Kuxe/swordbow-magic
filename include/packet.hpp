@@ -8,6 +8,9 @@
 constexpr int stringhash(const char* str, int h = 0) {
     return *str ? stringhash(str+1, (h << 1 ^ *str+1)) : h;
 }
+constexpr int stringhash(const std::string& str) {
+    return stringhash(str.c_str());
+}
 
 static unsigned char nextSequenceNum = 0;
 
