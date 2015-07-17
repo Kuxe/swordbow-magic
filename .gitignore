@@ -73,3 +73,6 @@ swordbow-magic-test
 
 #linter-clang
 .linter-clang*
+
+#Files generated from doxygen
+/doxygen/
