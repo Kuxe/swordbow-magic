@@ -46,8 +46,8 @@ public:
         ar(protocol, sequence, datasize, type, data);
     }
 
-    constexpr unsigned int getProtocol() const { return protocol; }
-    constexpr unsigned char getSequence() const { return sequence; }
+    constexpr uint16_t getProtocol() const { return protocol; }
+    constexpr uint16_t getSequence() const { return sequence; }
     constexpr unsigned char getType() const { return type; }
     constexpr const Data& getData() const { return data; }
     constexpr Data& getData() { return data; }
