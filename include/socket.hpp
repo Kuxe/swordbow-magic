@@ -10,6 +10,8 @@
 #include <iostream>
 #include "packet.hpp"
 #include <fstream>
+#include <chrono>
+#include <ctime>
 
 /** For portable serialization using cereal **/
 #include <cereal/archives/portable_binary.hpp>
@@ -131,10 +133,15 @@ public:
             unsigned int fromPort = ntohs(from.sin_port);
             sender = IpAddress(fromAddress, fromPort);
 
-            printf("received packet from %d.%d.%d.%d:%d (%dbytes)\n",
+            #ifdef NET_DEBUG
+            //Print ip address of sender, bytes in packet and timestamp
+            std::time_t timestamp(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
+            printf("received packet from %d.%d.%d.%d:%d (%dbytes)",
                 sender.getA(), sender.getB(), sender.getC(), sender.getD(),
                 sender.getPort(), bytesRead
             );
+            std::cout << ", " << std::ctime(&timestamp) << std::endl;
+            #endif //NET_DEBUG
 
             //Deserialize contents of buffer into (untyped) tmppacket
             std::string str((char*)buffer, bytesRead);
