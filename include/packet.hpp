@@ -5,14 +5,14 @@
 #include <string>
 #include <type_traits>
 
-constexpr int stringhash(const char* str, int h = 0) {
+constexpr uint16_t stringhash(const char* str, int h = 0) {
     return *str ? stringhash(str+1, (h << 1 ^ *str+1)) : h;
 }
-constexpr int stringhash(const std::string& str) {
+constexpr uint16_t stringhash(const std::string& str) {
     return stringhash(str.c_str());
 }
 
-static unsigned char nextSequenceNum = 0;
+static uint16_t nextSequenceNum = 1;
 
 //Representing objects as unsigned int is probably the easiest way
 //but template is here to allow user to pass any type in the packet
@@ -22,8 +22,8 @@ static unsigned char nextSequenceNum = 0;
 template<class Data = unsigned int>
 class Packet {
 private:
-    unsigned int protocol;
-    unsigned char sequence;
+    uint16_t protocol;
+    uint16_t sequence;
     unsigned int datasize;
     unsigned char type;
 

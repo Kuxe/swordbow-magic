@@ -159,11 +159,15 @@ public:
 
             //Check if the packet is meant for swordbow-magic (protocol)
             if(protocol == stringhash(protocolName)) {
-                static int remoteSequence = -1;
+                static uint16_t remoteSequence = 0;
 
-                //TODO: Implement sequence-wrap-around and change type of
-                //sequence to something with fewer bytes than unsigned int..
-                if(sequence > remoteSequence) {
+                //Only accept recent messages
+                constexpr uint16_t MAX = 65535;
+                const bool recent =
+                    (sequence - remoteSequence && sequence - remoteSequence < MAX/2) ||
+                    (remoteSequence > sequence && remoteSequence - sequence < MAX/2);
+
+                if(recent) {
                     remoteSequence = sequence;
 
                     //TODO: Figure out what 'ack(knowledge)' is and implement congestion control

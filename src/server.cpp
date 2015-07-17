@@ -78,6 +78,10 @@ void Server::step() {
     if(bytesRead > 0) {
 
         switch(type) {
+			case MESSAGE_TYPE::OUTDATED: {
+                std::cout << "This packet is outdated, to late! Sluggish!" << endl;
+            } break;
+
 			case MESSAGE_TYPE::CONNECT: {
 				onConnect(client);
 			} break;
@@ -89,7 +93,14 @@ void Server::step() {
 			case MESSAGE_TYPE::INPUTDATA: {
 				auto typedPacket = socket.get<Packet<InputData>>(bytesRead);
 				inputDataToInputComponent(client, typedPacket.getData());
-			}
+			} break;
+
+			default: {
+                std::cout << "WARNING: Message without proper type received. This is probably a bug." << std::endl;
+                std::cout << "Either server-side handling for that message isn't implemented";
+                std::cout << " or a client sent a message with a bogus messagetype";
+                std::cout << " or the messagetype was wrongly altered somewhere" << std::endl;
+            };
         }
 	}
 
