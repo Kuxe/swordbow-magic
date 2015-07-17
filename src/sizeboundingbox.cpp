@@ -10,10 +10,10 @@ const Rect SizeBoundingBox::getBoundingBox(ID id) const {
     const auto& mc = componentManager->moveComponents.at(id);
     const auto& sc = componentManager->sizeComponents.at(id);
     return Rect {
-        (float)mc.pos.x,
-        (float)mc.pos.y,
-        (float)(sc.width - 1),
-        (float)(sc.height - 1),
+        mc.pos.x,
+        mc.pos.y,
+        static_cast<float>(sc.width - 1),
+        static_cast<float>(sc.height - 1),
     };
 }
 
@@ -21,10 +21,10 @@ const Rect SizeBoundingBox::getOldBoundingBox(ID id) const {
     const auto& mc = componentManager->moveComponents.at(id);
     const auto& sc = componentManager->sizeComponents.at(id);
     return Rect {
-        (float)mc.oldPos.x,
-        (float)mc.oldPos.y,
-        (float)(sc.width - 1),
-        (float)(sc.height - 1),
+        floorf(mc.oldPos.x),
+        floorf(mc.oldPos.y),
+        static_cast<float>(sc.width - 1),
+        static_cast<float>(sc.height - 1),
     };
 }
 

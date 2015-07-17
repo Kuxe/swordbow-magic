@@ -9,8 +9,6 @@
 #include "systemidentifiers.hpp"
 #include "ipaddress.hpp"
 
-using namespace std;
-
 /**
 	_The_ EntityManager is respnsible for creating objects.
 	It requests objects from componentmanager.
@@ -33,9 +31,9 @@ class EntityManager {
 		(except for looping through all systems and searching for ID, removing it
 		if it exits, but that's a slow bruteforce-approach)
 	*/
- 	unordered_map<unsigned int, vector<ISystem*> > entityServerSystemMap;
-    unordered_map<unsigned int, vector<System::Identifier> > entityClientSystemMap;
-    unordered_set<unsigned int> ids;
+ 	std::unordered_map<unsigned int, std::vector<ISystem*> > entityServerSystemMap;
+    std::unordered_map<unsigned int, std::vector<System::Identifier> > entityClientSystemMap;
+    std::unordered_set<unsigned int> ids;
 
 	SystemManager* systemManager;
 	ComponentManager* componentManager;

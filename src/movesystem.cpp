@@ -14,8 +14,6 @@
 #include "icommand.hpp"
 #include <math.h>
 
-using namespace std;
-
 void MoveSystem::add(ID id) {
 	ids.insert(id);
 	activeIds.insert(id);

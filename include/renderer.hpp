@@ -33,8 +33,8 @@ private:
 public:
     Renderer(int argc, char** argv);
     ~Renderer();
-    const unordered_map<Image::Identifier, TextureData, std::hash<int>>& getTextureDatas() const;
-    void render(priority_queue<RenderData>& pq, const SDL_Rect& camera);
+    const std::unordered_map<Image::Identifier, TextureData, std::hash<int>>& getTextureDatas() const;
+    void render(std::priority_queue<RenderData>& pq, const SDL_Rect& camera);
     void printText(const Text& text);
     static constexpr ushort getScreenWidth() { return SCREEN_WIDTH; }
     static constexpr ushort getScreenHeight() { return SCREEN_HEIGHT; }

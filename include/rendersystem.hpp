@@ -16,8 +16,6 @@
 #include "renderdata.hpp"
 #include "texturedata.hpp"
 
-using namespace std;
-
 class RenderComponent;
 class MoveComponent;
 class SizeComponent;
@@ -31,9 +29,9 @@ class Renderer;
 class RenderSystem : public ISystem {
 private:
 	unordered_set<ID> ids;
-	queue<ID> activeIds;
-    priority_queue<RenderData> pq;
-	queue<Rect> previousDrawAreas;
+	std::queue<ID> activeIds;
+    std::priority_queue<RenderData> pq;
+	std::queue<Rect> previousDrawAreas;
 
     Renderer* renderer;
 
@@ -49,7 +47,10 @@ public:
 	const System::Identifier getIdentifier() const;
 	void activateId(ID id);
 	void printText(const Text& text);
-    priority_queue<RenderData>& getDrawPriorityQueue();
+
+	//TODO: Implement const ref
+    std::priority_queue<RenderData>& getDrawPriorityQueue();
+	const std::priority_queue<RenderData>& getDrawPriorityQueue() const;
 
 	//Forces a redraw within an area
 	void inline constexpr renderArea(const Rect& area) {

@@ -17,10 +17,10 @@ const Rect TextureBoundingBox::getBoundingBox(ID id) const {
     auto& rc = componentManager->renderComponents.at(id);
     auto& textureData = renderer->getTextureDatas().at(rc.image);
     return Rect {
-        floor(mc.pos.x + rc.xoffset),
-        floor(mc.pos.y + rc.yoffset),
-        (float)textureData.width,
-        (float)textureData.height,
+        floorf(mc.pos.x + rc.xoffset),
+        floorf(mc.pos.y + rc.yoffset),
+        static_cast<float>(textureData.width),
+        static_cast<float>(textureData.height),
     };
 }
 
@@ -29,10 +29,10 @@ const Rect TextureBoundingBox::getOldBoundingBox(ID id) const {
     auto& rc = componentManager->renderComponents.at(id);
     auto& textureData = renderer->getTextureDatas().at(rc.image);
     return Rect {
-        floor(mc.oldPos.x + rc.xoffset),
-        floor(mc.oldPos.y + rc.yoffset),
-        (float)textureData.width,
-        (float)textureData.height,
+        floorf(mc.oldPos.x + rc.xoffset),
+        floorf(mc.oldPos.y + rc.yoffset),
+        static_cast<float>(textureData.width),
+        static_cast<float>(textureData.height),
     };
 }
 

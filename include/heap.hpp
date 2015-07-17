@@ -4,8 +4,6 @@
 #include "dynamicarray.hpp"
 #include <iostream>
 
-using namespace std;
-
 template<class T>
 class heap {
 	private:

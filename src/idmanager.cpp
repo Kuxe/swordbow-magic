@@ -1,10 +1,8 @@
 #include "idmanager.hpp"
 #include <iostream>
 
-using namespace std;
-
 IdManager::IdManager() {
-	cout << "Available IDs: " << MAX_IDS << ", IdManager memory footprint: " << MAX_IDS * sizeof(ID) / 1048576 << "MB" << endl;
+	std::cout << "Available IDs: " << MAX_IDS << ", IdManager memory footprint: " << MAX_IDS * sizeof(ID) / 1048576 << "MB" << std::endl;
 }
 
 unsigned int IdManager::acquireId() {
@@ -19,7 +17,7 @@ unsigned int IdManager::acquireId() {
 	static ID id = 0;
 	id += 1;
 	if(id == MAX_IDS) {
-		cout << "Error: Ran out of free ids (idmanager.cpp). Either increase the amount of freeIds or reduce entities in world." << endl;
+			std::cout << "Error: Ran out of free ids (idmanager.cpp). Either increase the amount of freeIds or reduce entities in world." << std::endl;
 	}
 	return id;
 }

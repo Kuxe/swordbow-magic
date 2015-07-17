@@ -14,8 +14,6 @@
 #include "attackcomponent.hpp"
 #include "commandcomponent.hpp"
 
-using namespace std;
-
 typedef unsigned int ID;
 
 class ComponentManager {

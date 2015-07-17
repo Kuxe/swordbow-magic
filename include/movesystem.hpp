@@ -3,19 +3,13 @@
 
 #include "isystem.hpp"
 #include <unordered_set>
-#include <queue>
-
-using namespace std;
-
-class MoveComponent;
-class RenderSystem;
 
 typedef unsigned int ID;
 
 class MoveSystem : public ISystem {
  private:
-	unordered_set<ID> ids;
-    unordered_set<ID> activeIds;
+    std::unordered_set<ID> ids;
+    std::unordered_set<ID> activeIds;
 
  public:
 	void add(ID id);

@@ -15,8 +15,6 @@
 #include "deltatime.hpp"
 #include "renderer.hpp"
 
-using namespace std;
-
 RenderSystem::RenderSystem(Renderer* renderer) :
     renderer(renderer) { }
 
@@ -33,7 +31,7 @@ void RenderSystem::update() {
 	auto spatialIndexer = dynamic_cast<SpatialIndexer*>(systemManager->getSystem(System::HASHGRID_TEXTURE));
 
     //Will contain all rectangles where a redraw is required
-    queue<Rect> drawQueue;
+    std::queue<Rect> drawQueue;
 
     //All drawareas saved from previous frame should be drawn this frame
 	drawQueue.swap(previousDrawAreas);
@@ -123,11 +121,13 @@ void RenderSystem::printText(const Text& text) {
     renderer->printText(text);
 }
 
-priority_queue<RenderData>& RenderSystem::getDrawPriorityQueue() {
+std::priority_queue<RenderData>& RenderSystem::getDrawPriorityQueue() {
     return pq;
 }
 
-
+const std::priority_queue<RenderData>& RenderSystem::getDrawPriorityQueue() const {
+    return pq;
+}
 
 
 

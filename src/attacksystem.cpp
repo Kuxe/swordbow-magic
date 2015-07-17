@@ -10,7 +10,6 @@
 #include "messagetypes.hpp"
 
 #include <iostream>
-using namespace std;
 
 AttackSystem::AttackSystem(
     HashGridSystem* hashgrid,
@@ -76,7 +75,7 @@ void AttackSystem::update() {
                 //Only apply damage to entities that has a healthcomponent
                 auto hcit = componentManager->healthComponents.find(attackedId);
                 if(hcit != componentManager->healthComponents.end()) {
-                    auto& hc = get<1>(*hcit);
+                    auto& hc = std::get<1>(*hcit);
                     hc.health -= ac.damage;
                     somethingWasHurt = true;
                 }

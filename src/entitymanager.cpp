@@ -17,8 +17,6 @@
 
 #include "client.hpp"
 
-using namespace std;
-
 EntityManager::EntityManager(
 	SystemManager* systemManager,
 	ComponentManager* componentManager,

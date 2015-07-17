@@ -5,8 +5,6 @@
 #include <vector>
 #include "systemidentifiers.hpp"
 
-using namespace std;
-
 class ISystem;
 class ComponentManager;
 class DeltaTime;
@@ -21,8 +19,8 @@ class SystemManager {
  	SystemManager(ComponentManager* componentManager, DeltaTime* deltaTime);
  	ComponentManager* const componentManager;
  	DeltaTime* const deltaTime;
-	vector<ISystem*> systems;
-	unordered_map<System::Identifier, ISystem*, std::hash<int>> systemByIdentifiers;
+	std::vector<ISystem*> systems;
+	std::unordered_map<System::Identifier, ISystem*, std::hash<int>> systemByIdentifiers;
 	void add(ISystem* system);
 	void remove(ISystem* system);
 	void update();

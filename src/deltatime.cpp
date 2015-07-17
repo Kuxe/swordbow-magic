@@ -1,8 +1,6 @@
 #include <iostream>
 #include "deltatime.hpp"
 
-using namespace std;
-
 void DeltaTime::start() {
 	startTime = std::chrono::high_resolution_clock::now();
 }

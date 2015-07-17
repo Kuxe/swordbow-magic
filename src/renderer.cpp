@@ -5,7 +5,7 @@ Renderer::Renderer(int argc, char** argv) {
     //Initialize SDL
     if(SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
     {
-        cout << "ERROR: SDL could not initialize! SDL_Error: " << SDL_GetError() << endl;
+        std::cout << "ERROR: SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
     } else {
         window = SDL_CreateWindow(
             "SDL Tutorial",
@@ -16,7 +16,7 @@ Renderer::Renderer(int argc, char** argv) {
             SDL_WINDOW_SHOWN);
 
         if(!window) {
-            cout << "ERROR: Window could not be created! SDL_Error: " << SDL_GetError() << endl;
+            std::cout << "ERROR: Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
         } else {
 
             //Flags for renderer to be used
@@ -32,49 +32,49 @@ Renderer::Renderer(int argc, char** argv) {
 
             renderer = SDL_CreateRenderer(window, -1, rendererFlags);
             if(!renderer) {
-                cout << "ERROR: Renderer could not be created! SDL_Error: " << SDL_GetError() << endl;
+                std::cout << "ERROR: Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
             } else {
 
 				//imgFlags is used to initialize PNG-loading
 				//so that IMG_Load can be used instead of SDL_LoadBMP
 				int imgFlags = IMG_INIT_PNG;
 				if(!(IMG_Init(imgFlags) & imgFlags)) {
-					cout << "ERROR: Couldnt initialze PNG usage!" << endl;
+					std::cout << "ERROR: Couldnt initialze PNG usage!" << std::endl;
 				} else {
 
 		            SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
 
                     fontTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
                     if(!fontTexture) {
-						cout << "ERROR: Couldn't create fontTexture!" << endl;
-						cout << "Screen will probably go black from now on" << endl;
-						cout << "SDL_GetError(): " << SDL_GetError() << endl;
+						std::cout << "ERROR: Couldn't create fontTexture!" << std::endl;
+						std::cout << "Screen will probably go black from now on" << std::endl;
+						std::cout << "SDL_GetError(): " << SDL_GetError() << std::endl;
 					}
                     SDL_SetTextureBlendMode(fontTexture, SDL_BLENDMODE_BLEND);
 
 			        worldTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 8192, 8192);
 					if(!worldTexture) {
-						cout << "ERROR: Couldn't create worldTexture!" << endl;
-						cout << "Screen will probably go black from now on" << endl;
-						cout << "SDL_GetError(): " << SDL_GetError() << endl;
+						std::cout << "ERROR: Couldn't create worldTexture!" << std::endl;
+						std::cout << "Screen will probably go black from now on" << std::endl;
+						std::cout << "SDL_GetError(): " << SDL_GetError() << std::endl;
 					}
 					SDL_SetRenderTarget(renderer, worldTexture);
 					SDL_RenderClear(renderer);
 				}
 
                 if(TTF_Init() < 0 ) {
-                    cout << "ERROR: Couldn't initialize SDL2_ttf!" << endl;
+                    std::cout << "ERROR: Couldn't initialize SDL2_ttf!" << std::endl;
                 } else {
                     font = TTF_OpenFont("/usr/share/fonts/TTF/DejaVuSansMono.ttf", 11);
                     if(!font) {
-                        cout << "ERROR: Failed to load font!" << endl;
+                        std::cout << "ERROR: Failed to load font!" << std::endl;
                     }
                 }
             }
         }
     }
 
-    const vector<std::pair<Image::Identifier, const char*>> pairs {
+    const std::vector<std::pair<Image::Identifier, const char*>> pairs {
         {Image::HELLO_WORLD, "./resources/images/HelloWorld.bmp"},
         {Image::PLAYER, "./resources/images/player.bmp"},
         {Image::GRASS, "./resources/images/grass.png"},
@@ -121,13 +121,13 @@ Renderer::Renderer(int argc, char** argv) {
     for(auto pair : pairs) {
         SDL_Surface* rawImage = IMG_Load(pair.second);
         if(!rawImage) {
-            cout << "ERROR: Couldn't load image on: " << pair.second << endl;
+            std::cout << "ERROR: Couldn't load image on: " << pair.second << std::endl;
         } else {
             //Make purple parts of images transparent by using color keying
             SDL_SetColorKey(rawImage, SDL_TRUE, SDL_MapRGB( rawImage->format, 0xFF, 0x00, 0xFF ));
             SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, rawImage);
             if(!texture) {
-                cout << "ERROR: Couldn't convert surface on addr " << rawImage << " to texture! SDL_Error: " << SDL_GetError() << endl;
+                std::cout << "ERROR: Couldn't convert surface on addr " << rawImage << " to texture! SDL_Error: " << SDL_GetError() << std::endl;
             } else {
                 SDL_FreeSurface(rawImage);
                 int w, h;
@@ -144,7 +144,7 @@ Renderer::~Renderer() {
 
     //Free all loaded images
     for(auto textureData : textureDatas) {
-        SDL_DestroyTexture(get<1>(textureData).texture);
+        SDL_DestroyTexture(std::get<1>(textureData).texture);
     }
 
     SDL_DestroyTexture(fontTexture);
@@ -154,7 +154,7 @@ Renderer::~Renderer() {
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-void Renderer::render(priority_queue<RenderData>& pq, const SDL_Rect& camera) {
+void Renderer::render(std::priority_queue<RenderData>& pq, const SDL_Rect& camera) {
 
     SDL_SetRenderTarget(renderer, worldTexture);
 
@@ -204,7 +204,7 @@ void Renderer::renderTexts() {
     }
 }
 
-const unordered_map<Image::Identifier, TextureData, std::hash<int>>& Renderer::getTextureDatas() const {
+const std::unordered_map<Image::Identifier, TextureData, std::hash<int>>& Renderer::getTextureDatas() const {
     return textureDatas;
 }
 

@@ -4,14 +4,12 @@
 #include <SDL2/SDL_ttf.h>
 #include <string>
 
-using namespace std;
-
 class Text {
 public:
-    const string text;
+    const std::string text;
     const SDL_Color color;
     const int x, y;
-    Text(const string& text, const int& x, const int& y, const SDL_Color& color = {255, 255, 255, 255});
+    Text(const std::string& text, int x, int y, const SDL_Color& color = {255, 255, 255, 255});
 };
 
 

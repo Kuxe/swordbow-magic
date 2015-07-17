@@ -7,8 +7,6 @@
 #include <iostream>
 #include <glm/ext.hpp>
 
-using namespace std;
-
 World::World(EntityManager* entityManager) :
 		entityManager(entityManager)
 	{ }

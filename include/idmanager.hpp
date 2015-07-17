@@ -4,8 +4,6 @@
 #include <math.h>
 #include <climits>
 
-using std::stack;
-
 typedef unsigned int ID;
 
 /**
@@ -13,7 +11,7 @@ typedef unsigned int ID;
 **/
 class IdManager {
 private:
-    stack<ID> freeIds;
+    std::stack<ID> freeIds;
 
 public:
     static constexpr ID MAX_IDS = 2 << 24;
