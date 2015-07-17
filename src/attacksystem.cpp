@@ -2,7 +2,7 @@
 #include "hashgridsystem.hpp"
 #include "componentmanager.hpp"
 #include "systemmanager.hpp"
-#include "soundcomponent.hpp"
+#include "sounddata.hpp"
 #include "namecomponent.hpp"
 #include "client.hpp"
 #include "socket.hpp"
@@ -84,11 +84,11 @@ void AttackSystem::update() {
 
             if(somethingWasHurt) {
                 //Play a default 'hurt'-sound for
-                SoundComponent::SoundData hurtSound = {Sound::HURT};
+                SoundData hurtSound = {Sound::HURT};
 
                 //Broadcast hurtsound to all clients
                 for(auto it : *clients) {
-                    using Type = Packet<SoundComponent::SoundData>;
+                    using Type = Packet<SoundData>;
                     auto packet = Type {
                 		stringhash("swordbow-magic"),
                 		MESSAGE_TYPE::PLAY_SOUND,

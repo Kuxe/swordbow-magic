@@ -2,7 +2,7 @@
 #define PLAYSOUND_HPP
 
 #include "icommand.hpp"
-#include "soundcomponent.hpp"
+#include "sounddata.hpp"
 #include <unordered_map>
 #include "ipaddress.hpp"
 
@@ -14,12 +14,12 @@ class Socket;
 /** Used when server should tell all clients to play a sound **/
 class PlaySound : public ICommand {
 private:
-    SoundComponent::SoundData sound;
+    SoundData sound;
     std::unordered_map<IpAddress, ID>* clients;
     Socket* socket;
 public:
     PlaySound(
-        SoundComponent::SoundData sound,
+        SoundData sound,
         std::unordered_map<IpAddress, ID>* clients,
         Socket* socket
     );

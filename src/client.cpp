@@ -163,7 +163,7 @@ void Client::step() {
             } break;
 
             case MESSAGE_TYPE::PLAY_SOUND: {
-                auto typedPacket = socket.get<Packet<SoundComponent::SoundData>>(bytesRead);
+                auto typedPacket = socket.get<Packet<SoundData>>(bytesRead);
                 soundEngine.playSound(typedPacket.getData());
             } break;
 

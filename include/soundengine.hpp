@@ -6,7 +6,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_audio.h>
 #include <SDL2/SDL_mixer.h>
-#include "soundcomponent.hpp"
+#include "sounddata.hpp"
 #include "soundidentifiers.hpp"
 #include "musicidentifiers.hpp"
 
@@ -23,8 +23,8 @@ public:
     SoundEngine();
     ~SoundEngine();
     void playMusic(Music::Identifier music) const;
-    void playSound(SoundComponent::SoundData& scSound) const;
-    void stopSound(SoundComponent::SoundData& scSound) const;
+    void playSound(SoundData& scSound) const;
+    void stopSound(SoundData& scSound) const;
 };
 
 #endif //SOUNDSYSTEM_H

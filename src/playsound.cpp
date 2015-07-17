@@ -5,7 +5,7 @@
 #include "packet.hpp"
 
 PlaySound::PlaySound(
-    SoundComponent::SoundData sound,
+    SoundData sound,
     unordered_map<IpAddress, ID>* clients,
     Socket* socket
     ) :
@@ -20,7 +20,7 @@ void PlaySound::execute() {
         const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - sound.startTime).count();
         if(elapsed > sound.duration) {
             sound.startTime = std::chrono::high_resolution_clock::now();
-            using Type = Packet<SoundComponent::SoundData>;
+            using Type = Packet<SoundData>;
             auto packet = Type {
                 stringhash("swordbow-magic"),
                 MESSAGE_TYPE::PLAY_SOUND,

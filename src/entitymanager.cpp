@@ -7,10 +7,6 @@
 #include "systemmanager.hpp"
 #include "rendersystem.hpp"
 #include "movesystem.hpp"
-#include "rendercomponent.hpp"
-#include "sizecomponent.hpp"
-#include "movecomponent.hpp"
-#include "namecomponent.hpp"
 #include "hashgridsystem.hpp"
 #include "activateid.hpp"
 #include "activateidonclients.hpp"
@@ -139,7 +135,7 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 
 	commandComponent[CommandComponent::Event::ON_DEATH] = {
 		new PlaySound(
-			SoundComponent::SoundData {Sound::BLOODSPLATTER},
+			SoundData {Sound::BLOODSPLATTER},
 			clients,
 			socket
 		),
