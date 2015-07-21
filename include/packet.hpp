@@ -12,8 +12,6 @@ constexpr uint16_t stringhash(const std::string& str) {
     return stringhash(str.c_str());
 }
 
-static uint16_t nextSequenceNum = 1;
-
 //Representing objects as unsigned int is probably the easiest way
 //but template is here to allow user to pass any type in the packet
 //caution: objects with pointers wont work as data, obviously,
@@ -33,8 +31,8 @@ private:
     Data data;
 public:
     constexpr Packet() {}
-    constexpr Packet(const unsigned int protocol, unsigned char type, const Data& data, unsigned int datasize) :
-        protocol(protocol), sequence(nextSequenceNum++), type(type), data(data), datasize(datasize) {
+    constexpr Packet(const unsigned int protocol, uint16_t sequence, unsigned char type, const Data& data, unsigned int datasize) :
+        protocol(protocol), sequence(sequence), type(type), data(data), datasize(datasize) {
             static_assert(
                 !std::is_pointer<Data>::value,
                 "Sending pointers over network can't work. Try to copy the data pointed to by the pointer instead"

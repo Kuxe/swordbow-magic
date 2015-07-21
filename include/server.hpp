@@ -1,7 +1,6 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "server.hpp"
 #include <iostream>
 #include "deltatime.hpp"
 #include "componentmanager.hpp"
@@ -26,6 +25,7 @@
 #include "inputdata.hpp"
 #include <mutex>
 #include "socket.hpp"
+#include "clientdata.hpp"
 
 typedef unsigned int ID;
 
@@ -54,7 +54,7 @@ private:
     MoveDiffSystem moveDiffSystem;
     RenderDiffSystem renderDiffSystem;
 
-    std::unordered_map<IpAddress, ID> clients;
+    std::unordered_map<IpAddress, ClientData> clients;
 
     std::mutex componentsMutex;
 

@@ -8,6 +8,7 @@
 
 Client::Client(int argc, char** argv) :
         socket("swordbow-magic"),
+        sequence(1),
         renderer(argc, argv),
         systemManager(&componentManager, &deltaTime),
         textureBoundingBox(&componentManager, &renderer),
@@ -49,6 +50,7 @@ void Client::connect(const IpAddress& server) {
     using Type = Packet<bool>;
     const Type packet {
         stringhash("swordbow-magic"),
+        sequence++,
         MESSAGE_TYPE::CONNECT,
         true,
         sizeof(sizeof(bool))
@@ -67,6 +69,7 @@ void Client::disconnect() {
     using Type = Packet<bool>;
     const Type packet {
         stringhash("swordbow-magic"),
+        sequence++,
         MESSAGE_TYPE::DISCONNECT,
         true,
         sizeof(sizeof(bool))
@@ -213,6 +216,7 @@ void Client::step() {
         using Type = Packet<InputData>;
         const Type packet {
             stringhash("swordbow-magic"),
+            sequence++,
             MESSAGE_TYPE::INPUTDATA,
             inputData,
             sizeof(inputData)

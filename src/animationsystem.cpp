@@ -11,7 +11,7 @@ using std::cout;
 using std::endl;
 
 AnimationSystem::AnimationSystem(
-    unordered_map<IpAddress, ID>* clients,
+    unordered_map<IpAddress, ClientData>* clients,
     Socket* socket) :
     clients(clients),
     socket(socket) { }
@@ -123,17 +123,24 @@ void AnimationSystem::update() {
                 }
 
                 //Tell all clients to activate this id on their rendersystems
-                for(auto it : *clients) {
+
+                //FIXME: I haven't given this much thought, but I think that
+                //activating ids already might be to soon since clients doesnt have
+                //the renderdiff yet... Which would explain animations not playing
+                //at times
+                for(auto pair : *clients) {
                     const std::pair<ID, System::Identifier> data {id, System::RENDER};
+                    auto& clientData = pair.second;
 
                     using Type = Packet<std::pair<ID, System::Identifier>>;
                     auto packet = Type {
                 		stringhash("swordbow-magic"),
+                        clientData.sequence++,
                 		MESSAGE_TYPE::ACTIVATE_ID,
                 		data,
                 		sizeof(data)
                 	};
-                	socket->send<Type>(it.first, packet);
+                	socket->send<Type>(pair.first, packet);
                 }
 
                 //Since the rendercomponent changed, add this id to

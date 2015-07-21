@@ -27,6 +27,7 @@ class Client {
 private:
     Socket socket;
     IpAddress server;
+    uint16_t sequence;
 
     std::thread receiveThread;
     bool receiveThreadRunning;

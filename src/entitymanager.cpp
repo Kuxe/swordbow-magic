@@ -15,13 +15,11 @@
 #include "playsound.hpp"
 #include "createbloodsplatter.hpp"
 
-#include "client.hpp"
-
 EntityManager::EntityManager(
 	SystemManager* systemManager,
 	ComponentManager* componentManager,
 	IdManager* idManager,
-	std::unordered_map<IpAddress, ID>* clients,
+	std::unordered_map<IpAddress, ClientData>* clients,
 	Socket* socket) :
 	systemManager(systemManager),
 	componentManager(componentManager),
@@ -425,17 +423,20 @@ void EntityManager::remove(ID id) {
 
 	//2. Remove from clients systemManagers
 	for(auto systemIdentifier : entityClientSystemMap.at(id)) {
-		for(auto it : *clients) {
+		for(auto pair : *clients) {
 			const std::pair<ID, System::Identifier> data {id, systemIdentifier};
+
+			auto& clientData = pair.second;
 
 			using Type = Packet<std::pair<ID, System::Identifier>>;
 			auto packet = Type {
 				stringhash("swordbow-magic"),
+				clientData.sequence++,
 				MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM,
 				data,
 				sizeof(data)
 			};
-			socket->send<Type>(it.first, packet);
+			socket->send<Type>(pair.first, packet);
 		}
 	}
 	entityClientSystemMap.erase(id);
@@ -455,17 +456,20 @@ void EntityManager::registerIdToSystem(ID id, System::Identifier system) {
 
 void EntityManager::registerIdToRemoteSystem(ID id, System::Identifier system) {
 	entityClientSystemMap[id].push_back(system);
-	for(auto it : *clients) {
+	for(auto pair : *clients) {
 		const std::pair<ID, System::Identifier> data {id, system};
+
+		auto& clientData = pair.second;
 
 		using Type = Packet<std::pair<ID, System::Identifier>>;
 		auto packet = Packet<std::pair<ID, System::Identifier>> {
 			stringhash("swordbow-magic"),
+			clientData.sequence++,
 			MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM,
 			data,
 			sizeof(data)
 		};
-		socket->send<Type>(it.first, packet);
+		socket->send<Type>(pair.first, packet);
 	}
 }
 

@@ -2,9 +2,11 @@
 #define ACTIVATEIDONCLIENTS_HPP
 
 #include "icommand.hpp"
-#include "client.hpp"
+#include "clientdata.hpp"
+#include "systemidentifiers.hpp"
 #include "messagetypes.hpp"
 #include "packet.hpp"
+#include "socket.hpp"
 
 class SystemManager;
 typedef unsigned int ID;
@@ -20,31 +22,33 @@ private:
     const System::Identifier system;
     const ID id;
     Socket* socket;
-    std::unordered_map<IpAddress, ID>* clients;
+    std::unordered_map<IpAddress, ClientData>* clients;
 
 public:
     ActivateIdOnClients(
             ID id,
             System::Identifier system,
             Socket* socket,
-            std::unordered_map<IpAddress, ID>* clients) :
+            std::unordered_map<IpAddress, ClientData>* clients) :
         system(system),
         id(id),
         socket(socket),
         clients(clients) { }
 
     void execute() {
-        for(auto it : *clients) {
+        for(auto pair : *clients) {
             const std::pair<ID, System::Identifier> data {id, system};
+            auto& client = pair.second;
 
             using Type = Packet<std::tuple<ID, System::Identifier>>;
             auto packet = Type {
         		stringhash("swordbow-magic"),
+                client.sequence++,
         		MESSAGE_TYPE::ACTIVATE_ID,
         		data,
         		sizeof(data)
         	};
-        	socket->send<Type>(it.first, packet);
+        	socket->send<Type>(pair.first, packet);
         }
     }
 };

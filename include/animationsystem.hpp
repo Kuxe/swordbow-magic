@@ -2,22 +2,22 @@
 #define ANIMATIONSYSTEM_HPP
 
 #include <unordered_set>
+#include <unordered_map>
 #include "isystem.hpp"
 #include "animationcomponent.hpp"
-#include <unordered_map>
-#include "ipaddress.hpp"
+#include "clientdata.hpp"
 
 class Client;
 class Socket;
 class AnimationSystem : public ISystem {
 private:
     std::unordered_set<ID> ids;
-    std::unordered_map<IpAddress, ID>* clients;
+    std::unordered_map<IpAddress, ClientData>* clients;
     Socket* socket;
 
 public:
 
-    AnimationSystem(std::unordered_map<IpAddress, ID>* clients, Socket* socket);
+    AnimationSystem(std::unordered_map<IpAddress, ClientData>* clients, Socket* socket);
 
     enum Animation {
         bloodsplatter,

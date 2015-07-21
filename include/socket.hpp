@@ -28,6 +28,8 @@
 #include <cereal/types/utility.hpp> //for std::pair
 #include <cereal/types/queue.hpp>
 
+#define NET_DEBUG
+
 class Socket {
 private:
     int socket = 0;
@@ -180,7 +182,6 @@ public:
 
                 //Each sender has it's own remoteSequenceNumber
                 const auto& remoteSequence = remoteSequenceNumbers[sender];
-                std::cout << remoteSequence << std::endl;
 
                 //Only accept recent messages
                 constexpr uint16_t MAX = 65535;

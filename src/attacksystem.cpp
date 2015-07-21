@@ -13,7 +13,7 @@
 
 AttackSystem::AttackSystem(
     HashGridSystem* hashgrid,
-    unordered_map<IpAddress, ID>* clients,
+    unordered_map<IpAddress, ClientData>* clients,
     Socket* socket) :
     hashgrid(hashgrid),
     clients(clients),
@@ -86,15 +86,17 @@ void AttackSystem::update() {
                 SoundData hurtSound = {Sound::HURT};
 
                 //Broadcast hurtsound to all clients
-                for(auto it : *clients) {
+                for(auto pair : *clients) {
+                    auto& clientData = pair.second;
                     using Type = Packet<SoundData>;
                     auto packet = Type {
                 		stringhash("swordbow-magic"),
+                        clientData.sequence++,
                 		MESSAGE_TYPE::PLAY_SOUND,
                 		hurtSound,
                 		sizeof(hurtSound)
                 	};
-                	socket->send<Type>(it.first, packet);
+                	socket->send<Type>(pair.first, packet);
                 }
             }
         }

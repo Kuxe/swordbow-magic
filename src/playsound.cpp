@@ -6,7 +6,7 @@
 
 PlaySound::PlaySound(
     SoundData sound,
-    unordered_map<IpAddress, ID>* clients,
+    unordered_map<IpAddress, ClientData>* clients,
     Socket* socket
     ) :
     sound(sound),
@@ -14,7 +14,8 @@ PlaySound::PlaySound(
     socket(socket) { }
 
 void PlaySound::execute() {
-    for(auto it : *clients) {
+    for(auto pair : *clients) {
+        auto& clientData = pair.second;
 
         //chrono is nasty
         const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - sound.startTime).count();
@@ -23,11 +24,12 @@ void PlaySound::execute() {
             using Type = Packet<SoundData>;
             auto packet = Type {
                 stringhash("swordbow-magic"),
+                clientData.sequence++,
                 MESSAGE_TYPE::PLAY_SOUND,
                 sound,
                 sizeof(sound)
             };
-            socket->send<Type>(it.first, packet);
+            socket->send<Type>(pair.first, packet);
         }
     }
 }

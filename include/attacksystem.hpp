@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <queue>
 #include "isystem.hpp"
-#include "ipaddress.hpp"
+#include "clientdata.hpp"
 
 class HashGridSystem;
 class Client;
@@ -13,7 +13,7 @@ class Socket;
 class AttackSystem : public ISystem {
 private:
     std::unordered_set<ID> ids;
-    std::unordered_map<IpAddress, ID>* clients;
+    std::unordered_map<IpAddress, ClientData>* clients;
     std::queue<ID> activeIds;
     HashGridSystem* hashgrid;
     Socket* socket;
@@ -21,7 +21,7 @@ private:
 public:
     AttackSystem(
         HashGridSystem* hashGrid,
-        std::unordered_map<IpAddress, ID>* clients,
+        std::unordered_map<IpAddress, ClientData>* clients,
         Socket* socket);
 
     void add(ID id);

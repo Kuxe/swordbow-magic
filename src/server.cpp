@@ -117,7 +117,7 @@ void Server::step() {
 
 void Server::onConnect(const IpAddress& ipAddress) {
 	auto fatManId = entityManager.createFatMan({0.0f, 0.0f});
-	clients.insert({ipAddress, fatManId});
+	clients.insert({ipAddress, {1, fatManId}});
 
 	//In case a client reconnects, the socket shouldn't reject the newly
 	//reconnected clients packets since the socket knows of latter remoteSequences
@@ -130,9 +130,12 @@ void Server::onConnect(const IpAddress& ipAddress) {
 	//Make the client aware of its ID and register the ID to client camerasytem
 	const std::pair<ID, System::Identifier> data {fatManId, System::CAMERA};
 
+	auto& clientData = clients.at(ipAddress);
+
 	using Type = Packet<std::pair<ID, System::Identifier>>;
 	auto cameraPacket = Type {
 		stringhash("swordbow-magic"),
+		clientData.sequence++,
 		MESSAGE_TYPE::CONNECT,
 		data,
 		sizeof(data)
@@ -151,6 +154,7 @@ void Server::onConnect(const IpAddress& ipAddress) {
 			using Type = Packet<std::pair<ID, System::Identifier>>;
 			auto packet = Type {
 				stringhash("swordbow-magic"),
+				clientData.sequence++,
 				MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM,
 				data,
 				sizeof(data)
@@ -161,14 +165,18 @@ void Server::onConnect(const IpAddress& ipAddress) {
 }
 
 void Server::onDisconnect(const IpAddress& ipAddress) {
-	entityManager.remove(clients.at(ipAddress));
+	entityManager.remove(clients.at(ipAddress).id);
 	clients.erase(ipAddress);
 }
 
 void Server::send(const IpAddress& ipAddress) {
+
+	auto& clientData = clients.at(ipAddress);
+
 	using mcType = Packet<Components<MoveComponent>>;
 	auto mcpacket = mcType {
 		stringhash("swordbow-magic"),
+		clients.at(ipAddress).sequence++,
 		MESSAGE_TYPE::MOVECOMPONENTS,
 		componentManager.moveComponents,
 		sizeof(componentManager.moveComponents)
@@ -178,6 +186,7 @@ void Server::send(const IpAddress& ipAddress) {
 	using rcType = Packet<Components<RenderComponent>>;
 	auto rcpacket = rcType {
 		stringhash("swordbow-magic"),
+		clientData.sequence++,
 		MESSAGE_TYPE::RENDERCOMPONENTS,
 		componentManager.renderComponents,
 		sizeof(componentManager.renderComponents)
@@ -193,6 +202,8 @@ void Server::send() {
 
 void Server::sendDiff(const IpAddress& ipAddress) {
 
+	auto& clientData = clients.at(ipAddress);
+
 	//Only send movecomponentsdiff if there actually was a difference
 	//If not for this if-check, then the server would DDOS clients with
 	//emtpy MOVECOMPONENTSDIFF-packets...
@@ -200,6 +211,7 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 		using mcType = Packet<Components<MoveComponent>>;
 		auto mcpacket = mcType {
 			stringhash("swordbow-magic"),
+			clientData.sequence++,
 			MESSAGE_TYPE::MOVECOMPONENTSDIFF,
 			componentManager.moveComponentsDiff,
 			sizeof(componentManager.moveComponentsDiff)
@@ -211,6 +223,7 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 		using rcType = Packet<Components<RenderComponent>>;
 		auto rcpacket = rcType {
 			stringhash("swordbow-magic"),
+			clientData.sequence++,
 			MESSAGE_TYPE::RENDERCOMPONENTSDIFF,
 			componentManager.renderComponentsDiff,
 			sizeof(componentManager.renderComponentsDiff)
@@ -227,7 +240,7 @@ void Server::sendDiff() {
 
 void Server::inputDataToInputComponent(const IpAddress& ipAddress, InputData& data) {
 	//Get id of client
-	auto id = clients.at(ipAddress);
+	auto id = clients.at(ipAddress).id;
 	auto& ic = componentManager.inputComponents.at(id);
 
 	ic.presses = data.presses;

@@ -3,8 +3,8 @@
 
 #include "icommand.hpp"
 #include "sounddata.hpp"
+#include "clientdata.hpp"
 #include <unordered_map>
-#include "ipaddress.hpp"
 
 typedef unsigned int ID;
 
@@ -15,12 +15,12 @@ class Socket;
 class PlaySound : public ICommand {
 private:
     SoundData sound;
-    std::unordered_map<IpAddress, ID>* clients;
+    std::unordered_map<IpAddress, ClientData>* clients;
     Socket* socket;
 public:
     PlaySound(
         SoundData sound,
-        std::unordered_map<IpAddress, ID>* clients,
+        std::unordered_map<IpAddress, ClientData>* clients,
         Socket* socket
     );
     void execute();
