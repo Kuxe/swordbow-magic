@@ -7,7 +7,7 @@
 #include "systemidentifiers.hpp"
 
 Client::Client(int argc, char** argv) :
-        socket(Socket("swordbow-magic")),
+        socket("swordbow-magic"),
         renderer(argc, argv),
         systemManager(&componentManager, &deltaTime),
         textureBoundingBox(&componentManager, &renderer),
@@ -34,6 +34,10 @@ Client::~Client() {
 
 void Client::connect(const IpAddress& server) {
 
+    //Start a thread that checks socket for any recieved data
+    receiveThreadRunning = true;
+    receiveThread = std::thread(&Client::receive, this);
+
     this->server = server;
 
     //Connect-request packet
@@ -49,6 +53,11 @@ void Client::connect(const IpAddress& server) {
 }
 
 void Client::disconnect() {
+
+    //Stop receiving data on socket
+    receiveThreadRunning = false;
+    receiveThread.join();
+
     //Disconnect-request packet
     using Type = Packet<bool>;
     const Type packet {
@@ -61,6 +70,96 @@ void Client::disconnect() {
     socket.send<Type>(server, packet);
 
     server = IpAddress(0, 0, 0, 0, 0); //Indicate not connected to any server
+}
+
+void Client::receive() {
+    while(receiveThreadRunning) {
+
+        //Receive data from server...
+        IpAddress server;
+        unsigned char type;
+        int bytesRead;
+        socket.receive(server, type, bytesRead);
+
+        //If any data was received, check its type and take appropiate action
+        if(bytesRead > 0) {
+
+            /** CRITICAL-SECTION **/
+            componentsMutex.lock();
+
+            switch(type) {
+                case MESSAGE_TYPE::OUTDATED: {
+                    std::cout << "This packet is outdated, to late! Sluggish!" << endl;
+                } break;
+
+                case MESSAGE_TYPE::CONNECT: {
+                    //Got my id. Tell camerasystem to follow that id.
+                    auto typedPacket = socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
+                    const auto& pair = typedPacket.getData();
+                    systemManager.getSystem(pair.second)->add(pair.first);
+                } break;
+                case MESSAGE_TYPE::MOVECOMPONENTS: {
+                    //All movecomponents were received - handle it
+                    auto typedPacket = socket.get<Packet<Components<MoveComponent>>>(bytesRead);
+                    componentManager.moveComponents.sync(typedPacket.getData());
+                } break;
+
+                case MESSAGE_TYPE::RENDERCOMPONENTS: {
+                    //All rendercomponents were received - handle it
+                    auto typedPacket = socket.get<Packet<Components<RenderComponent>>>(bytesRead);
+                    componentManager.renderComponents.sync(typedPacket.getData());
+                } break;
+
+                case MESSAGE_TYPE::MOVECOMPONENTSDIFF: {
+                    //Diff movecomponents were received - handle it
+                    auto typedPacket = socket.get<Packet<Components<MoveComponent>>>(bytesRead);
+                    componentManager.moveComponents.sync(typedPacket.getData());
+                } break;
+
+                case MESSAGE_TYPE::RENDERCOMPONENTSDIFF: {
+                    //Diff rendercomponents were received - handle it
+                    auto typedPacket = socket.get<Packet<Components<RenderComponent>>>(bytesRead);
+                    componentManager.renderComponents.sync(typedPacket.getData());
+                } break;
+
+                case MESSAGE_TYPE::PLAY_SOUND: {
+                    auto typedPacket = socket.get<Packet<SoundData>>(bytesRead);
+                    soundEngine.playSound(typedPacket.getData());
+                } break;
+
+                case MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM: {
+                    auto typedPacket = socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
+                    const auto& id = typedPacket.getData().first;
+                    const auto& systemIdentifier = typedPacket.getData().second;
+                    systemManager.getSystem(systemIdentifier)->add(id);
+                } break;
+
+                case MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM: {
+                    auto typedPacket = socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
+                    const auto& id = typedPacket.getData().first;
+                    const auto& systemIdentifier = typedPacket.getData().second;
+                    systemManager.getSystem(systemIdentifier)->remove(id);
+                } break;
+
+                case MESSAGE_TYPE::ACTIVATE_ID: {
+                    auto typedPacket = socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
+                    const auto& id = typedPacket.getData().first;
+                    const auto& systemIdentifier = typedPacket.getData().second;
+                    systemManager.getSystem(systemIdentifier)->activateId(id);
+                } break;
+
+                default: {
+                    std::cout << "WARNING: Message without proper type received. This is probably a bug." << std::endl;
+                    std::cout << "Either client-side handling for that message isn't implemented";
+                    std::cout << " or server sent a message with a bogus messagetype";
+                    std::cout << " or the messagetype was wrongly altered somewhere" << std::endl;
+                };
+            }
+
+            /** END OF CRITICAL SECTION **/
+            componentsMutex.unlock();
+        }
+    }
 }
 
 void Client::run() {
@@ -117,84 +216,6 @@ void Client::step() {
         //Send that packet to 127.0.0.1:47293
         constexpr unsigned short SERVER_PORT = 47293;
         socket.send<Type>({127, 0, 0, 1, SERVER_PORT}, packet);
-    }
-
-    //Receive data from server...
-    IpAddress server;
-    unsigned char type;
-    int bytesRead;
-    socket.receive(server, type, bytesRead);
-
-    //If any data was received, check its type and take appropiate action
-    if(bytesRead > 0) {
-        switch(type) {
-            case MESSAGE_TYPE::OUTDATED: {
-                std::cout << "This packet is outdated, to late! Sluggish!" << endl;
-            } break;
-
-            case MESSAGE_TYPE::CONNECT: {
-                //Got my id. Tell camerasystem to follow that id.
-                auto typedPacket = socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
-                const auto& pair = typedPacket.getData();
-                systemManager.getSystem(pair.second)->add(pair.first);
-            } break;
-            case MESSAGE_TYPE::MOVECOMPONENTS: {
-                //All movecomponents were received - handle it
-                auto typedPacket = socket.get<Packet<Components<MoveComponent>>>(bytesRead);
-                componentManager.moveComponents.sync(typedPacket.getData());
-            } break;
-
-            case MESSAGE_TYPE::RENDERCOMPONENTS: {
-                //All rendercomponents were received - handle it
-                auto typedPacket = socket.get<Packet<Components<RenderComponent>>>(bytesRead);
-                componentManager.renderComponents.sync(typedPacket.getData());
-            } break;
-
-            case MESSAGE_TYPE::MOVECOMPONENTSDIFF: {
-                //Diff movecomponents were received - handle it
-                auto typedPacket = socket.get<Packet<Components<MoveComponent>>>(bytesRead);
-                componentManager.moveComponents.sync(typedPacket.getData());
-            } break;
-
-            case MESSAGE_TYPE::RENDERCOMPONENTSDIFF: {
-                //Diff rendercomponents were received - handle it
-                auto typedPacket = socket.get<Packet<Components<RenderComponent>>>(bytesRead);
-                componentManager.renderComponents.sync(typedPacket.getData());
-            } break;
-
-            case MESSAGE_TYPE::PLAY_SOUND: {
-                auto typedPacket = socket.get<Packet<SoundData>>(bytesRead);
-                soundEngine.playSound(typedPacket.getData());
-            } break;
-
-            case MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM: {
-                auto typedPacket = socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
-                const auto& id = typedPacket.getData().first;
-                const auto& systemIdentifier = typedPacket.getData().second;
-                systemManager.getSystem(systemIdentifier)->add(id);
-            } break;
-
-            case MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM: {
-                auto typedPacket = socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
-                const auto& id = typedPacket.getData().first;
-                const auto& systemIdentifier = typedPacket.getData().second;
-                systemManager.getSystem(systemIdentifier)->remove(id);
-            } break;
-
-            case MESSAGE_TYPE::ACTIVATE_ID: {
-                auto typedPacket = socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
-                const auto& id = typedPacket.getData().first;
-                const auto& systemIdentifier = typedPacket.getData().second;
-                systemManager.getSystem(systemIdentifier)->activateId(id);
-            } break;
-
-            default: {
-                std::cout << "WARNING: Message without proper type received. This is probably a bug." << std::endl;
-                std::cout << "Either client-side handling for that message isn't implemented";
-                std::cout << " or server sent a message with a bogus messagetype";
-                std::cout << " or the messagetype was wrongly altered somewhere" << std::endl;
-            };
-        }
     }
 
     /** CRITICAL SECTION **/

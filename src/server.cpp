@@ -4,7 +4,7 @@
 #include "messagetypes.hpp"
 
 Server::Server(int argc, char** argv) :
-		socket(Socket("swordbow-magic")),
+		socket("swordbow-magic"),
 		systemManager(&componentManager, &deltaTime),
 		sizeBoundingBox(&componentManager),
 		entityManager(&systemManager, &componentManager, &idManager, &clients, &socket),

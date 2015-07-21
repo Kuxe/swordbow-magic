@@ -12,6 +12,7 @@
 #include <fstream>
 #include <chrono>
 #include <ctime>
+#include <mutex>
 
 /** For portable serialization using cereal **/
 #include <cereal/archives/portable_binary.hpp>
@@ -31,6 +32,7 @@ private:
     int socket = 0;
     unsigned char buffer[4096];
     std::string protocolName;
+    std::mutex mutex;
 
 
 public:
@@ -76,7 +78,7 @@ public:
     }
 
     template<class T>
-    bool send(const IpAddress& destination, const T& object) const {
+    bool send(const IpAddress& destination, const T& object) {
         if(socket == 0) {
             std::cout << "ERROR: Cannot send because socket isn't open" << std::endl;
         }
@@ -94,6 +96,8 @@ public:
         address.sin_addr.s_addr = htonl(destination.getAddress());
         address.sin_port = htons((unsigned short)destination.getPort());
 
+        mutex.lock();
+
         //Send to that address
         int sendBytes = sendto(
             socket,
@@ -103,6 +107,8 @@ public:
             (sockaddr*)&address,
             sizeof(sockaddr_in)
         );
+
+        mutex.unlock();
 
         //Doesn't check if packet succesfully arrived (UDP duh)
         //but if the expected size of sent bytes matches the
@@ -126,7 +132,9 @@ public:
         sockaddr_in from;
         socklen_t fromLength = sizeof(from);
 
+        mutex.lock();
         bytesRead = recvfrom(socket, (char*)buffer, sizeof(buffer), 0, (sockaddr*)&from, &fromLength);
+        mutex.unlock();
 
         if(bytesRead > 0) {
             unsigned int fromAddress = ntohl(from.sin_addr.s_addr);

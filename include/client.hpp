@@ -18,6 +18,7 @@
 #include <glm/vec2.hpp>
 #include <queue>
 #include <mutex>
+#include <thread>
 
 typedef unsigned int ID;
 
@@ -26,6 +27,9 @@ class Client {
 private:
     Socket socket;
     IpAddress server;
+
+    std::thread receiveThread;
+    bool receiveThreadRunning;
 
     SDL_Event event;
 
@@ -43,6 +47,8 @@ private:
     Renderer renderer;
 
     std::mutex componentsMutex;
+
+    void receive();
 
 public:
     bool running = true;
