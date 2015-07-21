@@ -119,6 +119,11 @@ void Server::onConnect(const IpAddress& ipAddress) {
 	auto fatManId = entityManager.createFatMan({0.0f, 0.0f});
 	clients.insert({ipAddress, fatManId});
 
+	//In case a client reconnects, the socket shouldn't reject the newly
+	//reconnected clients packets since the socket knows of latter remoteSequences
+	//since the previous session on client machine
+	socket.resetRemoteSequenceNumber(ipAddress);
+
 	//Client should get a copy of all components
 	send(ipAddress);
 

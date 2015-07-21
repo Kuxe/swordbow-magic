@@ -34,6 +34,11 @@ Client::~Client() {
 
 void Client::connect(const IpAddress& server) {
 
+    //TODO: The server should inform the client of the servers current
+    //sequence number, and the client should set it here with some
+    //socket.setRemoteSequenceNumber(server)-call. Otherwise clients
+    //that connects to a server might figure some packets to be old
+
     //Start a thread that checks socket for any recieved data
     receiveThreadRunning = true;
     receiveThread = std::thread(&Client::receive, this);

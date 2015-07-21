@@ -13,6 +13,7 @@
 #include <chrono>
 #include <ctime>
 #include <mutex>
+#include <unordered_map>
 
 /** For portable serialization using cereal **/
 #include <cereal/archives/portable_binary.hpp>
@@ -33,6 +34,8 @@ private:
     unsigned char buffer[4096];
     std::string protocolName;
     std::mutex mutex;
+
+    std::unordered_map<IpAddress, unsigned int> remoteSequenceNumbers;
 
 
 public:
@@ -174,7 +177,10 @@ public:
 
             //Check if the packet is meant for swordbow-magic (protocol)
             if(protocol == stringhash(protocolName)) {
-                static uint16_t remoteSequence = 0;
+
+                //Each sender has it's own remoteSequenceNumber
+                const auto& remoteSequence = remoteSequenceNumbers[sender];
+                std::cout << remoteSequence << std::endl;
 
                 //Only accept recent messages
                 constexpr uint16_t MAX = 65535;
@@ -183,7 +189,7 @@ public:
                     (remoteSequence > sequence && remoteSequence - sequence < MAX/2);
 
                 if(recent) {
-                    remoteSequence = sequence;
+                    remoteSequenceNumbers[sender] = sequence;
 
                     //TODO: Figure out what 'ack(knowledge)' is and implement congestion control
                     //TODO: Implement congestion avoidance
@@ -207,6 +213,16 @@ public:
         cereal::PortableBinaryInputArchive pbia(iss);
         pbia(object);
         return object;
+    }
+
+    //Should be called if same machine restarts a client, since that
+    //client will start producing sequencenumbers starting on 0, 1, 2 ...
+    //but the server, without calling this method, would compare 0, 1, 2 etc
+    //towards an already present, possibly larger, number within
+    //remoteSequnceNumbers which would result in deeming the newest packet
+    //as an old packet, which is unwanted behaviour..
+    void resetRemoteSequenceNumber(const IpAddress& ipAddress) {
+        remoteSequenceNumbers[ipAddress] = 0;
     }
 };
 
