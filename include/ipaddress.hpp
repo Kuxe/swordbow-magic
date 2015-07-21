@@ -1,7 +1,7 @@
 #ifndef IPADDRESS_HPP
 #define IPADDRESS_HPP
 
-#include <boost/functional/hash.hpp>
+#include <functional>
 
 //Forward declare
 struct IpAddressHash;
@@ -49,14 +49,21 @@ public:
     }
 };
 
+//Apparently the same as boost hash_combine
+template <class T>
+inline void hash_combine(std::size_t& seed, const T& v) {
+    std::hash<T> hasher;
+    seed ^= hasher(v) + 0x9e3779b9 + (seed<<6) + (seed>>2);
+}
+
 //Hash method for using IpAddress as key in unordered_map
 namespace std {
     template<>
     struct hash<IpAddress> {
         std::size_t operator()(const IpAddress& ipa) const {
             std::size_t s = 0;
-            boost::hash_combine(s, ipa.address);
-            boost::hash_combine(s, ipa.port);
+            hash_combine(s, ipa.address);
+            hash_combine(s, ipa.port);
             return s;
         }
     };
