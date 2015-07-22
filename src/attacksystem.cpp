@@ -86,7 +86,7 @@ void AttackSystem::update() {
                 SoundData hurtSound = {Sound::HURT};
 
                 //Broadcast hurtsound to all clients
-                for(auto pair : *clients) {
+                for(auto& pair : *clients) {
                     auto& clientData = pair.second;
                     using Type = Packet<SoundData>;
                     auto packet = Type {

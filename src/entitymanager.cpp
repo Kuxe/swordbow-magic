@@ -423,7 +423,7 @@ void EntityManager::remove(ID id) {
 
 	//2. Remove from clients systemManagers
 	for(auto systemIdentifier : entityClientSystemMap.at(id)) {
-		for(auto pair : *clients) {
+		for(auto& pair : *clients) {
 			const std::pair<ID, System::Identifier> data {id, systemIdentifier};
 
 			auto& clientData = pair.second;
@@ -456,7 +456,7 @@ void EntityManager::registerIdToSystem(ID id, System::Identifier system) {
 
 void EntityManager::registerIdToRemoteSystem(ID id, System::Identifier system) {
 	entityClientSystemMap[id].push_back(system);
-	for(auto pair : *clients) {
+	for(auto& pair : *clients) {
 		const std::pair<ID, System::Identifier> data {id, system};
 
 		auto& clientData = pair.second;

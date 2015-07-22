@@ -128,7 +128,7 @@ void AnimationSystem::update() {
                 //activating ids already might be to soon since clients doesnt have
                 //the renderdiff yet... Which would explain animations not playing
                 //at times
-                for(auto pair : *clients) {
+                for(auto& pair : *clients) {
                     const std::pair<ID, System::Identifier> data {id, System::RENDER};
                     auto& clientData = pair.second;
 
