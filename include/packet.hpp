@@ -1,16 +1,9 @@
 #ifndef PACKET_HPP
 #define PACKET_HPP
 
-#include <functional>
-#include <string>
 #include <type_traits>
 
-constexpr uint16_t stringhash(const char* str, int h = 0) {
-    return *str ? stringhash(str+1, (h << 1 ^ *str+1)) : h;
-}
-constexpr uint16_t stringhash(const std::string& str) {
-    return stringhash(str.c_str());
-}
+#include "stringhash.hpp"
 
 //Representing objects as unsigned int is probably the easiest way
 //but template is here to allow user to pass any type in the packet

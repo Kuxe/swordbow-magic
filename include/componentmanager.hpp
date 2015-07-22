@@ -33,37 +33,37 @@ class ComponentManager {
     Components<MoveComponent> moveComponentsDiff;
     Components<RenderComponent> renderComponentsDiff;
 
-	constexpr MoveComponent& createMoveComponent(const ID id) {
+	MoveComponent& createMoveComponent(const ID id) {
         return moveComponents[id] = moveComponentsDiff[id] = MoveComponent();
     }
-	constexpr RenderComponent& createRenderComponent(const ID id) {
+	RenderComponent& createRenderComponent(const ID id) {
         return renderComponents[id] = renderComponentsDiff[id] = RenderComponent();
     }
-	constexpr InputComponent& createInputComponent(const ID id) {
+	InputComponent& createInputComponent(const ID id) {
         return inputComponents[id] = InputComponent();
     }
-	constexpr TileComponent& createTileComponent(const ID id) {
+	TileComponent& createTileComponent(const ID id) {
         return tileComponents[id] = TileComponent();
     }
-    constexpr SizeComponent& createSizeComponent(const ID id) {
+    SizeComponent& createSizeComponent(const ID id) {
         return sizeComponents[id] = SizeComponent();
     }
-    constexpr NameComponent& createNameComponent(const ID id) {
+    NameComponent& createNameComponent(const ID id) {
         return nameComponents[id] = NameComponent();
     }
-    constexpr SoundComponent& createSoundComponent(const ID id) {
+    SoundComponent& createSoundComponent(const ID id) {
         return soundComponents[id] = SoundComponent();
     }
-    constexpr AnimationComponent& createAnimationComponent(const ID id) {
+    AnimationComponent& createAnimationComponent(const ID id) {
         return animationComponents[id] = AnimationComponent();
     }
-    constexpr HealthComponent& createHealthComponent(const ID id) {
+    HealthComponent& createHealthComponent(const ID id) {
         return healthComponents[id] = HealthComponent();
     }
-    constexpr AttackComponent& createAttackComponent(const ID id) {
+    AttackComponent& createAttackComponent(const ID id) {
         return attackComponents[id] = AttackComponent();
     }
-    constexpr CommandComponent& createCommandComponent(const ID id) {
+    CommandComponent& createCommandComponent(const ID id) {
         return commandComponents[id] = CommandComponent();
     }
 

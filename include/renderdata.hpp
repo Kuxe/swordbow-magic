@@ -12,7 +12,7 @@ struct RenderData {
     int zindex_base;
     int zindex;
 
-    RenderData(
+    constexpr RenderData(
         Image::Identifier image,
         const SDL_Rect& cliprect,
         const SDL_Rect& target,

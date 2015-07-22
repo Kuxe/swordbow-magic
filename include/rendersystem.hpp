@@ -49,7 +49,7 @@ public:
 	const std::priority_queue<RenderData>& getDrawPriorityQueue() const;
 
 	//Forces a redraw within an area
-	void inline constexpr renderArea(const Rect& area) {
+	void inline renderArea(const Rect& area) {
 	    previousDrawAreas.push(area);
 	}
 };

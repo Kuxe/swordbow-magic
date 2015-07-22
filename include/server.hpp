@@ -78,7 +78,7 @@ public:
     void sendDiff();
     void sendDiff(const IpAddress& ipAddress);
 
-    constexpr void printGeneralInfo() {
+    void printGeneralInfo() {
     	using std::cout;
     	using std::endl;
 
