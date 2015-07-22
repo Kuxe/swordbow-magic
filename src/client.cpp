@@ -286,9 +286,7 @@ void Client::step() {
             sizeof(inputData)
         };
 
-        //Send that packet to 127.0.0.1:47293
-        constexpr unsigned short SERVER_PORT = 47293;
-        socket.send<Type>({127, 0, 0, 1, SERVER_PORT}, packet);
+        socket.send<Type>(server, packet);
     }
 
     /** CRITICAL SECTION **/
