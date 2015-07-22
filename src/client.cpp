@@ -1,6 +1,7 @@
 #include "client.hpp"
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <string>
 
 /** For network **/
 #include "messagetypes.hpp"
@@ -21,7 +22,16 @@ Client::Client(int argc, char** argv) :
 
     std::cout << "\n--** STARTING CLIENT **--" << std::endl;
 
-    constexpr short port = 47294;
+    //Default port
+    short port = 47294;
+
+    //Check if port is set
+    for(int i = 0; i < argc; i++) {
+		if(strcmp(argv[i], "port") == 0) {
+			port = std::atoi(argv[i+1]);
+		}
+	}
+
     socket.open(port);
 
     systemManager.add(&textureHashGridSystem);
