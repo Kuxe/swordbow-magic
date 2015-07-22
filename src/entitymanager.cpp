@@ -388,10 +388,11 @@ void EntityManager::remove(ID id) {
 	}
 	entityServerSystemMap.erase(id);
 
-	//2. Remove from clients systemManagers
-	//Tell clients to erase id from its systems. By assumption any id
-	//on client systems are present on both rendersystem and texturehashgridsystem
-	//So a generic "REMOVE_ID_FROM_SYSTEMS" message is sufficient. This might
+	//2. Remove from clients
+	//Tell clients to erase id from its systems and component manager.
+	//By assumption any id on client systems are present on both rendersystem
+	//and texturehashgridsystem
+	//So a generic "REMOVE_ID" message is sufficient. This might
 	//change in the future.
 	for(auto& pair : *clients) {
 		auto& clientData = pair.second;
@@ -400,7 +401,7 @@ void EntityManager::remove(ID id) {
 		auto packet = Type {
 			stringhash("swordbow-magic"),
 			clientData.sequence++,
-			MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEMS,
+			MESSAGE_TYPE::REMOVE_ID,
 			id,
 			sizeof(id)
 		};
