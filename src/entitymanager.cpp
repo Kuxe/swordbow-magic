@@ -4,6 +4,11 @@
 #include <iostream>
 #include <forward_list>
 
+/** For networking **/
+#include "socket.hpp"
+#include "packet.hpp"
+#include "messagetypes.hpp"
+
 #include "systemmanager.hpp"
 #include "rendersystem.hpp"
 #include "movesystem.hpp"
