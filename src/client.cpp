@@ -16,7 +16,7 @@ Client::Client(int argc, char** argv) :
         renderSystem(&renderer),
         cameraSystem(&renderer) {
 
-    cout << "\n--** STARTING CLIENT **--" << endl;
+    std::cout << "\n--** STARTING CLIENT **--" << std::endl;
 
     constexpr short port = 47294;
     socket.open(port);
@@ -97,7 +97,7 @@ void Client::receive() {
 
             switch(type) {
                 case MESSAGE_TYPE::OUTDATED: {
-                    std::cout << "This packet is outdated, to late! Sluggish!" << endl;
+                    std::cout << "This packet is outdated, to late! Sluggish!" << std::endl;
                 } break;
 
                 case MESSAGE_TYPE::CONNECT: {
@@ -223,8 +223,8 @@ void Client::step() {
     deltaTime.start();
 
     /** Get input from client **/
-    queue<int> presses;
-    queue<int> releases;
+    std::queue<int> presses;
+    std::queue<int> releases;
 
     //Fetch all events that ocurred...
     while(SDL_PollEvent(&event) != 0) {

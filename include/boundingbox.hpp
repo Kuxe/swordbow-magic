@@ -1,7 +1,7 @@
 #ifndef BOUNDINGBOX_H
 #define BOUNDINGBOX_H
 
-#include "spatialindexer.hpp"
+#include "rect.hpp"
 #include "systemidentifiers.hpp"
 
 class ComponentManager;

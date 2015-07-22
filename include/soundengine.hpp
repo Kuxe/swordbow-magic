@@ -1,7 +1,6 @@
 #ifndef SOUNDSYSTEM_H
 #define SOUNDSYSTEM_H
 
-#include <unordered_set>
 #include <unordered_map>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_audio.h>
@@ -12,7 +11,6 @@
 
 typedef unsigned int ID;
 
-//TODO: Figure out if SoundSystem really should be a system.
 class SoundEngine {
 private:
     std::unordered_map<Music::Identifier, Mix_Music*, std::hash<int>> musics;

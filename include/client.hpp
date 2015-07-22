@@ -1,10 +1,8 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-#include "components.hpp"
 #include "deltatime.hpp"
 #include "renderer.hpp"
-#include "inputdata.hpp"
 #include "componentmanager.hpp"
 #include "systemmanager.hpp"
 #include "rendersystem.hpp"
@@ -15,8 +13,6 @@
 #include "socket.hpp"
 
 #include <SDL2/SDL.h>
-#include <glm/vec2.hpp>
-#include <queue>
 #include <mutex>
 #include <thread>
 

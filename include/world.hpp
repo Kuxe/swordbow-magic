@@ -1,9 +1,6 @@
 #ifndef WORLD_H
 #define WORLD_H
 
-#include "noisebrush.hpp"
-#include "glm/vec2.hpp"
-
 typedef unsigned int ID;
 
 class EntityManager;

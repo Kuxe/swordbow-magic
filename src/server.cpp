@@ -1,7 +1,10 @@
 #include "server.hpp"
-#include "client.hpp"
+
+/** For network **/
 #include "packet.hpp"
 #include "messagetypes.hpp"
+
+#include <SDL2/SDL.h> //For SDL_keys
 
 Server::Server(int argc, char** argv) :
 		socket("swordbow-magic"),
@@ -11,10 +14,9 @@ Server::Server(int argc, char** argv) :
 		sizeHashGridSystem(&componentManager, &sizeBoundingBox),
 		collisionSystem(&sizeHashGridSystem),
 		removeSystem(&entityManager),
-		animationSystem(&clients, &socket),
 		attackSystem(&sizeHashGridSystem, &clients, &socket) {
 
-	cout << "\n--** STARTING SERVER **--" << endl;
+	std::cout << "\n--** STARTING SERVER **--" << std::endl;
 
 	printGeneralInfo();
 
@@ -79,7 +81,7 @@ void Server::step() {
 
         switch(type) {
 			case MESSAGE_TYPE::OUTDATED: {
-                std::cout << "This packet is outdated, to late! Sluggish!" << endl;
+                std::cout << "This packet is outdated, to late! Sluggish!" << std::endl;
             } break;
 
 			case MESSAGE_TYPE::CONNECT: {

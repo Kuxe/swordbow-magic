@@ -4,10 +4,6 @@
 #include "isystem.hpp"
 #include <unordered_set>
 #include <queue>
-#include "spatialindexer.hpp"
-
-using std::unordered_set;
-using std::queue;
 
 class MoveComponent;
 class SizeComponent;
@@ -17,8 +13,8 @@ typedef unsigned int ID;
 
 class CollisionSystem : public ISystem {
 private:
-	unordered_set<ID> ids;
-	queue<ID> activeIds;
+	std::unordered_set<ID> ids;
+	std::queue<ID> activeIds;
 	SpatialIndexer* spatialIndexer;
 
 public:

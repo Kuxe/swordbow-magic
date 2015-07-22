@@ -5,8 +5,6 @@
 
 typedef unsigned int ID;
 
-class Client;
-
 template<class T, class Container = std::unordered_map<ID, T>>
 class Components {
 private:

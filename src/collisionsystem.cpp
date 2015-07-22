@@ -1,5 +1,6 @@
 #include "collisionsystem.hpp"
 #include "componentmanager.hpp"
+#include "spatialindexer.hpp"
 #include "movecomponent.hpp"
 #include "sizecomponent.hpp"
 

@@ -2,25 +2,21 @@
 #define HASHGRIDSYSTEM_H
 
 #include <iostream>
-#include "spatialindexer.hpp"
 #include <queue>
+#include "spatialindexer.hpp"
 #include "isystem.hpp"
-
-using std::cout;
-using std::endl;
-using std::queue;
 
 class ComponentManager;
 class BoundingBox;
 
 class HashGridSystem : public SpatialIndexer, public ISystem {
 	private:
-		unordered_set<ID> ids;
-		queue<ID> activeIds;
+		std::unordered_set<ID> ids;
+		std::queue<ID> activeIds;
 		const unsigned int width;
 		const unsigned int height;
 		const unsigned int cellsCapacity;
-		unordered_set<ID>* cells;
+		std::unordered_set<ID>* cells;
 		const unsigned int side;
 
 		ComponentManager* componentManager;
@@ -44,8 +40,8 @@ class HashGridSystem : public SpatialIndexer, public ISystem {
 
 		virtual void add(ID id);
 		virtual void remove(ID id);
-		virtual unordered_set<ID> overlaps(const ID id) const;
-		virtual unordered_set<ID> query(const Rect& queryArea) const ;
+		virtual std::unordered_set<ID> overlaps(const ID id) const;
+		virtual std::unordered_set<ID> query(const Rect& queryArea) const ;
 		inline Rect getBoundingBox(const ID id) const;
 
 		void activateId(ID id);

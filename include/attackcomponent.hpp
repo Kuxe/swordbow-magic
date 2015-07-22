@@ -1,7 +1,7 @@
 #ifndef ATTACKCOMPONENT_HPP
 #define ATTACKCOMPONENT_HPP
 
-#include "spatialindexer.hpp"
+#include "rect.hpp"
 #include <chrono>
 
 class AttackComponent {
@@ -13,7 +13,5 @@ public:
     unsigned short delay = 1000; //In milliseconds
 
 };
-
-
 
 #endif //ATTACKCOMPONENT_HPP

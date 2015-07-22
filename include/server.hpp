@@ -2,13 +2,16 @@
 #define SERVER_HPP
 
 #include <iostream>
+
+#include <unordered_map>
+#include <mutex>
+
 #include "deltatime.hpp"
 #include "componentmanager.hpp"
 #include "systemmanager.hpp"
 #include "idmanager.hpp"
 #include "entitymanager.hpp"
 #include "movesystem.hpp"
-#include "rendersystem.hpp"
 #include "movecomponent.hpp"
 #include "world.hpp"
 #include "hashgridsystem.hpp"
@@ -21,15 +24,14 @@
 #include "animationsystem.hpp"
 #include "movediffsystem.hpp"
 #include "renderdiffsystem.hpp"
-#include <unordered_map>
 #include "inputdata.hpp"
-#include <mutex>
+
+/** For network **/
 #include "socket.hpp"
 #include "clientdata.hpp"
 
 typedef unsigned int ID;
 
-class Client;
 class Server {
 private:
     Socket socket;

@@ -2,9 +2,8 @@
 #define SPATIALINDEXER_H
 
 #include <unordered_set>
-#include "rect.hpp"
 
-using std::unordered_set;
+#include "rect.hpp"
 
 typedef unsigned int ID;
 class SpatialIndexer {
@@ -26,12 +25,12 @@ class SpatialIndexer {
 		 * Fills the list overlappingEntities with all IDs that overlap IDs texture.
 		 * Useful for overlapping textures.
 		 **/
-		virtual unordered_set<ID> overlaps(const ID id) const = 0;
+		virtual std::unordered_set<ID> overlaps(const ID id) const = 0;
 
 		/**
 		 *	Return all ids within queryarea
 		 **/
-		virtual unordered_set<ID> query(const Rect& queryArea) const = 0;
+		virtual std::unordered_set<ID> query(const Rect& queryArea) const = 0;
 
 		virtual Rect getBoundingBox(const ID id) const = 0;
 

@@ -1,20 +1,11 @@
 #include "animationsystem.hpp"
+#include "animationcomponent.hpp"
 #include <iostream>
 #include "componentmanager.hpp"
 #include "systemmanager.hpp"
-#include "client.hpp"
-#include "socket.hpp"
-#include "packet.hpp"
-#include "messagetypes.hpp"
 
 using std::cout;
 using std::endl;
-
-AnimationSystem::AnimationSystem(
-    unordered_map<IpAddress, ClientData>* clients,
-    Socket* socket) :
-    clients(clients),
-    socket(socket) { }
 
 void AnimationSystem::add(ID id) {
     ids.insert(id);

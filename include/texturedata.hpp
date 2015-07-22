@@ -1,7 +1,7 @@
 #ifndef TEXTUREDATA_HPP
 #define TEXTUREDATA_HPP
 
-class SDL_Teture;
+class SDL_Texture;
 struct TextureData {
     SDL_Texture* texture;
 	int width;

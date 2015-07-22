@@ -1,11 +1,15 @@
 #ifndef ATTACKSYSTEM_HPP
 #define ATTACKSYSTEM_HPP
 
+#include "isystem.hpp"
+
 #include <unordered_set>
 #include <unordered_map>
 #include <queue>
-#include "isystem.hpp"
+
+/** For network **/
 #include "clientdata.hpp"
+#include "ipaddress.hpp"
 
 class HashGridSystem;
 class Client;

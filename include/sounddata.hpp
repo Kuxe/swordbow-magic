@@ -1,7 +1,6 @@
 #ifndef SOUNDDATA_HPP
 #define SOUNDDATA_HPP
 
-#include <string>
 #include <chrono>
 #include "soundidentifiers.hpp"
 

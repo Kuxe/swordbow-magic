@@ -2,16 +2,15 @@
 #define RENDERSYSTEM_H
 
 #include "isystem.hpp"
-#include <unordered_map>
-#include <string>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
-#include <vector>
+
 #include <unordered_set>
 #include <queue>
-#include "spatialindexer.hpp"
-#include "heap.hpp"
+
+#include "rect.hpp"
 #include "text.hpp"
 #include "renderdata.hpp"
 #include "texturedata.hpp"
@@ -28,14 +27,12 @@ class Renderer;
 
 class RenderSystem : public ISystem {
 private:
-	unordered_set<ID> ids;
+	std::unordered_set<ID> ids;
 	std::queue<ID> activeIds;
     std::priority_queue<RenderData> pq;
 	std::queue<Rect> previousDrawAreas;
 
     Renderer* renderer;
-
-	void renderArea(heap<RenderData>& pq, Rect area);
 
 public:
     RenderSystem(Renderer* renderer);
@@ -48,7 +45,6 @@ public:
 	void activateId(ID id);
 	void printText(const Text& text);
 
-	//TODO: Implement const ref
     std::priority_queue<RenderData>& getDrawPriorityQueue();
 	const std::priority_queue<RenderData>& getDrawPriorityQueue() const;
 

@@ -1,11 +1,10 @@
 #include "world.hpp"
+
+#include <random>
+
 #include "entitymanager.hpp"
 #include "componentmanager.hpp"
-#include "movecomponent.hpp"
-#include "rendercomponent.hpp"
-#include "sizecomponent.hpp"
-#include <iostream>
-#include <glm/ext.hpp>
+#include "noisebrush.hpp"
 
 World::World(EntityManager* entityManager) :
 		entityManager(entityManager)

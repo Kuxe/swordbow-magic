@@ -18,7 +18,6 @@ namespace System {
         REMOVE,
         RENDERDIFF,
         RENDER,
-        SERVERNETWORK,
     };
 }
 

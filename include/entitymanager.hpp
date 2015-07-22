@@ -7,7 +7,10 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include "systemidentifiers.hpp"
+
+/** For network **/
 #include "clientdata.hpp"
+#include "ipaddress.hpp"
 
 /**
 	_The_ EntityManager is respnsible for creating objects.

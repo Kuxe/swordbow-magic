@@ -1,12 +1,14 @@
 #include "playsound.hpp"
-#include "client.hpp"
+
+/** For network **/
+#include "clientdata.hpp"
 #include "socket.hpp"
 #include "messagetypes.hpp"
 #include "packet.hpp"
 
 PlaySound::PlaySound(
     SoundData sound,
-    unordered_map<IpAddress, ClientData>* clients,
+    std::unordered_map<IpAddress, ClientData>* clients,
     Socket* socket
     ) :
     sound(sound),

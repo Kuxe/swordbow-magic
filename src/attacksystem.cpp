@@ -1,10 +1,9 @@
 #include "attacksystem.hpp"
 #include "hashgridsystem.hpp"
 #include "componentmanager.hpp"
-#include "systemmanager.hpp"
 #include "sounddata.hpp"
-#include "namecomponent.hpp"
-#include "client.hpp"
+
+/** For network **/
 #include "socket.hpp"
 #include "packet.hpp"
 #include "messagetypes.hpp"
@@ -13,7 +12,7 @@
 
 AttackSystem::AttackSystem(
     HashGridSystem* hashgrid,
-    unordered_map<IpAddress, ClientData>* clients,
+    std::unordered_map<IpAddress, ClientData>* clients,
     Socket* socket) :
     hashgrid(hashgrid),
     clients(clients),
@@ -26,7 +25,7 @@ void AttackSystem::add(ID id) {
 }
 void AttackSystem::remove(ID id) {
     if(ids.find(id) == ids.end()) {
-        cout << "WARNING: Tried to remove unpresent ID from AttackSystem!" << endl;
+        std::cout << "WARNING: Tried to remove unpresent ID from AttackSystem!" << std::endl;
     }
     ids.erase(id);
 }

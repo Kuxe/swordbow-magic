@@ -22,7 +22,7 @@ void MoveSystem::add(ID id) {
 
 void MoveSystem::remove(ID id) {
 	if(ids.erase(id) == 0) {
-		cout << "WARNING: MoveSystem tried to erase unpresent ID " << id << ", segfault inc!" << endl;
+		std::cout << "WARNING: MoveSystem tried to erase unpresent ID " << id << ", segfault inc!" << std::endl;
 		return;
 	}
 

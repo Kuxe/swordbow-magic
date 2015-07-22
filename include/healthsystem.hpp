@@ -4,13 +4,11 @@
 #include <unordered_set>
 #include "isystem.hpp"
 
-using std::unordered_set;
-
 typedef unsigned int ID;
 
 class HealthSystem : public ISystem {
 private:
-    unordered_set<ID> ids;
+    std::unordered_set<ID> ids;
 
 public:
     void add(ID id);

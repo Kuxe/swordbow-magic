@@ -5,13 +5,11 @@
 #include <chrono>
 #include "imageidentifiers.hpp"
 
-using std::vector;
-
 class AnimationComponent {
 public:
     class Animation {
     public:
-        vector<Image::Identifier> frames;
+        std::vector<Image::Identifier> frames;
         unsigned char currentFrame = 0;
         std::chrono::high_resolution_clock::time_point startTime;
         unsigned short duration = 150; //duration per frame in milliseconds

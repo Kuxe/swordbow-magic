@@ -3,8 +3,11 @@
 
 #include "icommand.hpp"
 #include "sounddata.hpp"
-#include "clientdata.hpp"
 #include <unordered_map>
+
+/** For network **/
+#include "ipaddress.hpp"
+#include "clientdata.hpp"
 
 typedef unsigned int ID;
 

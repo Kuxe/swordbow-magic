@@ -39,7 +39,6 @@ ADD_LIBRARY(game SHARED
     src/renderdiffsystem.cpp
     src/renderer.cpp
     src/rendersystem.cpp
-    src/servernetworksystem.cpp
     src/sizeboundingbox.cpp
     src/soundengine.cpp
     src/systemmanager.cpp

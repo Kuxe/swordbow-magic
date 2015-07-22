@@ -3,12 +3,10 @@
 
 #include <unordered_map>
 #include <forward_list>
+
+//Forward declaration could work instead of inclusion but that leads to
+//undefined behaviour when deleting a pointer to ICommand
 #include "icommand.hpp"
-
-using std::unordered_map;
-using std::forward_list;
-
-class ICommand;
 
 //This component allows each entity to do it's own thing
 //on a certain event (command).
@@ -26,6 +24,8 @@ struct CommandComponent {
         ON_MOVE
     };
 
+    std::unordered_map<unsigned int, std::forward_list<ICommand*> > commands;
+
     virtual ~CommandComponent() {
         for(auto list : commands) {
             for(auto command : list.second) {
@@ -34,8 +34,7 @@ struct CommandComponent {
         }
     }
 
-    unordered_map<unsigned int, forward_list<ICommand*> > commands;
-    constexpr inline forward_list<ICommand*>& operator [](unsigned int index) {
+    constexpr inline std::forward_list<ICommand*>& operator [](unsigned int index) {
         return commands[index];
     }
     void execute(const Event& event);
