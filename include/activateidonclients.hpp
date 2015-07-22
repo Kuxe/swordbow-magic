@@ -14,7 +14,9 @@ typedef unsigned int ID;
 /**
  *
  *  Similar to ActivateId but activates
- *  id on all remote clients
+ *  id on all remote clients. Obsolete class
+ *  since activation of ids are implicit upon
+ *  receiving a packet
  *
  **/
 class ActivateIdOnClients : public ICommand {
@@ -36,6 +38,7 @@ public:
         clients(clients) { }
 
     void execute() {
+        std::cout << "Warning: Called obsolete ActivateIdOnClients.execute()!" << std::endl;
         for(auto pair : *clients) {
             const std::pair<ID, System::Identifier> data {id, system};
             auto& client = pair.second;

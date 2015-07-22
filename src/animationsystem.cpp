@@ -122,30 +122,10 @@ void AnimationSystem::update() {
                     animation->firstLoop = false;
                 }
 
-                //Tell all clients to activate this id on their rendersystems
-
-                //FIXME: I haven't given this much thought, but I think that
-                //activating ids already might be to soon since clients doesnt have
-                //the renderdiff yet... Which would explain animations not playing
-                //at times
-                for(auto& pair : *clients) {
-                    const std::pair<ID, System::Identifier> data {id, System::RENDER};
-                    auto& clientData = pair.second;
-
-                    using Type = Packet<std::pair<ID, System::Identifier>>;
-                    auto packet = Type {
-                		stringhash("swordbow-magic"),
-                        clientData.sequence++,
-                		MESSAGE_TYPE::ACTIVATE_ID,
-                		data,
-                		sizeof(data)
-                	};
-                	socket->send<Type>(pair.first, packet);
-                }
-
                 //Since the rendercomponent changed, add this id to
                 //RenderDiffSystem so that the network can send only the
-                //changed rendercomponents
+                //changed rendercomponents. This implicitly activates
+                //the ids of the components upon receival on the clients
                 systemManager->getSystem(System::RENDERDIFF)->add(id);
             }
         }

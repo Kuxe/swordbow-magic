@@ -9,7 +9,6 @@
 #include "movesystem.hpp"
 #include "hashgridsystem.hpp"
 #include "activateid.hpp"
-#include "activateidonclients.hpp"
 #include "addidtosystem.hpp"
 #include "removeidfromsystem.hpp"
 #include "playsound.hpp"
@@ -139,10 +138,7 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 	};
 
 	commandComponent[CommandComponent::Event::ON_MOVE] = {
-		//Perhaps use a "new ActivateIdOnClients(id, "RenderSystem")"?
-		new ActivateIdOnClients(id, System::RENDER, socket, clients),
 		new ActivateId(id, System::COLLISION, systemManager),
-		new ActivateIdOnClients(id, System::HASHGRID_TEXTURE, socket, clients),
 		new ActivateId(id, System::HASHGRID_SIZE, systemManager),
 		new PlaySound(soundComponent.walk, clients, socket),
 	};
@@ -154,8 +150,6 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 	registerIdToSystem(id, System::REMOVE);
 	registerIdToSystem(id, System::ATTACK);
 	registerIdToSystem(id, System::INPUT);
-	registerIdToRemoteSystem(id, System::RENDER);
-	registerIdToRemoteSystem(id, System::HASHGRID_TEXTURE);
 	registerIdToSystem(id, System::ANIMATION);
 
 	return id;
@@ -189,8 +183,6 @@ ID EntityManager::createTree(const glm::vec2& position) {
 
 	registerIdToSystem(id, System::COLLISION);
 	registerIdToSystem(id, System::HASHGRID_SIZE);
-	registerIdToRemoteSystem(id, System::RENDER);
-	registerIdToRemoteSystem(id, System::HASHGRID_TEXTURE);
 
 	return id;
 }
@@ -214,10 +206,6 @@ ID EntityManager::createGrassTile(const glm::vec2& position) {
 
 	nameComponent.name = "grasstile";
 
-	//Systems on clients need to be aware of these
-	registerIdToRemoteSystem(id, System::RENDER);
-	registerIdToRemoteSystem(id, System::HASHGRID_TEXTURE);
-
 	return id;
 }
 
@@ -240,9 +228,6 @@ ID EntityManager::createWaterTile(const glm::vec2& position) {
 	sizeComponent.height = 32;
 
 	nameComponent.name = "watertile";
-
-	registerIdToRemoteSystem(id, System::RENDER);
-	registerIdToRemoteSystem(id, System::HASHGRID_TEXTURE);
 
 	return id;
 }
@@ -280,17 +265,6 @@ ID EntityManager::createBloodSplatter(const glm::vec2& position) {
 
 	ac.state = &ac.bloodsplatter;
 
-	//FIXME: These are getting registered on remote systems.
-	//It could be possible that the remote systems iterate
-	//over registered entities BEFORE the remote client
-	//got the components, which would cause a segfault
-	//This is probably the case when killing a character
-	//which emits a new entity (blood). That blood is getting
-	//registered to client, client iterate over it and
-	//fetches movecomponent before
-	//server did send movecomponent of that id to client
-	registerIdToRemoteSystem(id, System::RENDER);
-	registerIdToRemoteSystem(id, System::HASHGRID_TEXTURE);
 	registerIdToSystem(id, System::ANIMATION);
 
 	return id;
@@ -328,9 +302,6 @@ ID EntityManager::createFlower(const glm::vec2& position, const char color) {
 	mc.pos = position;
 
 	nc.name = "flower";
-
-	registerIdToRemoteSystem(id, System::RENDER);
-	registerIdToRemoteSystem(id, System::HASHGRID_TEXTURE);
 
 	return id;
 }
@@ -372,15 +343,8 @@ ID EntityManager::createDummySquare(const glm::vec2& position) {
 		new AddIdToSystem(id, System::MOVE, systemManager),
 	};
 
-	cc[CommandComponent::Event::ON_MOVE] = {
-		new ActivateIdOnClients(id, System::RENDER, socket, clients),
-		new ActivateIdOnClients(id, System::HASHGRID_TEXTURE, socket, clients),
-	};
-
 	registerIdToSystem(id, System::MOVE);
 	registerIdToSystem(id, System::INPUT);
-	registerIdToRemoteSystem(id, System::RENDER);
-	registerIdToRemoteSystem(id, System::HASHGRID_TEXTURE);
 
 	return id;
 }
@@ -408,8 +372,6 @@ ID EntityManager::createStone(const glm::vec2& position) {
 
 	registerIdToSystem(id, System::COLLISION);
 	registerIdToSystem(id, System::HASHGRID_SIZE);
-	registerIdToRemoteSystem(id, System::RENDER);
-	registerIdToRemoteSystem(id, System::HASHGRID_TEXTURE);
 
 	return id;
 }
@@ -455,6 +417,7 @@ void EntityManager::registerIdToSystem(ID id, System::Identifier system) {
 }
 
 void EntityManager::registerIdToRemoteSystem(ID id, System::Identifier system) {
+	std::cout << "WARNING: Called obsolete entityManager.registerIdToRemoteSystem(...)!" << std::endl;
 	entityClientSystemMap[id].push_back(system);
 	for(auto& pair : *clients) {
 		const std::pair<ID, System::Identifier> data {id, system};

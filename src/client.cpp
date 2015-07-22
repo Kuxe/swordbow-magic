@@ -110,24 +110,60 @@ void Client::receive() {
                     //All movecomponents were received - handle it
                     auto typedPacket = socket.get<Packet<Components<MoveComponent>>>(bytesRead);
                     componentManager.moveComponents.sync(typedPacket.getData());
+
+                    //It is assumed that any receieved movecomponent should
+                    //be added to texturehashgridsystem and rendersystem,
+                    //because if not, why would the server send them in the first
+                    //place?
+                    for(auto& pair : typedPacket.getData()) {
+                        textureHashGridSystem.add(pair.first);
+                        renderSystem.add(pair.first);
+                    }
+
                 } break;
 
                 case MESSAGE_TYPE::RENDERCOMPONENTS: {
                     //All rendercomponents were received - handle it
                     auto typedPacket = socket.get<Packet<Components<RenderComponent>>>(bytesRead);
                     componentManager.renderComponents.sync(typedPacket.getData());
+
+                    for(auto& pair : typedPacket.getData()) {
+                        textureHashGridSystem.add(pair.first);
+                        renderSystem.add(pair.first);
+                    }
+
                 } break;
 
                 case MESSAGE_TYPE::MOVECOMPONENTSDIFF: {
                     //Diff movecomponents were received - handle it
                     auto typedPacket = socket.get<Packet<Components<MoveComponent>>>(bytesRead);
                     componentManager.moveComponents.sync(typedPacket.getData());
+
+                    //It makes sence to auto-activate newly received ids of the
+                    //movecomponents in rendersystem, since the server only
+                    //sends movecomponents on actual difference, the client
+                    //should redraw that difference. So former ACTIVATE_ID message
+                    //could be implicit with any component-message, which has the
+                    //benefit of not mistakingly activating ids before components
+                    //are received. Since system.add is a superset of system.activateId
+                    //we might aswell assume adding received components to systems
+                    //which makes REGISTER_ID_TO_SYSTEM-message obsolete
+                    for(auto& pair : typedPacket.getData()) {
+                        textureHashGridSystem.add(pair.first);
+                        renderSystem.add(pair.first);
+                    }
+
                 } break;
 
                 case MESSAGE_TYPE::RENDERCOMPONENTSDIFF: {
                     //Diff rendercomponents were received - handle it
                     auto typedPacket = socket.get<Packet<Components<RenderComponent>>>(bytesRead);
                     componentManager.renderComponents.sync(typedPacket.getData());
+
+                    for(auto& pair : typedPacket.getData()) {
+                        textureHashGridSystem.add(pair.first);
+                        renderSystem.add(pair.first);
+                    }
                 } break;
 
                 case MESSAGE_TYPE::PLAY_SOUND: {
