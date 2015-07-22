@@ -389,24 +389,23 @@ void EntityManager::remove(ID id) {
 	entityServerSystemMap.erase(id);
 
 	//2. Remove from clients systemManagers
-	for(auto systemIdentifier : entityClientSystemMap.at(id)) {
-		for(auto& pair : *clients) {
-			const std::pair<ID, System::Identifier> data {id, systemIdentifier};
+	//Tell clients to erase id from its systems. By assumption any id
+	//on client systems are present on both rendersystem and texturehashgridsystem
+	//So a generic "REMOVE_ID_FROM_SYSTEMS" message is sufficient. This might
+	//change in the future.
+	for(auto& pair : *clients) {
+		auto& clientData = pair.second;
 
-			auto& clientData = pair.second;
-
-			using Type = Packet<std::pair<ID, System::Identifier>>;
-			auto packet = Type {
-				stringhash("swordbow-magic"),
-				clientData.sequence++,
-				MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM,
-				data,
-				sizeof(data)
-			};
-			socket->send<Type>(pair.first, packet);
-		}
+		using Type = Packet<ID>;
+		auto packet = Type {
+			stringhash("swordbow-magic"),
+			clientData.sequence++,
+			MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEMS,
+			id,
+			sizeof(id)
+		};
+		socket->send<Type>(pair.first, packet);
 	}
-	entityClientSystemMap.erase(id);
 
 	//3. Remove from componentManager
 	componentManager->clearComponents(id);
@@ -419,26 +418,6 @@ void EntityManager::registerIdToSystem(ID id, System::Identifier system) {
 	auto systemptr = systemManager->getSystem(system);
 	entityServerSystemMap[id].push_back(systemptr);
 	systemptr->add(id);
-}
-
-void EntityManager::registerIdToRemoteSystem(ID id, System::Identifier system) {
-	std::cout << "WARNING: Called obsolete entityManager.registerIdToRemoteSystem(...)!" << std::endl;
-	entityClientSystemMap[id].push_back(system);
-	for(auto& pair : *clients) {
-		const std::pair<ID, System::Identifier> data {id, system};
-
-		auto& clientData = pair.second;
-
-		using Type = Packet<std::pair<ID, System::Identifier>>;
-		auto packet = Packet<std::pair<ID, System::Identifier>> {
-			stringhash("swordbow-magic"),
-			clientData.sequence++,
-			MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM,
-			data,
-			sizeof(data)
-		};
-		socket->send<Type>(pair.first, packet);
-	}
 }
 
 

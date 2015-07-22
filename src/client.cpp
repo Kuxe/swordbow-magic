@@ -185,6 +185,13 @@ void Client::receive() {
                     systemManager.getSystem(systemIdentifier)->remove(id);
                 } break;
 
+                case MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEMS: {
+                    auto typedPacket = socket.get<Packet<ID>>(bytesRead);
+                    const auto& id = typedPacket.getData();
+                    systemManager.getSystem(System::RENDER)->remove(id);
+                    systemManager.getSystem(System::HASHGRID_TEXTURE)->remove(id);
+                } break;
+
                 case MESSAGE_TYPE::ACTIVATE_ID: {
                     auto typedPacket = socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
                     const auto& id = typedPacket.getData().first;

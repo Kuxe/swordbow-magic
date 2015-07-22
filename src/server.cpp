@@ -142,26 +142,6 @@ void Server::onConnect(const IpAddress& ipAddress) {
 	};
 
 	socket.send<Type>(ipAddress, cameraPacket);
-
-	//Whenever a client connects, tell the client what entities
-	//should be in what systems on the client-side
-	for(auto tuple : entityManager.entityClientSystemMap) {
-		auto id = tuple.first;
-		vector<System::Identifier>& systems = tuple.second;
-		for(auto system : systems) {
-			const std::pair<ID, System::Identifier> data {id, system};
-
-			using Type = Packet<std::pair<ID, System::Identifier>>;
-			auto packet = Type {
-				stringhash("swordbow-magic"),
-				clientData.sequence++,
-				MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM,
-				data,
-				sizeof(data)
-			};
-			socket.send<Type>(ipAddress, packet);
-		}
-	}
 }
 
 void Server::onDisconnect(const IpAddress& ipAddress) {

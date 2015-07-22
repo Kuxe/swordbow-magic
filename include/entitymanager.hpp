@@ -32,7 +32,6 @@ class EntityManager {
 		if it exits, but that's a slow bruteforce-approach)
 	*/
  	std::unordered_map<unsigned int, std::vector<ISystem*> > entityServerSystemMap;
-    std::unordered_map<unsigned int, std::vector<System::Identifier> > entityClientSystemMap;
     std::unordered_set<unsigned int> ids;
 
 	SystemManager* systemManager;
@@ -68,7 +67,6 @@ class EntityManager {
 	void remove(ID id);
 
     void registerIdToSystem(ID id, System::Identifier system);
-    void registerIdToRemoteSystem(ID id, System::Identifier system);
 };
 
 #endif //ENTITYMANAGER_H
