@@ -1,10 +1,13 @@
 #include "client.hpp"
-#include "server.hpp"
 #include <iostream>
 #include <SDL2/SDL.h>
+
+/** For network **/
 #include "messagetypes.hpp"
 #include "packet.hpp"
 #include "systemidentifiers.hpp"
+
+#include "inputdata.hpp"
 
 Client::Client(int argc, char** argv) :
         socket("swordbow-magic"),
