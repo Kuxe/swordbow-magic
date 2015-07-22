@@ -38,9 +38,6 @@ class EntityManager {
 	ComponentManager* componentManager;
 	IdManager* idManager;
 
-    //If entitymanager creates anything, it need to inform all clients connected
-    //to the parent server that a new entity was created and it belongs to
-    //"these" systems (eg RenderSystem and TextureHashGridSystem)
     std::unordered_map<IpAddress, ClientData>* clients;
 
     //Required during creation for some commands
