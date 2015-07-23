@@ -29,7 +29,7 @@ If these are not installed, the build wil fail. CMake will tell you what depende
 
 ## Windows (untested)
 1. Open up your favorite terminal and navigate to \\swordbow-magic\\\<You should be here>.
-2. Type these: `mkdir build` + `cd .\\build` + `cmake -G "MinGW Makefiles"..` + `make build`
+2. Type these: `mkdir build` + `cd .\build` + `cmake -G "MinGW Makefiles"..` + `make build`
 3. A executable "swordbow-magic" is present inside \\swordbow-magic\\\<executable should be here>
 
 I don't know if it builds at all on Windows or what steps must be taken for CMake and make to be succesful.
