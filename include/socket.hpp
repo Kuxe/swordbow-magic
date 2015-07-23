@@ -15,6 +15,14 @@
 #include <mutex>
 #include <unordered_map>
 
+#include "platform.hpp"
+
+#if PLATFORM == PLATFORM_WINDOWS
+    #include <winsock2.h>
+#endif //PLATFORM == PLATFORM_WINDOWS
+
+
+
 /** For portable serialization using cereal **/
 #include <cereal/archives/portable_binary.hpp>
 
@@ -30,6 +38,10 @@
 
 #define NET_DEBUG
 
+#if PLATFORM == PLATFORM_WINDOWS
+    typedef int socklen_t;
+#endif //PLATFORM == PLATFORM_WINDOWS
+
 class Socket {
 private:
     int socket = 0;
@@ -42,7 +54,18 @@ private:
 
 public:
     Socket(std::string protocolName) :
-        protocolName(protocolName) { }
+        protocolName(protocolName) {
+            #if PLATFORM == PLATFORM_WINDOWS
+                WSADATA WsaData;
+                return WSAStartup(MAKEWORD(2,2), &WsaData) == NO_ERROR;
+            #endif //PLATFORM == PLATFORM_WINDOWS
+    }
+
+    ~Socket() {
+        #if PLATFORM == PLATFORM_WINDOWS
+            WSACleanup();
+        #endif //PLATFORM == PLATFORM_WINDOWS
+    }
 
     bool open(unsigned short port) {
         //Create a socket and check for failure
@@ -65,18 +88,34 @@ public:
         }
 
         //Dont wait until a message is recieved
-        constexpr int nonBlocking = 1;
-        if(fcntl(socket, F_SETFL, O_NONBLOCK, nonBlocking) == -1) {
-            std::cout << "ERORR: Failed to set non-blocking" << std::endl;
-            close();
-            return false;
-        }
+
+        #if PLATFORM == PLATFORM_LINUX || PLATFORM == PLATFORM_APPLE
+            constexpr int nonBlocking = 1;
+            if(fcntl(socket, F_SETFL, O_NONBLOCK, nonBlocking) == -1) {
+                std::cout << "ERORR: Failed to set non-blocking" << std::endl;
+                close();
+                return false;
+            }
+
+        #elif PLATFORM == PLATFORM_WINDOWS
+            DWORD nonBlocking = 1;
+            if(ioctlsocket(socket, FIONBIO, &nonBlocking) != 0) {
+                std::cout << "ERROR: Failed to set non-blocking" << std::endl;
+                close();
+                return false;
+            }
+        #endif
+
 
         return true;
     }
 
     void close() {
-        ::close(socket);
+        #if PLATFORM == PLATFORM_MAX || PLATFORM == PLATFORM_LINUX
+            ::close(socket);
+        #elif PLATFORM == PLATFORM_WINDOWS
+            closesocket(socket);
+        #endif
     }
     bool isOpen() const {
         return socket != 0;

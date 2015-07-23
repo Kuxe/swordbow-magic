@@ -47,6 +47,11 @@ ADD_LIBRARY(game SHARED
     src/world.cpp
     )
 
+#Need to link to wsock32 on windows
+IF(${CMAKE_SYSTEM_NAME} EQUAL "Windows")
+    TARGET_LINK_LIBRARIES(game -lwsock32)
+ENDIF()
+
 #Find SDL2 dependencies
 PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
 PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image)
