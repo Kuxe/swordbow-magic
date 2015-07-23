@@ -12,44 +12,49 @@ SET(CMAKE_CXX_COMPILER "g++")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -pthread -std=c++14")
 SET(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
-#Create a library containing game-functionality
-#game-executable and test-executable uses this library
-#Want to re-use *.o files in both game-exec and test-exec...
-ADD_LIBRARY(game SHARED
-    src/animationsystem.cpp
-    src/attacksystem.cpp
-    src/camerasystem.cpp
-    src/collisionsystem.cpp
-    src/commandcomponent.cpp
+#Create a library containing game-functionality shared between server and client
+ADD_LIBRARY(sbm SHARED
     src/componentmanager.cpp
     src/deltatime.cpp
-    src/entitymanager.cpp
     src/hashgridsystem.cpp
+    src/rect.cpp
+    src/systemmanager.cpp
+)
+
+#Server specific sources
+ADD_LIBRARY(sbm-server SHARED
+    src/animationsystem.cpp
+    src/attacksystem.cpp
+    src/collisionsystem.cpp
+    src/entitymanager.cpp
     src/healthsystem.cpp
     src/idmanager.cpp
     src/inputsystem.cpp
     src/keyboardsystem.cpp
-    src/movecomponent.cpp
     src/movediffsystem.cpp
     src/movesystem.cpp
     src/noisebrush.cpp
     src/playsound.cpp
-    src/rect.cpp
     src/removesystem.cpp
     src/renderdiffsystem.cpp
+    src/sizeboundingbox.cpp
+    src/world.cpp
+)
+
+#Client specific sources
+ADD_LIBRARY(sbm-client SHARED
+    src/camerasystem.cpp
     src/renderer.cpp
     src/rendersystem.cpp
-    src/sizeboundingbox.cpp
     src/soundengine.cpp
-    src/systemmanager.cpp
     src/text.cpp
     src/textureboundingbox.cpp
-    src/world.cpp
-    )
+)
+
 
 #Need to link to wsock32 on windows
 IF(${CMAKE_SYSTEM_NAME} EQUAL "Windows")
-    TARGET_LINK_LIBRARIES(game -lwsock32)
+    TARGET_LINK_LIBRARIES(sbm -lwsock32)
 ENDIF()
 
 #Find SDL2 dependencies
@@ -58,7 +63,7 @@ PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image)
 PKG_SEARCH_MODULE(SDL2TTF REQUIRED SDL2_ttf)
 PKG_SEARCH_MODULE(SDL2MIXER REQUIRED SDL2_mixer)
 INCLUDE_DIRECTORIES(./include/ ./catch/ ${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS} ${SDL2MIXER_INCLUDE_DIRS})
-TARGET_LINK_LIBRARIES(game ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES} ${SDL2MIXER_LIBRARIES})
+TARGET_LINK_LIBRARIES(sbm-client ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES} ${SDL2MIXER_LIBRARIES})
 
 #Find modules that isn't supported by cmake. Have to put .cmake files in the
 #/cmake/Modules/ folder for that to work. Find those files by googling.
@@ -73,19 +78,19 @@ INCLUDE_DIRECTORIES(${GLM_INCLUDE_DIRS})
 
 FIND_PACKAGE(OGG REQUIRED)
 INCLUDE_DIRECTORIES(${OGG_INCLUDE_DIRS})
-TARGET_LINK_LIBRARIES(game ${OGG_LIBRARIES})
+TARGET_LINK_LIBRARIES(sbm-client ${OGG_LIBRARIES})
 
 #Create a client-executable
 ADD_EXECUTABLE(swordbow-magic-client src/client.cpp)
 
 #What linker flags are required for swordbow-magic-client?
-TARGET_LINK_LIBRARIES(swordbow-magic-client game)
+TARGET_LINK_LIBRARIES(swordbow-magic-client sbm sbm-client)
 
 #Create a client-executable
 ADD_EXECUTABLE(swordbow-magic-server src/server.cpp)
 
 #What linker flags are required for swordbow-magic-server?
-TARGET_LINK_LIBRARIES(swordbow-magic-server game)
+TARGET_LINK_LIBRARIES(swordbow-magic-server sbm sbm-server)
 
 #Create a test-executable using Catch
 ADD_EXECUTABLE(swordbow-magic-test
@@ -96,7 +101,7 @@ ADD_EXECUTABLE(swordbow-magic-test
 )
 
 #What linker flags are required for swordbow-magic-test?
-TARGET_LINK_LIBRARIES(swordbow-magic-test game)
+TARGET_LINK_LIBRARIES(swordbow-magic-test sbm sbm-server sbm-client)
 
 #Run "make client" to build the client
 ADD_CUSTOM_TARGET(client

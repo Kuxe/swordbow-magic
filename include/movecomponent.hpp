@@ -15,10 +15,13 @@ struct MoveComponent {
     glm::vec2 dir {0, 0};
     float maxVelLength;
 
-	MoveComponent(
-		const glm::vec2& = {0, 0},
-		const glm::vec2& = {0, 0},
-		const float maxVelLength = 100.0f);
+    MoveComponent(
+    	const glm::vec2& pos = {0, 0},
+    	const glm::vec2& oldPos = {0, 0},
+    	const float maxVelLength = {100.0f}) :
+    	pos(pos),
+    	oldPos(pos),
+    	maxVelLength(maxVelLength) { }
 
     template<class Archive>
     void serialize(Archive& ar) {

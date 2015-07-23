@@ -39,7 +39,11 @@ struct CommandComponent {
     inline std::forward_list<ICommand*>& operator [](unsigned int index) {
         return commands[index];
     }
-    void execute(const Event& event);
+    void execute(const Event& event) {
+        for(auto command : commands[event]) {
+            command->execute();
+        }
+    }
 };
 
 

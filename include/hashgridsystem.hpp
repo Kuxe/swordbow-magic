@@ -1,7 +1,6 @@
 #ifndef HASHGRIDSYSTEM_H
 #define HASHGRIDSYSTEM_H
 
-#include <iostream>
 #include <queue>
 #include "spatialindexer.hpp"
 #include "isystem.hpp"

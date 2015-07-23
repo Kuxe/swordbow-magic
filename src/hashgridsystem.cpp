@@ -1,6 +1,7 @@
+#include <iostream>
+
 #include "hashgridsystem.hpp"
 #include "componentmanager.hpp"
-#include <iostream>
 #include "movecomponent.hpp"
 #include "sizecomponent.hpp"
 #include "rendercomponent.hpp"
