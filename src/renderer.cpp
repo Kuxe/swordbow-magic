@@ -1,9 +1,6 @@
 #include "renderer.hpp"
 #include "heap.hpp"
 
-/** For platform detection **/
-#include "platform.hpp"
-
 Renderer::Renderer(int argc, char** argv) {
     //Initialize SDL
     if(SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
@@ -69,27 +66,10 @@ Renderer::Renderer(int argc, char** argv) {
                     std::cout << "ERROR: Couldn't initialize SDL2_ttf!" << std::endl;
                 } else {
 
-                    #if PLATFORM == PLATFORM_LINUX
-                    const std::string fontPath = "/usr/share/fonts/TTF/DejaVuSansMono.ttf";
-                    font = TTF_OpenFont(fontPath.c_str(), 11);
-
-                    #elif PLATFORM == PLATFORM_APPLE
-                    const std::string fontPath = "NOT SUPPORTED YET";
-
-                    #elif PLATFORM == PLATFORM_WINDOWS
-                    const std::string fontPath = "NOT SUPPORTED YET";
-
-                    #else
-                    const std::string fontPath = "ERROR: Couldn't determine OS, font loading will fail!";
-
-                    #endif
+                    font = TTF_OpenFont("./resources/fonts/DejaVuSansMono.ttf", 11);
 
                     if(!font) {
                         std::cout << "ERROR: Failed to load font!" << std::endl;
-                        std::cout << "This could be because the CMake couldn't";
-                        std::cout << " figure out what system this is, and thus";
-                        std::cout << " where to look for a font!" << std::endl;
-                        std::cout << "missing: " << fontPath << std::endl;
                     }
                 }
             }
