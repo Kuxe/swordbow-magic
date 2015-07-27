@@ -119,6 +119,13 @@ void Client::receive() {
                     const auto& pair = typedPacket.getData();
                     systemManager.getSystem(pair.second)->add(pair.first);
                 } break;
+
+                //Server will send this to client for a couple of reasons.
+                //In any case the client shouldn't be connected to the server.
+                case MESSAGE_TYPE::DISCONNECT: {
+                    disconnect();
+                } break;
+
                 case MESSAGE_TYPE::MOVECOMPONENTS: {
                     //All movecomponents were received - handle it
                     auto typedPacket = socket.get<Packet<Components<MoveComponent>>>(bytesRead);
