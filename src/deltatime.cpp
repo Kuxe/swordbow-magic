@@ -11,3 +11,7 @@ void DeltaTime::stop() {
 float DeltaTime::delta() const {
 	return deltaTime;
 }
+
+float DeltaTime::elapsed() const {
+	return (std::chrono::high_resolution_clock::now() - startTime).count() / 1000000000.0f;
+}

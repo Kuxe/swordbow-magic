@@ -12,6 +12,7 @@ class DeltaTime {
 	void start();
 	void stop();
 	float delta() const;
+    float elapsed() const;
 };
 
 #endif //DELTATIME_H
