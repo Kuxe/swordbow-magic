@@ -94,7 +94,17 @@ void Server::step() {
 
 			case MESSAGE_TYPE::INPUTDATA: {
 				auto typedPacket = socket.get<Packet<InputData>>(bytesRead);
-				inputDataToInputComponent(client, typedPacket.getData());
+
+				//Check if client established a connection to the server, ie
+				//asked for a entity id. It could be that the client had a connection
+				//to another session of the server, in which case the clients id might
+				//not be present on this session of the server... Those clients should
+				//restart / reconnect. So don't do anything with this packet if
+				//the server doesn't think the client has connected
+				if(clients.find(client) != clients.end()) {
+					inputDataToInputComponent(client, typedPacket.getData());
+				}
+
 			} break;
 
 			default: {
