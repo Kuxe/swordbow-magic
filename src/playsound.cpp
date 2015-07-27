@@ -16,7 +16,7 @@ PlaySound::PlaySound(
     socket(socket) { }
 
 void PlaySound::execute() {
-    for(auto pair : *clients) {
+    for(auto& pair : *clients) {
         auto& clientData = pair.second;
 
         //chrono is nasty
