@@ -34,6 +34,7 @@ private:
     Socket socket;
 
     DeltaTime deltaTime;
+    float tps = 60.0f; //tick per second
 
 	ComponentManager componentManager;
 	SystemManager systemManager;

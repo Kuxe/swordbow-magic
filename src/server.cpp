@@ -53,6 +53,13 @@ Server::Server(int argc, char** argv) :
 	} else {
 		world.createDebugWorld();
 	}
+
+	for(int i = 0; i < argc; i++) {
+		if(strcmp(argv[i], "tps") == 0) {
+			tps = atof(argv[i+1]);
+			break;
+		}
+	}
 }
 
 Server::~Server() {
@@ -132,8 +139,7 @@ void Server::step() {
 	//16.6666... then it's faster than 60fps so sleep until 16.666ms has passed
 	using ms = std::chrono::milliseconds;
 	using fdur = std::chrono::duration<float>;
-	const float serverTickPerSecond = 60.0f;
-	const float sleep_float = 1.0f/serverTickPerSecond - deltaTime.elapsed();
+	const float sleep_float = 1.0f/tps - deltaTime.elapsed();
 	const ms sleep = std::chrono::duration_cast<ms>(fdur(sleep_float));
 	std::this_thread::sleep_for(sleep);
 
