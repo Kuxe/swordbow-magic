@@ -157,8 +157,11 @@ void Server::onConnect(const IpAddress& ipAddress) {
 }
 
 void Server::onDisconnect(const IpAddress& ipAddress) {
-	entityManager.remove(clients.at(ipAddress).id);
-	clients.erase(ipAddress);
+	//If this ipaddress isn't a client, do nothing
+	if(clients.find(ipAddress) != clients.end()) {
+		entityManager.remove(clients.at(ipAddress).id);
+		clients.erase(ipAddress);
+	}
 }
 
 void Server::send(const IpAddress& ipAddress) {
