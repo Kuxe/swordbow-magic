@@ -66,6 +66,13 @@ class EntityManager {
     ID createStone(const glm::vec2& position);
 	void remove(ID id);
 
+    //FIXME: This should always be called. system->add should be private but
+    //friended by ISystem, or something similar.
+    //Never should systemManager->getSystem(System::blabla)->add(id)
+    //be called from anything but entitymanager because if registerIdToSystem
+    //isnt called, then entitymanager wont know that the entity is part of system
+    //so when the entity is erased, it wont get erase from the system and
+    //a segfault can occur
     void registerIdToSystem(ID id, System::Identifier system);
 };
 

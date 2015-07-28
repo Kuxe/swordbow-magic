@@ -2,15 +2,14 @@
 #include "componentmanager.hpp"
 
 void RenderDiffSystem::add(ID id) {
-    ids.push(id);
+    ids.insert(id);
 }
 void RenderDiffSystem::remove(ID id) {
-
+    ids.erase(id);
 }
 void RenderDiffSystem::update() {
     componentManager->renderComponentsDiff.clear();
-    while(!ids.empty()) {
-        const auto id = ids.front(); ids.pop();
+    for(auto id : ids) {
         componentManager->renderComponentsDiff.insert({id, componentManager->renderComponents.at(id)});
     }
 }

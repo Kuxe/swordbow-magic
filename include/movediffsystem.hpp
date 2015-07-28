@@ -2,12 +2,12 @@
 #define MOVEDIFFSYSTEM_HPP
 
 #include "isystem.hpp"
-#include <queue>
+#include <unordered_set>
 
 typedef unsigned int ID;
 
 class MoveDiffSystem : public ISystem {
-    std::queue<ID> ids;
+    std::unordered_set<ID> ids;
 public:
     void add(ID id);
     void remove(ID id);

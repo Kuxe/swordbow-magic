@@ -2,15 +2,14 @@
 #include "componentmanager.hpp"
 
 void MoveDiffSystem::add(ID id) {
-    ids.push(id);
+    ids.insert(id);
 }
 void MoveDiffSystem::remove(ID id) {
-
+    ids.erase(id);
 }
 void MoveDiffSystem::update() {
     componentManager->moveComponentsDiff.clear();
-    while(!ids.empty()) {
-        const auto id = ids.front(); ids.pop();
+    for(auto id : ids) {
         componentManager->moveComponentsDiff.insert({id, componentManager->moveComponents.at(id)});
     }
 }
