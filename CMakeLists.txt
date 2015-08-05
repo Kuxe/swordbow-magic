@@ -2,15 +2,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.0 FATAL_ERROR)
 
 PROJECT(swordbow-magic)
 
-#Binary should be in root folder
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
-
 INCLUDE(FindPkgConfig)
-
-#Flags for compiler and linker
-SET(CMAKE_CXX_COMPILER "g++")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -pthread -std=c++14")
-SET(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 #Create a library containing game-functionality shared between server and client
 ADD_LIBRARY(sbm SHARED
@@ -51,6 +43,12 @@ ADD_LIBRARY(sbm-client SHARED
     src/textureboundingbox.cpp
 )
 
+#Flags for compiler and linker
+SET(CMAKE_CXX_COMPILER "g++")
+SET(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+
+SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Og -pthread -std=c++14")
+SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Os -pthread -fomit-frame-pointer -march=native -flto -s -std=c++14")
 
 #Need to link to wsock32 on windows
 IF(${CMAKE_SYSTEM_NAME} EQUAL "Windows")

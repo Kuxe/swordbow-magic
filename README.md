@@ -23,16 +23,28 @@ If these are not installed, the build wil fail. CMake will tell you what depende
 
 # Building
 ## Linux and OSX
+You can build either a release build or debug build.
+### Debug
 1. Open up your favorite terminal and navigate to /swordbow-magic/\<You should be here>.
-2. Type this: `mkdir build && cd build/ && cmake .. && make build`
-3. A executable "swordbow-magic" is present inside /swordbow-magic/\<executable should be here>
+2. Type this: `mkdir debug && cd debug/ && cmake -DCMAKE_BUILD_TYPE=Debug .. && make build`
+3. Two executables (client and server) is present inside /swordbow-magic/debug/\<executables should be here>
+
+### Release
+1. Open up your favorite terminal and navigate to /swordbow-magic/\<You should be here>.
+2. Type this: `mkdir release && cd release/ && cmake -DCMAKE_BUILD_TYPE=Release .. && make build`
+3. Two executables (client and server) is present inside /swordbow-magic/release/\<executables should be here>
 
 ## Windows (untested)
+You can build either a release build or debug build. I don't know if it builds at all on Windows. Instructions bellow _might_ work.
+### Debug
 1. Open up your favorite terminal and navigate to \\swordbow-magic\\\<You should be here>.
-2. Type these: `mkdir build` + `cd .\build` + `cmake -G "MinGW Makefiles"..` + `make build`
-3. A executable "swordbow-magic" is present inside \\swordbow-magic\\\<executable should be here>
+2. Type these: `mkdir debug` + `cd .\debug` + `cmake -DCMAKE_BUILD_TYPE=Debug -G "MinGW Makefiles" ..` + `make build`
+3. Two executables (client and server) is present inside \\swordbow-magic\\debug\\\<executables should be here>
 
-I don't know if it builds at all on Windows or what steps must be taken for CMake and make to be succesful.
+### Release
+1. Open up your favorite terminal and navigate to \\swordbow-magic\\\<You should be here>.
+2. Type these: `mkdir release` + `cd .\release` + `cmake -DCMAKE_BUILD_TYPE=Release -G "MinGW Makefiles" ..` + `make build`
+3. Two executables (client and server) is present inside \\swordbow-magic\\release\\\<executables should be here>
 
 ## Running
 Navigate to git root, after a successful build there should be two executables:

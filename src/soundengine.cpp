@@ -14,13 +14,22 @@ SoundEngine::SoundEngine() {
         cout << "ERROR: Couldn't initialize SDL_mixer " << Mix_GetError() << ")! I dont know what will happen!" << endl;
     }
 
-    std::pair<Music::Identifier, const char*> musicPairs [] {
-        {Music::NATURE_SOUNDS, "./resources/sounds/naturesounds.ogg"}
+    /** Sound paths are relative to the executable. If executable is here:
+        /someFolder/<the executable is here>
+
+        Then the resources are assumed to be in:
+        /someFolder/resources/sounds/<image files here>
+
+        If this isn't adhered to, sounds won't be found and segfaults will be inbound
+    **/
+    const std::string resourcePath("../resources/sounds/");
+    std::pair<Music::Identifier, std::string> musicPairs [] {
+        {Music::NATURE_SOUNDS, resourcePath + "naturesounds.ogg"}
     };
 
     //Load musics and store them in music map
     for(auto pair : musicPairs) {
-        auto music = Mix_LoadMUS(pair.second);
+        auto music = Mix_LoadMUS(pair.second.c_str());
         if(!music) cout << "ERROR: Couldn't load music " << pair.second << " (" << Mix_GetError() << ")" << endl;
         musics.insert({pair.first, music});
     }
@@ -32,15 +41,15 @@ SoundEngine::SoundEngine() {
     }
 
     //Load sounds and store them in sound map
-    const std::pair<Sound::Identifier, const char*> soundPairs[] {
-        {Sound::WALKING, "./resources/sounds/walking.wav"},
-        {Sound::HURT, "./resources/sounds/hurt.wav"},
-        {Sound::BLOODSPLATTER, "./resources/sounds/bloodsplatter.wav"}
+    const std::pair<Sound::Identifier, std::string> soundPairs[] {
+        {Sound::WALKING, resourcePath + "walking.wav"},
+        {Sound::HURT, resourcePath + "hurt.wav"},
+        {Sound::BLOODSPLATTER, resourcePath + "bloodsplatter.wav"}
     };
     unsigned char channelNumber = 0; //Will overflow if number of channels > 255
 
     for(auto pair : soundPairs) {
-        auto sound = Mix_LoadWAV(pair.second);
+        auto sound = Mix_LoadWAV(pair.second.c_str());
         if(!sound) cout << "ERROR: Couldn't load sound " << pair.second << " (" << Mix_GetError() << ")" << endl;
         sounds.insert({pair.first, sound});
         channels.insert({sound, channelNumber++});

@@ -66,7 +66,8 @@ Renderer::Renderer(int argc, char** argv) {
                     std::cout << "ERROR: Couldn't initialize SDL2_ttf!" << std::endl;
                 } else {
 
-                    font = TTF_OpenFont("./resources/fonts/DejaVuSansMono.ttf", 11);
+                    const std::string fontPath("../resources/fonts/DejaVuSansMono.ttf");
+                    font = TTF_OpenFont(fontPath.c_str(), 11);
 
                     if(!font) {
                         std::cout << "ERROR: Failed to load font!" << std::endl;
@@ -76,52 +77,61 @@ Renderer::Renderer(int argc, char** argv) {
         }
     }
 
-    const std::vector<std::pair<Image::Identifier, const char*>> pairs {
-        {Image::HELLO_WORLD, "./resources/images/HelloWorld.bmp"},
-        {Image::PLAYER, "./resources/images/player.bmp"},
-        {Image::GRASS, "./resources/images/grass.png"},
-        {Image::SMALL_TREE, "./resources/images/SmallTree.png"},
-        {Image::PLAYER_V2, "./resources/images/playerv2.png"},
+    /** Image paths are relative to the executable. If executable is here:
+        /someFolder/<the executable is here>
+
+        Then the resources are assumed to be in:
+        /someFolder/resources/images/<image files here>
+
+        If this isn't adhered to, images won't be found and segfaults will be inbound
+    **/
+    const std::string imageDirectory = "../resources/images/";
+    const std::vector<std::pair<Image::Identifier, const std::string>> pairs {
+        {Image::HELLO_WORLD, imageDirectory + "HelloWorld.bmp"},
+        {Image::PLAYER, imageDirectory + "player.bmp"},
+        {Image::GRASS, imageDirectory + "grass.png"},
+        {Image::SMALL_TREE, imageDirectory + "SmallTree.png"},
+        {Image::PLAYER_V2, imageDirectory + "playerv2.png"},
 
 
-        {Image::PLAYER_V3_FRONT, "./resources/images/playerv3_front.png"},
-        {Image::PLAYER_V3_BACK, "./resources/images/playerv3_back.png"},
-        {Image::PLAYER_V3_LEFT, "./resources/images/playerv3_left.png"},
-        {Image::PLAYER_V3_RIGHT, "./resources/images/playerv3_right.png"},
+        {Image::PLAYER_V3_FRONT, imageDirectory + "playerv3_front.png"},
+        {Image::PLAYER_V3_BACK, imageDirectory + "playerv3_back.png"},
+        {Image::PLAYER_V3_LEFT, imageDirectory + "playerv3_left.png"},
+        {Image::PLAYER_V3_RIGHT, imageDirectory + "playerv3_right.png"},
 
-        {Image::PLAYER_V3_FRONT_RUN1, "./resources/images/playerv3_front_run1.png"},
-        {Image::PLAYER_V3_FRONT_RUN2, "./resources/images/playerv3_front_run2.png"},
-        {Image::PLAYER_V3_FRONT_RUN3, "./resources/images/playerv3_front_run3.png"},
-        {Image::PLAYER_V3_FRONT_RUN4, "./resources/images/playerv3_front_run4.png"},
+        {Image::PLAYER_V3_FRONT_RUN1, imageDirectory + "playerv3_front_run1.png"},
+        {Image::PLAYER_V3_FRONT_RUN2, imageDirectory + "playerv3_front_run2.png"},
+        {Image::PLAYER_V3_FRONT_RUN3, imageDirectory + "playerv3_front_run3.png"},
+        {Image::PLAYER_V3_FRONT_RUN4, imageDirectory + "playerv3_front_run4.png"},
 
-        {Image::BLOODSPLATTER_1_1, "./resources/images/bloodsplatter1_1.png"},
-        {Image::BLOODSPLATTER_1_2, "./resources/images/bloodsplatter1_2.png"},
-        {Image::BLOODSPLATTER_1_3, "./resources/images/bloodsplatter1_3.png"},
-        {Image::BLOODSPLATTER_1_4, "./resources/images/bloodsplatter1_4.png"},
-        {Image::BLOODSPLATTER_1_5, "./resources/images/bloodsplatter1_5.png"},
-        {Image::BLOODSPLATTER_1_6, "./resources/images/bloodsplatter1_6.png"},
-        {Image::BLOODSPLATTER_1_7, "./resources/images/bloodsplatter1_7.png"},
-        {Image::BLOODSPLATTER_1_8, "./resources/images/bloodsplatter1_8.png"},
-        {Image::BLOODSPLATTER_1_9, "./resources/images/bloodsplatter1_9.png"},
-        {Image::BLOODSPLATTER_1_10, "./resources/images/bloodsplatter1_10.png"},
-        {Image::BLOODSPLATTER_1_11, "./resources/images/bloodsplatter1_11.png"},
+        {Image::BLOODSPLATTER_1_1, imageDirectory + "bloodsplatter1_1.png"},
+        {Image::BLOODSPLATTER_1_2, imageDirectory + "bloodsplatter1_2.png"},
+        {Image::BLOODSPLATTER_1_3, imageDirectory + "bloodsplatter1_3.png"},
+        {Image::BLOODSPLATTER_1_4, imageDirectory + "bloodsplatter1_4.png"},
+        {Image::BLOODSPLATTER_1_5, imageDirectory + "bloodsplatter1_5.png"},
+        {Image::BLOODSPLATTER_1_6, imageDirectory + "bloodsplatter1_6.png"},
+        {Image::BLOODSPLATTER_1_7, imageDirectory + "bloodsplatter1_7.png"},
+        {Image::BLOODSPLATTER_1_8, imageDirectory + "bloodsplatter1_8.png"},
+        {Image::BLOODSPLATTER_1_9, imageDirectory + "bloodsplatter1_9.png"},
+        {Image::BLOODSPLATTER_1_10, imageDirectory + "bloodsplatter1_10.png"},
+        {Image::BLOODSPLATTER_1_11, imageDirectory + "bloodsplatter1_11.png"},
 
-        {Image::YELLOW_FLOWER, "./resources/images/yellow_flower.png"},
-        {Image::GREEN_FLOWER, "./resources/images/green_flower.png"},
-        {Image::VIOLET_FLOWER, "./resources/images/violet_flower.png"},
-        {Image::BLUE_FLOWER, "./resources/images/blue_flower.png"},
+        {Image::YELLOW_FLOWER, imageDirectory + "yellow_flower.png"},
+        {Image::GREEN_FLOWER, imageDirectory + "green_flower.png"},
+        {Image::VIOLET_FLOWER, imageDirectory + "violet_flower.png"},
+        {Image::BLUE_FLOWER, imageDirectory + "blue_flower.png"},
 
-        {Image::TEST_SQUARE_10x10, "./resources/images/testsquare10x10.png"},
-        {Image::TEST_SQUARE_1x1, "./resources/images/testsquare1x1.png"},
+        {Image::TEST_SQUARE_10x10, imageDirectory + "testsquare10x10.png"},
+        {Image::TEST_SQUARE_1x1, imageDirectory + "testsquare1x1.png"},
 
-        {Image::STONE_1, "./resources/images/stone1.png"},
+        {Image::STONE_1, imageDirectory + "stone1.png"},
 
-        {Image::WATER, "./resources/images/water.png"},
+        {Image::WATER, imageDirectory + "water.png"},
     };
 
     //Bind each texture with a value in Image and load the texture
     for(auto pair : pairs) {
-        SDL_Surface* rawImage = IMG_Load(pair.second);
+        SDL_Surface* rawImage = IMG_Load(pair.second.c_str());
         if(!rawImage) {
             std::cout << "ERROR: Couldn't load image on: " << pair.second << std::endl;
         } else {

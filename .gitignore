@@ -37,6 +37,8 @@ Makefile
 
 # Builds
 /build/
+/release/
+/debug/
 
 # runtests
 /test/runtests
