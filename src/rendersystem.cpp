@@ -5,9 +5,6 @@
 #include "sizecomponent.hpp"
 #include <iostream>
 #include "spatialindexer.hpp"
-#include "heap.hpp"
-#include "dynamicarray.hpp"
-#include "heapsort.hpp"
 #include <queue>
 #include "namecomponent.hpp"
 #include "systemmanager.hpp"

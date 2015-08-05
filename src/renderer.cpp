@@ -1,5 +1,5 @@
 #include "renderer.hpp"
-#include "heap.hpp"
+#include <iostream>
 
 Renderer::Renderer(int argc, char** argv) {
     //Initialize SDL
