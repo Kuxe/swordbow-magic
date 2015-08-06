@@ -17,6 +17,8 @@ namespace Log {
 	verbose and WARNING being middle-verbose and ERROR being least
 	verbose. Info logs everything, WARNING log everything but INFO-logs
 	and ERROR only log ERROR-logs.
+
+	Logger works for Windows, OSX and Linux
 **/
 struct Logger {
 	static Log::Level level;

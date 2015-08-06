@@ -108,7 +108,7 @@ public:
     }
 
     void close() {
-        #if PLATFORM == PLATFORM_MAX || PLATFORM == PLATFORM_LINUX
+        #if PLATFORM == PLATFORM_APPLE || PLATFORM == PLATFORM_LINUX
             ::close(socket);
         #elif PLATFORM == PLATFORM_WINDOWS
             closesocket(socket);
