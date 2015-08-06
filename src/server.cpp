@@ -31,10 +31,10 @@ Server::Server(int argc, char** argv) :
 	socket.open(port);
 
 	//Add systems to systemmanager
-	systemManager.add(&inputSystem);
-	systemManager.add(&moveSystem);
 	systemManager.add(&moveDiffSystem);
 	systemManager.add(&renderDiffSystem);
+	systemManager.add(&inputSystem);
+	systemManager.add(&moveSystem);
 	systemManager.add(&animationSystem);
 	systemManager.add(&sizeHashGridSystem);
 	systemManager.add(&collisionSystem);
@@ -84,8 +84,15 @@ void Server::terminate() {
 void Server::step() {
 	deltaTime.start();
 
+	//Run the entity-component-system
+	componentsMutex.lock();
+	systemManager.update();
+	componentsMutex.unlock();
 
-	//Receive data from server...
+	//Broadcast new gamestate to clients
+	sendDiff();
+
+	//Receive data from clients...
     IpAddress client;
     unsigned char type;
     int bytesRead;
@@ -130,14 +137,6 @@ void Server::step() {
             };
         }
 	}
-
-	//Run the entity-component-system
-	componentsMutex.lock();
-	systemManager.update();
-	componentsMutex.unlock();
-
-	//Broadcast new gamestate to clients
-	sendDiff();
 
 	//Limit server-speed to 60fps (rather 60 tick per second)
 	//Check the elapsed time for the current step, if it is lower than
@@ -231,29 +230,41 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 
 	auto& clientData = clients.at(ipAddress);
 
-	//Only send movecomponentsdiff if there actually was a difference
-	//If not for this if-check, then the server would DDOS clients with
-	//emtpy MOVECOMPONENTSDIFF-packets...
-	if(!componentManager.moveComponentsDiff.empty()) {
+	//Get all movecomponents of members of movediffsystem
+	//and store them in a new Components<MoveComponent>
+	Components<MoveComponent> movediffs;
+	for(ID id : moveDiffSystem) {
+		movediffs.insert({id, componentManager.moveComponents.at(id)});
+	}
+
+	if(!movediffs.empty()) {
 		using mcType = Packet<Components<MoveComponent>>;
 		auto mcpacket = mcType {
 			stringhash("swordbow-magic"),
 			clientData.sequence++,
 			MESSAGE_TYPE::MOVECOMPONENTSDIFF,
-			componentManager.moveComponentsDiff,
-			sizeof(componentManager.moveComponentsDiff)
+			movediffs,
+			sizeof(movediffs)
 		};
 		socket.send<mcType>(ipAddress, mcpacket);
 	}
 
-	if(!componentManager.renderComponentsDiff.empty()) {
+	//Get all rendercomponents of members of movediffsystem
+	//and store them in a new Components<RendersComponent>
+	Components<RenderComponent> renderdiffs;
+	for(ID id : moveDiffSystem) {
+		renderdiffs.insert({id, componentManager.renderComponents.at(id)});
+	}
+
+
+	if(!renderdiffs.empty()) {
 		using rcType = Packet<Components<RenderComponent>>;
 		auto rcpacket = rcType {
 			stringhash("swordbow-magic"),
 			clientData.sequence++,
 			MESSAGE_TYPE::RENDERCOMPONENTSDIFF,
-			componentManager.renderComponentsDiff,
-			sizeof(componentManager.renderComponentsDiff)
+			renderdiffs,
+			sizeof(renderdiffs)
 		};
 		socket.send<rcType>(ipAddress, rcpacket);
 	}

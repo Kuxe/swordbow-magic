@@ -8,10 +8,7 @@ void RenderDiffSystem::remove(ID id) {
     ids.erase(id);
 }
 void RenderDiffSystem::update() {
-    componentManager->renderComponentsDiff.clear();
-    for(auto id : ids) {
-        componentManager->renderComponentsDiff.insert({id, componentManager->renderComponents.at(id)});
-    }
+	ids.clear();
 }
 unsigned int RenderDiffSystem::count() const {
     return ids.size();

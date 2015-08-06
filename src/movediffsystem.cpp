@@ -8,10 +8,7 @@ void MoveDiffSystem::remove(ID id) {
     ids.erase(id);
 }
 void MoveDiffSystem::update() {
-    componentManager->moveComponentsDiff.clear();
-    for(auto id : ids) {
-        componentManager->moveComponentsDiff.insert({id, componentManager->moveComponents.at(id)});
-    }
+    ids.clear();
 }
 unsigned int MoveDiffSystem::count() const {
     return ids.size();

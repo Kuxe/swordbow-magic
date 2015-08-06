@@ -30,14 +30,14 @@ class ComponentManager {
     Components<AttackComponent> attackComponents;
     Components<CommandComponent> commandComponents;
 
-    Components<MoveComponent> moveComponentsDiff;
-    Components<RenderComponent> renderComponentsDiff;
+    //Components<MoveComponent> moveComponentsDiff;
+    //Components<RenderComponent> renderComponentsDiff;
 
 	MoveComponent& createMoveComponent(const ID id) {
-        return moveComponents[id] = moveComponentsDiff[id] = MoveComponent();
+        return moveComponents[id] = MoveComponent();
     }
 	RenderComponent& createRenderComponent(const ID id) {
-        return renderComponents[id] = renderComponentsDiff[id] = RenderComponent();
+        return renderComponents[id] = RenderComponent();
     }
 	InputComponent& createInputComponent(const ID id) {
         return inputComponents[id] = InputComponent();

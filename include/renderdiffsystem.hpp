@@ -15,6 +15,9 @@ public:
     unsigned int count() const;
     const System::Identifier getIdentifier() const;
     void activateId(ID id);
+
+    auto begin() { return ids.begin(); }
+    auto end() { return ids.end(); }
 };
 
 #endif //RENDERDIFFSYSTEM_HPP
