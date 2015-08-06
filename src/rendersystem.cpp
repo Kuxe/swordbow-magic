@@ -98,7 +98,7 @@ void RenderSystem::update() {
         printText(Text(str, 0, 20, {255, 55, 55}));
     }
 
-    //renderer->render(pq, cameraSystem->getCamera());
+    renderer->render(pq, cameraSystem->getCamera());
 }
 
 unsigned int RenderSystem::count() const {
