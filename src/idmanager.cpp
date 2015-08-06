@@ -5,9 +5,9 @@
 #include <ostream>
 
 IdManager::IdManager() {
-	std::ostream* os;
-	*os << "Available IDs: " << MAX_IDS << ", IdManager memory footprint: " << MAX_IDS * sizeof(ID) / 1048576 << "MB" << std::endl;
-	Logger::log(*os, Log::INFO);
+	std::ostringstream oss;
+	oss << "Available IDs: " << MAX_IDS << ", IdManager memory footprint: " << MAX_IDS * sizeof(ID) / 1048576 << "MB" << std::endl;
+	Logger::log(oss, Log::INFO);
 }
 
 unsigned int IdManager::acquireId() {

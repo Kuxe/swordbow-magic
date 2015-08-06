@@ -12,7 +12,7 @@ namespace Log {
 	};
 };
 
-/**	Logger logs strings, stringstreams and ostreams to std::cout
+/**	Logger logs strings and stringstreams to std::cout
 	It has different levels of logging, with INFO being the most
 	verbose and WARNING being middle-verbose and ERROR being least
 	verbose. Info logs everything, WARNING log everything but INFO-logs
@@ -22,7 +22,6 @@ struct Logger {
 	static Log::Level level;
 	static void log(const std::string& str, const Log::Level level = Log::UNDEFINED);
 	static void log(std::ostringstream& oss, const Log::Level level = Log::UNDEFINED);
-	static void log(std::ostream& os, const Log::Level level = Log::UNDEFINED);
 };
 
 

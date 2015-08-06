@@ -8,14 +8,14 @@
 
 SoundEngine::SoundEngine() {
     if(SDL_InitSubSystem(SDL_INIT_AUDIO) < 0) {
-        std::ostream* os;
-        *os << "Couldn't initialize SDL_audio (" << SDL_GetError() << ")! I don't know what will happen!" << std::endl;
-        Logger::log(*os, Log::ERROR);
+        std::ostringstream oss;
+        oss << "Couldn't initialize SDL_audio (" << SDL_GetError() << ")! I don't know what will happen!" << std::endl;
+        Logger::log(oss, Log::ERROR);
     }
     if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0 ) {
-        std::ostream* os;
-        *os << "Couldn't initialize SDL_mixer " << Mix_GetError() << ")! I dont know what will happen!" << std::endl;
-        Logger::log(*os, Log::ERROR);
+        std::ostringstream oss;
+        oss << "Couldn't initialize SDL_mixer " << Mix_GetError() << ")! I dont know what will happen!" << std::endl;
+        Logger::log(oss, Log::ERROR);
     }
 
     /** Sound paths are relative to the executable. If executable is here:
@@ -35,19 +35,19 @@ SoundEngine::SoundEngine() {
     for(auto pair : musicPairs) {
         auto music = Mix_LoadMUS(pair.second.c_str());
         if(!music) {
-            std::ostream* os;
-            *os << "Couldn't load music " << pair.second << " (" << Mix_GetError() << ")" << std::endl;
-            Logger::log(*os, Log::ERROR);
+            std::ostringstream oss;
+            oss << "Couldn't load music " << pair.second << " (" << Mix_GetError() << ")" << std::endl;
+            Logger::log(oss, Log::ERROR);
         }
         musics.insert({pair.first, music});
     }
 
     //Check for pusleaudio audio-driver and warn about it
     if(strcmp(SDL_GetCurrentAudioDriver(), "pulseaudio") == 0) {
-        std::ostream* os;
-        *os << SDL_GetCurrentAudioDriver() << " detected! Make sure to run this program with ALSA instead, otherwise sounds might break!";
-        *os << " This might make shutdown of program VERY slow!" << std::endl;
-        Logger::log(*os, Log::WARNING);
+        std::ostringstream oss;
+        oss << SDL_GetCurrentAudioDriver() << " detected! Make sure to run this program with ALSA instead, otherwise sounds might break!";
+        oss << " This might make shutdown of program VERY slow!" << std::endl;
+        Logger::log(oss, Log::WARNING);
     }
 
     //Load sounds and store them in sound map
@@ -61,9 +61,9 @@ SoundEngine::SoundEngine() {
     for(auto pair : soundPairs) {
         auto sound = Mix_LoadWAV(pair.second.c_str());
         if(!sound) {
-            std::ostream* os;
-            *os << "Couldn't load sound " << pair.second << " (" << Mix_GetError() << ")" << std::endl;
-            Logger::log(*os, Log::ERROR);
+            std::ostringstream oss;
+            oss << "Couldn't load sound " << pair.second << " (" << Mix_GetError() << ")" << std::endl;
+            Logger::log(oss, Log::ERROR);
         }
         sounds.insert({pair.first, sound});
         channels.insert({sound, channelNumber++});
