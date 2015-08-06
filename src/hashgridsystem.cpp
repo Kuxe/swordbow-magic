@@ -1,7 +1,8 @@
-#include <iostream>
-
 #include "hashgridsystem.hpp"
 #include "boundingbox.hpp"
+
+/** For logging **/
+#include "logger.hpp"
 
 HashGridSystem::HashGridSystem(
 	BoundingBox* boundingBox,
@@ -38,7 +39,7 @@ void HashGridSystem::addToCells(const ID id) {
 			if(y*width + x < cellsCapacity) {
 				cells[y*width + x].insert(id);
 			} else {
-				std::cout << "WARNING: tried to index out of HashGrid cellsCapacity!" << std::endl;
+				Logger::log("Tried to index out of HashGrid cellsCapacity", Log::WARNING);
 			}
 		}
 	}
@@ -51,9 +52,14 @@ void HashGridSystem::removeFromCells(const ID id) {
 	for(unsigned int y = bb.y/side; y < (bb.y + bb.h)/side; y++) {
 		for(unsigned int x = bb.x/side; x < (bb.x + bb.w)/side; x++) {
 			if(cells[y*width + x].erase(id) == 0) {
-				/*cout << "ERROR: hashgrid tried to erase id " << *id << " from cell " << y*width + x << " but the ID wasn't there." << endl;
-				cout << "Strange things may happen from now on, because the ID could remain in cells ";
-				cout << "where the ID isnt physically located anymore (hashgrid got desynced)" << endl;*/
+				Logger::log(
+					std::to_string(getIdentifier()) +
+					std::string(
+						" couldn't erase " +
+						std::to_string(id) +
+						" from grid because it didn't exist"
+					), Log::WARNING
+				);
 			};
 		}
 	}
@@ -66,14 +72,14 @@ void HashGridSystem::removeFromCellsOldBoundingBox(const ID id) {
 	for(unsigned int y = bb.y/side; y < (bb.y + bb.h)/side; y++) {
 		for(unsigned int x = bb.x/side; x < (bb.x + bb.w)/side; x++) {
 			if(cells[y*width + x].erase(id) == 0) {
-				/*cout << "ERROR: hashgrid tried to erase id " << *id << " from cell " << y*width + x << " but the ID wasn't there." << endl;
-				cout << "Strange things may happen from now on, because the ID could remain in cells ";
-				cout << "where the ID isnt physically located anymore (hashgrid got desynced)" << endl;
-				cout << "as of 2015-04-16 this error-message occurs during initialization of gameworld," << endl;
-				cout << "in that case you need not to worry about the error message. It happens since" << endl;
-				cout << "adding to the HashGridSystem is done BEFORE world.cpp sets appropiate coordinates of each tile" << endl;
-				cout << "thus when the tile becomes active it tries to remove itself from {0,0}. This is of course harmless" << endl;
-				cout << "and can be ignored" << endl;*/
+				Logger::log(
+					std::to_string(getIdentifier()) +
+					std::string(
+						" couldn't erase " +
+						std::to_string(id) +
+						" (old boundingbox) from grid because it didn't exist"
+					), Log::WARNING
+				);
 			};
 		}
 	}
@@ -98,9 +104,6 @@ std::unordered_set<ID> HashGridSystem::query(const Rect& queryArea) const {
 			for(auto otherId : cells[y*width + x]) {
 				auto bb = boundingBox->getBoundingBox(otherId);
 				if(Rect::intersect(queryArea, bb)) {
-					//cout << "{" << queryArea.x << ", " << queryArea.y << ", " << queryArea.w << ", " << queryArea.h << "}";
-					//cout << " intersects ";
-					//cout << "{" << bb.x << ", " << bb.y << ", " << bb.w << ", " << bb.h << "}" << endl;
 					queryIds.insert(otherId);
 				}
 			}

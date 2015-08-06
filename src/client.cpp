@@ -1,6 +1,7 @@
 #include "client.hpp"
-#include <iostream>
-#include <string>
+
+/** For logging **/
+#include "logger.hpp"
 
 /** For event-handling **/
 #include <SDL2/SDL.h>
@@ -22,7 +23,7 @@ Client::Client(int argc, char** argv) :
         cameraSystem(&renderer),
         renderSystem(&renderer, &textureHashGridSystem, &cameraSystem) {
 
-    std::cout << "\n--** STARTING CLIENT **--" << std::endl;
+    Logger::log("Starting client", Log::INFO);
 
     //Default port
     short port = 47294;
@@ -46,6 +47,7 @@ Client::Client(int argc, char** argv) :
 
 Client::~Client() {
     socket.close();
+    Logger::log("Destroying client", Log::INFO);
 }
 
 void Client::connect(const IpAddress& server) {
@@ -112,7 +114,7 @@ void Client::receive() {
 
             switch(type) {
                 case MESSAGE_TYPE::OUTDATED: {
-                    std::cout << "This packet is outdated, to late! Sluggish!" << std::endl;
+                    Logger::log("This packet is outdated, to late! Sluggish!", Log::WARNING);
                 } break;
 
                 case MESSAGE_TYPE::CONNECT: {
@@ -230,10 +232,13 @@ void Client::receive() {
                 } break;
 
                 default: {
-                    std::cout << "WARNING: Message without proper type received. This is probably a bug." << std::endl;
-                    std::cout << "Either client-side handling for that message isn't implemented";
-                    std::cout << " or server sent a message with a bogus messagetype";
-                    std::cout << " or the messagetype was wrongly altered somewhere" << std::endl;
+                    const std::string logstr(
+                        std::string("Message without proper type received. This is probably a bug.\n") +
+                        std::string("Either client-side handling for that message isn't implemented") +
+                        std::string(" or server sent a message with a bogus messagetype") +
+                        std::string(" or the messagetype was wrongly altered somewhere\n")
+                    );
+                    Logger::log(logstr, Log::WARNING);
                 };
             }
 

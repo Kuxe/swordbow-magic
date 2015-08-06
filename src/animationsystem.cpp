@@ -1,6 +1,6 @@
 #include "animationsystem.hpp"
 #include "animationcomponent.hpp"
-#include <iostream>
+#include "logger.hpp"
 #include "componentmanager.hpp"
 #include "systemmanager.hpp"
 
@@ -10,7 +10,7 @@ void AnimationSystem::add(ID id) {
 }
 void AnimationSystem::remove(ID id) {
     if(ids.find(id) == ids.end()) {
-        std::cout << "ERROR: Tried to remove unpresent ID from AnimationSystem. Don't know what will happen from now on!" << std::endl;
+        Logger::log("Tried to remove unpresent ID from AnimationSystem. Don't know what will happen from now on!", Log::ERROR);
         return;
     }
     ids.erase(id);

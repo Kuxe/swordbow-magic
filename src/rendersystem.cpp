@@ -6,6 +6,7 @@
 #include "spatialindexer.hpp"
 #include "camerasystem.hpp"
 #include "renderer.hpp"
+#include "logger.hpp"
 
 RenderSystem::RenderSystem(
     Renderer* renderer,

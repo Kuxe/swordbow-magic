@@ -1,11 +1,15 @@
 #include "renderer.hpp"
-#include <iostream>
+
+/** For logging **/
+#include "logger.hpp"
+#include <ostream>
 
 Renderer::Renderer(int argc, char** argv) {
     //Initialize SDL
-    if(SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
-    {
-        std::cout << "ERROR: SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
+    if(SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
+        std::ostream* os;
+        *os << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
+        Logger::log(*os, Log::ERROR);
     } else {
         window = SDL_CreateWindow(
             "SDL Tutorial",
@@ -16,7 +20,9 @@ Renderer::Renderer(int argc, char** argv) {
             SDL_WINDOW_SHOWN);
 
         if(!window) {
-            std::cout << "ERROR: Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+            std::ostream* os;
+            *os << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+            Logger::log(*os, Log::ERROR);
         } else {
 
             //Flags for renderer to be used
@@ -32,45 +38,57 @@ Renderer::Renderer(int argc, char** argv) {
 
             renderer = SDL_CreateRenderer(window, -1, rendererFlags);
             if(!renderer) {
-                std::cout << "ERROR: Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+                std::ostream* os;
+                *os << "Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+                Logger::log(*os, Log::ERROR);
             } else {
 
 				//imgFlags is used to initialize PNG-loading
 				//so that IMG_Load can be used instead of SDL_LoadBMP
 				int imgFlags = IMG_INIT_PNG;
 				if(!(IMG_Init(imgFlags) & imgFlags)) {
-					std::cout << "ERROR: Couldnt initialze PNG usage!" << std::endl;
+                    std::ostream* os;
+					*os << "Couldnt initialze PNG usage!" << std::endl;
+                    Logger::log(*os, Log::ERROR);
 				} else {
 
 		            SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
 
                     fontTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
                     if(!fontTexture) {
-						std::cout << "ERROR: Couldn't create fontTexture!" << std::endl;
-						std::cout << "Screen will probably go black from now on" << std::endl;
-						std::cout << "SDL_GetError(): " << SDL_GetError() << std::endl;
+                        std::ostream* os;
+						*os << "Couldn't create fontTexture!" << std::endl;
+						*os << "Screen will probably go black from now on" << std::endl;
+						*os << "SDL_GetError(): " << SDL_GetError() << std::endl;
+                        Logger::log(*os, Log::ERROR);
 					}
                     SDL_SetTextureBlendMode(fontTexture, SDL_BLENDMODE_BLEND);
 
 			        worldTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 8192, 8192);
 					if(!worldTexture) {
-						std::cout << "ERROR: Couldn't create worldTexture!" << std::endl;
-						std::cout << "Screen will probably go black from now on" << std::endl;
-						std::cout << "SDL_GetError(): " << SDL_GetError() << std::endl;
+                        std::ostream* os;
+						*os << "Couldn't create worldTexture!" << std::endl;
+						*os << "Screen will probably go black from now on" << std::endl;
+						*os << "SDL_GetError(): " << SDL_GetError() << std::endl;
+                        Logger::log(*os, Log::ERROR);
 					}
 					SDL_SetRenderTarget(renderer, worldTexture);
 					SDL_RenderClear(renderer);
 				}
 
                 if(TTF_Init() < 0 ) {
-                    std::cout << "ERROR: Couldn't initialize SDL2_ttf!" << std::endl;
+                    std::ostream* os;
+                    *os << "Couldn't initialize SDL2_ttf!" << std::endl;
+                    Logger::log(*os, Log::ERROR);
                 } else {
 
                     const std::string fontPath("../resources/fonts/DejaVuSansMono.ttf");
                     font = TTF_OpenFont(fontPath.c_str(), 11);
 
                     if(!font) {
-                        std::cout << "ERROR: Failed to load font!" << std::endl;
+                        std::ostream* os;
+                        *os << "Failed to load font!" << std::endl;
+                        Logger::log(*os, Log::ERROR);
                     }
                 }
             }
@@ -133,13 +151,17 @@ Renderer::Renderer(int argc, char** argv) {
     for(auto pair : pairs) {
         SDL_Surface* rawImage = IMG_Load(pair.second.c_str());
         if(!rawImage) {
-            std::cout << "ERROR: Couldn't load image on: " << pair.second << std::endl;
+            std::ostream* os;
+            *os << "Couldn't load image on: " << pair.second << std::endl;
+            Logger::log(*os, Log::ERROR);
         } else {
             //Make purple parts of images transparent by using color keying
             SDL_SetColorKey(rawImage, SDL_TRUE, SDL_MapRGB( rawImage->format, 0xFF, 0x00, 0xFF ));
             SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, rawImage);
             if(!texture) {
-                std::cout << "ERROR: Couldn't convert surface on addr " << rawImage << " to texture! SDL_Error: " << SDL_GetError() << std::endl;
+                std::ostream* os;
+                *os << "Couldn't convert surface on addr " << rawImage << " to texture! SDL_Error: " << SDL_GetError() << std::endl;
+                Logger::log(*os, Log::ERROR);
             } else {
                 SDL_FreeSurface(rawImage);
                 int w, h;

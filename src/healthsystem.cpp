@@ -1,15 +1,17 @@
 #include "healthsystem.hpp"
-#include <iostream>
 #include "healthcomponent.hpp"
 #include "componentmanager.hpp"
 #include "systemmanager.hpp"
+
+/** For logging **/
+#include "logger.hpp"
 
 void HealthSystem::add(ID id) {
     ids.insert(id);
 }
 void HealthSystem::remove(ID id) {
     if(ids.find(id) == ids.end()) {
-        std::cout << "WARNING: Tried to remove unpresent ID from HealthSystem. Anything can happen!" << std::endl;
+        Logger::log("Tried to remove unpresent ID from HealthSystem", Log::WARNING);
         return;
     }
     ids.erase(id);

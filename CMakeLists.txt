@@ -9,6 +9,7 @@ ADD_LIBRARY(sbm SHARED
     src/componentmanager.cpp
     src/deltatime.cpp
     src/hashgridsystem.cpp
+    src/logger.cpp
     src/rect.cpp
     src/systemmanager.cpp
 )

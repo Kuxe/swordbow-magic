@@ -1,4 +1,3 @@
-#include <iostream>
 #include "deltatime.hpp"
 #include "systemmanager.hpp"
 #include "movesystem.hpp"
@@ -6,6 +5,9 @@
 #include "movecomponent.hpp"
 #include "inputcomponent.hpp"
 #include "icommand.hpp"
+
+/** For logging **/
+#include "logger.hpp"
 
 void MoveSystem::add(ID id) {
 	ids.insert(id);
@@ -15,7 +17,7 @@ void MoveSystem::add(ID id) {
 
 void MoveSystem::remove(ID id) {
 	if(ids.erase(id) == 0) {
-		std::cout << "WARNING: MoveSystem tried to erase unpresent ID " << id << ", segfault inc!" << std::endl;
+		Logger::log("MoveSystem tried to erase unpresent ID" + std::to_string(id), Log::WARNING);
 		return;
 	}
 

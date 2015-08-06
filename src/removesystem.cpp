@@ -1,8 +1,10 @@
 #include "removesystem.hpp"
-#include <iostream>
 #include "componentmanager.hpp"
 #include "entitymanager.hpp"
 #include "icommand.hpp"
+
+/** For logging **/
+#include "logger.hpp"
 
 RemoveSystem::RemoveSystem(EntityManager* entityManager) :
     entityManager(entityManager) { }
@@ -12,7 +14,7 @@ void RemoveSystem::add(ID id) {
 }
 void RemoveSystem::remove(ID id) {
     if(ids.find(id) == ids.end()) {
-        std::cout << "WARNING: Tried to remove unpresent ID from RemoveSystem. Anything can happen!" << std::endl;
+        Logger::log("Tried to remove unpresent ID from RemoveSystem. Anything can happen!", Log::WARNING);
         return;
     }
     ids.erase(id);

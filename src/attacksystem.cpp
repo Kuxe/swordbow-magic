@@ -8,7 +8,8 @@
 #include "packet.hpp"
 #include "messagetypes.hpp"
 
-#include <iostream>
+/** For logging **/
+#include "logger.hpp"
 
 AttackSystem::AttackSystem(
     HashGridSystem* hashgrid,
@@ -25,7 +26,7 @@ void AttackSystem::add(ID id) {
 }
 void AttackSystem::remove(ID id) {
     if(ids.find(id) == ids.end()) {
-        std::cout << "WARNING: Tried to remove unpresent ID from AttackSystem!" << std::endl;
+        Logger::log("Tried to remove unpresent id from AttackSystem", Log::WARNING);
     }
     ids.erase(id);
 }

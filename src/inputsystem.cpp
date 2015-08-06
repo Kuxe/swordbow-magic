@@ -2,14 +2,15 @@
 #include "componentmanager.hpp"
 #include "icommand.hpp"
 
-#include <iostream>
+/** For logging **/
+#include "logger.hpp"
 
 void InputSystem::add(ID id) {
     ids.insert(id);
 }
 void InputSystem::remove(ID id) {
     if(ids.find(id) == ids.end()) {
-        std::cout << "ERROR: Tried to remove unpresent ID from InputSystem. Don't know what will happen from now on!" << std::endl;
+        Logger::log("Tried to remove unpresent ID from InputSystem", Log::WARNING);
         return;
     }
     ids.erase(id);

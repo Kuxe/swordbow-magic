@@ -1,6 +1,6 @@
 #include "systemmanager.hpp"
 #include "isystem.hpp"
-#include <iostream>
+#include "logger.hpp"
 
 SystemManager::SystemManager(ComponentManager* componentManager, DeltaTime* deltaTime) :
 	componentManager(componentManager),
@@ -32,13 +32,16 @@ ISystem* SystemManager::getSystem(System::Identifier identifier) {
 	try {
 		system = systems.at(identifier);
 	} catch(const std::out_of_range& oor) {
+		const std::string logstr(
+			"out_of_range exception caught in SystemManager::getSystem(string identifier): " + std::string(oor.what()) +
+			"\n1. Maybe there as a typo in the system-identifier argument, " + std::to_string(identifier) + "?" +
+			"\n2. Maybe " + std::to_string(identifier) + " wasn't added to this SystemManager?" +
+			"\n3. Maybe " + std::to_string(identifier) + " was added, but got removed?" +
+			"\n4. Maybe another system didn't implement getIdentifier() (in that case, above error messages are misleading!)" +
+			"\nThings will go wrong from now on!\n"
+		);
 
-		std::cout << "out_of_range exception caught in SystemManager::getSystem(string identifier): " << oor.what() << std::endl;
-		std::cout << "1. Maybe there as a typo in the system-identifier argument, " << identifier << "?" << std::endl;
-		std::cout << "2. Maybe " << identifier << " wasn't added to this SystemManager?" << std::endl;
-		std::cout << "3. Maybe " << identifier << " was added, but got removed?" << std::endl;
-		std::cout << "4. Maybe another system didn't implement getIdentifier() (in that case, above error messages are misleading!)" << std::endl;
-		std::cout << "Things will go wrong from now on!" << std::endl;
+		Logger::log(logstr, Log::ERROR);
 	}
 
 

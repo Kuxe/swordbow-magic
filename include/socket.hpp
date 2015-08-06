@@ -7,7 +7,7 @@
 #include <netinet/in.h>
 #include <fcntl.h>
 #include <unistd.h> //close()
-#include <iostream>
+#include "logger.hpp"
 #include "packet.hpp"
 #include <fstream>
 #include <chrono>
@@ -34,8 +34,6 @@
 #include <cereal/types/chrono.hpp>
 #include <cereal/types/utility.hpp> //for std::pair
 #include <cereal/types/queue.hpp>
-
-#define NET_DEBUG
 
 #if PLATFORM == PLATFORM_WINDOWS
     typedef int socklen_t;
@@ -70,7 +68,7 @@ public:
         //Create a socket and check for failure
         socket = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
         if(socket <= 0) {
-            std::cout << "ERROR: Couldn't create socket" << std::endl;
+            Logger::log("Couldn't create socket", Log::ERROR);
             return false;
         }
 
@@ -81,7 +79,7 @@ public:
 
         if(bind(socket, (const sockaddr*)&address, sizeof(sockaddr_in)) < 0 )
         {
-            std::cout << "ERROR: Couldn't bind socket" << std::endl;
+            Logger::log("Couldn't bind socket", Log::ERROR);
             close();
             return false;
         }
@@ -91,7 +89,7 @@ public:
         #if PLATFORM == PLATFORM_LINUX || PLATFORM == PLATFORM_APPLE
             constexpr int nonBlocking = 1;
             if(fcntl(socket, F_SETFL, O_NONBLOCK, nonBlocking) == -1) {
-                std::cout << "ERORR: Failed to set non-blocking" << std::endl;
+                Logger::log("Failed to set non-blocking", Log::ERROR);
                 close();
                 return false;
             }
@@ -99,7 +97,7 @@ public:
         #elif PLATFORM == PLATFORM_WINDOWS
             DWORD nonBlocking = 1;
             if(ioctlsocket(socket, FIONBIO, &nonBlocking) != 0) {
-                std::cout << "ERROR: Failed to set non-blocking" << std::endl;
+                Logger::log("Failed to set non-blocking", Log::ERROR);
                 close();
                 return false;
             }
@@ -123,7 +121,7 @@ public:
     template<class T>
     bool send(const IpAddress& destination, const T& object) {
         if(socket == 0) {
-            std::cout << "ERROR: Cannot send because socket isn't open" << std::endl;
+            Logger::log("Cannot send because socket isn't open", Log::ERROR);
         }
 
         //Serialize object
@@ -157,7 +155,7 @@ public:
         //but if the expected size of sent bytes matches the
         //size of the sent packet
         if(sendBytes != size) {
-            std::cout << "ERROR: Failed to send packet.";
+            Logger::log("Failed to send packet", Log::ERROR);
             return false;
         }
         return true;
@@ -169,7 +167,7 @@ public:
     //save the bytes read to param bytesread
     void receive(IpAddress& sender, unsigned char& type, int& bytesRead) {
         if(socket == 0) {
-            std::cout << "Cannot receive because socket isn't open" << std::endl;
+            Logger::log("Cannot receive because socket isn't open", Log::WARNING);
         }
 
         sockaddr_in from;
@@ -184,15 +182,18 @@ public:
             unsigned int fromPort = ntohs(from.sin_port);
             sender = IpAddress(fromAddress, fromPort);
 
-            #ifdef NET_DEBUG
-            //Print ip address of sender, bytes in packet and timestamp
-            std::time_t timestamp(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
-            printf("received packet from %d.%d.%d.%d:%d (%dbytes)",
-                sender.getA(), sender.getB(), sender.getC(), sender.getD(),
-                sender.getPort(), bytesRead
+            //Print ip address of sender, bytes in packet
+            const std::string packetLog(
+                "Received packet from " +
+                std::to_string(sender.getA()) + "." +
+                std::to_string(sender.getB()) + "." +
+                std::to_string(sender.getC()) + "." +
+                std::to_string(sender.getD()) + ":" +
+                std::to_string(sender.getPort()) + " " +
+                "(" + std::to_string(bytesRead) + "bytes)"
             );
-            std::cout << ", " << std::ctime(&timestamp) << std::endl;
-            #endif //NET_DEBUG
+
+            Logger::log(packetLog, Log::INFO);
 
             //Deserialize contents of buffer into (untyped) tmppacket
             std::string str((char*)buffer, bytesRead);
@@ -208,12 +209,12 @@ public:
             const auto& datasize = tmppacket.getDataSize();
 
             //Print packet metadata if NET_DEBUG is defined
-            #ifdef NET_DEBUG
-            std::cout << "\tprotocol: " << protocol << std::endl;
-            std::cout << "\tsequence: " << (int)sequence << std::endl;
-            std::cout << "\tdatatype: " << (int)type << std::endl;
-            std::cout << "\tdatasize: " << datasize << std::endl;
-            #endif //NET_DEBUG
+            const std::string packetMetadatalog(
+                "\tprotocol: " + std::to_string(protocol) +
+                "\n\tsequence: " + std::to_string((int)sequence) +
+                "\n\tdatatype: " + std::to_string((int)type) +
+                "\n\tdatasize: " + std::to_string(datasize) + "\n"
+            );
 
             //Check if the packet is meant for swordbow-magic (protocol)
             if(protocol == stringhash(protocolName)) {
@@ -237,8 +238,11 @@ public:
                     type = 0; //0 for outdated
                 }
             } else {
-                std::cout << "got packet with illegal protocol " << protocol;
-                std::cout << ", expected " << stringhash(protocolName) << "(" << protocolName << ")" << std::endl;
+                Logger::log(
+                    "Got packet with illegal protocol " + std::to_string(protocol) +
+                    ", expected " + std::to_string(stringhash(protocolName)) +
+                    "(" + protocolName + ")\n"
+                );
             }
         }
     }
