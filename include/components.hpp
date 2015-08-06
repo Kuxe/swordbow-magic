@@ -36,14 +36,14 @@ public:
 
     T& operator[](const ID id) {
         std::ostringstream oss;
-        oss << "If id " << id << " has no " << typeid(T).name() << ", then now it has" << id;
+        oss << "If id " << id << " has no " << typeid(T).name() << ", then now it has";
         Logger::log(oss, Log::INFO);
         return container[id];
     }
 
     const T& operator[](const ID id) const {
         std::ostringstream oss;
-        oss << "If id " << id << " has no " << typeid(T).name() << ", then now it has" << id;
+        oss << "If id " << id << " has no " << typeid(T).name() << ", then now it has";
         Logger::log(oss, Log::INFO);
         return container[id];
     }
