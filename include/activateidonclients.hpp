@@ -8,6 +8,9 @@
 #include "packet.hpp"
 #include "socket.hpp"
 
+/** For logging **/
+#include "logger.hpp"
+
 class SystemManager;
 typedef unsigned int ID;
 
@@ -38,7 +41,7 @@ public:
         clients(clients) { }
 
     void execute() {
-        std::cout << "Warning: Called obsolete ActivateIdOnClients.execute()!" << std::endl;
+        Logger::log("Called obsolete ActivateIdOnClients.execute()", Log::WARNING);
         for(auto pair : *clients) {
             const std::pair<ID, System::Identifier> data {id, system};
             auto& client = pair.second;

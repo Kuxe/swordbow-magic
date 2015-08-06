@@ -6,7 +6,7 @@
 
 IdManager::IdManager() {
 	std::ostringstream oss;
-	oss << "Available IDs: " << MAX_IDS << ", IdManager memory footprint: " << MAX_IDS * sizeof(ID) / 1048576 << "MB" << std::endl;
+	oss << "Available IDs: " << MAX_IDS << ", IdManager memory footprint: " << MAX_IDS * sizeof(ID) / 1048576 << "MB";
 	Logger::log(oss, Log::INFO);
 }
 

@@ -9,6 +9,9 @@
 #include "packet.hpp"
 #include "messagetypes.hpp"
 
+/** For logging **/
+#include "logger.hpp"
+
 #include <SDL2/SDL.h> //For SDL_keys
 
 Server::Server(int argc, char** argv) :
@@ -21,8 +24,7 @@ Server::Server(int argc, char** argv) :
 		removeSystem(&entityManager),
 		attackSystem(&sizeHashGridSystem, &clients, &socket) {
 
-	std::cout << "\n--** STARTING SERVER **--" << std::endl;
-
+	Logger::log("Starting server", Log::INFO);
 	printGeneralInfo();
 
 	constexpr short port = 47293;
@@ -94,7 +96,7 @@ void Server::step() {
 
         switch(type) {
 			case MESSAGE_TYPE::OUTDATED: {
-                std::cout << "This packet is outdated, to late! Sluggish!" << std::endl;
+				Logger::log("This packet is outdated, to late! Sluggish!", Log::WARNING);
             } break;
 
 			case MESSAGE_TYPE::CONNECT: {
@@ -324,9 +326,6 @@ void Server::inputDataToInputComponent(const IpAddress& ipAddress, InputData& da
 }
 
 void Server::printGeneralInfo() {
-	using std::cout;
-	using std::endl;
-
 	//Print some worst-case memory statistics, assuming
 	//all entities have all components
 	//(which isn't the case)
@@ -334,11 +333,13 @@ void Server::printGeneralInfo() {
 	uint64_t entityByteSize = ComponentManager::sizePerEntity();
 	uint64_t allEntitiesByteSize = IdManager::MAX_IDS * entityByteSize;
 	uint64_t allEntitiesMegabyteSize = allEntitiesByteSize / bytePerMegabyte;
-	cout << "There can be at most " << IdManager::MAX_IDS << " ids";
-	cout << " each of size " << entityByteSize << "bytes summing";
-	cout << " up to " << allEntitiesByteSize;
-	cout << "bytes (" << allEntitiesMegabyteSize;
-	cout << "MB)" << endl;
+	std::ostringstream oss;
+	oss << "There can be at most " << IdManager::MAX_IDS << " ids";
+	oss << " each of size " << entityByteSize << "bytes summing";
+	oss << " up to " << allEntitiesByteSize;
+	oss << "bytes (" << allEntitiesMegabyteSize;
+	oss << "MB)";
+	Logger::log(oss, Log::INFO);
 }
 
 int main(int argc, char** argv) {
