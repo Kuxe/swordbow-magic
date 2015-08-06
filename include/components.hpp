@@ -16,7 +16,10 @@ private:
     Container container;
 
 public:
-    constexpr void insert(const std::pair<const ID, const T&> pair) {
+    void insert(const std::pair<const ID, const T&> pair) {
+        std::ostringstream oss;
+        oss << "Adding " << typeid(T).name() << " to id " << pair.first;
+        Logger::log(oss, Log::INFO);
         container.insert(pair);
     }
 
@@ -31,11 +34,17 @@ public:
         return *this;
     }
 
-    constexpr T& operator[](const ID id) {
+    T& operator[](const ID id) {
+        std::ostringstream oss;
+        oss << "If id " << id << " has no " << typeid(T).name() << ", then now it has" << id;
+        Logger::log(oss, Log::INFO);
         return container[id];
     }
 
-    constexpr const T& operator[](const ID id) const {
+    const T& operator[](const ID id) const {
+        std::ostringstream oss;
+        oss << "If id " << id << " has no " << typeid(T).name() << ", then now it has" << id;
+        Logger::log(oss, Log::INFO);
         return container[id];
     }
 
@@ -51,8 +60,16 @@ public:
         }
     }
 
-    constexpr const T& at(const ID id) const {
-        return container.at(id);
+    const T& at(const ID id) const {
+        //Log before the error before throwing it
+        try {
+            return container.at(id);
+        } catch (std::out_of_range oor) {
+            std::ostringstream oss;
+            oss << "Tried accesing absent " << typeid(T).name() << " on id " << id;
+            Logger::log(oss, Log::ERROR);
+            throw oor;
+        }
     }
 
     constexpr auto find(const ID id) {
@@ -67,7 +84,10 @@ public:
         return container.end();
     }
 
-    constexpr auto erase(const ID id) {
+    auto erase(const ID id) {
+        std::ostringstream oss;
+        oss << "Erasing " << typeid(T).name() << " from id " << id;
+        Logger::log(oss, Log::INFO);
         return container.erase(id);
     }
 

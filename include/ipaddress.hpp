@@ -9,6 +9,7 @@ struct IpAddressHash;
 class IpAddress {
 private:
     friend std::hash<IpAddress>;
+    friend std::ostream& operator<<(std::ostream&, const IpAddress& ipAddress);
     unsigned int address = 0;
     unsigned short port = 0;
 
@@ -60,6 +61,6 @@ namespace std {
             return s;
         }
     };
-}
+};
 
 #endif //IPADDRESS_HPP

@@ -183,17 +183,9 @@ public:
             sender = IpAddress(fromAddress, fromPort);
 
             //Print ip address of sender, bytes in packet
-            const std::string packetLog(
-                "Received packet from " +
-                std::to_string(sender.getA()) + "." +
-                std::to_string(sender.getB()) + "." +
-                std::to_string(sender.getC()) + "." +
-                std::to_string(sender.getD()) + ":" +
-                std::to_string(sender.getPort()) + " " +
-                "(" + std::to_string(bytesRead) + "bytes)"
-            );
-
-            Logger::log(packetLog, Log::INFO);
+            std::ostringstream oss;
+            oss << "Recieved packet from " << sender << " (" << std::to_string(bytesRead) + "bytes)";
+            Logger::log(oss, Log::INFO);
 
             //Deserialize contents of buffer into (untyped) tmppacket
             std::string str((char*)buffer, bytesRead);

@@ -152,6 +152,9 @@ void Server::step() {
 }
 
 void Server::onConnect(const IpAddress& ipAddress) {
+	std::ostringstream oss;
+	oss << ipAddress << " connected";
+	Logger::log(oss, Log::INFO);
 	auto fatManId = entityManager.createFatMan({0.0f, 0.0f});
 	clients.insert({ipAddress, {1, fatManId}});
 
@@ -183,6 +186,11 @@ void Server::onConnect(const IpAddress& ipAddress) {
 void Server::onDisconnect(const IpAddress& ipAddress) {
 	//If this ipaddress isn't a client, do nothing
 	if(clients.find(ipAddress) != clients.end()) {
+
+		std::ostringstream oss;
+		oss << ipAddress << " disconnected";
+		Logger::log(oss, Log::INFO);
+
 		entityManager.remove(clients.at(ipAddress).id);
 		clients.erase(ipAddress);
 	}
