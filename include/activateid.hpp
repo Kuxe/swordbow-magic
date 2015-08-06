@@ -2,6 +2,7 @@
 
 #include "icommand.hpp"
 #include "systemidentifiers.hpp"
+#include "isystem.hpp"
 
 class SystemManager;
 typedef unsigned int ID;

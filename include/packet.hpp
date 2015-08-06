@@ -2,7 +2,6 @@
 #define PACKET_HPP
 
 #include <type_traits>
-
 #include "stringhash.hpp"
 
 //Representing objects as unsigned int is probably the easiest way

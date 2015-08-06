@@ -4,15 +4,12 @@
 #include "componentmanager.hpp"
 #include "systemmanager.hpp"
 
-using std::cout;
-using std::endl;
-
 void HealthSystem::add(ID id) {
     ids.insert(id);
 }
 void HealthSystem::remove(ID id) {
     if(ids.find(id) == ids.end()) {
-        cout << "WARNING: Tried to remove unpresent ID from HealthSystem. Anything can happen!" << endl;
+        std::cout << "WARNING: Tried to remove unpresent ID from HealthSystem. Anything can happen!" << std::endl;
         return;
     }
     ids.erase(id);

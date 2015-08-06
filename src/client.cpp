@@ -1,7 +1,9 @@
 #include "client.hpp"
 #include <iostream>
-#include <SDL2/SDL.h>
 #include <string>
+
+/** For event-handling **/
+#include <SDL2/SDL.h>
 
 /** For network **/
 #include "messagetypes.hpp"
@@ -13,12 +15,12 @@
 Client::Client(int argc, char** argv) :
         socket("swordbow-magic"),
         sequence(1),
-        renderer(argc, argv),
         systemManager(&componentManager, &deltaTime),
+        renderer(argc, argv),
         textureBoundingBox(&componentManager, &renderer),
-        textureHashGridSystem(&componentManager, &textureBoundingBox),
-        renderSystem(&renderer),
-        cameraSystem(&renderer) {
+        textureHashGridSystem(&textureBoundingBox),
+        cameraSystem(&renderer),
+        renderSystem(&renderer, &textureHashGridSystem, &cameraSystem) {
 
     std::cout << "\n--** STARTING CLIENT **--" << std::endl;
 
@@ -304,9 +306,6 @@ void Client::step() {
 
     /** END OF CRITICAL SECTION **/
     componentsMutex.unlock();
-
-    /** Pass output from rendersystem to renderer **/
-    renderer.render(renderSystem.getDrawPriorityQueue(), cameraSystem.getCamera());
 
     deltaTime.stop();
 }

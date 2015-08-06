@@ -1,9 +1,6 @@
 #include "world.hpp"
-
 #include <random>
-
 #include "entitymanager.hpp"
-#include "componentmanager.hpp"
 #include "noisebrush.hpp"
 
 World::World(EntityManager* entityManager) :

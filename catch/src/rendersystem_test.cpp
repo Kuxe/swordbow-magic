@@ -24,7 +24,7 @@ TEST_CASE("RenderSystem") {
     IdManager im;
     EntityManager entityManager(&sm, &cm, &im);
 
-    HashGridSystem hg(&cm, &tbb);
+    HashGridSystem hg(&tbb);
     RenderSystem rs;
     MoveSystem ms;
     InputSystem is;

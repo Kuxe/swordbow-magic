@@ -4,16 +4,13 @@
 #include "componentmanager.hpp"
 #include "systemmanager.hpp"
 
-using std::cout;
-using std::endl;
-
 void AnimationSystem::add(ID id) {
     ids.insert(id);
     systemManager->getSystem(System::RENDERDIFF)->add(id);
 }
 void AnimationSystem::remove(ID id) {
     if(ids.find(id) == ids.end()) {
-        cout << "ERROR: Tried to remove unpresent ID from AnimationSystem. Don't know what will happen from now on!" << endl;
+        std::cout << "ERROR: Tried to remove unpresent ID from AnimationSystem. Don't know what will happen from now on!" << std::endl;
         return;
     }
     ids.erase(id);

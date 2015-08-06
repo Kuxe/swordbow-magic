@@ -5,7 +5,6 @@
 #include "spatialindexer.hpp"
 #include "isystem.hpp"
 
-class ComponentManager;
 class BoundingBox;
 
 class HashGridSystem : public SpatialIndexer, public ISystem {
@@ -18,8 +17,6 @@ class HashGridSystem : public SpatialIndexer, public ISystem {
 		std::unordered_set<ID>* cells;
 		const unsigned int side;
 
-		ComponentManager* componentManager;
-
 		BoundingBox* boundingBox;
 
 		void addToCells(const ID id);
@@ -29,7 +26,6 @@ class HashGridSystem : public SpatialIndexer, public ISystem {
 	public:
 
 		HashGridSystem(
-			ComponentManager* componentManager,
 			BoundingBox* boundingBox,
 			const unsigned int worldWidth = 32768,
 			const unsigned int worldHeight = 32786,

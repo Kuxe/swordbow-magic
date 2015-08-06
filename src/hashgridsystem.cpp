@@ -1,21 +1,9 @@
 #include <iostream>
 
 #include "hashgridsystem.hpp"
-#include "componentmanager.hpp"
-#include "movecomponent.hpp"
-#include "sizecomponent.hpp"
-#include "rendercomponent.hpp"
-#include "rendersystem.hpp"
-#include "namecomponent.hpp"
 #include "boundingbox.hpp"
 
-using std::cout;
-using std::endl;
-
-constexpr float EPSILON = 0.00001f;
-
 HashGridSystem::HashGridSystem(
-	ComponentManager* componentManager,
 	BoundingBox* boundingBox,
 	const unsigned int worldWidth,
 	const unsigned int worldHeight,
@@ -25,7 +13,6 @@ HashGridSystem::HashGridSystem(
 		cellsCapacity(width * height),
 		cells(new std::unordered_set<ID>[cellsCapacity]),
 		side(side),
-		componentManager(componentManager),
 		boundingBox(boundingBox) { }
 
 HashGridSystem::~HashGridSystem() {
@@ -51,7 +38,7 @@ void HashGridSystem::addToCells(const ID id) {
 			if(y*width + x < cellsCapacity) {
 				cells[y*width + x].insert(id);
 			} else {
-				cout << "WARNING: tried to index out of HashGrid cellsCapacity!" << endl;
+				std::cout << "WARNING: tried to index out of HashGrid cellsCapacity!" << std::endl;
 			}
 		}
 	}

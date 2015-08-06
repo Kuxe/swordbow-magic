@@ -1,18 +1,13 @@
 #include "entitymanager.hpp"
 #include "componentmanager.hpp"
 #include "idmanager.hpp"
-#include <iostream>
-#include <forward_list>
-
+ 
 /** For networking **/
 #include "socket.hpp"
 #include "packet.hpp"
 #include "messagetypes.hpp"
 
 #include "systemmanager.hpp"
-#include "rendersystem.hpp"
-#include "movesystem.hpp"
-#include "hashgridsystem.hpp"
 #include "activateid.hpp"
 #include "addidtosystem.hpp"
 #include "removeidfromsystem.hpp"

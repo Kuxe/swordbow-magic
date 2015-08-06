@@ -1,8 +1,6 @@
 #ifndef IDMANAGER_H
 #define IDMANAGER_H
 #include <stack>
-#include <math.h>
-#include <climits>
 
 typedef unsigned int ID;
 

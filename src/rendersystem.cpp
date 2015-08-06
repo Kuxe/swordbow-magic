@@ -1,19 +1,19 @@
 #include "rendersystem.hpp"
+#include "deltatime.hpp"
 #include "componentmanager.hpp"
 #include "rendercomponent.hpp"
 #include "movecomponent.hpp"
-#include "sizecomponent.hpp"
-#include <iostream>
 #include "spatialindexer.hpp"
-#include <queue>
-#include "namecomponent.hpp"
-#include "systemmanager.hpp"
-#include "hashgridsystem.hpp"
-#include "deltatime.hpp"
+#include "camerasystem.hpp"
 #include "renderer.hpp"
 
-RenderSystem::RenderSystem(Renderer* renderer) :
-    renderer(renderer) { }
+RenderSystem::RenderSystem(
+    Renderer* renderer,
+    SpatialIndexer* spatialIndexer,
+    CameraSystem* cameraSystem) :
+    renderer(renderer),
+    spatialIndexer(spatialIndexer),
+    cameraSystem(cameraSystem) { }
 
 void RenderSystem::add(ID id) {
 	ids.insert(id);
@@ -25,8 +25,6 @@ void RenderSystem::remove(ID id) {
 }
 
 void RenderSystem::update() {
-	auto spatialIndexer = dynamic_cast<SpatialIndexer*>(systemManager->getSystem(System::HASHGRID_TEXTURE));
-
     //Will contain all rectangles where a redraw is required
     std::queue<Rect> drawQueue;
 
@@ -45,8 +43,10 @@ void RenderSystem::update() {
 		drawQueue.push(drawArea); activeIds.pop();
 
         //The texturearea should be saved for next frame, it must be redrawn then too
-		renderArea(drawArea);
+		previousDrawAreas.push(drawArea);
 	}
+
+    std::priority_queue<RenderData> pq;
 
     while(!drawQueue.empty()) {
         const auto& drawArea = drawQueue.front();
@@ -97,6 +97,8 @@ void RenderSystem::update() {
         const std::string str = "WARNING: renderer is lagging behind";
         printText(Text(str, 0, 20, {255, 55, 55}));
     }
+
+    //renderer->render(pq, cameraSystem->getCamera());
 }
 
 unsigned int RenderSystem::count() const {
@@ -116,14 +118,6 @@ void RenderSystem::activateId(ID id) {
 
 void RenderSystem::printText(const Text& text) {
     renderer->printText(text);
-}
-
-std::priority_queue<RenderData>& RenderSystem::getDrawPriorityQueue() {
-    return pq;
-}
-
-const std::priority_queue<RenderData>& RenderSystem::getDrawPriorityQueue() const {
-    return pq;
 }
 
 

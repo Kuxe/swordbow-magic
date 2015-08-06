@@ -2,9 +2,9 @@
 #define CLIENT_HPP
 
 #include "deltatime.hpp"
-#include "renderer.hpp"
 #include "componentmanager.hpp"
 #include "systemmanager.hpp"
+#include "renderer.hpp"
 #include "rendersystem.hpp"
 #include "hashgridsystem.hpp"
 #include "camerasystem.hpp"
@@ -18,7 +18,6 @@
 
 typedef unsigned int ID;
 
-class Server;
 class Client {
 private:
     Socket socket;
@@ -33,15 +32,14 @@ private:
     DeltaTime deltaTime;
     ComponentManager componentManager;
     SystemManager systemManager;
+    Renderer renderer;
     TextureBoundingBox textureBoundingBox;
 
     //Client-side systems
     HashGridSystem textureHashGridSystem;
-    RenderSystem renderSystem;
     CameraSystem cameraSystem;
+    RenderSystem renderSystem;
     SoundEngine soundEngine;
-
-    Renderer renderer;
 
     std::mutex componentsMutex;
 

@@ -4,15 +4,12 @@
 
 #include <iostream>
 
-using std::cout;
-using std::endl;
-
 void InputSystem::add(ID id) {
     ids.insert(id);
 }
 void InputSystem::remove(ID id) {
     if(ids.find(id) == ids.end()) {
-        cout << "ERROR: Tried to remove unpresent ID from InputSystem. Don't know what will happen from now on!" << endl;
+        std::cout << "ERROR: Tried to remove unpresent ID from InputSystem. Don't know what will happen from now on!" << std::endl;
         return;
     }
     ids.erase(id);

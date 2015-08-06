@@ -1,7 +1,6 @@
 #ifndef ENTITYMANAGER_H
 #define ENTITYMANAGER_H
 
-#include <time.h>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -21,7 +20,6 @@ class SystemManager;
 class ComponentManager;
 class IdManager;
 class ISystem;
-class Client;
 class Socket;
 
 typedef unsigned int ID;

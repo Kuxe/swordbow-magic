@@ -9,8 +9,9 @@
 #include "systemmanager.hpp"
 #include "idmanager.hpp"
 #include "entitymanager.hpp"
+
+/** Server-side systems **/
 #include "movesystem.hpp"
-#include "world.hpp"
 #include "hashgridsystem.hpp"
 #include "collisionsystem.hpp"
 #include "sizeboundingbox.hpp"
@@ -21,6 +22,8 @@
 #include "animationsystem.hpp"
 #include "movediffsystem.hpp"
 #include "renderdiffsystem.hpp"
+
+/** For inputDataToInputComponent-method **/
 #include "inputdata.hpp"
 
 /** For network **/

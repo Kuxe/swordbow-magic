@@ -11,7 +11,6 @@
 
 typedef unsigned int ID;
 
-class Client;
 class Socket;
 
 /** Used when server should tell all clients to play a sound **/

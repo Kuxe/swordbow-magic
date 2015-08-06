@@ -22,7 +22,6 @@ ADD_LIBRARY(sbm-server SHARED
     src/healthsystem.cpp
     src/idmanager.cpp
     src/inputsystem.cpp
-    src/keyboardsystem.cpp
     src/movediffsystem.cpp
     src/movesystem.cpp
     src/noisebrush.cpp

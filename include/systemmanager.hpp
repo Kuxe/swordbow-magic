@@ -2,7 +2,6 @@
 #define SYSTEMMANGER_H
 
 #include <unordered_map>
-#include <vector>
 #include "systemidentifiers.hpp"
 
 class ISystem;
@@ -10,17 +9,17 @@ class ComponentManager;
 class DeltaTime;
 
 class SystemManager {
- public:
- 	/* 	SystemManager need to inform systems about
+private:
+	/* 	SystemManager need to inform systems about
  		ComponentManager so that systems may access ComponentManager
  		in order to aquire the components
  	*/
-
- 	SystemManager(ComponentManager* componentManager, DeltaTime* deltaTime);
- 	ComponentManager* const componentManager;
+	ComponentManager* const componentManager;
  	DeltaTime* const deltaTime;
-	std::vector<ISystem*> systems;
-	std::unordered_map<System::Identifier, ISystem*, std::hash<int>> systemByIdentifiers;
+	std::unordered_map<System::Identifier, ISystem*, std::hash<int>> systems;
+
+public:
+	SystemManager(ComponentManager* componentManager, DeltaTime* deltaTime);
 	void add(ISystem* system);
 	void remove(ISystem* system);
 	void update();

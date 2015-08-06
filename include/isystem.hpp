@@ -8,14 +8,12 @@ class DeltaTime;
 class SystemManager;
 
 typedef unsigned int ID;
-typedef unsigned char SYSTEM_IDENTIFIER;
 
 //Not entierly an interface. It's an abstract class.
 class ISystem {
  public:
  	DeltaTime* deltaTime;
  	ComponentManager* componentManager;
-    SYSTEM_IDENTIFIER sysid;
 
      virtual ~ISystem() { }
 

@@ -3,15 +3,12 @@
 #include <chrono>
 #include <string>
 
-using std::cout;
-using std::endl;
-
 SoundEngine::SoundEngine() {
     if(SDL_InitSubSystem(SDL_INIT_AUDIO) < 0) {
-        cout << "ERROR: Couldn't initialize SDL_audio (" << SDL_GetError() << ")! I don't know what will happen!" << endl;
+        std::cout << "ERROR: Couldn't initialize SDL_audio (" << SDL_GetError() << ")! I don't know what will happen!" << std::endl;
     }
     if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0 ) {
-        cout << "ERROR: Couldn't initialize SDL_mixer " << Mix_GetError() << ")! I dont know what will happen!" << endl;
+        std::cout << "ERROR: Couldn't initialize SDL_mixer " << Mix_GetError() << ")! I dont know what will happen!" << std::endl;
     }
 
     /** Sound paths are relative to the executable. If executable is here:
@@ -30,14 +27,14 @@ SoundEngine::SoundEngine() {
     //Load musics and store them in music map
     for(auto pair : musicPairs) {
         auto music = Mix_LoadMUS(pair.second.c_str());
-        if(!music) cout << "ERROR: Couldn't load music " << pair.second << " (" << Mix_GetError() << ")" << endl;
+        if(!music) std::cout << "ERROR: Couldn't load music " << pair.second << " (" << Mix_GetError() << ")" << std::endl;
         musics.insert({pair.first, music});
     }
 
     //Check for pusleaudio audio-driver and warn about it
     if(strcmp(SDL_GetCurrentAudioDriver(), "pulseaudio") == 0) {
-        cout << "WARNING: " << SDL_GetCurrentAudioDriver() << " detected! Make sure to run this program with ALSA instead, otherwise sounds might break!";
-        cout << " This might make shutdown of program VERY slow!" << endl;
+        std::cout << "WARNING: " << SDL_GetCurrentAudioDriver() << " detected! Make sure to run this program with ALSA instead, otherwise sounds might break!";
+        std::cout << " This might make shutdown of program VERY slow!" << std::endl;
     }
 
     //Load sounds and store them in sound map
@@ -50,7 +47,7 @@ SoundEngine::SoundEngine() {
 
     for(auto pair : soundPairs) {
         auto sound = Mix_LoadWAV(pair.second.c_str());
-        if(!sound) cout << "ERROR: Couldn't load sound " << pair.second << " (" << Mix_GetError() << ")" << endl;
+        if(!sound) std::cout << "ERROR: Couldn't load sound " << pair.second << " (" << Mix_GetError() << ")" << std::endl;
         sounds.insert({pair.first, sound});
         channels.insert({sound, channelNumber++});
     }

@@ -2,6 +2,9 @@
 
 #include <thread>
 
+/** For world generation **/
+#include "world.hpp"
+
 /** For network **/
 #include "packet.hpp"
 #include "messagetypes.hpp"
@@ -13,7 +16,7 @@ Server::Server(int argc, char** argv) :
 		systemManager(&componentManager, &deltaTime),
 		sizeBoundingBox(&componentManager),
 		entityManager(&systemManager, &componentManager, &idManager, &clients, &socket),
-		sizeHashGridSystem(&componentManager, &sizeBoundingBox),
+		sizeHashGridSystem(&sizeBoundingBox),
 		collisionSystem(&sizeHashGridSystem),
 		removeSystem(&entityManager),
 		attackSystem(&sizeHashGridSystem, &clients, &socket) {

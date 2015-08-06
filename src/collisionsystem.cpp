@@ -2,7 +2,6 @@
 #include "componentmanager.hpp"
 #include "spatialindexer.hpp"
 #include "movecomponent.hpp"
-#include "sizecomponent.hpp"
 
 CollisionSystem::CollisionSystem(SpatialIndexer* spatialIndexer) :
 	spatialIndexer(spatialIndexer) {}

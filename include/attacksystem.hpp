@@ -12,7 +12,6 @@
 #include "ipaddress.hpp"
 
 class HashGridSystem;
-class Client;
 class Socket;
 class AttackSystem : public ISystem {
 private:

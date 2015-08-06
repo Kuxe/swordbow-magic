@@ -2,7 +2,6 @@
 #define ANIMATIONSYSTEM_HPP
 
 #include <unordered_set>
-#include <unordered_map>
 #include "isystem.hpp"
 
 class AnimationSystem : public ISystem {

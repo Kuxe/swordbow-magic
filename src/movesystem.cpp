@@ -1,18 +1,11 @@
-#define NDEBUG
-
-#include "movesystem.hpp"
 #include <iostream>
 #include "deltatime.hpp"
+#include "systemmanager.hpp"
+#include "movesystem.hpp"
 #include "componentmanager.hpp"
 #include "movecomponent.hpp"
 #include "inputcomponent.hpp"
-#include "deltatime.hpp"
-#include "systemmanager.hpp"
-#include "rendersystem.hpp"
-#include "hashgridsystem.hpp"
-#include "collisionsystem.hpp"
 #include "icommand.hpp"
-#include <math.h>
 
 void MoveSystem::add(ID id) {
 	ids.insert(id);
