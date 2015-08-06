@@ -5,6 +5,10 @@
 #include "renderer.hpp"
 #include <cmath>
 
+/** For logging **/
+#include "logger.hpp"
+#include <ostream>
+
 TextureBoundingBox::TextureBoundingBox(
     const ComponentManager* const componentManager,
     const Renderer* renderer
@@ -13,27 +17,41 @@ TextureBoundingBox::TextureBoundingBox(
     renderer(renderer) {}
 
 const Rect TextureBoundingBox::getBoundingBox(ID id) const {
-    auto& mc = componentManager->moveComponents.at(id);
-    auto& rc = componentManager->renderComponents.at(id);
-    auto& textureData = renderer->getTextureDatas().at(rc.image);
-    return Rect {
-        floorf(mc.pos.x + rc.xoffset),
-        floorf(mc.pos.y + rc.yoffset),
-        static_cast<float>(textureData.width),
-        static_cast<float>(textureData.height),
-    };
+    try {
+        auto& mc = componentManager->moveComponents.at(id);
+        auto& rc = componentManager->renderComponents.at(id);
+        auto& textureData = renderer->getTextureDatas().at(rc.image);
+        return Rect {
+            floorf(mc.pos.x + rc.xoffset),
+            floorf(mc.pos.y + rc.yoffset),
+            static_cast<float>(textureData.width),
+            static_cast<float>(textureData.height),
+        };
+    } catch(std::out_of_range oor) {
+        std::ostringstream oss;
+        oss << "Tried getting boundingbox on id " << id << " but components or image were missing";
+        Logger::log(oss, Log::ERROR);
+        throw oor;
+    }
 }
 
 const Rect TextureBoundingBox::getOldBoundingBox(ID id) const {
-    auto& mc = componentManager->moveComponents.at(id);
-    auto& rc = componentManager->renderComponents.at(id);
-    auto& textureData = renderer->getTextureDatas().at(rc.image);
-    return Rect {
-        floorf(mc.oldPos.x + rc.xoffset),
-        floorf(mc.oldPos.y + rc.yoffset),
-        static_cast<float>(textureData.width),
-        static_cast<float>(textureData.height),
-    };
+    try {
+        auto& mc = componentManager->moveComponents.at(id);
+        auto& rc = componentManager->renderComponents.at(id);
+        auto& textureData = renderer->getTextureDatas().at(rc.image);
+        return Rect {
+            floorf(mc.oldPos.x + rc.xoffset),
+            floorf(mc.oldPos.y + rc.yoffset),
+            static_cast<float>(textureData.width),
+            static_cast<float>(textureData.height),
+        };
+    } catch(std::out_of_range oor) {
+        std::ostringstream oss;
+        oss << "Tried getting oldboundingbox on id " << id << " but components or image were missing";
+        Logger::log(oss, Log::ERROR);
+        throw oor;
+    }
 }
 
 const System::Identifier TextureBoundingBox::getSystemName() const {

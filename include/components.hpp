@@ -3,6 +3,11 @@
 
 #include <unordered_map>
 
+/** For logging **/
+#include "logger.hpp"
+#include <ostream>
+#include <typeinfo>
+
 typedef unsigned int ID;
 
 template<class T, class Container = std::unordered_map<ID, T>>
@@ -34,8 +39,16 @@ public:
         return container[id];
     }
 
-    constexpr T& at(const ID id) {
-        return container.at(id);
+    T& at(const ID id) {
+        //Log before the error before throwing it
+        try {
+            return container.at(id);
+        } catch (std::out_of_range oor) {
+            std::ostringstream oss;
+            oss << "Tried accesing absent " << typeid(T).name() << " on id " << id;
+            Logger::log(oss, Log::ERROR);
+            throw oor;
+        }
     }
 
     constexpr const T& at(const ID id) const {
