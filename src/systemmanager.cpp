@@ -22,7 +22,13 @@ void SystemManager::remove(ISystem* system) {
 void SystemManager::update() {
 	for(auto pair : systems) {
 		if(pair.second->active) {
-			pair.second->update();
+			try {
+				pair.second->update();
+			} catch (std::out_of_range oor) {
+				std::ostringstream oss;
+				oss << "System " << pair.second->getIdentifier() << " failed to update";
+				oss << ", this is most likely due to a missing component";
+			} 
 		}
 	}
 }

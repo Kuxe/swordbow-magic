@@ -46,42 +46,58 @@ void HashGridSystem::addToCells(const ID id) {
 }
 
 void HashGridSystem::removeFromCells(const ID id) {
-	const auto bb = boundingBox->getBoundingBox(id);
+	try {
+		const auto bb = boundingBox->getBoundingBox(id);
 
-	//Remove ID in all cells which previously contained this ID
-	for(unsigned int y = bb.y/side; y < (bb.y + bb.h)/side; y++) {
-		for(unsigned int x = bb.x/side; x < (bb.x + bb.w)/side; x++) {
-			if(cells[y*width + x].erase(id) == 0) {
-				Logger::log(
-					std::to_string(getIdentifier()) +
-					std::string(
-						" couldn't erase " +
-						std::to_string(id) +
-						" from grid because it didn't exist"
-					), Log::WARNING
-				);
-			};
+		//Remove ID in all cells which previously contained this ID
+		for(unsigned int y = bb.y/side; y < (bb.y + bb.h)/side; y++) {
+			for(unsigned int x = bb.x/side; x < (bb.x + bb.w)/side; x++) {
+				if(cells[y*width + x].erase(id) == 0) {
+					Logger::log(
+						std::to_string(getIdentifier()) +
+						std::string(
+							" couldn't erase " +
+							std::to_string(id) +
+							" from grid because it didn't exist"
+						), Log::WARNING
+					);
+				};
+			}
 		}
+	} catch (std::out_of_range oor) {
+		std::ostringstream oss;
+		oss << "Couldn't remove id " << id << " from hashgrid-cells using bounding box";
+		oss << " because the bounding box couldn't be retrieved";
+		Logger::log(oss, Log::ERROR);
+		throw oor;
 	}
 }
 
 void HashGridSystem::removeFromCellsOldBoundingBox(const ID id) {
-	const auto bb = boundingBox->getOldBoundingBox(id);
+	try {
+		const auto bb = boundingBox->getOldBoundingBox(id);
 
-	//Remove ID in all cells which previously contained this ID
-	for(unsigned int y = bb.y/side; y < (bb.y + bb.h)/side; y++) {
-		for(unsigned int x = bb.x/side; x < (bb.x + bb.w)/side; x++) {
-			if(cells[y*width + x].erase(id) == 0) {
-				Logger::log(
-					std::to_string(getIdentifier()) +
-					std::string(
-						" couldn't erase " +
-						std::to_string(id) +
-						" (old boundingbox) from grid because it didn't exist"
-					), Log::WARNING
-				);
-			};
+		//Remove ID in all cells which previously contained this ID
+		for(unsigned int y = bb.y/side; y < (bb.y + bb.h)/side; y++) {
+			for(unsigned int x = bb.x/side; x < (bb.x + bb.w)/side; x++) {
+				if(cells[y*width + x].erase(id) == 0) {
+					Logger::log(
+						std::to_string(getIdentifier()) +
+						std::string(
+							" couldn't erase " +
+							std::to_string(id) +
+							" (old boundingbox) from grid because it didn't exist"
+						), Log::WARNING
+					);
+				};
+			}
 		}
+	} catch (std::out_of_range oor) {
+		std::ostringstream oss;
+		oss << "Couldn't remove id " << id << " from hashgrid-cells using old bounding box";
+		oss << " because the old bounding box couldn't be retrieved";
+		Logger::log(oss, Log::ERROR);
+		throw oor;
 	}
 }
 
@@ -113,7 +129,14 @@ std::unordered_set<ID> HashGridSystem::query(const Rect& queryArea) const {
 }
 
 Rect HashGridSystem::getBoundingBox(ID id) const {
-	return boundingBox->getBoundingBox(id);
+	try {
+		return boundingBox->getBoundingBox(id);
+	} catch(std::out_of_range oor) {
+		std::ostringstream oss;
+		oss << "HashGridSystem couldn't get the bounding box of id " << id;
+		Logger::log(oss, Log::ERROR);
+		throw oor;
+	}
 }
 
 void HashGridSystem::activateId(const ID id) {
@@ -130,7 +153,14 @@ void HashGridSystem::update() {
 
 		//search cells bounded by old bounding box for id
 		//and remove id from those cells
-		removeFromCellsOldBoundingBox(id);
+		try {
+			removeFromCellsOldBoundingBox(id);
+		} catch (std::out_of_range oor) {
+			std::ostringstream oss;
+			oss << "Call to removeFromCellsOldBoundingBox failed for id " << id;
+			Logger::log(oss, Log::ERROR);
+			throw oor;
+		}
 
 		//add id to the cells bounded by current bounding box for id
 		addToCells(id);

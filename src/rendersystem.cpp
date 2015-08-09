@@ -40,7 +40,14 @@ void RenderSystem::update() {
 	//For all activeIds in rendersystem...
 	while(!activeIds.empty() && allowedRendersThisFrame-- > 0 ) {
 		//Draw everything within the activeIds texturearea
-        auto drawArea = spatialIndexer->getBoundingBox(activeIds.front());
+        Rect drawArea {0, 0, 0, 0};
+        try {
+            drawArea = spatialIndexer->getBoundingBox(activeIds.front());
+        } catch (std::out_of_range oor) {
+            std::ostringstream oss;
+            oss << "Couldn't render id " << activeIds.front() << " because boundingbox couldn't be retrieved";
+            Logger::log(oss, Log::ERROR);
+        }
 		drawQueue.push(drawArea); activeIds.pop();
 
         //The texturearea should be saved for next frame, it must be redrawn then too
