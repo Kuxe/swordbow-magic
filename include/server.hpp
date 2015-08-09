@@ -29,6 +29,7 @@
 /** For network **/
 #include "socket.hpp"
 #include "clientdata.hpp"
+#include "messagetypes.hpp"
 
 typedef unsigned int ID;
 
@@ -63,6 +64,23 @@ private:
 
     void inputDataToInputComponent(const IpAddress& ipAddress, InputData& data);
 
+    //Helper method for sending packets
+    template<class DataType>
+    void send(const IpAddress& ipAddress, DataType data, MESSAGE_TYPE message) {
+        auto& clientData = clients.at(ipAddress);
+
+        using PacketType = Packet<DataType>;
+        PacketType cameraPacket = {
+            stringhash("swordbow-magic"),
+            clientData.sequence++,
+            message,
+            data,
+            sizeof(data)
+        };
+
+        socket.send<PacketType>(ipAddress, cameraPacket);
+    }
+
 public:
     bool running = true;
 
@@ -73,6 +91,10 @@ public:
     void run();
     void terminate();
     void step();
+
+    //Sends all components to client using MESSAGE_TYPE::INITIAL_COMPONENTS
+    void sendInitial();
+    void sendInitial(const IpAddress& ipAddress);
 
     void send();
     void send(const IpAddress& ipAddress);

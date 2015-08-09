@@ -58,16 +58,7 @@ void Client::connect(const IpAddress& server) {
     this->server = server;
 
     //Connect-request packet
-    using Type = Packet<bool>;
-    const Type packet {
-        stringhash("swordbow-magic"),
-        sequence++,
-        MESSAGE_TYPE::CONNECT,
-        true,
-        sizeof(sizeof(bool))
-    };
-
-    socket.send<Type>(server, packet);
+    send<bool>(true, MESSAGE_TYPE::CONNECT);
 }
 
 void Client::disconnect() {
@@ -77,18 +68,10 @@ void Client::disconnect() {
     receiveThread.join();
 
     //Disconnect-request packet
-    using Type = Packet<bool>;
-    const Type packet {
-        stringhash("swordbow-magic"),
-        sequence++,
-        MESSAGE_TYPE::DISCONNECT,
-        true,
-        sizeof(sizeof(bool))
-    };
+    send<bool>(true, MESSAGE_TYPE::DISCONNECT);
 
-    socket.send<Type>(server, packet);
-
-    server = IpAddress(0, 0, 0, 0, 0); //Indicate not connected to any server
+    //Indicate not connected to any server
+    server = IpAddress(0, 0, 0, 0, 0);
 }
 
 void Client::receive() {
@@ -112,6 +95,8 @@ void Client::receive() {
                 } break;
 
                 case MESSAGE_TYPE::CONNECT: {
+                    Logger::log("Got camera ID from server", Log::INFO);
+
                     //Got my id. Tell camerasystem to follow that id.
                     auto typedPacket = socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
                     const auto& pair = typedPacket.getData();
@@ -122,6 +107,17 @@ void Client::receive() {
                 //In any case the client shouldn't be connected to the server.
                 case MESSAGE_TYPE::DISCONNECT: {
                     disconnect();
+                } break;
+
+                case MESSAGE_TYPE::INITIAL_COMPONENTS: {
+                    using DataType = std::pair<Components<MoveComponent>, Components<RenderComponent>>;
+                    using PacketType = Packet<DataType>;
+                    auto typedPacket = socket.get<PacketType>(bytesRead);
+
+                    for(auto& pair : typedPacket.getData().first) {
+                        textureHashGridSystem.add(pair.first);
+                        renderSystem.add(pair.first);
+                    }
                 } break;
 
                 case MESSAGE_TYPE::MOVECOMPONENTS: {
@@ -280,21 +276,9 @@ void Client::step() {
     }
 
     //If user either pressed or released a key
+    //then send keystrokes to server
     if( !(presses.empty() && releases.empty()) ) {
-
-        //Assemble the InputData that should be sent into a packet
-        const InputData inputData{presses, releases};
-
-        using Type = Packet<InputData>;
-        const Type packet {
-            stringhash("swordbow-magic"),
-            sequence++,
-            MESSAGE_TYPE::INPUTDATA,
-            inputData,
-            sizeof(inputData)
-        };
-
-        socket.send<Type>(server, packet);
+        send<InputData>({presses, releases}, MESSAGE_TYPE::INPUTDATA);
     }
 
     /** CRITICAL SECTION **/

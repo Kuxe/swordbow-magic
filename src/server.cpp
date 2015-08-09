@@ -166,20 +166,9 @@ void Server::onConnect(const IpAddress& ipAddress) {
 	send(ipAddress);
 
 	//Make the client aware of its ID and register the ID to client camerasytem
-	const std::pair<ID, System::Identifier> data {fatManId, System::CAMERA};
-
-	auto& clientData = clients.at(ipAddress);
-
-	using Type = Packet<std::pair<ID, System::Identifier>>;
-	auto cameraPacket = Type {
-		stringhash("swordbow-magic"),
-		clientData.sequence++,
-		MESSAGE_TYPE::CONNECT,
-		data,
-		sizeof(data)
-	};
-
-	socket.send<Type>(ipAddress, cameraPacket);
+	using DataType = std::pair<ID, System::Identifier>;
+	const DataType data {fatManId, System::CAMERA};
+	send<DataType>(ipAddress, data, MESSAGE_TYPE::CONNECT);
 }
 
 void Server::onDisconnect(const IpAddress& ipAddress) {
@@ -195,29 +184,21 @@ void Server::onDisconnect(const IpAddress& ipAddress) {
 	}
 }
 
+void Server::sendInitial(const IpAddress& ipAddress) {
+	using DataType = std::pair<Components<MoveComponent>, Components<RenderComponent>>;
+	DataType data = {componentManager.moveComponents, componentManager.renderComponents};
+	send<DataType>(ipAddress, data, MESSAGE_TYPE::INITIAL_COMPONENTS);
+}
+
+void Server::sendInitial() {
+	for(auto it : clients) {
+		sendInitial(it.first);
+	}
+}
+
 void Server::send(const IpAddress& ipAddress) {
-
-	auto& clientData = clients.at(ipAddress);
-
-	using mcType = Packet<Components<MoveComponent>>;
-	auto mcpacket = mcType {
-		stringhash("swordbow-magic"),
-		clients.at(ipAddress).sequence++,
-		MESSAGE_TYPE::MOVECOMPONENTS,
-		componentManager.moveComponents,
-		sizeof(componentManager.moveComponents)
-	};
-	socket.send<mcType>(ipAddress, mcpacket);
-
-	using rcType = Packet<Components<RenderComponent>>;
-	auto rcpacket = rcType {
-		stringhash("swordbow-magic"),
-		clientData.sequence++,
-		MESSAGE_TYPE::RENDERCOMPONENTS,
-		componentManager.renderComponents,
-		sizeof(componentManager.renderComponents)
-	};
-	socket.send<rcType>(ipAddress, rcpacket);
+	send<Components<MoveComponent>>(ipAddress, componentManager.moveComponents, MESSAGE_TYPE::MOVECOMPONENTS);
+	send<Components<RenderComponent>>(ipAddress, componentManager.renderComponents, MESSAGE_TYPE::RENDERCOMPONENTS);
 }
 
 void Server::send() {
@@ -227,9 +208,6 @@ void Server::send() {
 }
 
 void Server::sendDiff(const IpAddress& ipAddress) {
-
-	auto& clientData = clients.at(ipAddress);
-
 	//Get all movecomponents of members of movediffsystem
 	//and store them in a new Components<MoveComponent>
 	Components<MoveComponent> movediffs;
@@ -240,15 +218,7 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 	}
 
 	if(!movediffs.empty()) {
-		using mcType = Packet<Components<MoveComponent>>;
-		auto mcpacket = mcType {
-			stringhash("swordbow-magic"),
-			clientData.sequence++,
-			MESSAGE_TYPE::MOVECOMPONENTSDIFF,
-			movediffs,
-			sizeof(movediffs)
-		};
-		socket.send<mcType>(ipAddress, mcpacket);
+		send<Components<MoveComponent>>(ipAddress, movediffs, MESSAGE_TYPE::MOVECOMPONENTSDIFF);
 	}
 
 	//Get all rendercomponents of members of movediffsystem
@@ -262,15 +232,7 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 
 
 	if(!renderdiffs.empty()) {
-		using rcType = Packet<Components<RenderComponent>>;
-		auto rcpacket = rcType {
-			stringhash("swordbow-magic"),
-			clientData.sequence++,
-			MESSAGE_TYPE::RENDERCOMPONENTSDIFF,
-			renderdiffs,
-			sizeof(renderdiffs)
-		};
-		socket.send<rcType>(ipAddress, rcpacket);
+		send<Components<RenderComponent>>(ipAddress, renderdiffs, MESSAGE_TYPE::RENDERCOMPONENTSDIFF);
 	}
 }
 

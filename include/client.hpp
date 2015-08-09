@@ -11,6 +11,7 @@
 #include "textureboundingbox.hpp"
 #include "soundengine.hpp"
 #include "socket.hpp"
+#include "messagetypes.hpp"
 
 #include <SDL2/SDL.h>
 #include <mutex>
@@ -44,6 +45,22 @@ private:
     std::mutex componentsMutex;
 
     void receive();
+
+    //Helper method for sending packets
+    template<class DataType>
+    void send(DataType data, MESSAGE_TYPE message) {
+
+        using PacketType = Packet<DataType>;
+        PacketType cameraPacket = {
+            stringhash("swordbow-magic"),
+            sequence++,
+            message,
+            data,
+            sizeof(data)
+        };
+
+        socket.send<PacketType>(server, cameraPacket);
+    }
 
 public:
     bool running = true;
