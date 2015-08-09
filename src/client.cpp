@@ -23,7 +23,7 @@ Client::Client(int argc, char** argv) :
         cameraSystem(&renderer),
         renderSystem(&renderer, &textureHashGridSystem, &cameraSystem) {
 
-    Logger::log("Starting client", Log::WARNING);
+    Logger::log("Starting client", Log::INFO);
 
     //Default port
     short port = 47294;
