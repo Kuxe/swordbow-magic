@@ -5,10 +5,13 @@
 //Default to flow-logging
 Log::Level Logger::level = Log::INFO;
 
-void Logger::log(const std::string& str, const Log::Level level) {
-	if(level >= Logger::level) {
+//Enabled by default
+bool Logger::enabled = true;
 
-	switch(level) {
+void Logger::log(const std::string& str, const Log::Level level) {
+	if(level >= Logger::level && Logger::enabled) {
+
+		switch(level) {
 			case Log::INFO: {
 			#if PLATFORM == PLATFORM_LINUX
 				std::cout << "\033[1;32mINFO\033[0m: " << str << std::endl;
@@ -54,4 +57,11 @@ void Logger::log(const std::string& str, const Log::Level level) {
 
 void Logger::log(std::ostringstream& oss, const Log::Level level) {
 	Logger::log(oss.str(), level);
+}
+
+void Logger::disable() {
+	Logger::enabled = false;
+}
+void Logger::enable() {
+	Logger::enabled = true;
 }

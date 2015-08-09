@@ -21,9 +21,13 @@ namespace Log {
 	Logger works for Windows, OSX and Linux
 **/
 struct Logger {
+public:
+	static bool enabled;
 	static Log::Level level;
 	static void log(const std::string& str, const Log::Level level = Log::UNDEFINED);
 	static void log(std::ostringstream& oss, const Log::Level level = Log::UNDEFINED);
+	static void disable();
+	static void enable();
 };
 
 

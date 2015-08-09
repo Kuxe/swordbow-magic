@@ -234,7 +234,9 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 	//and store them in a new Components<MoveComponent>
 	Components<MoveComponent> movediffs;
 	for(ID id : moveDiffSystem) {
+		Logger::disable();
 		movediffs.insert({id, componentManager.moveComponents.at(id)});
+		Logger::enable();
 	}
 
 	if(!movediffs.empty()) {
@@ -253,7 +255,9 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 	//and store them in a new Components<RendersComponent>
 	Components<RenderComponent> renderdiffs;
 	for(ID id : moveDiffSystem) {
+		Logger::disable();
 		renderdiffs.insert({id, componentManager.renderComponents.at(id)});
+		Logger::enable();
 	}
 
 
@@ -362,6 +366,7 @@ void Server::printGeneralInfo() {
 }
 
 int main(int argc, char** argv) {
+	Logger::level = Log::INFO;
 	Server server(argc, argv);
 	server.run();
 	return 0;
