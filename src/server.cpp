@@ -107,14 +107,17 @@ void Server::step() {
             } break;
 
 			case MESSAGE_TYPE::CONNECT: {
+				Logger::log("Received CONNECT packet", Log::INFO);
 				onConnect(client);
 			} break;
 
 			case MESSAGE_TYPE::DISCONNECT: {
+				Logger::log("Received DISCONNECT packet", Log::INFO);
 				onDisconnect(client);
 			} break;
 
 			case MESSAGE_TYPE::INPUTDATA: {
+				Logger::log("Received INPUTDATA packet", Log::INFO);
 				auto typedPacket = socket.get<Packet<InputData>>(bytesRead);
 
 				//Check if client established a connection to the server, ie

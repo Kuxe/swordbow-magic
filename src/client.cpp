@@ -59,6 +59,9 @@ void Client::connect(const IpAddress& server) {
 
     //Connect-request packet
     send<bool>(true, MESSAGE_TYPE::CONNECT);
+    std::ostringstream oss;
+    oss << "Sent connect request to " << server;
+    Logger::log(oss, Log::INFO);
 }
 
 void Client::disconnect() {
@@ -69,6 +72,10 @@ void Client::disconnect() {
 
     //Disconnect-request packet
     send<bool>(true, MESSAGE_TYPE::DISCONNECT);
+
+    std::ostringstream oss;
+    oss << "Disconnected from " << server;
+    Logger::log(oss, Log::INFO);
 
     //Indicate not connected to any server
     server = IpAddress(0, 0, 0, 0, 0);
@@ -106,10 +113,13 @@ void Client::receive() {
                 //Server will send this to client for a couple of reasons.
                 //In any case the client shouldn't be connected to the server.
                 case MESSAGE_TYPE::DISCONNECT: {
+                    Logger::log("Received DISCONNECT packet", Log::INFO);
                     disconnect();
                 } break;
 
                 case MESSAGE_TYPE::INITIAL_COMPONENTS: {
+                    Logger::log("Received INITIAL_COMPONENTS packet", Log::INFO);
+
                     using DataType = std::pair<Components<MoveComponent>, Components<RenderComponent>>;
                     using PacketType = Packet<DataType>;
                     auto typedPacket = socket.get<PacketType>(bytesRead);
@@ -121,6 +131,8 @@ void Client::receive() {
                 } break;
 
                 case MESSAGE_TYPE::MOVECOMPONENTS: {
+                    Logger::log("Received MOVECOMPONENTS packet", Log::INFO);
+
                     //All movecomponents were received - handle it
                     auto typedPacket = socket.get<Packet<Components<MoveComponent>>>(bytesRead);
                     componentManager.moveComponents.sync(typedPacket.getData());
@@ -137,6 +149,8 @@ void Client::receive() {
                 } break;
 
                 case MESSAGE_TYPE::RENDERCOMPONENTS: {
+                    Logger::log("Received RENDERCOMPONENTS packet", Log::INFO);
+
                     //All rendercomponents were received - handle it
                     auto typedPacket = socket.get<Packet<Components<RenderComponent>>>(bytesRead);
                     componentManager.renderComponents.sync(typedPacket.getData());
@@ -149,6 +163,8 @@ void Client::receive() {
                 } break;
 
                 case MESSAGE_TYPE::MOVECOMPONENTSDIFF: {
+                    Logger::log("Received MOVECOMPONENTSDIFF packet", Log::INFO);
+
                     //Diff movecomponents were received - handle it
                     auto typedPacket = socket.get<Packet<Components<MoveComponent>>>(bytesRead);
                     componentManager.moveComponents.sync(typedPacket.getData());
@@ -170,6 +186,8 @@ void Client::receive() {
                 } break;
 
                 case MESSAGE_TYPE::RENDERCOMPONENTSDIFF: {
+                    Logger::log("Received RENDERCOMPONENTSDIFF packet", Log::INFO);
+
                     //Diff rendercomponents were received - handle it
                     auto typedPacket = socket.get<Packet<Components<RenderComponent>>>(bytesRead);
                     componentManager.renderComponents.sync(typedPacket.getData());
@@ -181,11 +199,15 @@ void Client::receive() {
                 } break;
 
                 case MESSAGE_TYPE::PLAY_SOUND: {
+                    Logger::log("Received PLAY_SOUND packet", Log::INFO);
+
                     auto typedPacket = socket.get<Packet<SoundData>>(bytesRead);
                     soundEngine.playSound(typedPacket.getData());
                 } break;
 
                 case MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM: {
+                    Logger::log("Received REGISTER_ID_TO_SYSTEM packet", Log::INFO);
+
                     auto typedPacket = socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
                     const auto& id = typedPacket.getData().first;
                     const auto& systemIdentifier = typedPacket.getData().second;
@@ -193,6 +215,8 @@ void Client::receive() {
                 } break;
 
                 case MESSAGE_TYPE::REMOVE_ID: {
+                    Logger::log("Received REMOVE_ID packet", Log::INFO);
+
                     auto typedPacket = socket.get<Packet<ID>>(bytesRead);
                     const auto& id = typedPacket.getData();
                     systemManager.getSystem(System::RENDER)->remove(id);
@@ -201,6 +225,8 @@ void Client::receive() {
                 } break;
 
                 case MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM: {
+                    Logger::log("Received REMOVE_ID_FROM_SYSTEM packet", Log::INFO);
+
                     auto typedPacket = socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
                     const auto& id = typedPacket.getData().first;
                     const auto& systemIdentifier = typedPacket.getData().second;
@@ -208,6 +234,8 @@ void Client::receive() {
                 } break;
 
                 case MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEMS: {
+                    Logger::log("Received REMOVE_ID_FROM_SYSTEMS packet", Log::INFO);
+
                     auto typedPacket = socket.get<Packet<ID>>(bytesRead);
                     const auto& id = typedPacket.getData();
                     systemManager.getSystem(System::RENDER)->remove(id);
@@ -215,6 +243,8 @@ void Client::receive() {
                 } break;
 
                 case MESSAGE_TYPE::ACTIVATE_ID: {
+                    Logger::log("Received ACTIVATE_ID packet", Log::INFO);
+
                     auto typedPacket = socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
                     const auto& id = typedPacket.getData().first;
                     const auto& systemIdentifier = typedPacket.getData().second;
