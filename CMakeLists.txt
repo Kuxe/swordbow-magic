@@ -13,6 +13,7 @@ ADD_LIBRARY(sbm SHARED
     src/logger.cpp
     src/rect.cpp
     src/systemmanager.cpp
+    src/timer.cpp
 )
 
 #Server specific sources

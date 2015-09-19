@@ -1,16 +1,15 @@
 #include "deltatime.hpp"
 
 void DeltaTime::start() {
-	startTime = std::chrono::high_resolution_clock::now();
+	timer.start();
 }
 void DeltaTime::stop() {
-	stopTime = std::chrono::high_resolution_clock::now();
-	deltaTime = (stopTime - startTime).count() / 1000000000.0f;
+	timer.stop();
 }
 float DeltaTime::delta() const {
-	return deltaTime;
+	return timer.delta();
 }
 
 float DeltaTime::elapsed() const {
-	return (std::chrono::high_resolution_clock::now() - startTime).count() / 1000000000.0f;
+	return timer.elapsed();
 }

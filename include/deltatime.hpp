@@ -1,12 +1,11 @@
 #ifndef DELTATIME_H
 #define DELTATIME_H
 #include <chrono>
+#include "timer.hpp"
 
 class DeltaTime {
  private:
- 	std::chrono::high_resolution_clock::time_point startTime;
-	std::chrono::high_resolution_clock::time_point stopTime;
-	float deltaTime = 0.0f;
+ 	Timer timer;
 
  public:
 	void start();
