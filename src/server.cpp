@@ -93,10 +93,10 @@ void Server::step() {
 	sendDiff();
 
 	//Receive data from clients...
-    IpAddress client;
+    IpAddress clientIp;
     unsigned char type;
     int bytesRead;
-    socket.receive(client, type, bytesRead);
+    socket.receive(clientIp, type, bytesRead);
 
 	//If any data was received, check its type and take appropiate action
     if(bytesRead > 0) {
@@ -108,12 +108,12 @@ void Server::step() {
 
 			case MESSAGE_TYPE::CONNECT: {
 				Logger::log("Received CONNECT packet", Log::INFO);
-				onConnect(client);
+				onConnect(clientIp);
 			} break;
 
 			case MESSAGE_TYPE::DISCONNECT: {
 				Logger::log("Received DISCONNECT packet", Log::INFO);
-				onDisconnect(client);
+				onDisconnect(clientIp);
 			} break;
 
 			case MESSAGE_TYPE::INPUTDATA: {
@@ -126,10 +126,22 @@ void Server::step() {
 				//not be present on this session of the server... Those clients should
 				//restart / reconnect. So don't do anything with this packet if
 				//the server doesn't think the client has connected
-				if(clients.find(client) != clients.end()) {
-					inputDataToInputComponent(client, typedPacket.getData());
+				if(clients.find(clientIp) != clients.end()) {
+					inputDataToInputComponent(clientIp, typedPacket.getData());
 				}
 
+			} break;
+
+			case MESSAGE_TYPE::CONGESTED_CLIENT: {
+				Logger::log("Received CONGESTED_CLIENT packet", Log::INFO);
+				auto& client = clients.at(clientIp);
+				client.congested = true;
+				client.congestionTimer.start();
+			} break;
+
+			case MESSAGE_TYPE::NOT_CONGESTED_CLIENT: {
+				Logger::log("Received NOT_CONGESTED_CLIENT packet", Log::INFO);
+				clients.at(clientIp).congested = false;
 			} break;
 
 			default: {
@@ -241,7 +253,19 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 
 void Server::sendDiff() {
 	for(auto it : clients) {
-		sendDiff(it.first);
+		auto& client(it.second);
+
+		//If the client whined about being congested
+		//then check if the congestion-timer has elapsed
+		//and if so, reset the congestion timer
+		if(client.congested) {
+			if(client.congestionTimer.elapsed() >= 100.0f) {
+				sendDiff(it.first);
+				client.congestionTimer.start();
+			}
+		} else {
+			sendDiff(it.first);
+		}
 	}
 }
 
