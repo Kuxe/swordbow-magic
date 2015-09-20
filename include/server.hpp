@@ -2,7 +2,6 @@
 #define SERVER_HPP
 
 #include <unordered_map>
-#include <mutex>
 
 #include "deltatime.hpp"
 #include "componentmanager.hpp"
@@ -59,8 +58,6 @@ private:
     RenderDiffSystem renderDiffSystem;
 
     std::unordered_map<IpAddress, ClientData> clients;
-
-    std::mutex componentsMutex;
 
     void inputDataToInputComponent(const IpAddress& ipAddress, InputData& data);
 

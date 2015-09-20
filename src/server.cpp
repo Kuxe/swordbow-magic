@@ -85,9 +85,7 @@ void Server::step() {
 	deltaTime.start();
 
 	//Run the entity-component-system
-	componentsMutex.lock();
 	systemManager.update();
-	componentsMutex.unlock();
 
 	//Broadcast new gamestate to clients
 	sendDiff();
