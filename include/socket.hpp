@@ -183,11 +183,6 @@ public:
             unsigned int fromPort = ntohs(from.sin_port);
             sender = IpAddress(fromAddress, fromPort);
 
-            //Print ip address of sender, bytes in packet
-            std::ostringstream oss;
-            oss << "Recieved packet from " << sender << " (" << std::to_string(bytesRead) + "bytes)";
-            Logger::log(oss, Log::INFO);
-
             //Deserialize contents of buffer into (untyped) tmppacket
             std::string str((char*)buffer, bytesRead);
             std::istringstream iss(str);
@@ -199,6 +194,10 @@ public:
             const auto& protocol = tmppacket.getProtocol();
             const auto& sequence = tmppacket.getSequence();
             type = tmppacket.getType();
+
+            std::ostringstream oss;
+            oss << "Recieved packet from " << sender << " (" << std::to_string(bytesRead) << "bytes)" << " (seq: " << sequence << ")";
+            Logger::log(oss, Log::INFO);
 
             //Check if the packet is meant for swordbow-magic (protocol)
             if(protocol == stringhash(protocolName)) {
