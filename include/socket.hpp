@@ -3,6 +3,7 @@
 
 #include "ipaddress.hpp"
 #include "socket.hpp"
+#include "connection.hpp"
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <fcntl.h>
@@ -46,7 +47,7 @@ private:
     std::string protocolName;
     std::mutex mutex;
 
-    std::unordered_map<IpAddress, unsigned int> remoteSequenceNumbers;
+    std::unordered_map<IpAddress, Connection> connections;
 
 
 public:
@@ -198,21 +199,12 @@ public:
             const auto& protocol = tmppacket.getProtocol();
             const auto& sequence = tmppacket.getSequence();
             type = tmppacket.getType();
-            const auto& datasize = tmppacket.getDataSize();
-
-            //Print packet metadata if NET_DEBUG is defined
-            const std::string packetMetadatalog(
-                "\tprotocol: " + std::to_string(protocol) +
-                "\n\tsequence: " + std::to_string((int)sequence) +
-                "\n\tdatatype: " + std::to_string((int)type) +
-                "\n\tdatasize: " + std::to_string(datasize) + "\n"
-            );
 
             //Check if the packet is meant for swordbow-magic (protocol)
             if(protocol == stringhash(protocolName)) {
 
                 //Each sender has it's own remoteSequenceNumber
-                const auto& remoteSequence = remoteSequenceNumbers[sender];
+                const auto& remoteSequence = connections[sender].remoteSequence;
 
                 //Only accept recent messages
                 constexpr uint16_t MAX = 65535;
@@ -221,7 +213,7 @@ public:
                     (remoteSequence > sequence && remoteSequence - sequence < MAX/2);
 
                 if(recent) {
-                    remoteSequenceNumbers[sender] = sequence;
+                    connections[sender].remoteSequence = sequence;
 
                     //TODO: Figure out what 'ack(knowledge)' is and implement congestion control
                     //TODO: Implement congestion avoidance
@@ -257,7 +249,7 @@ public:
     //remoteSequnceNumbers which would result in deeming the newest packet
     //as an old packet, which is unwanted behaviour..
     void resetRemoteSequenceNumber(const IpAddress& ipAddress) {
-        remoteSequenceNumbers[ipAddress] = 0;
+        connections[ipAddress].remoteSequence = 0;
     }
 };
 
