@@ -320,6 +320,15 @@ void Client::step() {
     /** END OF CRITICAL SECTION **/
     componentsMutex.unlock();
 
+    //Limit client-speed to 60fps (rather 60 tick per second)
+    //Check the elapsed time for the current step, if it is lower than
+    //16.6666... then it's faster than 60fps so sleep until 16.666ms has passed
+    using ms = std::chrono::milliseconds;
+    using fdur = std::chrono::duration<float>;
+    const float sleep_float = 1.0f/60 - deltaTime.elapsed();
+    const ms sleep = std::chrono::duration_cast<ms>(fdur(sleep_float));
+    std::this_thread::sleep_for(sleep);
+
     deltaTime.stop();
 }
 
