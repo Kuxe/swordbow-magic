@@ -109,7 +109,7 @@ void World::createDebugWorld() {
 	entityManager->createFlower({100.0123f, 177.01f}, 0);
 
 	//test stuff on this guy
-	entityManager->createFatMan({250, 250});
+	entityManager->createFatMan({50, 100});
 
 
 
