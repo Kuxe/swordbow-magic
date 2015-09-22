@@ -280,6 +280,7 @@ ID EntityManager::createBloodSplatter(const glm::vec2& position) {
 	ac.state = &ac.bloodsplatter;
 
 	registerIdToSystem(id, System::ANIMATION);
+	registerIdToSystem(id, System::MOVEDIFF);
 
 	return id;
 }

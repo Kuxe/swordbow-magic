@@ -22,6 +22,7 @@ public:
     unsigned int count() const;
     const System::Identifier getIdentifier() const;
     void activateId(ID id);
+    void clear();
 
     auto begin() const { return ids.begin(); }
     auto end() const { return ids.end(); } 

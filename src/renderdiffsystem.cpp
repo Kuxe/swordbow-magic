@@ -8,11 +8,16 @@ void RenderDiffSystem::remove(ID id) {
     ids.erase(id);
 }
 void RenderDiffSystem::update() {
-	ids.clear();
+	//ids.clear();
 }
 unsigned int RenderDiffSystem::count() const {
     return ids.size();
 }
+
+void RenderDiffSystem::clear() {
+	ids.clear();
+}
+
 const System::Identifier RenderDiffSystem::getIdentifier() const {
     return System::RENDERDIFF;
 }

@@ -33,6 +33,10 @@ void HashGridSystem::remove(const ID id) {
 void HashGridSystem::addToCells(const ID id) {
 	const auto bb = boundingBox->getBoundingBox(id);
 
+	std::ostringstream oss;
+	oss << "Adding id " << id << " to hashgrid cells";
+	Logger::log(oss, Log::INFO);
+
 	//Place ID in all cells which partially or completely contains the ID
 	for(unsigned int y = bb.y/side; y < (bb.y + bb.h)/side; y++) {
 		for(unsigned int x = bb.x/side; x < (bb.x + bb.w)/side; x++) {

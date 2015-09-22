@@ -8,11 +8,16 @@ void MoveDiffSystem::remove(ID id) {
     ids.erase(id);
 }
 void MoveDiffSystem::update() {
-    ids.clear();
+    //ids.clear();
 }
 unsigned int MoveDiffSystem::count() const {
     return ids.size();
 }
+
+void MoveDiffSystem::clear() {
+	ids.clear();
+}
+
 const System::Identifier MoveDiffSystem::getIdentifier() const {
     return System::MOVEDIFF;
 }

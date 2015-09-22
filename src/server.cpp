@@ -232,6 +232,12 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 
 	if(!movediffs.empty()) {
 		send<Components<MoveComponent>>(ipAddress, movediffs, MESSAGE_TYPE::MOVECOMPONENTSDIFF);
+		std::ostringstream oss;
+		oss << "Sending MOVECOMPONENTSDIFF-packet containing ids: ";
+		for(auto pair : movediffs) {
+			oss << pair.first << ", ";
+		}
+		Logger::log(oss, Log::INFO);
 	}
 
 	//Get all rendercomponents of members of movediffsystem
@@ -243,10 +249,25 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 		Logger::enable();
 	}
 
+	for(ID id : renderDiffSystem) {
+		Logger::disable();
+		renderdiffs.insert({id, componentManager.renderComponents.at(id)});
+		Logger::enable();
+	}
+
 
 	if(!renderdiffs.empty()) {
 		send<Components<RenderComponent>>(ipAddress, renderdiffs, MESSAGE_TYPE::RENDERCOMPONENTSDIFF);
+		std::ostringstream oss;
+		oss << "Sending RENDERCOMPONENTSDIFF-packet containing ids: ";
+		for(auto pair : renderdiffs) {
+			oss << pair.first << ", ";
+		}
+		Logger::log(oss, Log::INFO);
 	}
+
+	moveDiffSystem.clear();
+	renderDiffSystem.clear();
 }
 
 void Server::sendDiff() {
