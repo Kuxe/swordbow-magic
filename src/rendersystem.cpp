@@ -89,6 +89,10 @@ void RenderSystem::update() {
                 (int)rc.zindex_base, (int)(mc.pos.y + textureData.height + rc.yoffset)
             };
 
+            std::ostringstream oss;
+            oss << "Rendering id " << id;
+            Logger::log(oss, Log::INFO);
+
     		pq.push(renderData);
     	}
 

@@ -35,16 +35,20 @@ public:
     }
 
     T& operator[](const ID id) {
-        std::ostringstream oss;
-        oss << "If id " << id << " has no " << typeid(T).name() << ", then now it has";
-        Logger::log(oss, Log::INFO);
+        if(container.find(id) == container.end()) {
+            std::ostringstream oss;
+            oss << "Creating " << typeid(T).name() << " on " << id;
+            Logger::log(oss, Log::INFO);
+        }
         return container[id];
     }
 
     const T& operator[](const ID id) const {
-        std::ostringstream oss;
-        oss << "If id " << id << " has no " << typeid(T).name() << ", then now it has";
-        Logger::log(oss, Log::INFO);
+        if(container.find(id) == container.end()) {
+            std::ostringstream oss;
+            oss << "Creating " << typeid(T).name() << " on " << id;
+            Logger::log(oss, Log::INFO);
+        }
         return container[id];
     }
 
