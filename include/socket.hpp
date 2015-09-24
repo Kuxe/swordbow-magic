@@ -156,7 +156,33 @@ public:
         //but if the expected size of sent bytes matches the
         //size of the sent packet
         if(sendBytes != size) {
-            Logger::log("Failed to send packet", Log::ERROR);
+            switch(errno) {
+                case EWOULDBLOCK: {
+                    Logger::log("Can't send packet, error EWOULDBLOCK (Socket is non-blocking and requested operation would block)", Log::ERROR);
+                } break;
+                case EINTR: {
+                    Logger::log("Can't send packet, error EINTR (A signal interrupted sendto() before any data was transmitted)", Log::ERROR);
+                } break;
+                case EMSGSIZE: {
+                    std::ostringstream oss;
+                    oss << "Can't send packet, error EMSGSIZE (Packet size to large, size: " << size << "bytes)";
+                    Logger::log(oss, Log::ERROR);
+                } break;
+                case EIO: {
+                    Logger::log("Can't send packet, error EIO (An I/O error occurred while reading from or writing to the file system)", Log::ERROR);
+                } break;
+                case ENOBUFS: {
+                    Logger::log("Can't send packet, error ENOBUFS (Output queue for network interface is full)", Log::ERROR);
+                } break;
+                case ENOMEM: {
+                    Logger::log("Can't send packet, error ENOMEM (Out of memory)", Log::ERROR);
+                } break;
+                default: {
+                    std::ostringstream oss;
+                    oss << "Failed to send packet for unknown reason (errorcode: " << errno << ")";
+                    Logger::log(oss, Log::ERROR);
+                } break;
+            }
             return false;
         }
         return true;
