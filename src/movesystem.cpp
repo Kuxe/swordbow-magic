@@ -67,6 +67,7 @@ void MoveSystem::update() {
 			cc.execute(CommandComponent::Event::ON_MOVE);
 
 			systemManager->getSystem(System::MOVEDIFF)->add(id);
+			systemManager->getSystem(System::HASHGRID_POSITION)->add(id);
 		}
 	}
 }

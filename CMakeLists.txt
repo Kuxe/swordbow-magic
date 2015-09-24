@@ -29,6 +29,7 @@ ADD_LIBRARY(sbm-server SHARED
     src/movesystem.cpp
     src/noisebrush.cpp
     src/playsound.cpp
+    src/positionboundingbox.cpp
     src/removesystem.cpp
     src/renderdiffsystem.cpp
     src/sizeboundingbox.cpp

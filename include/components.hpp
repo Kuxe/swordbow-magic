@@ -80,6 +80,10 @@ public:
         return container.find(id);
     }
 
+    constexpr bool contains(const ID id) {
+        return container.find(id) != container.end();
+    }
+
     constexpr auto begin() const {
         return container.begin();
     }

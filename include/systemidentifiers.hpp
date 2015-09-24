@@ -8,6 +8,7 @@ namespace System {
         ATTACK,
         CAMERA,
         COLLISION,
+        HASHGRID_POSITION,
         HASHGRID_SIZE,
         HASHGRID_TEXTURE,
         HEALTH,

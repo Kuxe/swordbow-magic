@@ -17,8 +17,10 @@
 Server::Server(int argc, char** argv) :
 		socket("swordbow-magic"),
 		systemManager(&componentManager, &deltaTime),
+		positionBoundingBox(&componentManager),
 		sizeBoundingBox(&componentManager),
 		entityManager(&systemManager, &componentManager, &idManager, &clients, &socket),
+		positionHashGridSystem(&positionBoundingBox),
 		sizeHashGridSystem(&sizeBoundingBox),
 		collisionSystem(&sizeHashGridSystem),
 		removeSystem(&entityManager),
@@ -36,6 +38,7 @@ Server::Server(int argc, char** argv) :
 	systemManager.add(&inputSystem);
 	systemManager.add(&moveSystem);
 	systemManager.add(&animationSystem);
+	systemManager.add(&positionHashGridSystem);
 	systemManager.add(&sizeHashGridSystem);
 	systemManager.add(&collisionSystem);
 	systemManager.add(&attackSystem);
@@ -143,10 +146,12 @@ void Server::step() {
 			} break;
 
 			default: {
-                std::cout << "WARNING: Message without proper type received. This is probably a bug." << std::endl;
-                std::cout << "Either server-side handling for that message isn't implemented";
-                std::cout << " or a client sent a message with a bogus messagetype";
-                std::cout << " or the messagetype was wrongly altered somewhere" << std::endl;
+				std::ostringstream oss;
+                oss << "Message without proper type received. This is probably a bug.";
+                oss << " Either server-side handling for that message isn't implemented";
+                oss << " or a client sent a message with a bogus messagetype";
+                oss << " or the messagetype was wrongly altered somewhere";
+                Logger::log(oss, Log::WARNING);
             };
         }
 	}
@@ -198,8 +203,26 @@ void Server::onDisconnect(const IpAddress& ipAddress) {
 }
 
 void Server::sendInitial(const IpAddress& ipAddress) {
+
+	Components<MoveComponent> nearbyMcs;
+	Components<RenderComponent> nearbyRcs;
+
+	const auto& clientPos = componentManager.moveComponents.at(clients.at(ipAddress).id).pos;
+	Rect area {0 + clientPos.x, 0 + clientPos.y, 100, 100};
+	auto nearby = positionHashGridSystem.query(area);
+
+	for(auto id : nearby) {
+		if(componentManager.moveComponents.find(id) != componentManager.moveComponents.end()) {
+			nearbyMcs.insert({id, componentManager.moveComponents.at(id)});
+		}
+
+		if(componentManager.renderComponents.find(id) != componentManager.renderComponents.end()) {
+			nearbyRcs.insert({id, componentManager.renderComponents.at(id)});
+		}
+	}
+
 	using DataType = std::pair<Components<MoveComponent>, Components<RenderComponent>>;
-	DataType data = {componentManager.moveComponents, componentManager.renderComponents};
+	DataType data = {nearbyMcs, nearbyRcs};
 	send<DataType>(ipAddress, data, MESSAGE_TYPE::INITIAL_COMPONENTS);
 }
 
@@ -210,12 +233,21 @@ void Server::sendInitial() {
 }
 
 void Server::sendDiff(const IpAddress& ipAddress) {
+
+	//nearby is a set of ids close to the entity on ipAddress
+	//the union of nearby and members of movediffsystem will be the ids
+	//that should be sent to this particular ipaddress. In other words,
+	//only send entities close to the player
+	const auto& clientPos = componentManager.moveComponents.at(clients.at(ipAddress).id).pos;
+	Rect area {0 + clientPos.x, 0 + clientPos.y, 100, 100};
+	auto nearby = positionHashGridSystem.query(area);
+
 	//Get all movecomponents of members of movediffsystem
 	//and store them in a new Components<MoveComponent>
 	Components<MoveComponent> movediffs;
 	for(ID id : moveDiffSystem) {
 		Logger::disable();
-		movediffs.insert({id, componentManager.moveComponents.at(id)});
+		if(nearby.find(id) != nearby.end()) movediffs.insert({id, componentManager.moveComponents.at(id)});
 		Logger::enable();
 	}
 
@@ -234,13 +266,13 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 	Components<RenderComponent> renderdiffs;
 	for(ID id : moveDiffSystem) {
 		Logger::disable();
-		renderdiffs.insert({id, componentManager.renderComponents.at(id)});
+		if(nearby.find(id) != nearby.end()) renderdiffs.insert({id, componentManager.renderComponents.at(id)});
 		Logger::enable();
 	}
 
 	for(ID id : renderDiffSystem) {
 		Logger::disable();
-		renderdiffs.insert({id, componentManager.renderComponents.at(id)});
+		if(nearby.find(id) != nearby.end()) renderdiffs.insert({id, componentManager.renderComponents.at(id)});
 		Logger::enable();
 	}
 
