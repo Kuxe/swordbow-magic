@@ -124,6 +124,10 @@ void Client::receive() {
                     using PacketType = Packet<DataType>;
                     auto typedPacket = socket.get<PacketType>(bytesRead);
 
+                    componentManager.moveComponents.sync(typedPacket.getData().first);
+                    componentManager.renderComponents.sync(typedPacket.getData().second);
+
+
                     for(auto& pair : typedPacket.getData().first) {
                         textureHashGridSystem.add(pair.first);
                         renderSystem.add(pair.first);

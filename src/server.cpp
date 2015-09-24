@@ -176,7 +176,7 @@ void Server::onConnect(const IpAddress& ipAddress) {
 	socket.resetRemoteSequenceNumber(ipAddress);
 
 	//Client should get a copy of all components
-	send(ipAddress);
+	sendInitial(ipAddress);
 
 	//Make the client aware of its ID and register the ID to client camerasytem
 	using DataType = std::pair<ID, System::Identifier>;
@@ -206,17 +206,6 @@ void Server::sendInitial(const IpAddress& ipAddress) {
 void Server::sendInitial() {
 	for(auto it : clients) {
 		sendInitial(it.first);
-	}
-}
-
-void Server::send(const IpAddress& ipAddress) {
-	send<Components<MoveComponent>>(ipAddress, componentManager.moveComponents, MESSAGE_TYPE::MOVECOMPONENTS);
-	send<Components<RenderComponent>>(ipAddress, componentManager.renderComponents, MESSAGE_TYPE::RENDERCOMPONENTS);
-}
-
-void Server::send() {
-	for(auto it : clients) {
-		send(it.first);
 	}
 }
 

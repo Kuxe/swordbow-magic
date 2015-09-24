@@ -43,7 +43,7 @@
 class Socket {
 private:
     int socket = 0;
-    unsigned char buffer[4096];
+    unsigned char buffer[8192];
     std::string protocolName;
     std::mutex mutex;
 

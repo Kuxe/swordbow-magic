@@ -93,8 +93,6 @@ public:
     void sendInitial();
     void sendInitial(const IpAddress& ipAddress);
 
-    void send();
-    void send(const IpAddress& ipAddress);
     void sendDiff();
     void sendDiff(const IpAddress& ipAddress);
 
