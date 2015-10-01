@@ -204,25 +204,8 @@ void Server::onDisconnect(const IpAddress& ipAddress) {
 
 void Server::sendInitial(const IpAddress& ipAddress) {
 
-	Components<MoveComponent> nearbyMcs;
-	Components<RenderComponent> nearbyRcs;
-
-	const auto& clientPos = componentManager.moveComponents.at(clients.at(ipAddress).id).pos;
-	Rect area {0 + clientPos.x, 0 + clientPos.y, 100, 100};
-	auto nearby = positionHashGridSystem.query(area);
-
-	for(auto id : nearby) {
-		if(componentManager.moveComponents.find(id) != componentManager.moveComponents.end()) {
-			nearbyMcs.insert({id, componentManager.moveComponents.at(id)});
-		}
-
-		if(componentManager.renderComponents.find(id) != componentManager.renderComponents.end()) {
-			nearbyRcs.insert({id, componentManager.renderComponents.at(id)});
-		}
-	}
-
 	using DataType = std::pair<Components<MoveComponent>, Components<RenderComponent>>;
-	DataType data = {nearbyMcs, nearbyRcs};
+	DataType data = {componentManager.moveComponents, componentManager.renderComponents};
 	send<DataType>(ipAddress, data, MESSAGE_TYPE::INITIAL_COMPONENTS);
 }
 
@@ -234,20 +217,12 @@ void Server::sendInitial() {
 
 void Server::sendDiff(const IpAddress& ipAddress) {
 
-	//nearby is a set of ids close to the entity on ipAddress
-	//the union of nearby and members of movediffsystem will be the ids
-	//that should be sent to this particular ipaddress. In other words,
-	//only send entities close to the player
-	const auto& clientPos = componentManager.moveComponents.at(clients.at(ipAddress).id).pos;
-	Rect area {0 + clientPos.x, 0 + clientPos.y, 100, 100};
-	auto nearby = positionHashGridSystem.query(area);
-
 	//Get all movecomponents of members of movediffsystem
 	//and store them in a new Components<MoveComponent>
 	Components<MoveComponent> movediffs;
 	for(ID id : moveDiffSystem) {
 		Logger::disable();
-		if(nearby.find(id) != nearby.end()) movediffs.insert({id, componentManager.moveComponents.at(id)});
+		movediffs.insert({id, componentManager.moveComponents.at(id)});
 		Logger::enable();
 	}
 
@@ -266,13 +241,13 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 	Components<RenderComponent> renderdiffs;
 	for(ID id : moveDiffSystem) {
 		Logger::disable();
-		if(nearby.find(id) != nearby.end()) renderdiffs.insert({id, componentManager.renderComponents.at(id)});
+		renderdiffs.insert({id, componentManager.renderComponents.at(id)});
 		Logger::enable();
 	}
 
 	for(ID id : renderDiffSystem) {
 		Logger::disable();
-		if(nearby.find(id) != nearby.end()) renderdiffs.insert({id, componentManager.renderComponents.at(id)});
+		renderdiffs.insert({id, componentManager.renderComponents.at(id)});
 		Logger::enable();
 	}
 
