@@ -63,6 +63,7 @@ class EntityManager {
     ID createDummySquare(const glm::vec2& poisiton);
     ID createStone(const glm::vec2& position);
 	void remove(ID id);
+    bool idExists(ID id);
 
     //FIXME: This should always be called. system->add should be private but
     //friended by ISystem, or something similar.

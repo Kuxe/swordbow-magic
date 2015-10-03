@@ -126,8 +126,12 @@ void Server::step() {
 				//to another session of the server, in which case the clients id might
 				//not be present on this session of the server... Those clients should
 				//restart / reconnect. So don't do anything with this packet if
-				//the server doesn't think the client has connected
-				if(clients.find(clientIp) != clients.end()) {
+				//the server doesn't think the client has connected. It might be the
+				//case that the id is connected currently, but was just killed but hasnt
+				//been notified of its death so it keeps trying to move. In that case,
+				//its fine to ignore any input trying to steer the deceased entity.
+				auto& ics = componentManager.inputComponents;
+				if(clients.find(clientIp) != clients.end() && ics.find(clients.at(clientIp).id) != ics.end()) {
 					inputDataToInputComponent(clientIp, typedPacket.getData());
 				}
 
@@ -172,8 +176,8 @@ void Server::onConnect(const IpAddress& ipAddress) {
 	std::ostringstream oss;
 	oss << ipAddress << " connected";
 	Logger::log(oss, Log::INFO);
-	auto fatManId = entityManager.createFatMan({10.0f, 20.0f});
-	clients.insert({ipAddress, {1, fatManId}});
+	auto playerId = entityManager.createFatMan({10.0f, 20.0f});
+	clients.insert({ipAddress, {1, playerId}});
 
 	//In case a client reconnects, the socket shouldn't reject the newly
 	//reconnected clients packets since the socket knows of latter remoteSequences
@@ -185,7 +189,7 @@ void Server::onConnect(const IpAddress& ipAddress) {
 
 	//Make the client aware of its ID and register the ID to client camerasytem
 	using DataType = std::pair<ID, System::Identifier>;
-	const DataType data {fatManId, System::CAMERA};
+	const DataType data {playerId, System::CAMERA};
 	send<DataType>(ipAddress, data, MESSAGE_TYPE::CONNECT);
 }
 
@@ -197,7 +201,15 @@ void Server::onDisconnect(const IpAddress& ipAddress) {
 		oss << ipAddress << " disconnected";
 		Logger::log(oss, Log::INFO);
 
-		entityManager.remove(clients.at(ipAddress).id);
+		const auto& clientData = clients.at(ipAddress);
+
+		//It could be that the client has no ID,
+		//because of recent death or something
+		//In that case do nothing
+		if(entityManager.idExists(clientData.id)) {
+			entityManager.remove(clientData.id);
+		}
+
 		clients.erase(ipAddress);
 	}
 }

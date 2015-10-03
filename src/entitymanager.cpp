@@ -166,7 +166,7 @@ ID EntityManager::createFatMan() {
 }
 
 ID EntityManager::createTree(const glm::vec2& position) {
-	auto id = idManager->acquireId();
+	auto id = getId();
 
 	Logger::log("Creating tree with id" + std::to_string(id), Log::INFO);
 
@@ -196,7 +196,7 @@ ID EntityManager::createTree(const glm::vec2& position) {
 	return id;
 }
 ID EntityManager::createGrassTile(const glm::vec2& position) {
-	auto id = idManager->acquireId();
+	auto id = getId();
 
 	Logger::log("Creating grass with id" + std::to_string(id), Log::INFO);
 
@@ -223,7 +223,7 @@ ID EntityManager::createGrassTile(const glm::vec2& position) {
 }
 
 ID EntityManager::createWaterTile(const glm::vec2& position) {
-	auto id = idManager->acquireId();
+	auto id = getId();
 
 	Logger::log("Creating water with id" + std::to_string(id), Log::INFO);
 
@@ -250,7 +250,7 @@ ID EntityManager::createWaterTile(const glm::vec2& position) {
 }
 
 ID EntityManager::createBloodSplatter(const glm::vec2& position) {
-	auto id = idManager->acquireId();
+	auto id = getId();
 
 	Logger::log("Creating bloodsplatter with id" + std::to_string(id), Log::INFO);
 
@@ -293,7 +293,7 @@ ID EntityManager::createBloodSplatter(const glm::vec2& position) {
 }
 
 ID EntityManager::createFlower(const glm::vec2& position, const char color) {
-	auto id = idManager->acquireId();
+	auto id = getId();
 
 	Logger::log("Creating flower with id" + std::to_string(id), Log::INFO);
 
@@ -334,7 +334,7 @@ ID EntityManager::createFlower(const glm::vec2& position, const char color) {
 }
 
 ID EntityManager::createDummySquare(const glm::vec2& position) {
-	auto id = idManager->acquireId();
+	auto id = getId();
 
 	Logger::log("Creating dummysquare with id" + std::to_string(id), Log::INFO);
 
@@ -381,7 +381,7 @@ ID EntityManager::createDummySquare(const glm::vec2& position) {
 }
 
 ID EntityManager::createStone(const glm::vec2& position) {
-	auto id = idManager->acquireId();
+	auto id = getId();
 
 	Logger::log("Creating stone with id" + std::to_string(id), Log::INFO);
 
@@ -443,8 +443,15 @@ void EntityManager::remove(ID id) {
 	//3. Remove from componentManager
 	componentManager->clearComponents(id);
 
-	//4. ReleaseId to idmanager
+	//4. Tell entitymanager that id isn't part of ECS anymore
+	ids.erase(id);
+
+	//5. ReleaseId to idmanager
 	idManager->releaseId(id);
+}
+
+bool EntityManager::idExists(ID id) {
+	return ids.find(id) != ids.end();
 }
 
 void EntityManager::registerIdToSystem(ID id, System::Identifier system) {
