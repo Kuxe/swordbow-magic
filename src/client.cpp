@@ -13,6 +13,9 @@
 
 #include "inputdata.hpp"
 
+/** For parsing **/
+#include <string>
+
 Client::Client(int argc, char** argv) :
         socket("swordbow-magic"),
         sequence(1),
@@ -372,7 +375,45 @@ void Client::step() {
 int main(int argc, char** argv) {
     Logger::level = Log::INFO;
     Client client(argc, argv);
-    client.connect({127, 0, 0, 1, 47293});
+
+    bool ipParameterSet = false;
+    for(int i = 0; i < argc; i++) {
+        std::string command(argv[i]);
+        size_t pos = command.rfind("--ip=");
+        if(pos != std::string::npos) {
+            ipParameterSet = true;
+
+            std::string ipstr = command.substr(pos+5);
+            pos = ipstr.find_first_of(".");
+            unsigned char a = stoi(ipstr.substr(0, pos));
+
+            ipstr = ipstr.substr(pos+1);
+            pos = ipstr.find_first_of(".");
+            unsigned char b = stoi(ipstr.substr(0, pos));
+
+            ipstr = ipstr.substr(pos+1);
+            pos = ipstr.find_first_of(".");
+            unsigned char c = stoi(ipstr.substr(0, pos));
+
+            ipstr = ipstr.substr(pos+1);
+            pos = ipstr.find_first_of(".");
+            unsigned char d = stoi(ipstr.substr(0, pos));
+
+            ipstr = ipstr.substr(pos+1);
+            pos = ipstr.find_first_of(":");
+            unsigned short port = 47293;
+            if(pos != std::string::npos) {
+                port = stoi(ipstr.substr(pos+1));
+            }
+
+            client.connect({a, b, c, d, port});
+        }
+    }
+
+    if(!ipParameterSet) {
+        client.connect({127, 0, 0, 1, 47293});
+    }
+
     client.run();
     client.disconnect();
 }
