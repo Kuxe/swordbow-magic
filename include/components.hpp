@@ -118,11 +118,10 @@ public:
     std::vector<Components<T>> split(ID componentsPerContainer) {
         const int numContainers = (size() / componentsPerContainer) + ((size() % componentsPerContainer) > 0 ? 1 : 0);
         std::vector<Components<T>> containers(numContainers, Components<T>());
-        int componentIndex = 0;
+        auto it(begin());
         for(auto& smallerContainer : containers) {
-            for(int i = 0; i < componentsPerContainer && componentIndex < size(); i++) {
-                smallerContainer.insert({componentIndex, (*this)[componentIndex]});
-                componentIndex++;
+            for(int i = 0; i < componentsPerContainer && it != end(); i++) {
+                smallerContainer.insert(*it++);
             }
         }
         return containers;
