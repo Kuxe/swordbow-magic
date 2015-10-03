@@ -86,7 +86,7 @@ void Client::receive() {
 
         //Receive data from server...
         IpAddress server;
-        unsigned char type;
+        MESSAGE_TYPE type;
         int bytesRead;
         socket.receive(server, type, bytesRead);
 
@@ -130,7 +130,7 @@ void Client::receive() {
                     while(!done) {
                         //Receive data from server...
                         IpAddress server;
-                        unsigned char type;
+                        MESSAGE_TYPE type;
                         int bytesRead;
                         socket.receive(server, type, bytesRead);
 
@@ -290,13 +290,12 @@ void Client::receive() {
                 } break;
 
                 default: {
-                    const std::string logstr(
-                        std::string("Message without proper type received. This is probably a bug.\n") +
-                        std::string("Either client-side handling for that message isn't implemented") +
-                        std::string(" or server sent a message with a bogus messagetype") +
-                        std::string(" or the messagetype was wrongly altered somewhere\n")
-                    );
-                    Logger::log(logstr, Log::WARNING);
+                    std::ostringstream oss;
+                    oss << "Message without proper type received. This is probably a bug.";
+                    oss << " Either client-side handling for that message isn't implemented";
+                    oss << " or server sent a message with a bogus messagetype";
+                    oss << " or the messagetype was wrongly altered somewhere (type: " << type << ")";
+                    Logger::log(oss, Log::WARNING);
                 };
             }
 

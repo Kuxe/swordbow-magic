@@ -192,7 +192,7 @@ public:
     //save the sender to param sender
     //save the messagetype to param type
     //save the bytes read to param bytesread
-    void receive(IpAddress& sender, unsigned char& type, int& bytesRead) {
+    void receive(IpAddress& sender, MESSAGE_TYPE& type, int& bytesRead) {
         if(socket == 0) {
             Logger::log("Cannot receive because socket isn't open", Log::WARNING);
         }
@@ -244,7 +244,7 @@ public:
                     //TODO: Implement congestion avoidance
 
                 } else {
-                    type = 0; //0 for outdated
+                    type = MESSAGE_TYPE::OUTDATED; //0 for outdated
                 }
             } else {
                 Logger::log(

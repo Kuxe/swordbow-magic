@@ -24,7 +24,7 @@ private:
     Data data;
 public:
     constexpr Packet() {}
-    constexpr Packet(const unsigned int protocol, uint16_t sequence, MESSAGE_TYPE, const Data& data, unsigned int datasize) :
+    constexpr Packet(const unsigned int protocol, uint16_t sequence, MESSAGE_TYPE type, const Data& data, unsigned int datasize) :
         protocol(protocol), sequence(sequence), type(type), data(data), datasize(datasize) {
             static_assert(
                 !std::is_pointer<Data>::value,

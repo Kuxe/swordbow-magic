@@ -95,7 +95,7 @@ void Server::step() {
 
 	//Receive data from clients...
     IpAddress clientIp;
-    unsigned char type;
+    MESSAGE_TYPE type;
     int bytesRead;
     socket.receive(clientIp, type, bytesRead);
 
@@ -150,7 +150,7 @@ void Server::step() {
                 oss << "Message without proper type received. This is probably a bug.";
                 oss << " Either server-side handling for that message isn't implemented";
                 oss << " or a client sent a message with a bogus messagetype";
-                oss << " or the messagetype was wrongly altered somewhere";
+                oss << " or the messagetype was wrongly altered somewhere (type: " << type << ")";
                 Logger::log(oss, Log::WARNING);
             };
         }
