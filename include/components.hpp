@@ -113,10 +113,10 @@ public:
     }
 
     /** Split the component into several containers no more components than componentsPerContainer
-        but there may be less components in each container **/
-    std::vector<Components<T>> split(unsigned char componentsPerContainer) {
-        Logger::disable();
-        const int numContainers = size() / componentsPerContainer + (size() % componentsPerContainer > 0);
+        but there may be less components in each container. There can never be more components in
+        a container than there are IDs, hence the type of parameter is ID **/
+    std::vector<Components<T>> split(ID componentsPerContainer) {
+        const int numContainers = (size() / componentsPerContainer) + ((size() % componentsPerContainer) > 0 ? 1 : 0);
         std::vector<Components<T>> containers(numContainers, Components<T>());
         int componentIndex = 0;
         for(auto& smallerContainer : containers) {
@@ -125,7 +125,6 @@ public:
                 componentIndex++;
             }
         }
-        Logger::enable();
         return containers;
     }
 

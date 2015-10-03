@@ -172,7 +172,7 @@ void Server::onConnect(const IpAddress& ipAddress) {
 	std::ostringstream oss;
 	oss << ipAddress << " connected";
 	Logger::log(oss, Log::INFO);
-	auto fatManId = entityManager.createFatMan({0.0f, 0.0f});
+	auto fatManId = entityManager.createFatMan({10.0f, 20.0f});
 	clients.insert({ipAddress, {1, fatManId}});
 
 	//In case a client reconnects, the socket shouldn't reject the newly
@@ -204,9 +204,26 @@ void Server::onDisconnect(const IpAddress& ipAddress) {
 
 void Server::sendInitial(const IpAddress& ipAddress) {
 
+	send<bool>(ipAddress, true, MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS);
+
 	using DataType = std::pair<Components<MoveComponent>, Components<RenderComponent>>;
-	DataType data = {componentManager.moveComponents, componentManager.renderComponents};
-	send<DataType>(ipAddress, data, MESSAGE_TYPE::INITIAL_COMPONENTS);
+
+	const ID split = 64;
+	const auto& smallerMcs = componentManager.moveComponents.split(split);
+	const auto& smallerRcs = componentManager.renderComponents.split(split);
+
+	std::ostringstream oss;
+	oss << "About to send #" << smallerMcs.size() << " small containers to client";
+	Logger::log(oss, Log::INFO);
+
+	using namespace std::literals;
+	for(int i = 0; i < smallerMcs.size(); i++) {
+		const DataType& data = {smallerMcs[i], smallerRcs[i]};
+		send<DataType>(ipAddress, data, MESSAGE_TYPE::INITIAL_COMPONENTS);
+		std::this_thread::sleep_for(1ms);
+	}
+
+	send<bool>(ipAddress, true, MESSAGE_TYPE::END_TRANSMITTING_INITIAL_COMPONENTS);
 }
 
 void Server::sendInitial() {

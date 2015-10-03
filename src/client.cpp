@@ -117,20 +117,54 @@ void Client::receive() {
                     disconnect();
                 } break;
 
-                case MESSAGE_TYPE::INITIAL_COMPONENTS: {
-                    Logger::log("Received INITIAL_COMPONENTS packet", Log::INFO);
+                //This message to client will put the client in a special "state"
+                //where the client will only receive INITIAL_COMPONENTS-packet
+                //and END_TRANSMITTING_INITIAL_COMPONENTS. ECS won't update.
+                //This is because large worlds must be split into smaller packets,
+                //due to packet limitation size, and then sent separately to client.
+                //Client may NOT update ECS because it's not guaranteed that the all
+                //required entity-components have been received.
+                case MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS: {
+                    Logger::log("Received BEGIN_TRANSMITTING_INITIAL_COMPONENTS packet", Log::INFO);
+                    bool done = false;
+                    while(!done) {
+                        //Receive data from server...
+                        IpAddress server;
+                        unsigned char type;
+                        int bytesRead;
+                        socket.receive(server, type, bytesRead);
 
-                    using DataType = std::pair<Components<MoveComponent>, Components<RenderComponent>>;
-                    using PacketType = Packet<DataType>;
-                    auto typedPacket = socket.get<PacketType>(bytesRead);
+                        if(bytesRead > 0) {
+                            switch(type) {
+                                case MESSAGE_TYPE::INITIAL_COMPONENTS: {
+                                    Logger::log("Received INITIAL_COMPONENTS packet", Log::INFO);
 
-                    componentManager.moveComponents.sync(typedPacket.getData().first);
-                    componentManager.renderComponents.sync(typedPacket.getData().second);
+                                    using DataType = std::pair<Components<MoveComponent>, Components<RenderComponent>>;
+                                    using PacketType = Packet<DataType>;
+                                    auto typedPacket = socket.get<PacketType>(bytesRead);
+
+                                    componentManager.moveComponents.sync(typedPacket.getData().first);
+                                    componentManager.renderComponents.sync(typedPacket.getData().second);
 
 
-                    for(auto& pair : typedPacket.getData().first) {
-                        textureHashGridSystem.add(pair.first);
-                        renderSystem.add(pair.first);
+                                    for(auto& pair : typedPacket.getData().first) {
+                                        textureHashGridSystem.add(pair.first);
+                                        renderSystem.add(pair.first);
+                                    }
+                                } break;
+
+                                case MESSAGE_TYPE::END_TRANSMITTING_INITIAL_COMPONENTS: {
+                                    Logger::log("Received END_TRANSMITTING_INITIAL_COMPONENTS packet", Log::INFO);
+                                    done = true;
+                                } break;
+
+                                default: {
+                                    std::ostringstream oss;
+                                    oss << "Received packet when in receiving-initial-components-mode (type: " << type << ")";
+                                    Logger::log(oss, Log::WARNING);
+                                } break;
+                            }
+                        }
                     }
                 } break;
 
