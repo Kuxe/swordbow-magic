@@ -62,10 +62,10 @@ ADD_LIBRARY(sbm-client SHARED
 )
 
 #Flags for compiler and linker
-SET(CMAKE_CXX_COMPILER "g++")
+#SET(CMAKE_CXX_COMPILER "g++")
 SET(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
-SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Og -pthread -std=c++14")
+SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -pthread -std=c++14 -stdlib=libc++")
 SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Os -pthread -fomit-frame-pointer -march=native -flto -s -std=c++14")
 
 #Need to link to wsock32 on windows
