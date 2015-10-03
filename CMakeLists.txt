@@ -4,6 +4,21 @@ PROJECT(swordbow-magic)
 
 INCLUDE(FindPkgConfig)
 
+# Dependency tree for targets
+#                   sbm
+#                   /  \
+#                  /    \
+#                 /      \
+#                /        \
+#          sbm-client  sbm-server
+#              /            \
+#             /              \
+#            /                \
+#           /                  \
+#          /                    \
+# swordbow-magic-client swordbow-magic-server
+
+
 #Create a library containing game-functionality shared between server and client
 ADD_LIBRARY(sbm SHARED
     src/componentmanager.cpp
@@ -64,7 +79,7 @@ PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image)
 PKG_SEARCH_MODULE(SDL2TTF REQUIRED SDL2_ttf)
 PKG_SEARCH_MODULE(SDL2MIXER REQUIRED SDL2_mixer)
 INCLUDE_DIRECTORIES(./include/ ./catch/ ${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS} ${SDL2MIXER_INCLUDE_DIRS})
-TARGET_LINK_LIBRARIES(sbm-client ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES} ${SDL2MIXER_LIBRARIES})
+TARGET_LINK_LIBRARIES(sbm-client sbm ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES} ${SDL2MIXER_LIBRARIES})
 
 #Find modules that isn't supported by cmake. Have to put .cmake files in the
 #/cmake/Modules/ folder for that to work. Find those files by googling.
@@ -85,13 +100,14 @@ TARGET_LINK_LIBRARIES(sbm-client ${OGG_LIBRARIES})
 ADD_EXECUTABLE(swordbow-magic-client src/client.cpp)
 
 #What linker flags are required for swordbow-magic-client?
-TARGET_LINK_LIBRARIES(swordbow-magic-client sbm sbm-client)
+TARGET_LINK_LIBRARIES(swordbow-magic-client sbm-client)
 
 #Create a client-executable
 ADD_EXECUTABLE(swordbow-magic-server src/server.cpp)
 
 #What linker flags are required for swordbow-magic-server?
-TARGET_LINK_LIBRARIES(swordbow-magic-server sbm sbm-server)
+TARGET_LINK_LIBRARIES(sbm-server sbm) #sbm-server depends on sbm
+TARGET_LINK_LIBRARIES(swordbow-magic-server sbm-server)
 
 #Create a test-executable using Catch
 ADD_EXECUTABLE(swordbow-magic-test
