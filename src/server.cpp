@@ -278,9 +278,6 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 		}
 		Logger::log(oss, Log::INFO);
 	}
-
-	moveDiffSystem.clear();
-	renderDiffSystem.clear();
 }
 
 void Server::sendDiff() {
@@ -299,6 +296,9 @@ void Server::sendDiff() {
 			sendDiff(it.first);
 		}
 	}
+
+	moveDiffSystem.clear();
+	renderDiffSystem.clear();
 }
 
 void Server::inputDataToInputComponent(const IpAddress& ipAddress, InputData& data) {
