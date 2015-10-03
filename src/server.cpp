@@ -93,6 +93,12 @@ void Server::step() {
 	//Broadcast new gamestate to clients
 	sendDiff();
 
+	//Special packet that clients must receive
+	//in order to be considered connected
+	//Clients will timeout if keepalive aren't
+	//received frequently
+	sendKeepAlive();
+
 	//Receive data from clients...
     IpAddress clientIp;
     MESSAGE_TYPE type;
@@ -311,6 +317,18 @@ void Server::sendDiff() {
 
 	moveDiffSystem.clear();
 	renderDiffSystem.clear();
+}
+
+void Server::sendKeepAlive() {
+	if(keepAlive.elapsed() > keepAliveInterval) {
+		keepAlive.start();
+		for(auto it : clients) {
+			const auto& client(it.second);
+			const auto& ipAddress = it.first;
+			send<bool>(ipAddress, true, MESSAGE_TYPE::KEEP_ALIVE);
+			Logger::log("Sending KEEP_ALIVE-packet", Log::INFO);
+		}
+	}
 }
 
 void Server::inputDataToInputComponent(const IpAddress& ipAddress, InputData& data) {

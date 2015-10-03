@@ -62,6 +62,7 @@ void Client::connect(const IpAddress& server) {
 
     //Connect-request packet
     send<bool>(true, MESSAGE_TYPE::CONNECT);
+    keepAlive.start();
     std::ostringstream oss;
     oss << "Sent connect request to " << server;
     Logger::log(oss, Log::INFO);
@@ -75,6 +76,8 @@ void Client::disconnect() {
 
     //Disconnect-request packet
     send<bool>(true, MESSAGE_TYPE::DISCONNECT);
+
+    keepAlive.stop();
 
     std::ostringstream oss;
     oss << "Disconnected from " << server;
@@ -292,6 +295,10 @@ void Client::receive() {
                     systemManager.getSystem(systemIdentifier)->activateId(id);
                 } break;
 
+                case MESSAGE_TYPE::KEEP_ALIVE: {
+                    keepAlive.start();
+                } break;
+
                 default: {
                     std::ostringstream oss;
                     oss << "Message without proper type received. This is probably a bug.";
@@ -304,6 +311,14 @@ void Client::receive() {
 
             /** END OF CRITICAL SECTION **/
             componentsMutex.unlock();
+        }
+
+        if(keepAlive.elapsed() > secondsUntilTimeout) {
+            running = false;
+            receiveThreadRunning = false;
+            std::ostringstream oss;
+            oss << "No packets from server received for " << keepAlive.elapsed() << "sec, server timeout";
+            Logger::log(oss, Log::ERROR);
         }
     }
 }

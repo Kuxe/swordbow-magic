@@ -8,6 +8,7 @@
 #include "systemmanager.hpp"
 #include "idmanager.hpp"
 #include "entitymanager.hpp"
+#include "timer.hpp"
 
 /** Server-side systems **/
 #include "movesystem.hpp"
@@ -46,6 +47,9 @@ private:
     PositionBoundingBox positionBoundingBox;
 	IdManager idManager;
 	EntityManager entityManager;
+
+    Timer keepAlive;
+    static constexpr float keepAliveInterval = 1;
 
 	//Declare systems
     HashGridSystem positionHashGridSystem;
@@ -98,6 +102,8 @@ public:
 
     void sendDiff();
     void sendDiff(const IpAddress& ipAddress);
+
+    void sendKeepAlive();
 
     void printGeneralInfo();
 };

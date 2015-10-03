@@ -12,6 +12,7 @@
 #include "soundengine.hpp"
 #include "socket.hpp"
 #include "messagetypes.hpp"
+#include "timer.hpp"
 
 #include <SDL2/SDL.h>
 #include <mutex>
@@ -35,6 +36,8 @@ private:
     SystemManager systemManager;
     Renderer renderer;
     TextureBoundingBox textureBoundingBox;
+    Timer keepAlive;
+    static constexpr float secondsUntilTimeout = 10;
 
     //Client-side systems
     HashGridSystem textureHashGridSystem;
