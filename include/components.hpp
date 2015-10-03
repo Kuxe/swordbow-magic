@@ -2,6 +2,7 @@
 #define COMPONENTS_HPP
 
 #include <unordered_map>
+#include <vector>
 
 /** For logging **/
 #include "logger.hpp"
@@ -109,6 +110,23 @@ public:
 
     constexpr auto empty() const {
         return container.empty();
+    }
+
+    /** Split the component into several containers no more components than componentsPerContainer
+        but there may be less components in each container **/
+    std::vector<Components<T>> split(unsigned char componentsPerContainer) {
+        Logger::disable();
+        const int numContainers = size() / componentsPerContainer + (size() % componentsPerContainer > 0);
+        std::vector<Components<T>> containers(numContainers, Components<T>());
+        int componentIndex = 0;
+        for(auto& smallerContainer : containers) {
+            for(int i = 0; i < componentsPerContainer && componentIndex < size(); i++) {
+                smallerContainer.insert({componentIndex, (*this)[componentIndex]});
+                componentIndex++;
+            }
+        }
+        Logger::enable();
+        return containers;
     }
 
     template<class Archive>
