@@ -47,6 +47,9 @@ private:
 
     std::mutex componentsMutex;
 
+    //ID that this client controlls
+    ID playerId;
+
     void receive();
 
     //Helper method for sending packets

@@ -113,7 +113,9 @@ void Client::receive() {
                     //Got my id. Tell camerasystem to follow that id.
                     auto typedPacket = socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
                     const auto& pair = typedPacket.getData();
-                    systemManager.getSystem(pair.second)->add(pair.first);
+                    const auto& id = pair.first;
+                    systemManager.getSystem(pair.second)->add(id);
+                    playerId = id;
                 } break;
 
                 //Server will send this to client for a couple of reasons.
@@ -250,6 +252,13 @@ void Client::receive() {
                     systemManager.getSystem(System::RENDER)->remove(id);
                     systemManager.getSystem(System::HASHGRID_TEXTURE)->remove(id);
                     componentManager.clearComponents(id);
+
+                    //Check if entity controlled by this client were
+                    //the one being removed. If so, take special actions..
+                    if(id == playerId) {
+                        cameraSystem.remove(playerId);
+                    }
+
                 } break;
 
                 case MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM: {
