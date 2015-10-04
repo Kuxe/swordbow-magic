@@ -30,8 +30,9 @@ void RenderSystem::update() {
     std::queue<Rect> drawQueue;
 
     //All drawareas saved from previous frame should be drawn this frame
-	drawQueue.swap(previousDrawAreas);
-
+	if(!activeIds.empty()) {
+        drawQueue.swap(previousDrawAreas);
+    }
 
     //Cap the amount of IDs getting rendered each frame
     //this is only a quick-fix to ensure no program-freeze
