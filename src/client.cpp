@@ -388,7 +388,7 @@ void Client::step() {
 }
 
 int main(int argc, char** argv) {
-    Logger::level = Log::INFO;
+    Logger::level = Log::WARNING;
     Client client(argc, argv);
 
     bool ipParameterSet = false;

@@ -151,7 +151,6 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 	registerIdToSystem(id, System::MOVE);
 	registerIdToSystem(id, System::COLLISION);
 	registerIdToSystem(id, System::HASHGRID_SIZE);
-	registerIdToSystem(id, System::HASHGRID_POSITION);
 	registerIdToSystem(id, System::HEALTH);
 	registerIdToSystem(id, System::REMOVE);
 	registerIdToSystem(id, System::ATTACK);
@@ -191,7 +190,6 @@ ID EntityManager::createTree(const glm::vec2& position) {
 
 	registerIdToSystem(id, System::COLLISION);
 	registerIdToSystem(id, System::HASHGRID_SIZE);
-	registerIdToSystem(id, System::HASHGRID_POSITION);
 
 	return id;
 }
@@ -217,8 +215,6 @@ ID EntityManager::createGrassTile(const glm::vec2& position) {
 
 	nameComponent.name = "grasstile";
 
-	registerIdToSystem(id, System::HASHGRID_POSITION);
-
 	return id;
 }
 
@@ -243,8 +239,6 @@ ID EntityManager::createWaterTile(const glm::vec2& position) {
 	sizeComponent.height = 32;
 
 	nameComponent.name = "watertile";
-
-	registerIdToSystem(id, System::HASHGRID_POSITION);
 
 	return id;
 }
@@ -287,7 +281,6 @@ ID EntityManager::createBloodSplatter(const glm::vec2& position) {
 
 	registerIdToSystem(id, System::ANIMATION);
 	registerIdToSystem(id, System::MOVEDIFF);
-	registerIdToSystem(id, System::HASHGRID_POSITION);
 
 	return id;
 }
@@ -327,8 +320,6 @@ ID EntityManager::createFlower(const glm::vec2& position, const char color) {
 	mc.pos = position;
 
 	nc.name = "flower";
-
-	registerIdToSystem(id, System::HASHGRID_POSITION);
 
 	return id;
 }
@@ -375,7 +366,6 @@ ID EntityManager::createDummySquare(const glm::vec2& position) {
 
 	registerIdToSystem(id, System::MOVE);
 	registerIdToSystem(id, System::INPUT);
-	registerIdToSystem(id, System::HASHGRID_POSITION);
 
 	return id;
 }
@@ -406,7 +396,6 @@ ID EntityManager::createStone(const glm::vec2& position) {
 
 	registerIdToSystem(id, System::COLLISION);
 	registerIdToSystem(id, System::HASHGRID_SIZE);
-	registerIdToSystem(id, System::HASHGRID_POSITION);
 
 	return id;
 }

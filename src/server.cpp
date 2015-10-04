@@ -17,10 +17,8 @@
 Server::Server(int argc, char** argv) :
 		socket("swordbow-magic"),
 		systemManager(&componentManager, &deltaTime),
-		positionBoundingBox(&componentManager),
 		sizeBoundingBox(&componentManager),
 		entityManager(&systemManager, &componentManager, &idManager, &clients, &socket),
-		positionHashGridSystem(&positionBoundingBox),
 		sizeHashGridSystem(&sizeBoundingBox),
 		collisionSystem(&sizeHashGridSystem),
 		removeSystem(&entityManager),
@@ -38,7 +36,6 @@ Server::Server(int argc, char** argv) :
 	systemManager.add(&inputSystem);
 	systemManager.add(&moveSystem);
 	systemManager.add(&animationSystem);
-	systemManager.add(&positionHashGridSystem);
 	systemManager.add(&sizeHashGridSystem);
 	systemManager.add(&collisionSystem);
 	systemManager.add(&attackSystem);
@@ -417,7 +414,7 @@ void Server::printGeneralInfo() {
 }
 
 int main(int argc, char** argv) {
-	Logger::level = Log::INFO;
+	Logger::level = Log::WARNING;
 	Server server(argc, argv);
 	server.run();
 	return 0;

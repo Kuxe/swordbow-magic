@@ -14,7 +14,6 @@
 #include "movesystem.hpp"
 #include "hashgridsystem.hpp"
 #include "collisionsystem.hpp"
-#include "positionboundingbox.hpp"
 #include "sizeboundingbox.hpp"
 #include "healthsystem.hpp"
 #include "removesystem.hpp"
@@ -44,7 +43,6 @@ private:
 	ComponentManager componentManager;
 	SystemManager systemManager;
 	SizeBoundingBox sizeBoundingBox;
-    PositionBoundingBox positionBoundingBox;
 	IdManager idManager;
 	EntityManager entityManager;
 
@@ -52,7 +50,6 @@ private:
     static constexpr float keepAliveInterval = 1;
 
 	//Declare systems
-    HashGridSystem positionHashGridSystem;
 	HashGridSystem sizeHashGridSystem;
 	MoveSystem moveSystem;
 	CollisionSystem collisionSystem;
