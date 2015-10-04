@@ -16,13 +16,14 @@ PlaySound::PlaySound(
     socket(socket) { }
 
 void PlaySound::execute() {
-    for(auto& pair : *clients) {
-        auto& clientData = pair.second;
 
-        //chrono is nasty
-        const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - sound.startTime).count();
-        if(elapsed > sound.duration) {
-            sound.startTime = std::chrono::high_resolution_clock::now();
+    const auto now = std::chrono::high_resolution_clock::now();
+    const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - sound.startTime).count();
+    if(elapsed > sound.duration) {
+        sound.startTime = std::chrono::high_resolution_clock::now();
+
+        for(auto& pair : *clients) {
+            auto& clientData = pair.second;
             using Type = Packet<SoundData>;
             auto packet = Type {
                 stringhash("swordbow-magic"),
