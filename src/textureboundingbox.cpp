@@ -29,7 +29,7 @@ const Rect TextureBoundingBox::getBoundingBox(ID id) const {
         };
     } catch(std::out_of_range oor) {
         std::ostringstream oss;
-        oss << "Tried getting boundingbox on id " << id << " but components or image were missing";
+        oss << "Tried getting textureboundingbox on id " << id << " but components or image were missing";
         Logger::log(oss, Log::ERROR);
         throw oor;
     }
@@ -48,7 +48,7 @@ const Rect TextureBoundingBox::getOldBoundingBox(ID id) const {
         };
     } catch(std::out_of_range oor) {
         std::ostringstream oss;
-        oss << "Tried getting oldboundingbox on id " << id << " but components or image were missing";
+        oss << "Tried getting oldtextureboundingbox on id " << id << " but components or image were missing";
         Logger::log(oss, Log::ERROR);
         throw oor;
     }
