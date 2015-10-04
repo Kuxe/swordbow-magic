@@ -39,8 +39,10 @@ const System::Identifier CollisionSystem::getIdentifier() const {
 	return System::COLLISION;
 }
 
-void CollisionSystem::activateId(ID id) {
+bool CollisionSystem::activateId(ID id) {
 	if(ids.find(id) != ids.end()) {
 		activeIds.push(id);
+		return true;
 	}
+	return false;
 }

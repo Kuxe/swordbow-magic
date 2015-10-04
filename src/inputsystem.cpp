@@ -41,9 +41,10 @@ unsigned int InputSystem::count() const {
 const System::Identifier InputSystem::getIdentifier() const {
     return System::INPUT;
 }
-void InputSystem::activateId(ID id) {
-    if(ids.find(id) == ids.end()) {
-        return;
+bool InputSystem::activateId(ID id) {
+    if(ids.find(id) != ids.end()) {
+        activeIds.push(id);
+        return true;
     }
-    activeIds.push(id);
+    return false;
 }

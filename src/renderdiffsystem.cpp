@@ -21,6 +21,7 @@ void RenderDiffSystem::clear() {
 const System::Identifier RenderDiffSystem::getIdentifier() const {
     return System::RENDERDIFF;
 }
-void RenderDiffSystem::activateId(ID id) {
+bool RenderDiffSystem::activateId(ID id) {
     add(id);
+    return true;
 }

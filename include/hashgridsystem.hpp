@@ -39,7 +39,7 @@ class HashGridSystem : public SpatialIndexer, public ISystem {
 		virtual std::unordered_set<ID> query(const Rect& queryArea) const ;
 		inline Rect getBoundingBox(const ID id) const;
 
-		void activateId(ID id);
+		bool activateId(ID id);
 
 		void update();
 		unsigned int count() const;

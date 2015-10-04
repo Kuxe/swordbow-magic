@@ -32,7 +32,7 @@ unsigned int CameraSystem::count() const {
 const System::Identifier CameraSystem::getIdentifier() const {
     return System::CAMERA;
 }
-void CameraSystem::activateId(ID id) {
+bool CameraSystem::activateId(ID id) {
 
 }
 

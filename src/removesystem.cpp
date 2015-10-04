@@ -38,10 +38,10 @@ unsigned int RemoveSystem::count() const {
 const System::Identifier RemoveSystem::getIdentifier() const {
     return System::REMOVE;
 }
-void RemoveSystem::activateId(ID id) {
-    if(ids.find(id) == ids.end()) {
-        return;
+bool RemoveSystem::activateId(ID id) {
+    if(ids.find(id) != ids.end()) {
+        activeIds.push(id);
+        return true;
     }
-
-    activeIds.push(id);
+    return false;
 }

@@ -109,9 +109,10 @@ unsigned int AttackSystem::count() const {
 const System::Identifier AttackSystem::getIdentifier() const {
     return System::ATTACK;
 }
-void AttackSystem::activateId(ID id) {
-    if(ids.find(id) == ids.end()) {
-        return;
+bool AttackSystem::activateId(ID id) {
+    if(ids.find(id) != ids.end()) {
+        activeIds.push(id);
+        return true;
     }
-    activeIds.push(id);
+    return false;
 }

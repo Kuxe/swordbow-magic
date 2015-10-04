@@ -22,7 +22,7 @@ HashGridSystem::~HashGridSystem() {
 
 void HashGridSystem::add(const ID id) {
 	ids.insert(id);
-	activeIds.push(id);
+	addToCells(id);
 }
 
 void HashGridSystem::remove(const ID id) {
@@ -143,12 +143,14 @@ Rect HashGridSystem::getBoundingBox(ID id) const {
 	}
 }
 
-void HashGridSystem::activateId(const ID id) {
+bool HashGridSystem::activateId(const ID id) {
 	//if the id is a member of hashgrid...
 	if(ids.find(id) != ids.end()) {
 		//then it is legit to make it an active id
 		activeIds.push(id);
+		return true;
 	}
+	return false;
 }
 
 void HashGridSystem::update() {

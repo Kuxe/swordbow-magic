@@ -174,38 +174,6 @@ void Client::receive() {
                     }
                 } break;
 
-                case MESSAGE_TYPE::MOVECOMPONENTS: {
-                    Logger::log("Received MOVECOMPONENTS packet", Log::INFO);
-
-                    //All movecomponents were received - handle it
-                    auto typedPacket = socket.get<Packet<Components<MoveComponent>>>(bytesRead);
-                    componentManager.moveComponents.sync(typedPacket.getData());
-
-                    //It is assumed that any receieved movecomponent should
-                    //be added to texturehashgridsystem and rendersystem,
-                    //because if not, why would the server send them in the first
-                    //place?
-                    for(auto& pair : typedPacket.getData()) {
-                        textureHashGridSystem.add(pair.first);
-                        renderSystem.add(pair.first);
-                    }
-
-                } break;
-
-                case MESSAGE_TYPE::RENDERCOMPONENTS: {
-                    Logger::log("Received RENDERCOMPONENTS packet", Log::INFO);
-
-                    //All rendercomponents were received - handle it
-                    auto typedPacket = socket.get<Packet<Components<RenderComponent>>>(bytesRead);
-                    componentManager.renderComponents.sync(typedPacket.getData());
-
-                    for(auto& pair : typedPacket.getData()) {
-                        textureHashGridSystem.add(pair.first);
-                        renderSystem.add(pair.first);
-                    }
-
-                } break;
-
                 case MESSAGE_TYPE::MOVECOMPONENTSDIFF: {
                     Logger::log("Received MOVECOMPONENTSDIFF packet", Log::INFO);
 
@@ -213,18 +181,24 @@ void Client::receive() {
                     auto typedPacket = socket.get<Packet<Components<MoveComponent>>>(bytesRead);
                     componentManager.moveComponents.sync(typedPacket.getData());
 
-                    //It makes sence to auto-activate newly received ids of the
-                    //movecomponents in rendersystem, since the server only
-                    //sends movecomponents on actual difference, the client
-                    //should redraw that difference. So former ACTIVATE_ID message
-                    //could be implicit with any component-message, which has the
-                    //benefit of not mistakingly activating ids before components
-                    //are received. Since system.add is a superset of system.activateId
-                    //we might aswell assume adding received components to systems
-                    //which makes REGISTER_ID_TO_SYSTEM-message obsolete
                     for(auto& pair : typedPacket.getData()) {
-                        textureHashGridSystem.add(pair.first);
-                        renderSystem.add(pair.first);
+                        //Try to activate id, but it could be the case that
+                        //the entity is newly created, in that case activation wont work
+                        //so just add it instead. But before adding/activating, make sure
+                        //both components exists
+
+                        const auto& id = pair.first;
+                        const auto& mcs = componentManager.moveComponents;
+                        const auto& rcs = componentManager.renderComponents;
+                        if(mcs.contains(id) && rcs.contains(id)) {
+                            if(!textureHashGridSystem.activateId(id)) {
+                                textureHashGridSystem.add(id);
+                            }
+
+                            if(!renderSystem.activateId(id)) {
+                                renderSystem.add(id);
+                            }
+                        }
                     }
 
                 } break;
@@ -237,8 +211,18 @@ void Client::receive() {
                     componentManager.renderComponents.sync(typedPacket.getData());
 
                     for(auto& pair : typedPacket.getData()) {
-                        textureHashGridSystem.add(pair.first);
-                        renderSystem.add(pair.first);
+                        const auto& id = pair.first;
+                        const auto& mcs = componentManager.moveComponents;
+                        const auto& rcs = componentManager.renderComponents;
+                        if(mcs.contains(id) && rcs.contains(id)) {
+                            if(!textureHashGridSystem.activateId(id)) {
+                                textureHashGridSystem.add(id);
+                            }
+
+                            if(!renderSystem.activateId(id)) {
+                                renderSystem.add(id);
+                            }
+                        }
                     }
                 } break;
 
@@ -388,7 +372,7 @@ void Client::step() {
 }
 
 int main(int argc, char** argv) {
-    Logger::level = Log::WARNING;
+    Logger::level = Log::INFO;
     Client client(argc, argv);
 
     bool ipParameterSet = false;

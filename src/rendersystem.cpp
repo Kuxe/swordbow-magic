@@ -121,11 +121,13 @@ const System::Identifier RenderSystem::getIdentifier() const {
 	return System::RENDER;
 }
 
-void RenderSystem::activateId(ID id) {
+bool RenderSystem::activateId(ID id) {
 	//Only make the id active if it is a member of rendersystem
 	if(ids.find(id) != ids.end()) {
 		activeIds.push(id);
+        return true;
 	}
+    return false;
 }
 
 void RenderSystem::printText(const Text& text) {

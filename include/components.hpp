@@ -81,7 +81,7 @@ public:
         return container.find(id);
     }
 
-    constexpr bool contains(const ID id) {
+    constexpr bool contains(const ID id) const {
         return container.find(id) != container.end();
     }
 

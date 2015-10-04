@@ -21,6 +21,7 @@ void MoveDiffSystem::clear() {
 const System::Identifier MoveDiffSystem::getIdentifier() const {
     return System::MOVEDIFF;
 }
-void MoveDiffSystem::activateId(ID id) {
+bool MoveDiffSystem::activateId(ID id) {
     add(id);
+    return true;
 }

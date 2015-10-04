@@ -21,7 +21,7 @@ public:
     void update();
     unsigned int count() const;
     const System::Identifier getIdentifier() const;
-    void activateId(ID id);
+    bool activateId(ID id);
     void clear();
 
     auto begin() const { return ids.begin(); }

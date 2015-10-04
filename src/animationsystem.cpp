@@ -125,6 +125,7 @@ unsigned int AnimationSystem::count() const {
 const System::Identifier AnimationSystem::getIdentifier() const {
     return System::ANIMATION;
 }
-void AnimationSystem::activateId(ID id) {
+bool AnimationSystem::activateId(ID id) {
     //Why would this method be required for AnimationSystem?
+    return false;
 }

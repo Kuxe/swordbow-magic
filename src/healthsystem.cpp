@@ -32,6 +32,6 @@ unsigned int HealthSystem::count() const {
 const System::Identifier HealthSystem::getIdentifier() const {
     return System::HEALTH;
 }
-void HealthSystem::activateId(ID id) {
-
+bool HealthSystem::activateId(ID id) {
+    return false;
 }

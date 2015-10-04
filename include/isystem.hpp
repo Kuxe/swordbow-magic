@@ -26,7 +26,7 @@ class ISystem {
 	virtual void update() = 0;
 	virtual unsigned int count() const = 0; //How many entities are present within the system?
 	virtual const System::Identifier getIdentifier() const = 0; //Naming convention is "RenderSystem", "MoveSystem" etc..
-    virtual void activateId(ID id) = 0;
+    virtual bool activateId(ID id) = 0;
     bool active = true;
 };
 

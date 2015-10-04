@@ -79,6 +79,7 @@ const System::Identifier MoveSystem::getIdentifier() const {
 	return System::MOVE;
 }
 
-void MoveSystem::activateId(ID id) {
+bool MoveSystem::activateId(ID id) {
 	add(id);
+	return true;
 }
