@@ -414,7 +414,7 @@ void Server::printGeneralInfo() {
 }
 
 int main(int argc, char** argv) {
-	Logger::level = Log::WARNING;
+	Logger::level = Log::INFO;
 	Server server(argc, argv);
 	server.run();
 	return 0;

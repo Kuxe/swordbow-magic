@@ -2,12 +2,16 @@
 #include <random>
 #include "entitymanager.hpp"
 #include "noisebrush.hpp"
+#include "logger.hpp"
 
 World::World(EntityManager* entityManager) :
 		entityManager(entityManager)
 	{ }
 
 void World::createWorld() {
+
+	Logger::log("Creating world...", Log::INFO);
+
 	//Fill world with grass
 	for(short y = 0; y < NUM_TILES; y++) {
 		for(short x = 0; x < NUM_TILES; x++) {
@@ -111,7 +115,6 @@ void World::createDebugWorld() {
 	//test stuff on this guy
 	entityManager->createFatMan({50, 100});
 
-
-
-
+	//This is nice
+	entityManager->createBlueBird({300, 50});
 }

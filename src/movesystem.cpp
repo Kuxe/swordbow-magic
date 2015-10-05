@@ -33,18 +33,28 @@ void MoveSystem::remove(ID id) {
 void MoveSystem::update() {
 	for(auto id : ids) {
 		auto& mc = componentManager->moveComponents.at(id);
-		auto& ic = componentManager->inputComponents.at(id);
-		auto& cc = componentManager->commandComponents.at(id);
 		mc.oldPos.x = mc.pos.x;
 		mc.oldPos.y = mc.pos.y;
 
-		//If no key was pressed
-		if(ic.d != 0 || ic.a != 0 || ic.s != 0 || ic.w != 0) {
-			mc.dir.x = ic.d - ic.a;
-			mc.dir.y = ic.s - ic.w;
-		}
+		//If this entity has an inputComponent,
+		//check if buttons are pressed in order to move entity.
+		//This should probably be a system of its own that's being
+		//run before movesystem (requiring movecomponents and inputcomponents,
+		//a system for handling input->velocity on entities. Ideally, this 
+		//system should _only_ be engaged in updating positions...)
+		if( componentManager->inputComponents.find(id) !=
+			componentManager->inputComponents.end()) {
 
-		mc.vel = {ic.d - ic.a, ic.s - ic.w};
+			auto& ic = componentManager->inputComponents.at(id);
+
+			//If no key was pressed
+			if(ic.d != 0 || ic.a != 0 || ic.s != 0 || ic.w != 0) {
+				mc.dir.x = ic.d - ic.a;
+				mc.dir.y = ic.s - ic.w;
+			}
+
+			mc.vel = {ic.d - ic.a, ic.s - ic.w};
+		}
 
 		//If some input was recieved which caused a move (mc.vel isn't of length 0)
 		if(glm::length(mc.vel) > 0) {
@@ -58,13 +68,22 @@ void MoveSystem::update() {
 			//Finally update position
 			mc.pos += mc.vel;
 
+			Logger::log(std::to_string(mc.vel.x), Log::ERROR);
+
 			//It might be handy to normalize the dir for other systems
 			mc.dir = normalize(mc.dir);
 		}
 
 		//Do something defined by the entity if the entity moved
 		if(!(mc.pos.x == mc.oldPos.x && mc.pos.y == mc.oldPos.y)) {
-			cc.execute(CommandComponent::Event::ON_MOVE);
+
+			//But only if it has a commandComponent. This "onMove" events
+			//should probably be handled in a system of its own, ie a
+			//"onMoveSystem".. Maybe. This will be sufficient for now.
+			if(componentManager->commandComponents.find(id) != componentManager->commandComponents.end()) {
+				auto& cc = componentManager->commandComponents.at(id);
+				cc.execute(CommandComponent::Event::ON_MOVE);
+			}
 
 			systemManager->getSystem(System::MOVEDIFF)->add(id);
 		}

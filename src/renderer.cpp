@@ -145,6 +145,15 @@ Renderer::Renderer(int argc, char** argv) {
         {Image::STONE_1, imageDirectory + "stone1.png"},
 
         {Image::WATER, imageDirectory + "water.png"},
+
+        {Image::BLUE_BIRD_WEST_1, imageDirectory + "bluebird_west_1.png"},
+        {Image::BLUE_BIRD_WEST_2, imageDirectory + "bluebird_west_2.png"},
+        {Image::BLUE_BIRD_WEST_3, imageDirectory + "bluebird_west_3.png"},
+        {Image::BLUE_BIRD_WEST_4, imageDirectory + "bluebird_west_4.png"},
+        {Image::BLUE_BIRD_EAST_1, imageDirectory + "bluebird_east_1.png"},
+        {Image::BLUE_BIRD_EAST_2, imageDirectory + "bluebird_east_2.png"},
+        {Image::BLUE_BIRD_EAST_3, imageDirectory + "bluebird_east_3.png"},
+        {Image::BLUE_BIRD_EAST_4, imageDirectory + "bluebird_east_4.png"},
     };
 
     //Bind each texture with a value in Image and load the texture

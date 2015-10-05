@@ -42,7 +42,16 @@ namespace Image {
         TEST_SQUARE_1x1,
 
         STONE_1,
-        WATER
+        WATER,
+
+        BLUE_BIRD_EAST_1,
+        BLUE_BIRD_EAST_2,
+        BLUE_BIRD_EAST_3,
+        BLUE_BIRD_EAST_4,
+        BLUE_BIRD_WEST_1,
+        BLUE_BIRD_WEST_2,
+        BLUE_BIRD_WEST_3,
+        BLUE_BIRD_WEST_4,
     };
 }
 

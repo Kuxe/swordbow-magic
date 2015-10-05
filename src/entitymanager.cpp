@@ -400,6 +400,50 @@ ID EntityManager::createStone(const glm::vec2& position) {
 	return id;
 }
 
+ID EntityManager::createBlueBird(const glm::vec2& position) {
+	auto id = getId();
+
+	Logger::log("Creating blueBird with id" + std::to_string(id), Log::INFO);
+
+	auto& mc = componentManager->createMoveComponent(id);
+	auto& rc = componentManager->createRenderComponent(id);
+	auto& nc = componentManager->createNameComponent(id);
+	auto& ac = componentManager->createAnimationComponent(id);
+
+	mc.pos = position;
+	mc.oldPos = mc.pos;
+	mc.vel = {-5, 0};
+
+	rc.image = Image::BLUE_BIRD_WEST_3;
+	rc.zindex_base = 2;
+	rc.xoffset = -8;
+	rc.yoffset = -11;
+
+	nc.name = "blueBird";
+
+	ac.walking.west.frames.push_back(Image::BLUE_BIRD_WEST_1);
+	ac.walking.west.frames.push_back(Image::BLUE_BIRD_WEST_2);
+	ac.walking.west.frames.push_back(Image::BLUE_BIRD_WEST_3);
+	ac.walking.west.frames.push_back(Image::BLUE_BIRD_WEST_4);
+	ac.walking.west.frames.push_back(Image::BLUE_BIRD_WEST_3);
+	ac.walking.west.frames.push_back(Image::BLUE_BIRD_WEST_2);
+
+	ac.walking.east.frames.push_back(Image::BLUE_BIRD_EAST_1);
+	ac.walking.east.frames.push_back(Image::BLUE_BIRD_EAST_2);
+	ac.walking.east.frames.push_back(Image::BLUE_BIRD_EAST_3);
+	ac.walking.east.frames.push_back(Image::BLUE_BIRD_EAST_4);
+	ac.walking.east.frames.push_back(Image::BLUE_BIRD_EAST_3);
+	ac.walking.east.frames.push_back(Image::BLUE_BIRD_EAST_2);
+
+	ac.state = &ac.walking.west;
+	ac.walking.west.duration = 200;
+
+	registerIdToSystem(id, System::MOVE);
+	registerIdToSystem(id, System::ANIMATION);
+
+	return id;
+}
+
 void EntityManager::remove(ID id) {
 	Logger::log("Removing id" + std::to_string(id) + " from entitymanager", Log::INFO);
 
