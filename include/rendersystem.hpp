@@ -3,6 +3,7 @@
 
 #include "isystem.hpp"
 #include <unordered_set>
+#include <unordered_map>
 #include <queue>
 #include "rect.hpp"
 #include "text.hpp"
@@ -24,7 +25,7 @@ class RenderSystem : public ISystem {
 private:
 	std::unordered_set<ID> ids;
 	std::queue<ID> activeIds;
-	std::queue<Rect> previousDrawAreas;
+	std::unordered_map<ID, Rect> oldDrawAreas;
 
     Renderer* renderer;
     SpatialIndexer* spatialIndexer;

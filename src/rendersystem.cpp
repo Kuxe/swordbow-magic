@@ -29,11 +29,6 @@ void RenderSystem::update() {
     //Will contain all rectangles where a redraw is required
     std::queue<Rect> drawQueue;
 
-    //All drawareas saved from previous frame should be drawn this frame
-	if(!activeIds.empty()) {
-        drawQueue.swap(previousDrawAreas);
-    }
-
     //Cap the amount of IDs getting rendered each frame
     //this is only a quick-fix to ensure no program-freeze
     //when initially rendering the whole world
@@ -44,15 +39,24 @@ void RenderSystem::update() {
         Rect drawArea {0, 0, 0, 0};
         try {
             drawArea = spatialIndexer->getBoundingBox(activeIds.front());
+
+            //Draw the new area that the entity moved to
+            drawQueue.push(drawArea);
+
+            //Also draw the area that the entity was before
+            drawQueue.push(oldDrawAreas[activeIds.front()]);
+
+            //Save drawarea so that next time this entity moves,
+            //draw the area that will be drawn this time
+            oldDrawAreas[activeIds.front()] = drawArea;
+
         } catch (std::out_of_range oor) {
             std::ostringstream oss;
             oss << "Couldn't render id " << activeIds.front() << " because boundingbox couldn't be retrieved";
             Logger::log(oss, Log::ERROR);
         }
-		drawQueue.push(drawArea); activeIds.pop();
 
-        //The texturearea should be saved for next frame, it must be redrawn then too
-		previousDrawAreas.push(drawArea);
+        activeIds.pop();
 	}
 
     std::priority_queue<RenderData> pq;
