@@ -30,6 +30,10 @@ Server::Server(int argc, char** argv) :
 	constexpr short port = 47293;
 	socket.open(port);
 
+	//Initialize time in deltatimer to something not zero, just to avoid velocities going to zero
+	deltaTime.start();
+	deltaTime.stop();
+
 	//Add systems to systemmanager
 	systemManager.add(&moveDiffSystem);
 	systemManager.add(&renderDiffSystem);

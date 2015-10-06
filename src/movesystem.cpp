@@ -33,6 +33,7 @@ void MoveSystem::remove(ID id) {
 void MoveSystem::update() {
 	for(auto id : ids) {
 		auto& mc = componentManager->moveComponents.at(id);
+
 		mc.oldPos.x = mc.pos.x;
 		mc.oldPos.y = mc.pos.y;
 
@@ -67,8 +68,6 @@ void MoveSystem::update() {
 
 			//Finally update position
 			mc.pos += mc.vel;
-
-			Logger::log(std::to_string(mc.vel.x), Log::ERROR);
 
 			//It might be handy to normalize the dir for other systems
 			mc.dir = normalize(mc.dir);
