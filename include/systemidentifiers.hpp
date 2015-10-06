@@ -4,6 +4,7 @@
 namespace System {
     enum Identifier {
         UNDEFINED,
+        ACCELERATION,
         ANIMATION,
         ATTACK,
         CAMERA,
@@ -19,6 +20,7 @@ namespace System {
         REMOVE,
         RENDERDIFF,
         RENDER,
+        BIRD,
     };
 }
 

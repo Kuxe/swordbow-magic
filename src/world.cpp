@@ -117,4 +117,10 @@ void World::createDebugWorld() {
 
 	//This is nice
 	entityManager->createBlueBird({300, 50});
+	entityManager->createBlueBird({20, 30});
+	entityManager->createBlueBird({50, 50});
+	entityManager->createBlueBird({50, 300});
+	entityManager->createBlueBird({62, 86});
+	entityManager->createBlueBird({68, 28});
+
 }

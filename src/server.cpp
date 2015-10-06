@@ -39,6 +39,7 @@ Server::Server(int argc, char** argv) :
 	systemManager.add(&renderDiffSystem);
 	systemManager.add(&inputSystem);
 	systemManager.add(&moveSystem);
+	systemManager.add(&birdSystem);
 	systemManager.add(&animationSystem);
 	systemManager.add(&sizeHashGridSystem);
 	systemManager.add(&collisionSystem);

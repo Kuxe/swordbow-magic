@@ -409,10 +409,11 @@ ID EntityManager::createBlueBird(const glm::vec2& position) {
 	auto& rc = componentManager->createRenderComponent(id);
 	auto& nc = componentManager->createNameComponent(id);
 	auto& ac = componentManager->createAnimationComponent(id);
+	auto accelerationComponent = componentManager->createAccelerationComponent(id);
 
 	mc.pos = position;
 	mc.oldPos = mc.pos;
-	mc.vel = {-1, 0};
+	mc.vel = {0, 0};
 
 	rc.image = Image::BLUE_BIRD_WEST_3;
 	rc.zindex_base = 2;
@@ -440,6 +441,24 @@ ID EntityManager::createBlueBird(const glm::vec2& position) {
 
 	registerIdToSystem(id, System::MOVE);
 	registerIdToSystem(id, System::ANIMATION);
+	registerIdToSystem(id, System::BIRD);
+
+	return id;
+}
+
+ID EntityManager::createSwarmPoint(const glm::vec2& position) {
+	auto id = getId();
+
+	auto& mc = componentManager->createMoveComponent(id);
+	auto& ac = componentManager->createAccelerationComponent(id);
+	auto& nc = componentManager->createNameComponent(id);
+
+	mc.pos = mc.oldPos = position;
+
+	nc.name = "SwarmPoint";
+
+	registerIdToSystem(id, System::ACCELERATION);
+	registerIdToSystem(id, System::MOVE);
 
 	return id;
 }

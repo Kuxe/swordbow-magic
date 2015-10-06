@@ -22,6 +22,7 @@
 #include "animationsystem.hpp"
 #include "movediffsystem.hpp"
 #include "renderdiffsystem.hpp"
+#include "birdsystem.hpp"
 
 /** For inputDataToInputComponent-method **/
 #include "inputdata.hpp"
@@ -60,6 +61,7 @@ private:
     AnimationSystem animationSystem;
     MoveDiffSystem moveDiffSystem;
     RenderDiffSystem renderDiffSystem;
+    BirdSystem birdSystem;
 
     std::unordered_map<IpAddress, ClientData> clients;
 

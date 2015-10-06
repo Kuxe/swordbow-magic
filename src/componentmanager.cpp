@@ -12,4 +12,5 @@ void ComponentManager::clearComponents(ID id) {
     healthComponents.erase(id);
     attackComponents.erase(id);
     commandComponents.erase(id);
+    accelerationComponents.erase(id);
 };

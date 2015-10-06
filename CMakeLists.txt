@@ -33,8 +33,10 @@ ADD_LIBRARY(sbm SHARED
 
 #Server specific sources
 ADD_LIBRARY(sbm-server SHARED
+    src/accelerationsystem.cpp
     src/animationsystem.cpp
     src/attacksystem.cpp
+    src/birdsystem.cpp
     src/collisionsystem.cpp
     src/entitymanager.cpp
     src/healthsystem.cpp

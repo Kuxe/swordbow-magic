@@ -63,6 +63,7 @@ class EntityManager {
     ID createDummySquare(const glm::vec2& poisiton);
     ID createStone(const glm::vec2& position);
     ID createBlueBird(const glm::vec2& position);
+    ID createSwarmPoint(const glm::vec2& position);
 	void remove(ID id);
     bool idExists(ID id);
 
