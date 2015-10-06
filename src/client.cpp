@@ -381,16 +381,33 @@ void Client::step() {
 }
 
 int main(int argc, char** argv) {
-    Logger::level = Log::INFO;
-    Client client(argc, argv);
+    Logger::level = Log::ERROR;
 
-    bool ipParameterSet = false;
+    /** Begin by parsing passed program arguments **/
+    for(int i = 0; i < argc; i++) {
+        std::string command(argv[i]);
+        size_t pos = command.rfind("--log=");
+        if(pos != std::string::npos) {
+            std::string logstr = command.substr(pos+6);
+
+            if(!logstr.compare("INFO")) {
+                Logger::level = Log::INFO;
+            } else if(!logstr.compare("WARNING")) {
+                Logger::level = Log::WARNING;
+            } else if(!logstr.compare("ERROR")) {
+                Logger::level = Log::ERROR;
+            } else {
+                Logger::log("Not valid value for --log=<INFO|WARNING|ERROR>", Log::ERROR);
+                return -1;
+            }
+        }
+    }
+
+    IpAddress ipAddress = {127, 0, 0, 1, 47293};
     for(int i = 0; i < argc; i++) {
         std::string command(argv[i]);
         size_t pos = command.rfind("--ip=");
         if(pos != std::string::npos) {
-            ipParameterSet = true;
-
             std::string ipstr = command.substr(pos+5);
             pos = ipstr.find_first_of(".");
             unsigned char a = stoi(ipstr.substr(0, pos));
@@ -414,16 +431,16 @@ int main(int argc, char** argv) {
                 port = stoi(ipstr.substr(pos+1));
             }
 
-            client.connect({a, b, c, d, port});
+            ipAddress = {a, b, c, d, port};
         }
     }
 
-    if(!ipParameterSet) {
-        client.connect({127, 0, 0, 1, 47293});
-    }
-
+    /** All arguments are parsed, now start the client **/
+    Client client(argc, argv);
+    client.connect(ipAddress);
     client.run();
     client.disconnect();
+    return 0;
 }
 
 

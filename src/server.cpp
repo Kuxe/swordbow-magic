@@ -418,7 +418,28 @@ void Server::printGeneralInfo() {
 }
 
 int main(int argc, char** argv) {
-	Logger::level = Log::INFO;
+	Logger::level = Log::ERROR; 
+
+	/** Begin by parsin passed program arguments **/
+	for(int i = 0; i < argc; i++) {
+        std::string command(argv[i]);
+        size_t pos = command.rfind("--log=");
+        if(pos != std::string::npos) {
+            std::string logstr = command.substr(pos+6);
+
+            if(!logstr.compare("INFO")) {
+                Logger::level = Log::INFO;
+            } else if(!logstr.compare("WARNING")) {
+                Logger::level = Log::WARNING;
+            } else if(!logstr.compare("ERROR")) {
+                Logger::level = Log::ERROR;
+            } else {
+                Logger::log("Not valid value for --log=<INFO|WARNING|ERROR>", Log::ERROR);
+                return -1;
+            }
+        }
+    }
+
 	Server server(argc, argv);
 	server.run();
 	return 0;
