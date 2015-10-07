@@ -54,14 +54,16 @@ void MoveSystem::update() {
 				mc.dir.y = ic.s - ic.w;
 			}
 
-			mc.vel = {ic.d - ic.a, ic.s - ic.w};
+			mc.vel = glm::vec2{ic.d - ic.a, ic.s - ic.w} * mc.maxVelLength; //temporary solution
 		}
 
 		//If some input was recieved which caused a move (mc.vel isn't of length 0)
 		if(glm::length(mc.vel) > 0) {
-			//Set it to appropiate length
-			mc.vel = glm::normalize(mc.vel);
-			mc.vel *= mc.maxVelLength;
+			if(glm::length(mc.vel) > mc.maxVelLength) {
+				mc.vel = glm::normalize(mc.vel);
+				mc.vel *= mc.maxVelLength;
+			}
+
 
 			//Adjust for dt
 			mc.vel *= deltaTime->delta();

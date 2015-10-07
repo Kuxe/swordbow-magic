@@ -2,6 +2,8 @@
 #include "componentmanager.hpp"
 #include <glm/gtx/vector_angle.hpp>
 #include <chrono>
+#include "deltatime.hpp"
+#include <math.h>
 
 BirdSystem::BirdSystem() {
 	seedTimer.start();
@@ -33,7 +35,7 @@ void BirdSystem::update() {
 		auto& accelerationComponent = componentManager->accelerationComponents.at(id);
 		auto& swarmIndex = birdComponent.swarmIndex;
 		auto& swarmPoint = swarmPoints.at(swarmIndex);
-		accelerationComponent.vec += getRandomAcceleration(moveComponent.pos, swarmPoint, 1600);
+		accelerationComponent.vec = accelerationComponent.vec*0.995f + getRandomAcceleration(moveComponent.pos, swarmPoint, 333);
 	}
 }
 
@@ -53,7 +55,7 @@ unsigned char BirdSystem::createSwarm(const glm::vec2& fixedPoint) {
 	auto swarmId = idManager.acquireId();
 	fixedPoints.insert({swarmId, fixedPoint});
 	//TODO: Generate swarmPoint
-	glm::vec2 swarmPoint = {50, 50};
+	glm::vec2 swarmPoint = {400, 400};
 	swarmPoints.insert({swarmId, swarmPoint});
 	return swarmId;
 }
@@ -74,9 +76,13 @@ glm::vec2 BirdSystem::getRandomAcceleration(
 	const glm::vec2& v2,
 	const unsigned short variance) const {
 	
-	unsigned short angleBetweenSwarmAndBird = glm::angle(v1, v2);
-	std::normal_distribution<double> normalDistribution = std::normal_distribution<double>(angleBetweenSwarmAndBird, variance);
+	const auto diff = v1 - v2;
+	std::normal_distribution<double> xdist = std::normal_distribution<double>(-diff.x, variance);
+	std::normal_distribution<double> ydist = std::normal_distribution<double>(-diff.y, variance);
 	std::default_random_engine generator(seedTimer.elapsed()*1000000000.0f);
-	auto randomAngle = normalDistribution(generator);
-	return glm::vec2 {cos(randomAngle), sin(randomAngle)} * glm::length(v1 - v2);
+
+	//Eagerness makes the speed of the birds more dependent on distance to their swarmpoint
+	//High eagerness = Oscillates more aggresivly around swarmpoint, with rapid moves
+	constexpr float eagerness = 0.05f; 
+	return glm::vec2 {xdist(generator), ydist(generator)} * (float)pow(glm::length(diff), eagerness);
 }

@@ -415,6 +415,7 @@ ID EntityManager::createBlueBird(const glm::vec2& position) {
 	mc.pos = position;
 	mc.oldPos = mc.pos;
 	mc.vel = {0, 0};
+	mc.maxVelLength = 150.0f;
 
 	rc.image = Image::BLUE_BIRD_WEST_3;
 	rc.zindex_base = 2;
