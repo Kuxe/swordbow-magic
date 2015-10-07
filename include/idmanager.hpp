@@ -10,6 +10,7 @@ typedef unsigned int ID;
 class IdManager {
 private:
     std::stack<ID> freeIds;
+    ID id = 0;
 
 public:
     static constexpr ID MAX_IDS = 2 << 24;

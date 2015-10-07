@@ -19,7 +19,6 @@ unsigned int IdManager::acquireId() {
 	}
 
 	//Else get next free id;
-	static ID id = 0;
 	id += 1;
 	if(id == MAX_IDS) {
 		Logger::log("Ran out of free ids (idmanager.cpp). Either increase the amount of freeIds or reduce entities in world", Log::ERROR);

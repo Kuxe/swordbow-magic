@@ -409,7 +409,8 @@ ID EntityManager::createBlueBird(const glm::vec2& position) {
 	auto& rc = componentManager->createRenderComponent(id);
 	auto& nc = componentManager->createNameComponent(id);
 	auto& ac = componentManager->createAnimationComponent(id);
-	auto accelerationComponent = componentManager->createAccelerationComponent(id);
+	auto& accelerationComponent = componentManager->createAccelerationComponent(id);
+	auto& bc = componentManager->createBirdComponent(id);
 
 	mc.pos = position;
 	mc.oldPos = mc.pos;
@@ -442,6 +443,7 @@ ID EntityManager::createBlueBird(const glm::vec2& position) {
 	registerIdToSystem(id, System::MOVE);
 	registerIdToSystem(id, System::ANIMATION);
 	registerIdToSystem(id, System::BIRD);
+	registerIdToSystem(id, System::ACCELERATION);
 
 	return id;
 }

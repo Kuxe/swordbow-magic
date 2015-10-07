@@ -23,6 +23,7 @@
 #include "movediffsystem.hpp"
 #include "renderdiffsystem.hpp"
 #include "birdsystem.hpp"
+#include "accelerationsystem.hpp"
 
 /** For inputDataToInputComponent-method **/
 #include "inputdata.hpp"
@@ -62,6 +63,7 @@ private:
     MoveDiffSystem moveDiffSystem;
     RenderDiffSystem renderDiffSystem;
     BirdSystem birdSystem;
+    AccelerationSystem accelerationSystem;
 
     std::unordered_map<IpAddress, ClientData> clients;
 

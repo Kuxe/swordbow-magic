@@ -38,6 +38,7 @@ Server::Server(int argc, char** argv) :
 	systemManager.add(&moveDiffSystem);
 	systemManager.add(&renderDiffSystem);
 	systemManager.add(&inputSystem);
+	systemManager.add(&accelerationSystem);
 	systemManager.add(&moveSystem);
 	systemManager.add(&birdSystem);
 	systemManager.add(&animationSystem);

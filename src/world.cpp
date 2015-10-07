@@ -3,6 +3,9 @@
 #include "entitymanager.hpp"
 #include "noisebrush.hpp"
 #include "logger.hpp"
+#include "birdsystem.hpp"
+#include "systemmanager.hpp"
+#include "componentmanager.hpp"
 
 World::World(EntityManager* entityManager) :
 		entityManager(entityManager)
@@ -115,12 +118,23 @@ void World::createDebugWorld() {
 	//test stuff on this guy
 	entityManager->createFatMan({50, 100});
 
-	//This is nice
-	entityManager->createBlueBird({300, 50});
-	entityManager->createBlueBird({20, 30});
-	entityManager->createBlueBird({50, 50});
-	entityManager->createBlueBird({50, 300});
-	entityManager->createBlueBird({62, 86});
-	entityManager->createBlueBird({68, 28});
+	//Create some birds in two separate flocks
+	auto& componentManager = entityManager->componentManager;
+	auto birdSystem = static_cast<BirdSystem*>(entityManager->systemManager->getSystem(System::BIRD));
+	auto swarmIndex = birdSystem->createSwarm({20, 40});
+	std::vector<glm::vec2> birdPoints = {{300, 50}, {20, 30}, {50, 50}, {50, 300}, {62, 86}, {68, 28}};
+	for(const auto& point : birdPoints) {
+		auto id = entityManager->createBlueBird(point);
+		auto& bc = componentManager->birdComponents.at(id);
+		bc.swarmIndex = swarmIndex;
+	}
+
+	swarmIndex = birdSystem->createSwarm({40, 70});
+	birdPoints = {{23, 32}, {123, 15}, {32, 43}, {46, 17}, {57, 32}, {87, 36}};
+	for(const auto& point : birdPoints) {
+		auto id = entityManager->createBlueBird(point);
+		auto& bc = componentManager->birdComponents.at(id);
+		bc.swarmIndex = swarmIndex;
+	}
 
 }

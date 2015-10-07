@@ -1,11 +1,6 @@
 #include "accelerationsystem.hpp"
 #include "componentmanager.hpp"
 
-AccelerationSystem::AccelerationSystem(const DeltaTime& deltaTime) :
-	deltaTime(deltaTime) {
-
-}
-
 void AccelerationSystem::add(ID id) {
 	ids.insert(id);
 }
@@ -18,7 +13,7 @@ void AccelerationSystem::update() {
 	for(auto id : ids) {
 		auto& mc = componentManager->moveComponents.at(id);
 		const auto& ac = componentManager->accelerationComponents.at(id);
-		mc.vel += ac.vec * deltaTime.delta();
+		mc.vel += ac.vec * deltaTime->delta();
 	}
 }
 

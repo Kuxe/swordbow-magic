@@ -7,15 +7,11 @@
 
 typedef unsigned int ID;
 
-class AccelerationSystem : ISystem {
+class AccelerationSystem : public ISystem {
 private:
-	DeltaTime deltaTime;
 	std::unordered_set<ID> ids;
 
 public:
-
-	AccelerationSystem(const DeltaTime& deltaTime);
-
 	void add(ID id);
  	void remove(ID id);
 	void update();
