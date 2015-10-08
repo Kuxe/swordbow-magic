@@ -121,20 +121,20 @@ void World::createDebugWorld() {
 	//Create some birds in two separate flocks
 	auto& componentManager = entityManager->componentManager;
 	auto birdSystem = static_cast<BirdSystem*>(entityManager->systemManager->getSystem(System::BIRD));
-	auto swarmIndex = birdSystem->createSwarm({20, 40});
+	auto swarmId = birdSystem->createSwarm({20, 40});
 	std::vector<glm::vec2> birdPoints = {{300, 50}, {20, 30}, {50, 50}, {50, 300}, {62, 86}, {68, 28}};
 	for(const auto& point : birdPoints) {
 		auto id = entityManager->createBlueBird(point);
 		auto& bc = componentManager->birdComponents.at(id);
-		bc.swarmIndex = swarmIndex;
+		bc.swarmId = swarmId;
 	}
 
-	swarmIndex = birdSystem->createSwarm({40, 70});
+	swarmId = birdSystem->createSwarm({40, 70});
 	birdPoints = {{23, 32}, {123, 15}, {32, 43}, {46, 17}, {57, 32}, {87, 36}};
 	for(const auto& point : birdPoints) {
 		auto id = entityManager->createBlueBird(point);
 		auto& bc = componentManager->birdComponents.at(id);
-		bc.swarmIndex = swarmIndex;
+		bc.swarmId = swarmId;
 	}
 
 }

@@ -1,10 +1,10 @@
 #ifndef BIRDCOMPONENT_HPP
 #define BIRDCOMPONENT_HPP
 
-typedef unsigned char SwarmIndex;
+typedef unsigned int ID;
 
 struct BirdComponent {
-	SwarmIndex swarmIndex;
+	ID swarmId;
 };
 
 #endif //BIRDCOMPONENT_HPP

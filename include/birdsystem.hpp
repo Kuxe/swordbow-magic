@@ -5,28 +5,29 @@
 #include <glm/vec2.hpp>
 #include <unordered_set>
 #include <unordered_map>
-#include "idmanager.hpp"
 #include <random>
 #include "timer.hpp"
 
 typedef unsigned int ID;
-typedef unsigned char SwarmIndex;
+
+class EntityManager;
 
 class BirdSystem : public ISystem {
 private:
-	std::unordered_set<ID> ids;
-	std::unordered_map<SwarmIndex, glm::vec2> swarmPoints;
-	std::unordered_map<SwarmIndex, glm::vec2> fixedPoints;
-	IdManager idManager;
+	std::unordered_set<ID> birdIds;
+	std::unordered_set<ID> swarmIds;
+	std::unordered_map<ID, glm::vec2> fixedPoints;
 	Timer seedTimer;
 
+	EntityManager* const entityManager;
+
 	glm::vec2 getRandomAcceleration(
-		const glm::vec2& vec1,
-		const glm::vec2& vec2,
-		const unsigned short variance) const;
+		const glm::vec2& v,
+		const unsigned short variance,
+		const float eagerness) const;
 
 public:
-	BirdSystem();
+	BirdSystem(EntityManager* const entityManager);
 
 	void add(ID id);
  	void remove(ID id);
@@ -39,10 +40,10 @@ public:
     //For any entity to be attached to the swarm, the entity
     //needs a birdComponent with swarmIndex = createSwarm({x, y});
     //For several birds to be part of a swarm, give them the same swarmIndex
-    unsigned char createSwarm(const glm::vec2& fixedPoint);
+    ID createSwarm(const glm::vec2& fixedPoint);
 
     //Swarm won't any longer affect birds in swarm 
-    bool dissolveSwarm(SwarmIndex swarmIndex);
+    bool dissolveSwarm(ID swarmId);
 
 };
 

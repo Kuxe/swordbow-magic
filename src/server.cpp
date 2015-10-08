@@ -22,7 +22,8 @@ Server::Server(int argc, char** argv) :
 		sizeHashGridSystem(&sizeBoundingBox),
 		collisionSystem(&sizeHashGridSystem),
 		removeSystem(&entityManager),
-		attackSystem(&sizeHashGridSystem, &clients, &socket) {
+		attackSystem(&sizeHashGridSystem, &clients, &socket),
+		birdSystem(&entityManager) {
 
 	Logger::log("Starting server", Log::INFO);
 	printGeneralInfo();
@@ -259,9 +260,7 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 	//and store them in a new Components<MoveComponent>
 	Components<MoveComponent> movediffs;
 	for(ID id : moveDiffSystem) {
-		Logger::disable();
 		movediffs.insert({id, componentManager.moveComponents.at(id)});
-		Logger::enable();
 	}
 
 	if(!movediffs.empty()) {
@@ -278,15 +277,11 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 	//and store them in a new Components<RendersComponent>
 	Components<RenderComponent> renderdiffs;
 	for(ID id : moveDiffSystem) {
-		Logger::disable();
 		renderdiffs.insert({id, componentManager.renderComponents.at(id)});
-		Logger::enable();
 	}
 
 	for(ID id : renderDiffSystem) {
-		Logger::disable();
 		renderdiffs.insert({id, componentManager.renderComponents.at(id)});
-		Logger::enable();
 	}
 
 
