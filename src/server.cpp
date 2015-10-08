@@ -226,31 +226,23 @@ void Server::onDisconnect(const IpAddress& ipAddress) {
 }
 
 void Server::sendInitial(const IpAddress& ipAddress) {
-
 	send<bool>(ipAddress, true, MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS);
 
-	Components<MoveComponent> initialMcs(initialComponentsSystem.count());
-	Components<RenderComponent> initialRcs(initialComponentsSystem.count());
-	const auto& mcs = componentManager.moveComponents;
-	const auto& rcs = componentManager.renderComponents;
-	for(auto id : initialComponentsSystem) {
-		initialMcs.insert({id, mcs.at(id)});
-		initialRcs.insert({id, rcs.at(id)});
-	}
-
-	const ID split = 64;
-	const auto& smallerMcs = initialMcs.split(split);
-	const auto& smallerRcs = initialRcs.split(split);
+	const ID componentsPerContainer = 64;
+	const auto& initialComponents = initialComponentsSystem.getInitialComponents();
+	const auto& initialMcs = initialComponents.first;
+	const auto& initialRcs = initialComponents.second;
+	const auto& smallerMcs = initialMcs.split(componentsPerContainer);
+	const auto& smallerRcs = initialRcs.split(componentsPerContainer);
 
 	std::ostringstream oss;
 	oss << "About to send #" << smallerMcs.size() << " small containers to client";
 	Logger::log(oss, Log::INFO);
 
 	using namespace std::literals;
-	using DataType = std::pair<Components<MoveComponent>, Components<RenderComponent>>;
+	using DataType = const std::pair<const Components<const MoveComponent&>, const Components<const RenderComponent&>>;
 	for(int i = 0; i < smallerMcs.size(); i++) {
-		const DataType& data = {smallerMcs[i], smallerRcs[i]};
-		send<DataType>(ipAddress, data, MESSAGE_TYPE::INITIAL_COMPONENTS);
+		send<DataType>(ipAddress, {smallerMcs[i], smallerRcs[i]}, MESSAGE_TYPE::INITIAL_COMPONENTS);
 		std::this_thread::sleep_for(1ms);
 	}
 

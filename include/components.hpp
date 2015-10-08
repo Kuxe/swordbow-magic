@@ -131,6 +131,18 @@ public:
         return containers;
     }
 
+    const std::vector<Components<const T&>> split(ID componentsPerContainer) const {
+        const int numContainers = (size() / componentsPerContainer) + ((size() % componentsPerContainer) > 0 ? 1 : 0);
+        std::vector<Components<T>> containers(numContainers, Components<T>());
+        auto it(begin());
+        for(auto& smallerContainer : containers) {
+            for(int i = 0; i < componentsPerContainer && it != end(); i++) {
+                smallerContainer.insert(*it++);
+            }
+        }
+        return containers;
+    }
+
     template<class Archive>
     constexpr void serialize(Archive& ar) {
         ar(container);

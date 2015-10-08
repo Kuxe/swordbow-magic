@@ -3,6 +3,9 @@
 
 #include "isystem.hpp"
 #include <unordered_set>
+#include "components.hpp"
+#include "movecomponent.hpp"
+#include "rendercomponent.hpp"
 
 /** If any entity is member of this system, it will be
 	sent in the INITIAL_COMPONENTS that is sent to clients
@@ -11,6 +14,7 @@
 class InitialComponentsSystem : public ISystem {
 private:
 	std::unordered_set<ID> ids;
+	std::pair<Components<const MoveComponent&>, Components<const RenderComponent&>> initialComponents;
 
 public:
 	void add(ID id);
@@ -19,9 +23,9 @@ public:
 	unsigned int count() const;
 	const System::Identifier getIdentifier() const;
     bool activateId(ID id);
-
-    auto begin() const { return ids.begin(); }
-    auto end() const { return ids.end(); }
+    const auto& getInitialComponents() const {
+    	return initialComponents;
+    }
 };
 
 

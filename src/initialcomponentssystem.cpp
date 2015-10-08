@@ -3,10 +3,14 @@
 
 void InitialComponentsSystem::add(ID id) {
 	ids.insert(id);
+	initialComponents.first.insert({id, componentManager->moveComponents.at(id)});
+	initialComponents.second.insert({id, componentManager->renderComponents.at(id)});
 }
 
 void InitialComponentsSystem::remove(ID id) {
 	ids.erase(id);
+	initialComponents.first.erase(id);
+	initialComponents.first.erase(id);
 }
 
 void InitialComponentsSystem::update() {
