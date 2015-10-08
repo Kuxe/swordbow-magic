@@ -17,6 +17,10 @@ private:
     Container container;
 
 public:
+    constexpr Components() { }
+    constexpr Components(const size_t size) :
+        container(size) { }
+
     void insert(const std::pair<const ID, const T&> pair) {
         std::ostringstream oss;
         oss << "Adding " << typeid(T).name() << " to id " << pair.first;

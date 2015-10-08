@@ -32,7 +32,7 @@ void RenderSystem::update() {
     //Cap the amount of IDs getting rendered each frame
     //this is only a quick-fix to ensure no program-freeze
     //when initially rendering the whole world
-    char allowedRendersThisFrame = 32;
+    int allowedRendersThisFrame = 512;
 	//For all activeIds in rendersystem...
 	while(!activeIds.empty() && allowedRendersThisFrame-- > 0 ) {
 		//Draw everything within the activeIds texturearea

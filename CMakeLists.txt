@@ -41,6 +41,7 @@ ADD_LIBRARY(sbm-server SHARED
     src/entitymanager.cpp
     src/healthsystem.cpp
     src/idmanager.cpp
+    src/initialcomponentssystem.cpp
     src/inputsystem.cpp
     src/movediffsystem.cpp
     src/movesystem.cpp

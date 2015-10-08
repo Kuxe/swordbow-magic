@@ -1,5 +1,6 @@
 #include "accelerationsystem.hpp"
 #include "componentmanager.hpp"
+#include "logger.hpp"
 
 void AccelerationSystem::add(ID id) {
 	ids.insert(id);

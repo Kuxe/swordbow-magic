@@ -85,7 +85,31 @@ void World::createWorld() {
 
 	const uint NUM_STONES = 100;
 	for(uint i = 0; i < NUM_STONES; i++) {
-		entityManager->createStone({uniformx(generator), uniformy(generator)});
+		entityManager->createStone({stoneUniformx(generator), stoneUniformy(generator)});
+	}
+
+	//Create some birds
+	auto& componentManager = entityManager->componentManager;
+	auto birdSystem = static_cast<BirdSystem*>(entityManager->systemManager->getSystem(System::BIRD));
+	std::uniform_real_distribution<double> swarmUniformx(0.0, NUM_TILES * TILE_SIZE);
+	std::uniform_real_distribution<double> swarmUniformy(0.0, NUM_TILES * TILE_SIZE);
+	constexpr uint birdVariance = 400;
+	std::normal_distribution<double> numberOfSwarmsDist(10, 0.5);
+	std::normal_distribution<double> numberOfBirdsPerSwarmDist(8, 3);
+
+	const auto numberOfSwarms = numberOfSwarmsDist(generator);
+	for(int i = 0; i < numberOfSwarms; i++) {
+		const glm::vec2 swarmPos = {swarmUniformx(generator), swarmUniformy(generator)};
+		std::normal_distribution<double> birdNormalx(swarmPos.x, birdVariance);
+		std::normal_distribution<double> birdNormaly(swarmPos.y, birdVariance);
+		const auto swarmId = birdSystem->createSwarm(swarmPos);
+		const auto numberOfBirds = numberOfBirdsPerSwarmDist(generator);
+		for(int j = 0; j < numberOfBirds; j++) {
+			const glm::vec2 birdPos = {birdNormalx(generator), birdNormaly(generator)};
+			const auto id = entityManager->createBlueBird(birdPos);
+			auto& bc = componentManager->birdComponents.at(id);
+			bc.swarmId = swarmId;
+		}
 	}
 }
 

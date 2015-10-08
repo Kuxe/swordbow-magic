@@ -24,6 +24,7 @@
 #include "renderdiffsystem.hpp"
 #include "birdsystem.hpp"
 #include "accelerationsystem.hpp"
+#include "initialcomponentssystem.hpp"
 
 /** For inputDataToInputComponent-method **/
 #include "inputdata.hpp"
@@ -64,6 +65,7 @@ private:
     RenderDiffSystem renderDiffSystem;
     BirdSystem birdSystem;
     AccelerationSystem accelerationSystem;
+    InitialComponentsSystem initialComponentsSystem;
 
     std::unordered_map<IpAddress, ClientData> clients;
 

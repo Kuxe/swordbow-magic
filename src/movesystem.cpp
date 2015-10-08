@@ -12,7 +12,6 @@
 void MoveSystem::add(ID id) {
 	ids.insert(id);
 	activeIds.insert(id);
-	systemManager->getSystem(System::MOVEDIFF)->add(id);
 }
 
 void MoveSystem::remove(ID id) {
@@ -85,11 +84,6 @@ void MoveSystem::update() {
 				auto& cc = componentManager->commandComponents.at(id);
 				cc.execute(CommandComponent::Event::ON_MOVE);
 			}
-
-			//FIXME: This is problematic... it means that any component that moved is sent to clients
-			//But not all things that move should be sent to clients, swarmPoints for example.
-			//This causes a crash on both client and server-side.
-			systemManager->getSystem(System::MOVEDIFF)->add(id);
 		}
 	}
 }

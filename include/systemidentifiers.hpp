@@ -21,6 +21,7 @@ namespace System {
         RENDERDIFF,
         RENDER,
         BIRD,
+        INITIAL_COMPONENTS,
     };
 }
 

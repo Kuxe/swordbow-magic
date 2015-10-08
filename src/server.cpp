@@ -48,6 +48,7 @@ Server::Server(int argc, char** argv) :
 	systemManager.add(&attackSystem);
 	systemManager.add(&healthSystem);
 	systemManager.add(&removeSystem);
+	systemManager.add(&initialComponentsSystem);
 
 	//Populate world with... world
 	World world(&entityManager);
@@ -228,17 +229,25 @@ void Server::sendInitial(const IpAddress& ipAddress) {
 
 	send<bool>(ipAddress, true, MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS);
 
-	using DataType = std::pair<Components<MoveComponent>, Components<RenderComponent>>;
+	Components<MoveComponent> initialMcs(initialComponentsSystem.count());
+	Components<RenderComponent> initialRcs(initialComponentsSystem.count());
+	const auto& mcs = componentManager.moveComponents;
+	const auto& rcs = componentManager.renderComponents;
+	for(auto id : initialComponentsSystem) {
+		initialMcs.insert({id, mcs.at(id)});
+		initialRcs.insert({id, rcs.at(id)});
+	}
 
 	const ID split = 64;
-	const auto& smallerMcs = componentManager.moveComponents.split(split);
-	const auto& smallerRcs = componentManager.renderComponents.split(split);
+	const auto& smallerMcs = initialMcs.split(split);
+	const auto& smallerRcs = initialRcs.split(split);
 
 	std::ostringstream oss;
 	oss << "About to send #" << smallerMcs.size() << " small containers to client";
 	Logger::log(oss, Log::INFO);
 
 	using namespace std::literals;
+	using DataType = std::pair<Components<MoveComponent>, Components<RenderComponent>>;
 	for(int i = 0; i < smallerMcs.size(); i++) {
 		const DataType& data = {smallerMcs[i], smallerRcs[i]};
 		send<DataType>(ipAddress, data, MESSAGE_TYPE::INITIAL_COMPONENTS);
@@ -273,17 +282,12 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 		Logger::log(oss, Log::INFO);
 	}
 
-	//Get all rendercomponents of members of movediffsystem
+	//Get all rendercomponents of members of renderdiffsystem
 	//and store them in a new Components<RendersComponent>
 	Components<RenderComponent> renderdiffs;
-	for(ID id : moveDiffSystem) {
-		renderdiffs.insert({id, componentManager.renderComponents.at(id)});
-	}
-
 	for(ID id : renderDiffSystem) {
 		renderdiffs.insert({id, componentManager.renderComponents.at(id)});
 	}
-
 
 	if(!renderdiffs.empty()) {
 		send<Components<RenderComponent>>(ipAddress, renderdiffs, MESSAGE_TYPE::RENDERCOMPONENTSDIFF);
