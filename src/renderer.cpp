@@ -4,6 +4,9 @@
 #include "logger.hpp"
 #include <ostream>
 
+/** For strmcp **/
+#include <cstring>
+
 Renderer::Renderer(int argc, char** argv) {
     //Initialize SDL
     if(SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {

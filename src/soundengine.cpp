@@ -1,6 +1,7 @@
 #include "soundengine.hpp"
 #include <chrono>
 #include <string>
+#include <cstring>
 
 /** For logging **/
 #include "logger.hpp"

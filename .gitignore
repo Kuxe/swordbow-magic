@@ -78,3 +78,6 @@ swordbow-magic-test
 
 #Files generated from doxygen
 /doxygen/
+
+#Dependencies is platform dependent and handled by CMake (not git)
+/deps/

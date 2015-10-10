@@ -3,9 +3,6 @@
 /** For logging **/
 #include "logger.hpp"
 
-/** For event-handling **/
-#include <SDL2/SDL.h>
-
 /** For network **/
 #include "messagetypes.hpp"
 #include "packet.hpp"

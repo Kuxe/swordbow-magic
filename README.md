@@ -4,12 +4,14 @@ swordbow-magic
 A multiplayer 2D top-down game with procedurally generated worlds. Very much in-progress.
 
 # Dependencies
-Before building you need to make sure some dependencies are installed, namely some software and libraries:
+Dependencies are installed locally (inside the repo, not in system-directories) by cmake. The build-system downloads the repositories using git and mercurial, so both git and mercurial need to be installed by you manually.
 
 ## Software
 * C++14 compliant compiler
 * CMake
 * make
+* git
+* mercurial (hg)
 
 ## Libraries
 * SDL2
@@ -18,8 +20,6 @@ Before building you need to make sure some dependencies are installed, namely so
 * SDL2_mixer
 * OGG (as in Ogg Vorbis libraries)
 * <a href=https://github.com/USCiLab/cereal>Cereal</a>
-
-If these are not installed, the build wil fail. CMake will tell you what dependencies are missing when running the `cmake ..` step as described bellow
 
 # Building
 ## Linux and OSX
@@ -47,8 +47,7 @@ You can build either a release build or debug build. I don't know if it builds a
 3. Two executables (client and server) is present inside \\swordbow-magic\\release\\\<executables should be here>
 
 ## Running
-Navigate to git root, after a successful build there should be two executables:
-
+There can be some bootup-time for server if running with parameter bigworld. Be patient before connecting a client. There should be two executables in the same directory that `make build` was executed:
 * swordbow-magic-server
 * swordbow-magic-client
 

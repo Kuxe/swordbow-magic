@@ -24,17 +24,17 @@
 
 
 /** For portable serialization using cereal **/
-#include <cereal/archives/portable_binary.hpp>
+#include "cereal/archives/portable_binary.hpp"
 
 /** These are needed for cereal to know how to serialize std containers **/
-#include <cereal/types/string.hpp>
-#include <cereal/types/memory.hpp>
-#include <cereal/types/unordered_map.hpp>
-#include <cereal/types/vector.hpp>
-#include <cereal/types/tuple.hpp>
-#include <cereal/types/chrono.hpp>
-#include <cereal/types/utility.hpp> //for std::pair
-#include <cereal/types/queue.hpp>
+#include "cereal/types/string.hpp"
+#include "cereal/types/memory.hpp"
+#include "cereal/types/unordered_map.hpp"
+#include "cereal/types/vector.hpp"
+#include "cereal/types/tuple.hpp"
+#include "cereal/types/chrono.hpp"
+#include "cereal/types/utility.hpp" //for std::pair
+#include "cereal/types/queue.hpp"
 
 #if PLATFORM == PLATFORM_WINDOWS
     typedef int socklen_t;
