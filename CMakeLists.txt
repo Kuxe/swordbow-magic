@@ -180,6 +180,7 @@ ADD_DEPENDENCIES(sbm Catch)
 TARGET_INCLUDE_DIRECTORIES(sbm PUBLIC
     ${CMAKE_SOURCE_DIR}/include/
     ${DEP_DIR}/cereal/src/Cereal/include/
+    ${DEP_DIR}/GLM/src/GLM/
 )
 TARGET_INCLUDE_DIRECTORIES(sbm-client PUBLIC
     ${CMAKE_SOURCE_DIR}/include/
