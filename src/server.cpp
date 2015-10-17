@@ -12,7 +12,7 @@
 /** For logging **/
 #include "logger.hpp"
 
-#include "SDL.h" //For SDL_keys
+#include <SDL2/SDL.h> //For SDL_keys
 
 Server::Server(int argc, char** argv) :
 		socket("swordbow-magic"),

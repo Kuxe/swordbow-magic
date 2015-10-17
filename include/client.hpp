@@ -14,7 +14,7 @@
 #include "messagetypes.hpp"
 #include "timer.hpp"
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 #include <mutex>
 #include <thread>
 

@@ -4,9 +4,9 @@
 #include <unordered_map>
 #include <queue>
 
-#include "SDL.h"
-#include "SDL_image.h"
-#include "SDL_ttf.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "text.hpp"
 #include "texturedata.hpp"

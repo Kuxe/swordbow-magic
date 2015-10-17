@@ -1,7 +1,7 @@
 #ifndef CAMERASYSTEM_HPP
 #define CAMERASYSTEM_HPP
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 #include "isystem.hpp"
 
 typedef unsigned int ID;

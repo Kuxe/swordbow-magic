@@ -2,9 +2,9 @@
 #define SOUNDSYSTEM_H
 
 #include <unordered_map>
-#include "SDL.h"
-#include "SDL_audio.h"
-#include "SDL_mixer.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_audio.h>
+#include <SDL2/SDL_mixer.h>
 #include "sounddata.hpp"
 #include "soundidentifiers.hpp"
 #include "musicidentifiers.hpp"

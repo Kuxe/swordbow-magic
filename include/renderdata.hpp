@@ -2,7 +2,7 @@
 #define RENDERDATA_HPP
 
 #include "imageidentifiers.hpp"
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 struct RenderData {
 

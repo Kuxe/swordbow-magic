@@ -95,6 +95,15 @@ ENDIF()
 #This is fine, because all required files will be
 #somewhere inside ${CMAKE_SOURCE_DIR}/deps/<somehere here or further down>/
 
+#Run "make setup" to download dependencies required
+#Other target are dependant on this target but not
+#marked as dependant in this CMakeLists.txt, or any other
+#CMakeLists.txt because this is a time consuming step
+#that only needs to be executed once
+ADD_CUSTOM_TARGET(setup
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+)
+
 #Without these, no dependencies can be downloaded
 #Hence these must be setup by everyone intended to build swordbow-magic
 FIND_PACKAGE(Git REQUIRED)
@@ -102,62 +111,24 @@ FIND_PACKAGE(Hg REQUIRED)
 
 SET(DEP_DIR "${CMAKE_SOURCE_DIR}/deps")
 
+#PLATFORM INDEPENDENT DOWNLOADS
 EXTERNALPROJECT_ADD(Cereal
     PREFIX ${DEP_DIR}/cereal
     GIT_REPOSITORY https://github.com/USCiLab/cereal
-    BUILD_COMMAND "" #Cereal is header only
-    INSTALL_COMMAND "" #Cereal is header only
-)
-ADD_DEPENDENCIES(sbm Cereal)
-
-SET(SDL2_INSTALL_PREFIX "${DEP_DIR}/SDL2-install")
-FILE(MAKE_DIRECTORY "${SDL2_INSTALL_PREFIX}")
-
-EXTERNALPROJECT_ADD(SDL2_project
-    PREFIX ${DEP_DIR}/SDL2
-    HG_REPOSITORY http://hg.libsdl.org/SDL
-    CONFIGURE_COMMAND ${DEP_DIR}/SDL2/src/SDL2_project/configure --prefix=${SDL2_INSTALL_PREFIX} --quiet
-    INSTALL_COMMAND make install --quiet
-)
-ADD_DEPENDENCIES(sbm SDL2_project)
-
-EXTERNALPROJECT_ADD(SDL2_image_project
-    PREFIX ${DEP_DIR}/SDL2_image
-    HG_REPOSITORY http://hg.libsdl.org/SDL_image/
-    CONFIGURE_COMMAND ${DEP_DIR}/SDL2_image/src/SDL2_image_project/configure --prefix=${SDL2_INSTALL_PREFIX} --with-sdl-prefix=${SDL2_INSTALL_PREFIX} --quiet
+    CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
-    INSTALL_COMMAND make install --quiet
+    INSTALL_COMMAND ""
 )
-ADD_DEPENDENCIES(SDL2_image_project SDL2_project)
-ADD_DEPENDENCIES(sbm-client SDL2_image_project)
-
-EXTERNALPROJECT_ADD(SDL2_ttf_project
-    PREFIX ${DEP_DIR}/SDL2_ttf
-    HG_REPOSITORY http://hg.libsdl.org/SDL_ttf/
-    CONFIGURE_COMMAND ${DEP_DIR}/SDL2_ttf/src/SDL2_ttf_project/configure --prefix=${SDL2_INSTALL_PREFIX} --with-sdl-prefix=${SDL2_INSTALL_PREFIX} --quiet
-    BUILD_COMMAND ""
-    INSTALL_COMMAND make install --quiet
-)
-ADD_DEPENDENCIES(SDL2_ttf_project SDL2_project)
-ADD_DEPENDENCIES(sbm-client SDL2_ttf_project)
-
-EXTERNALPROJECT_ADD(SDL2_mixer_project
-    PREFIX ${DEP_DIR}/SDL2_mixer
-    HG_REPOSITORY http://hg.libsdl.org/SDL_mixer/
-    CONFIGURE_COMMAND ${DEP_DIR}/SDL2_mixer/src/SDL2_mixer_project/configure --prefix=${SDL2_INSTALL_PREFIX} --with-sdl-prefix=${SDL2_INSTALL_PREFIX} --quiet
-    BUILD_COMMAND ""
-    INSTALL_COMMAND make install --quiet
-)
-ADD_DEPENDENCIES(SDL2_mixer_project SDL2_project)
-ADD_DEPENDENCIES(sbm-client SDL2_mixer_project)
+ADD_DEPENDENCIES(setup Cereal)
 
 EXTERNALPROJECT_ADD(GLM
     PREFIX ${DEP_DIR}/GLM
     GIT_REPOSITORY https://github.com/g-truc/glm
-    BUILD_COMMAND "" #header only
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
     INSTALL_COMMAND ""
 )
-ADD_DEPENDENCIES(sbm GLM)
+ADD_DEPENDENCIES(setup GLM)
 
 EXTERNALPROJECT_ADD(OGG
     PREFIX ${DEP_DIR}/OGG
@@ -166,7 +137,7 @@ EXTERNALPROJECT_ADD(OGG
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
 )
-ADD_DEPENDENCIES(sbm-client OGG)
+ADD_DEPENDENCIES(setup OGG)
 
 EXTERNALPROJECT_ADD(Catch
     PREFIX ${DEP_DIR}/Catch
@@ -175,7 +146,78 @@ EXTERNALPROJECT_ADD(Catch
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
 )
-ADD_DEPENDENCIES(sbm Catch)
+ADD_DEPENDENCIES(setup Catch)
+
+
+#As for the platform dependant dependencies (such as SDL2 which isn't header only)
+#Different platforms get ahold of the libraries in different ways
+#sbm, sbm-client and sbm-server expects, for each platform, that these variables are
+#set to valid directories containing either headers or libraries:
+#   SLD2_INCLUDE_DIR
+#   SDL2_IMAGE_INCLUDE_DIR
+#   SDL2_TTF_INCLUDE_DIR
+#   SDL2_MIXER_INCLUDE_DIR
+#   SDL2_LIB_DIR
+#   SDL2_IMAGE_LIB_DIR
+#   SDL2_TTF_LIB_DIR
+#   SDL2_MIXER_LIB_DIR
+
+IF(UNIX)
+    SET(SDL2_INSTALL_PREFIX "${DEP_DIR}/SDL2-install")
+    FILE(MAKE_DIRECTORY "${SDL2_INSTALL_PREFIX}")
+
+    EXTERNALPROJECT_ADD(SDL2_project
+        PREFIX ${DEP_DIR}/SDL2
+        HG_REPOSITORY http://hg.libsdl.org/SDL
+        CONFIGURE_COMMAND ${DEP_DIR}/SDL2/src/SDL2_project/configure --prefix=${SDL2_INSTALL_PREFIX}
+        INSTALL_COMMAND make install
+    )
+    SET(SDL2_INCLUDE_DIR "${SDL2_INSTALL_PREFIX}/include/")
+    SET(SDL2_LIB_DIR "${SDL2_INSTALL_PREFIX}/lib/")
+    ADD_DEPENDENCIES(setup SDL2_project)
+
+    EXTERNALPROJECT_ADD(SDL2_image_project
+        PREFIX ${DEP_DIR}/SDL2_image
+        HG_REPOSITORY http://hg.libsdl.org/SDL_image
+        CONFIGURE_COMMAND cd ${DEP_DIR}/SDL2_image/src/SDL2_image_project && ./autogen.sh && ./configure --prefix=${SDL2_INSTALL_PREFIX} --with-sdl-prefix=${SDL2_INSTALL_PREFIX}
+        BUILD_COMMAND cd ${DEP_DIR}/SDL2_image/src/SDL2_image_project && make
+        INSTALL_COMMAND cd ${DEP_DIR}/SDL2_image/src/SDL2_image_project && make install
+    )
+    SET(SDL2_IMAGE_INCLUDE_DIR "${SDL2_INSTALL_PREFIX}/include/")
+    SET(SDL2_IMAGE_LIB_DIR "${SDL2_INSTALL_PREFIX}/lib/")
+    ADD_DEPENDENCIES(SDL2_image_project SDL2_project)
+    ADD_DEPENDENCIES(setup SDL2_image_project)
+
+    EXTERNALPROJECT_ADD(SDL2_ttf_project
+        PREFIX ${DEP_DIR}/SDL2_ttf
+        HG_REPOSITORY http://hg.libsdl.org/SDL_ttf/
+        CONFIGURE_COMMAND cd ${DEP_DIR}/SDL2_ttf/src/SDL2_ttf_project && ./autogen.sh && ./configure --prefix=${SDL2_INSTALL_PREFIX} --with-sdl-prefix=${SDL2_INSTALL_PREFIX}
+        BUILD_COMMAND cd ${DEP_DIR}/SDL2_ttf/src/SDL2_ttf_project && make
+        INSTALL_COMMAND cd ${DEP_DIR}/SDL2_ttf/src/SDL2_ttf_project && make install
+    )
+    SET(SDL2_TTF_INCLUDE_DIR "${SDL2_INSTALL_PREFIX}/include/")
+    SET(SDL2_TTF_LIB_DIR "${SDL2_INSTALL_PREFIX}/lib/")
+    ADD_DEPENDENCIES(SDL2_ttf_project SDL2_project)
+    ADD_DEPENDENCIES(setup SDL2_ttf_project)
+
+    EXTERNALPROJECT_ADD(SDL2_mixer_project
+        PREFIX ${DEP_DIR}/SDL2_mixer
+        HG_REPOSITORY http://hg.libsdl.org/SDL_mixer/
+        CONFIGURE_COMMAND cd ${DEP_DIR}/SDL2_mixer/src/SDL2_mixer_project && ./autogen.sh && ./configure --prefix=${SDL2_INSTALL_PREFIX} --with-sdl-prefix=${SDL2_INSTALL_PREFIX}
+        BUILD_COMMAND cd ${DEP_DIR}/SDL2_mixer/src/SDL2_mixer_project && make
+        INSTALL_COMMAND cd ${DEP_DIR}/SDL2_mixer/src/SDL2_mixer_project && make install
+    )
+    SET(SDL2_MIXER_INCLUDE_DIR "${SDL2_INSTALL_PREFIX}/include/")
+    SET(SDL2_MIXER_LIB_DIR "${SDL2_INSTALL_PREFIX}/lib/")
+    ADD_DEPENDENCIES(SDL2_mixer_project SDL2_project)
+    ADD_DEPENDENCIES(setup SDL2_mixer_project)
+
+ELSEIF(WIN32)
+    #TODO: Download dependencies and set variables as described couple of lines above
+    MESSAGE(FATAL_ERROR "Windows not supported yet (but it will be 'soon')")
+ELSEIF()
+    MESSAGE(FATAL_ERROR "Could not indentify platform. I (the cmake file) doesn't think this is a Linux, OSX or Windows computer and therefore goodbye")
+ENDIF()
 
 TARGET_INCLUDE_DIRECTORIES(sbm PUBLIC
     ${CMAKE_SOURCE_DIR}/include/
@@ -184,15 +226,15 @@ TARGET_INCLUDE_DIRECTORIES(sbm PUBLIC
 )
 TARGET_INCLUDE_DIRECTORIES(sbm-client PUBLIC
     ${CMAKE_SOURCE_DIR}/include/
-    ${DEP_DIR}/SDL2/src/SDL2_project/include/
-    ${DEP_DIR}/SDL2_image/src/SDL2_image_project/
-    ${DEP_DIR}/SDL2_ttf/src/SDL2_ttf_project/
-    ${DEP_DIR}/SDL2_mixer/src/SDL2_mixer_project/
+    ${SDL2_INCLUDE_DIR}
+    ${SDL2_IMAGE_INCLUDE_DIR}
+    ${SDL2_TTF_INCLUDE_DIR}
+    ${SDL2_MIXER_INCLUDE_DIR}
     ${DEP_DIR}/cereal/src/Cereal/include/
 )
 TARGET_INCLUDE_DIRECTORIES(sbm-server PUBLIC
     ${CMAKE_SOURCE_DIR}/include/
-    ${DEP_DIR}/SDL2/src/SDL2_project/include/
+    ${SDL2_INCLUDE_DIR}
 )
 
 
