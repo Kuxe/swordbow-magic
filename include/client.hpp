@@ -14,12 +14,18 @@
 #include "messagetypes.hpp"
 #include "timer.hpp"
 
+/** States of client **/
+#include "clientdisconnectedstate.hpp"
+#include "clientreceiveinitialstate.hpp"
+#include "clientrunningstate.hpp"
+
 #include <SDL2/SDL.h>
 #include <mutex>
 #include <thread>
 
 typedef unsigned int ID;
 
+class ClientState;
 class Client {
 private:
     Socket socket;
@@ -50,7 +56,19 @@ private:
     //ID that this client controlls
     ID playerId;
 
+    //States of the client
+    IClientState* clientState;
+    friend ClientDisconnectedState;
+    ClientDisconnectedState clientDisconnectedState;
+    friend ClientReceiveInitialState;
+    ClientReceiveInitialState clientReceiveInitialState;
+    friend ClientRunningState;
+    ClientRunningState clientRunningState;
+
     void receive();
+
+public:
+    bool running = true;
 
     //Helper method for sending packets
     template<class DataType>
@@ -67,9 +85,6 @@ private:
 
         socket.send<PacketType>(server, cameraPacket);
     }
-
-public:
-    bool running = true;
 
     Client(int argc, char** argv);
     ~Client();

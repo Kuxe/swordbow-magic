@@ -77,6 +77,16 @@ Renderer::Renderer(int argc, char** argv) {
 					}
 					SDL_SetRenderTarget(renderer, worldTexture);
 					SDL_RenderClear(renderer);
+
+                    overlayTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
+                    if(!overlayTexture) {
+                        std::ostringstream oss;
+                        oss << "Couldn't create overlayTexture!" << std::endl;
+                        oss << "You won't see any loading screens or alike.. Screen could go all black" << std::endl;
+                        oss << "SDL_GetError(): " << SDL_GetError() << std::endl;
+                        Logger::log(oss, Log::ERROR);
+                    }
+                    SDL_SetTextureBlendMode(overlayTexture, SDL_BLENDMODE_BLEND);
 				}
 
                 if(TTF_Init() < 0 ) {
@@ -157,6 +167,11 @@ Renderer::Renderer(int argc, char** argv) {
         {Image::BLUE_BIRD_EAST_2, imageDirectory + "bluebird_east_2.png"},
         {Image::BLUE_BIRD_EAST_3, imageDirectory + "bluebird_east_3.png"},
         {Image::BLUE_BIRD_EAST_4, imageDirectory + "bluebird_east_4.png"},
+
+        {Image::GREY_OVERLAY, imageDirectory + "grey_overlay.png"},
+        {Image::CONNECT_OVERLAY, imageDirectory + "grey_overlay.png"},
+        {Image::RECEIVING_DATA_OVERLAY, imageDirectory + "grey_overlay.png"},
+        {Image::INITIAL_LAG_OVERLAY, imageDirectory + "grey_overlay.png"},
     };
 
     //Bind each texture with a value in Image and load the texture
@@ -218,12 +233,24 @@ void Renderer::render(std::priority_queue<RenderData>& pq, const SDL_Rect& camer
     //Render all texts
     renderTexts();
 
+    //Ontop of everything, render overlays (if any)
+    renderOverlays();
+
     //Draw to default render target (NULL)
     SDL_SetRenderTarget(renderer, NULL);
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, worldTexture, &camera, NULL);
     SDL_RenderCopy(renderer, fontTexture, nullptr, nullptr);
+    SDL_RenderCopy(renderer, overlayTexture, nullptr, nullptr);
 	SDL_RenderPresent(renderer);
+}
+
+void Renderer::renderOnlyOverlays() {
+    renderOverlays();
+    SDL_SetRenderTarget(renderer, NULL);
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, overlayTexture, nullptr, nullptr);
+    SDL_RenderPresent(renderer);
 }
 
 void Renderer::printText(const Text& text) {
@@ -254,6 +281,60 @@ const std::unordered_map<Image::Identifier, TextureData, std::hash<int>>& Render
     return textureDatas;
 }
 
+void Renderer::showOverlay(Image::Identifier identifier, Text text) {
+    overlays.insert({identifier, Overlay(identifier, text)});
+    auto& overlay = overlays.at(identifier);
+    overlay.show();
+}
+
+void Renderer::hideOverlay(Image::Identifier identifier) {
+    overlays.erase(identifier);
+}
+
+void Renderer::fadeInOverlay(Image::Identifier identifier, float seconds, Text text) {
+    overlays.insert({identifier, Overlay(identifier, text)});
+    auto& overlay = overlays.at(identifier);
+    overlay.fadeIn(seconds);
+}
+
+
+void Renderer::fadeOutOverlay(Image::Identifier identifier, float seconds) {
+    auto& overlay = overlays.at(identifier);
+    overlay.fadeOut(seconds);
+}
+
+void Renderer::renderOverlays() {
+    SDL_SetRenderTarget(renderer, overlayTexture);
+    SDL_RenderClear(renderer);
+    for(auto& pair : overlays) {
+        auto& identifier = pair.first;
+        auto& overlay = pair.second;
+        auto& texture = textureDatas.at(identifier).texture;
+
+        const float transparency = overlay.getTransparency();
+        constexpr float eps = 0.00001f;
+        if(transparency > 1.0f - eps) {
+            hideOverlay(identifier);
+        } else {
+            SDL_SetTextureAlphaMod(texture, (1 - transparency) * 255);
+            auto& texture = textureDatas.at(overlay.identifier).texture;
+            SDL_RenderCopy(renderer, texture, nullptr, nullptr);
+
+            const auto& text = overlay.getText();
+            if(text.text != "") {
+                auto fontSurface = TTF_RenderText_Solid(font, text.text.c_str(), text.color);
+                auto tmpTexture = SDL_CreateTextureFromSurface(renderer, fontSurface);
+                SDL_SetTextureAlphaMod(tmpTexture, (1 - transparency) * 255);
+                int w, h;
+                TTF_SizeText(font, text.text.c_str(), &w, &h);
+                const SDL_Rect tmpdest = {text.x, text.y, w, h};
+                SDL_RenderCopy(renderer, tmpTexture, nullptr, &tmpdest);
+                SDL_FreeSurface(fontSurface);
+                SDL_DestroyTexture(tmpTexture);
+            }
+        }
+    }
+}
 
 
 

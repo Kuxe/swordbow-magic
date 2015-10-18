@@ -67,6 +67,10 @@ ADD_LIBRARY(sbm-server SHARED
 #Client specific sources
 ADD_LIBRARY(sbm-client SHARED
     src/camerasystem.cpp
+    src/clientdisconnectedstate.cpp
+    src/clientreceiveinitialstate.cpp
+    src/clientrunningstate.cpp
+    src/overlay.cpp
     src/renderer.cpp
     src/rendersystem.cpp
     src/soundengine.cpp

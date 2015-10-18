@@ -52,6 +52,11 @@ namespace Image {
         BLUE_BIRD_WEST_2,
         BLUE_BIRD_WEST_3,
         BLUE_BIRD_WEST_4,
+
+        GREY_OVERLAY,
+        CONNECT_OVERLAY,
+        RECEIVING_DATA_OVERLAY,
+        INITIAL_LAG_OVERLAY,
     };
 }
 
