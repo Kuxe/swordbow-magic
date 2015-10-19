@@ -56,7 +56,6 @@ namespace Image {
         GREY_OVERLAY,
         CONNECT_OVERLAY,
         RECEIVING_DATA_OVERLAY,
-        INITIAL_LAG_OVERLAY,
     };
 }
 

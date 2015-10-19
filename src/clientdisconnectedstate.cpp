@@ -37,11 +37,6 @@ void ClientDisconnectedState::receive() {
                 //required entity-components have been received.
                 case MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS: {
                     Logger::log("Received BEGIN_TRANSMITTING_INITIAL_COMPONENTS packet", Log::INFO);
-                    const auto& screenWidth = client->renderer.getScreenWidth();
-                    const auto& screenHeight = client->renderer.getScreenHeight();
-                    const Text text = {"Receiving data from server...", screenWidth / 2 - 100, screenHeight / 2 - 15, {200, 200, 200}};
-
-                    client->renderer.fadeOutOverlay(Image::CONNECT_OVERLAY, 0.5);
                     client->clientState = &client->clientReceiveInitialState;
                 } break;
 

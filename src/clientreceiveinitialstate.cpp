@@ -18,7 +18,9 @@ void ClientReceiveInitialState::receive() {
         switch(type) {
             case MESSAGE_TYPE::INITIAL_COMPONENTS: {
             	Logger::log("Received INITIAL_COMPONENTS packet", Log::INFO);
-                client->renderer.showOverlay(Image::RECEIVING_DATA_OVERLAY);
+                client->renderer.hideOverlay(Image::CONNECT_OVERLAY);
+                const Text text = {"Receiving data from server...", 150, client->renderer.getScreenHeight()/2 - 10};
+                client->renderer.showOverlay(Image::RECEIVING_DATA_OVERLAY, text);
 
 				using DataType = std::pair<Components<MoveComponent>, Components<RenderComponent>>;
 				using PacketType = Packet<DataType>;
@@ -36,7 +38,6 @@ void ClientReceiveInitialState::receive() {
 
         	case MESSAGE_TYPE::END_TRANSMITTING_INITIAL_COMPONENTS: {
         	    Logger::log("Received END_TRANSMITTING_INITIAL_COMPONENTS packet", Log::INFO);
-                client->renderer.fadeOutOverlay(Image::RECEIVING_DATA_OVERLAY, 0.5f);
                 client->clientState = &client->clientRunningState;
                 //Play some sweet music
                 client->soundEngine.playMusic(Music::NATURE_SOUNDS);
@@ -68,5 +69,6 @@ void ClientReceiveInitialState::step() {
             }
         }
     }
+
     client->renderer.renderOnlyOverlays();
 }

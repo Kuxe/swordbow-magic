@@ -1,5 +1,4 @@
 #include "overlay.hpp"
-#include "logger.hpp"
 
 Overlay::Overlay(Image::Identifier identifier, const Text text) : 
 	identifier(identifier),

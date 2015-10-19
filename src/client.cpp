@@ -55,10 +55,7 @@ Client::~Client() {
 }
 
 void Client::connect(const IpAddress& server) {
-    const auto& screenWidth = renderer.getScreenWidth();
-    const auto& screenHeight = renderer.getScreenHeight();
-    const Text text = {"Connecting to server...", screenWidth / 2 - 25, screenHeight / 2 - 15, {200, 200, 200}};
-    renderer.showOverlay(Image::CONNECT_OVERLAY, text);
+    renderer.showOverlay(Image::CONNECT_OVERLAY, {"Connecting to server...", 150, renderer.getScreenHeight() / 2 - 10});
 
     //Start a thread that checks socket for any recieved data
     receiveThreadRunning = true;

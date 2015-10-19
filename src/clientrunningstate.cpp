@@ -21,6 +21,7 @@ void ClientRunningState::receive() {
             switch(type) {
                 case MESSAGE_TYPE::CONNECT: {
                     Logger::log("Got camera ID from server", Log::INFO);
+                    client->renderer.fadeOutOverlay(Image::RECEIVING_DATA_OVERLAY, 0.5f);
 
                     //Got my id. Tell camerasystem to follow that id.
                     auto typedPacket = client->socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);

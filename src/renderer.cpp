@@ -171,7 +171,6 @@ Renderer::Renderer(int argc, char** argv) {
         {Image::GREY_OVERLAY, imageDirectory + "grey_overlay.png"},
         {Image::CONNECT_OVERLAY, imageDirectory + "grey_overlay.png"},
         {Image::RECEIVING_DATA_OVERLAY, imageDirectory + "grey_overlay.png"},
-        {Image::INITIAL_LAG_OVERLAY, imageDirectory + "grey_overlay.png"},
     };
 
     //Bind each texture with a value in Image and load the texture
@@ -306,16 +305,19 @@ void Renderer::fadeOutOverlay(Image::Identifier identifier, float seconds) {
 void Renderer::renderOverlays() {
     SDL_SetRenderTarget(renderer, overlayTexture);
     SDL_RenderClear(renderer);
-    for(auto& pair : overlays) {
-        auto& identifier = pair.first;
-        auto& overlay = pair.second;
+
+    auto it = overlays.begin();
+    for(it; it != overlays.end();) {
+        auto& identifier = (*it).first;
+        auto& overlay = (*it).second;
         auto& texture = textureDatas.at(identifier).texture;
 
         const float transparency = overlay.getTransparency();
         constexpr float eps = 0.00001f;
         if(transparency > 1.0f - eps) {
-            hideOverlay(identifier);
+            it = overlays.erase(it);
         } else {
+            it++;
             SDL_SetTextureAlphaMod(texture, (1 - transparency) * 255);
             auto& texture = textureDatas.at(overlay.identifier).texture;
             SDL_RenderCopy(renderer, texture, nullptr, nullptr);
