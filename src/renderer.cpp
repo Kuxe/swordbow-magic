@@ -8,6 +8,45 @@
 #include <cstring>
 
 Renderer::Renderer(int argc, char** argv) {
+
+    //Check if fullscreen was set from command-line
+    Uint32 fullscreenFlag = 0;
+    for(int i = 0; i < argc; i++) {
+        std::string command(argv[i]);
+        size_t pos = command.rfind("--fullscreen=");
+        if(pos != std::string::npos) {
+            std::string fsstr = command.substr(pos+13);
+            if(!fsstr.compare("true")) {
+                Logger::log("Fullscreen on", Log::ERROR);
+                fullscreenFlag = SDL_WINDOW_FULLSCREEN;
+            } else if (!fsstr.compare("false")) {
+                fullscreenFlag = 0;
+            } else {
+                Logger::log("Not valid value for --fullscreen=<true|false>, defaulting to false", Log::WARNING);
+            }
+            break;
+        }
+    }
+
+    //Check if vsync was set from command-line
+    Uint32 vsyncFlag = 0;
+    for(int i = 0; i < argc; i++) {
+        std::string command(argv[i]);
+        size_t pos = command.rfind("--vsync=");
+        if(pos != std::string::npos) {
+            std::string vsyncstr = command.substr(pos+8);
+            if(!vsyncstr.compare("true")) {
+                Logger::log("VSync on", Log::ERROR);
+                vsyncFlag = SDL_RENDERER_PRESENTVSYNC;
+            } else if (!vsyncstr.compare("false")) {
+                vsyncFlag = 0;
+            } else {
+                Logger::log("Not valid value for --vsync=<true|false>, defaulting to false", Log::WARNING);
+            }
+            break;
+        }
+    }
+
     //Initialize SDL
     if(SDL_InitSubSystem(SDL_INIT_VIDEO) < 0) {
         std::ostringstream oss;
@@ -20,7 +59,7 @@ Renderer::Renderer(int argc, char** argv) {
             SDL_WINDOWPOS_UNDEFINED,
             SCREEN_WIDTH,
             SCREEN_HEIGHT,
-            SDL_WINDOW_SHOWN);
+            SDL_WINDOW_SHOWN | fullscreenFlag);
 
         if(!window) {
             std::ostringstream oss;
@@ -29,16 +68,7 @@ Renderer::Renderer(int argc, char** argv) {
         } else {
 
             //Flags for renderer to be used
-            int rendererFlags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE;
-
-            //Determine if vsync was passed as argument
-        	for(int i = 0; i < argc; i++) {
-        		if(strcmp(argv[i], "vsync") == 0) {
-                    rendererFlags |= SDL_RENDERER_PRESENTVSYNC;
-        			break;
-        		}
-        	}
-
+            Uint32 rendererFlags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE | vsyncFlag;
             renderer = SDL_CreateRenderer(window, -1, rendererFlags);
             if(!renderer) {
                 std::ostringstream oss;
