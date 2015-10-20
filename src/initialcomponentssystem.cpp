@@ -10,7 +10,7 @@ void InitialComponentsSystem::add(ID id) {
 void InitialComponentsSystem::remove(ID id) {
 	ids.erase(id);
 	initialComponents.first.erase(id);
-	initialComponents.first.erase(id);
+	initialComponents.second.erase(id);
 }
 
 void InitialComponentsSystem::update() {
