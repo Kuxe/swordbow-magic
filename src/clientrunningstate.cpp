@@ -1,6 +1,7 @@
 #include "clientrunningstate.hpp"
 #include "client.hpp"
 #include "inputdata.hpp"
+#include "timer.hpp"
 
 ClientRunningState::ClientRunningState(Client* client) : client(client) { }
 
@@ -16,7 +17,15 @@ void ClientRunningState::receive() {
         if(bytesRead > 0) {
 
             /** CRITICAL-SECTION **/
+            Timer waitTimer;
+            waitTimer.start();
             client->componentsMutex.lock();
+            const auto elapsed = waitTimer.elapsed();
+            if(elapsed > 1.0f/50.0f) {
+                std::ostringstream oss;
+                oss << "Receive-thread waited for " << elapsed << "s on componentsMutex. This is a probable cause of stuttering.";
+                Logger::log(oss, Log::WARNING);
+            }
 
             switch(type) {
                 case MESSAGE_TYPE::OUTDATED: {
@@ -203,8 +212,16 @@ void ClientRunningState::step() {
         client->send<InputData>({presses, releases}, MESSAGE_TYPE::INPUTDATA);
     }
 
-    /** CRITICAL SECTION **/
+    /** CRITICAL-SECTION **/
+    Timer waitTimer;
+    waitTimer.start();
     client->componentsMutex.lock();
+    const auto elapsed = waitTimer.elapsed();
+    if(elapsed > 1.0f/50.0f) {
+        std::ostringstream oss;
+        oss << "Main-thread waited for " << elapsed << "s on componentsMutex. This is a probable cause of stuttering.";
+        Logger::log(oss, Log::WARNING);
+    }
 
     /** Update client-side ECS **/
     client->systemManager.update();
