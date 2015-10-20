@@ -35,7 +35,7 @@ void HashGridSystem::addToCells(const ID id) {
 
 	std::ostringstream oss;
 	oss << "Adding id " << id << " to hashgrid cells";
-	Logger::log(oss, Log::INFO);
+	Logger::log(oss, Log::VERBOSE);
 
 	//Place ID in all cells which partially or completely contains the ID
 	for(unsigned int y = bb.y/side; y < (bb.y + bb.h)/side; y++) {

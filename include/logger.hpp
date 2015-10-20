@@ -2,11 +2,13 @@
 #define LOGGER_HPP
 #include <string>
 #include <sstream>
+#include <fstream>
 
 namespace Log {
 	enum Level {
 		UNDEFINED,	//Default value
-		INFO,		//Simple info announcements, eg "Rendering" or "ID removed"
+		VERBOSE,	//These might bloat the log, things that occur 'almost' every gameloop (arbitrary...)
+		INFO,		//Simple info announcements, should not bloat the log
 		WARNING,	//For anything that might lead to an error or a bug
 		ERROR		//Only happens if something is broke for sure
 	};
@@ -23,6 +25,11 @@ namespace Log {
 struct Logger {
 public:
 	static bool enabled;
+
+	//Logfile will always log in verbose mode
+	static std::ofstream logfile;
+	static void openLogfile(const std::string path);
+	static void closeLogfile();
 	static Log::Level level;
 	static void log(const std::string& str, const Log::Level level = Log::UNDEFINED);
 	static void log(std::ostringstream& oss, const Log::Level level = Log::UNDEFINED);

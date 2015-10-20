@@ -223,7 +223,7 @@ public:
 
             std::ostringstream oss;
             oss << "Recieved packet from " << sender << " (" << std::to_string(bytesRead) << "bytes)" << " (seq: " << sequence << ")";
-            Logger::log(oss, Log::INFO);
+            Logger::log(oss, Log::VERBOSE);
 
             //Check if the packet is meant for swordbow-magic (protocol)
             if(protocol == stringhash(protocolName)) {

@@ -19,6 +19,10 @@ void ClientRunningState::receive() {
             client->componentsMutex.lock();
 
             switch(type) {
+                case MESSAGE_TYPE::OUTDATED: {
+                    Logger::log("This packet is outdated, to late! Sluggish!", Log::WARNING);
+                } break;
+
                 case MESSAGE_TYPE::CONNECT: {
                     Logger::log("Got camera ID from server", Log::INFO);
                     client->renderer.fadeOutOverlay(Image::RECEIVING_DATA_OVERLAY, 0.5f);
@@ -32,7 +36,7 @@ void ClientRunningState::receive() {
                 } break;
 
 				case MESSAGE_TYPE::MOVECOMPONENTSDIFF: {
-                    Logger::log("Received MOVECOMPONENTSDIFF packet", Log::INFO);
+                    Logger::log("Received MOVECOMPONENTSDIFF packet", Log::VERBOSE);
 
                     //Diff movecomponents were received - handle it
                     auto typedPacket = client->socket.get<Packet<Components<MoveComponent>>>(bytesRead);
@@ -61,7 +65,7 @@ void ClientRunningState::receive() {
                 } break;
 
                 case MESSAGE_TYPE::RENDERCOMPONENTSDIFF: {
-                    Logger::log("Received RENDERCOMPONENTSDIFF packet", Log::INFO);
+                    Logger::log("Received RENDERCOMPONENTSDIFF packet", Log::VERBOSE);
 
                     //Diff rendercomponents were received - handle it
                     auto typedPacket = client->socket.get<Packet<Components<RenderComponent>>>(bytesRead);
@@ -84,7 +88,7 @@ void ClientRunningState::receive() {
                 } break;
 
                 case MESSAGE_TYPE::PLAY_SOUND: {
-                    Logger::log("Received PLAY_SOUND packet", Log::INFO);
+                    Logger::log("Received PLAY_SOUND packet", Log::VERBOSE);
 
                     auto typedPacket = client->socket.get<Packet<SoundData>>(bytesRead);
                     client->soundEngine.playSound(typedPacket.getData());
@@ -146,6 +150,15 @@ void ClientRunningState::receive() {
                 case MESSAGE_TYPE::KEEP_ALIVE: {
                     client->keepAlive.start();
                 } break;
+
+                default: {
+                    std::ostringstream oss;
+                    oss << "Message without proper type received. This is probably a bug.";
+                    oss << " Either client-side handling for that message isn't implemented";
+                    oss << " or server sent a message with a bogus messagetype";
+                    oss << " or the messagetype was wrongly altered somewhere (type: " << type << ")";
+                    Logger::log(oss, Log::WARNING);
+                };
             }
 
             /** END OF CRITICAL-SECTION **/

@@ -96,7 +96,7 @@ void RenderSystem::update() {
 
             std::ostringstream oss;
             oss << "Rendering id " << id;
-            Logger::log(oss, Log::INFO);
+            Logger::log(oss, Log::VERBOSE);
 
     		pq.push(renderData);
     	}

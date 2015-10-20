@@ -16,6 +16,10 @@ void ClientReceiveInitialState::receive() {
         client->componentsMutex.lock();
 
         switch(type) {
+            case MESSAGE_TYPE::OUTDATED: {
+                    Logger::log("This packet is outdated, to late! Sluggish!", Log::WARNING);
+                } break;
+            
             case MESSAGE_TYPE::INITIAL_COMPONENTS: {
             	Logger::log("Received INITIAL_COMPONENTS packet", Log::INFO);
                 client->renderer.hideOverlay(Image::CONNECT_OVERLAY);
@@ -45,7 +49,7 @@ void ClientReceiveInitialState::receive() {
 
         	default: {
         	    std::ostringstream oss;
-        	    oss << "Received packet when in receiving-initial-components-mode (type: " << type << ")";
+        	    oss << "Received (unwanted) packet when in receive-initial-state (type: " << type << ")";
         	    Logger::log(oss, Log::WARNING);
         	} break;
         }

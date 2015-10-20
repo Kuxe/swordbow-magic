@@ -42,10 +42,7 @@ void ClientDisconnectedState::receive() {
 
                 default: {
                     std::ostringstream oss;
-                    oss << "Message without proper type received. This is probably a bug.";
-                    oss << " Either client-side handling for that message isn't implemented";
-                    oss << " or server sent a message with a bogus messagetype";
-                    oss << " or the messagetype was wrongly altered somewhere (type: " << type << ")";
+                    oss << "Received (unwanted) packet when in disconnected-state (type: " << type << ")";
                     Logger::log(oss, Log::WARNING);
                 };
             }

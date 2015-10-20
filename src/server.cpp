@@ -129,7 +129,7 @@ void Server::step() {
 			} break;
 
 			case MESSAGE_TYPE::INPUTDATA: {
-				Logger::log("Received INPUTDATA packet", Log::INFO);
+				Logger::log("Received INPUTDATA packet", Log::VERBOSE);
 				auto typedPacket = socket.get<Packet<InputData>>(bytesRead);
 
 				//Check if client established a connection to the server, ie
@@ -237,7 +237,7 @@ void Server::sendInitial(const IpAddress& ipAddress) {
 
 	std::ostringstream oss;
 	oss << "About to send #" << smallerMcs.size() << " small containers to client";
-	Logger::log(oss, Log::INFO);
+	Logger::log(oss, Log::VERBOSE);
 
 	using namespace std::literals;
 	using DataType = const std::pair<const Components<const MoveComponent&>, const Components<const RenderComponent&>>;
@@ -271,7 +271,7 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 		for(auto pair : movediffs) {
 			oss << pair.first << ", ";
 		}
-		Logger::log(oss, Log::INFO);
+		Logger::log(oss, Log::VERBOSE);
 	}
 
 	//Get all rendercomponents of members of renderdiffsystem
@@ -288,7 +288,7 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 		for(auto pair : renderdiffs) {
 			oss << pair.first << ", ";
 		}
-		Logger::log(oss, Log::INFO);
+		Logger::log(oss, Log::VERBOSE);
 	}
 }
 
@@ -320,7 +320,7 @@ void Server::sendKeepAlive() {
 			const auto& client(it.second);
 			const auto& ipAddress = it.first;
 			send<bool>(ipAddress, true, MESSAGE_TYPE::KEEP_ALIVE);
-			Logger::log("Sending KEEP_ALIVE-packet", Log::INFO);
+			Logger::log("Sending KEEP_ALIVE-packet", Log::VERBOSE);
 		}
 	}
 }
@@ -411,6 +411,7 @@ void Server::printGeneralInfo() {
 }
 
 int main(int argc, char** argv) {
+	Logger::openLogfile("serverlog.txt");
 	Logger::level = Log::ERROR; 
 
 	/** Begin by parsin passed program arguments **/
@@ -420,14 +421,16 @@ int main(int argc, char** argv) {
         if(pos != std::string::npos) {
             std::string logstr = command.substr(pos+6);
 
-            if(!logstr.compare("INFO")) {
+            if(!logstr.compare("VERBOSE")) {
+            	Logger::level = Log::VERBOSE;
+            } else if(!logstr.compare("INFO")) {
                 Logger::level = Log::INFO;
             } else if(!logstr.compare("WARNING")) {
                 Logger::level = Log::WARNING;
             } else if(!logstr.compare("ERROR")) {
                 Logger::level = Log::ERROR;
             } else {
-                Logger::log("Not valid value for --log=<INFO|WARNING|ERROR>", Log::ERROR);
+                Logger::log("Not valid value for --log=<VERBOSE|INFO|WARNING|ERROR>", Log::ERROR);
                 return -1;
             }
         }
@@ -435,6 +438,7 @@ int main(int argc, char** argv) {
 
 	Server server(argc, argv);
 	server.run();
+	Logger::closeLogfile();
 	return 0;
 }
 

@@ -532,7 +532,7 @@ bool EntityManager::idExists(ID id) {
 }
 
 void EntityManager::registerIdToSystem(ID id, System::Identifier system) {
-	Logger::log("Registering id " + std::to_string(id) + " to system " + std::to_string(system), Log::INFO);
+	Logger::log("Registering id " + std::to_string(id) + " to system " + std::to_string(system), Log::VERBOSE);
 	
 	auto systemptr = systemManager->getSystem(system);
 	entityServerSystemMap[id].push_back(systemptr);

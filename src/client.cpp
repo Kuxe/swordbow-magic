@@ -107,6 +107,7 @@ void Client::step() {
 }
 
 int main(int argc, char** argv) {
+    Logger::openLogfile("clientlog.txt");
     Logger::level = Log::ERROR;
 
     /** Begin by parsing passed program arguments **/
@@ -116,14 +117,16 @@ int main(int argc, char** argv) {
         if(pos != std::string::npos) {
             std::string logstr = command.substr(pos+6);
 
-            if(!logstr.compare("INFO")) {
+            if(!logstr.compare("VERBOSE")) {
+                Logger::level = Log::VERBOSE;
+            } else if(!logstr.compare("INFO")) {
                 Logger::level = Log::INFO;
             } else if(!logstr.compare("WARNING")) {
                 Logger::level = Log::WARNING;
             } else if(!logstr.compare("ERROR")) {
                 Logger::level = Log::ERROR;
             } else {
-                Logger::log("Not valid value for --log=<INFO|WARNING|ERROR>", Log::ERROR);
+                Logger::log("Not valid value for --log=<VERBOSE|INFO|WARNING|ERROR>", Log::ERROR);
                 return -1;
             }
         }
@@ -166,6 +169,7 @@ int main(int argc, char** argv) {
     client.connect(ipAddress);
     client.run();
     client.disconnect();
+    Logger::closeLogfile();
     return 0;
 }
 
