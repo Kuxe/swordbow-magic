@@ -227,6 +227,9 @@ void Server::onDisconnect(const IpAddress& ipAddress) {
 
 void Server::sendInitial(const IpAddress& ipAddress) {
 	send<bool>(ipAddress, true, MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS);
+	std::ostringstream oss1;
+	oss1 << "Sending BEGIN_TRANSMITTING_INITIAL_COMPONENTS-packet to " << ipAddress;
+	Logger::log(oss1, Log::VERBOSE);
 
 	const ID componentsPerContainer = 64;
 	const auto& initialComponents = initialComponentsSystem.getInitialComponents();
@@ -246,6 +249,9 @@ void Server::sendInitial(const IpAddress& ipAddress) {
 		std::this_thread::sleep_for(1ms);
 	}
 
+	std::ostringstream oss2;
+	oss2 << "Sending END_TRANSMITTING_INITIAL_COMPONENTS-packet to " << ipAddress;
+	Logger::log(oss2, Log::VERBOSE);
 	send<bool>(ipAddress, true, MESSAGE_TYPE::END_TRANSMITTING_INITIAL_COMPONENTS);
 }
 
