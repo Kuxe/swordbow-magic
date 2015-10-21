@@ -224,7 +224,15 @@ void ClientRunningState::step() {
     }
 
     /** Update client-side ECS **/
+    Timer updateTimer;
+    updateTimer.start();
     client->systemManager.update();
+    const auto updateElapsed = updateTimer.elapsed();
+    if(updateElapsed > 1.0f/50.0f) {
+        std::ostringstream oss;
+        oss << "Updating systems took " << updateElapsed << "s. This is a probable cause of stuttering.";
+        Logger::log(oss, Log::WARNING);
+    }
 
     /** END OF CRITICAL SECTION **/
     client->componentsMutex.unlock();

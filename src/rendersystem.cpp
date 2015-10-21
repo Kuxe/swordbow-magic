@@ -7,6 +7,7 @@
 #include "camerasystem.hpp"
 #include "renderer.hpp"
 #include "logger.hpp"
+#include "timer.hpp"
 
 RenderSystem::RenderSystem(
     Renderer* renderer,
@@ -26,6 +27,9 @@ void RenderSystem::remove(ID id) {
 }
 
 void RenderSystem::update() {
+    Timer updateTimer;
+    updateTimer.start();
+
     //Will contain all rectangles where a redraw is required
     std::queue<Rect> drawQueue;
 
@@ -65,8 +69,8 @@ void RenderSystem::update() {
         const auto& drawArea = drawQueue.front();
 
     	for(auto id : spatialIndexer->query(drawArea)) {
-    		auto& mc = componentManager->moveComponents.at(id);
-    		auto& rc = componentManager->renderComponents.at(id);
+    		const auto& mc = componentManager->moveComponents.at(id);
+    		const auto& rc = componentManager->renderComponents.at(id);
 
     		//Get the intersection between an entity within drawarea and the drawarea
     		const auto intersection = Rect::getIntersection(
@@ -103,6 +107,13 @@ void RenderSystem::update() {
 
         //Dont move this piece of code. A reference to this element is used above!
         drawQueue.pop();
+    }
+
+    const auto updateElapsed = updateTimer.elapsed();
+    if(updateElapsed > 1.0f/50.0f) {
+        std::ostringstream oss;
+        oss << "Calculating drawboxes took " << updateElapsed << "s. This is a probable cause of stuttering.";
+        Logger::log(oss, Log::WARNING);
     }
 
     //Put the fps on tmp (text->surface->tmp->fontTexture->default render target)
