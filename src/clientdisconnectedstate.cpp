@@ -50,14 +50,6 @@ void ClientDisconnectedState::receive() {
             /** END OF CRITICAL SECTION **/
             client->componentsMutex.unlock();
         }
-
-        if(client->keepAlive.elapsed() > client->secondsUntilTimeout) {
-            client->running = false;
-            client->receiveThreadRunning = false;
-            std::ostringstream oss;
-            oss << "No packets from server received for " << client->keepAlive.elapsed() << "sec, server timeout";
-            Logger::log(oss, Log::ERROR);
-        }
 }
 
 void ClientDisconnectedState::step() {
