@@ -22,8 +22,8 @@ const Rect TextureBoundingBox::getBoundingBox(ID id) const {
         auto& rc = componentManager->renderComponents.at(id);
         auto& textureData = renderer->getTextureDatas().at(rc.image);
         return Rect {
-            floorf(mc.pos.x + rc.xoffset),
-            floorf(mc.pos.y + rc.yoffset),
+            floorf(mc.pos.x + rc.offset.x),
+            floorf(mc.pos.y + rc.offset.y),
             static_cast<float>(textureData.width),
             static_cast<float>(textureData.height),
         };
@@ -41,8 +41,8 @@ const Rect TextureBoundingBox::getOldBoundingBox(ID id) const {
         auto& rc = componentManager->renderComponents.at(id);
         auto& textureData = renderer->getTextureDatas().at(rc.image);
         return Rect {
-            floorf(mc.oldPos.x + rc.xoffset),
-            floorf(mc.oldPos.y + rc.yoffset),
+            floorf(mc.oldPos.x + rc.offset.x),
+            floorf(mc.oldPos.y + rc.offset.y),
             static_cast<float>(textureData.width),
             static_cast<float>(textureData.height),
         };

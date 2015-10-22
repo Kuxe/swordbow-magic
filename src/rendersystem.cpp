@@ -78,8 +78,8 @@ void RenderSystem::update() {
             );
 
             const SDL_Rect clipSource = {
-                int(intersection.x) - int(mc.pos.x) - int(rc.xoffset),
-                int(intersection.y) - int(mc.pos.y) - int(rc.yoffset),
+                int(intersection.x) - int(mc.pos.x) - int(rc.offset.x),
+                int(intersection.y) - int(mc.pos.y) - int(rc.offset.y),
                 int(intersection.w),
                 int(intersection.h)
             };
@@ -95,7 +95,7 @@ void RenderSystem::update() {
 
             const RenderData renderData = {
                 rc.image, clipSource, clipDestination,
-                (int)rc.zindex_base, (int)(mc.pos.y + textureData.height + rc.yoffset)
+                (int)rc.zindex_base, (int)(mc.pos.y + textureData.height + rc.offset.y)
             };
 
             std::ostringstream oss;

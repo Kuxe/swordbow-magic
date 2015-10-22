@@ -2,13 +2,13 @@
 #define RENDERCOMPONENT_H
 
 #include "imageidentifiers.hpp"
+#include <glm/vec2.hpp>
 
 //Class containing render-relevant data (such as image identifier)
 class RenderComponent {
  public:
  	Image::Identifier image = Image::UNDEFINED;
- 	float xoffset = 0;
- 	float yoffset = 0;
+ 	glm::vec2 offset = {0.0f, 0.0f};
 
 	//is set to y+height during runtime
 	//used in painters algorithm
@@ -22,7 +22,7 @@ class RenderComponent {
 
     template<class Archive>
     void serialize(Archive& ar) {
-        ar(image, xoffset, yoffset, zindex, zindex_base);
+        ar(image, offset.x, offset.y, zindex, zindex_base);
     }
 };
 

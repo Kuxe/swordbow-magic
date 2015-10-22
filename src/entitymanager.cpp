@@ -59,8 +59,8 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 	//Just save a pointer to the component like above and modify it like bellow
 	renderComponent.image = Image::PLAYER_V3_FRONT;
 	renderComponent.zindex_base = 1;
-	renderComponent.xoffset = -7;
-	renderComponent.yoffset = -7;
+	renderComponent.offset.x = -7;
+	renderComponent.offset.y = -7;
 
 	moveComponent.pos = position;
 	moveComponent.vel.x = 200;
@@ -179,8 +179,8 @@ ID EntityManager::createTree(const glm::vec2& position) {
 
 	renderComponent.image = Image::SMALL_TREE;
 	renderComponent.zindex_base = 1;
-	renderComponent.xoffset = -24;
-	renderComponent.yoffset = -54;
+	renderComponent.offset.x = -24;
+	renderComponent.offset.y = -54;
 
 	moveComponent.pos = position;
 	moveComponent.oldPos = moveComponent.pos;
@@ -261,8 +261,8 @@ ID EntityManager::createBloodSplatter(const glm::vec2& position) {
 	auto& ac = componentManager->createAnimationComponent(id);
 
 	rc.image = Image::BLOODSPLATTER_1_11;
-	rc.xoffset = -10;
-	rc.yoffset = -10;
+	rc.offset.x = -10;
+	rc.offset.y = -10;
 	rc.zindex_base = 1;
 
 	mc.pos = position;
@@ -321,8 +321,8 @@ ID EntityManager::createFlower(const glm::vec2& position, const char color) {
 	}
 
 	rc.image = flowercolor;
-	rc.xoffset = -1;
-	rc.yoffset = -5;
+	rc.offset.x = -1;
+	rc.offset.y = -5;
 	rc.zindex_base = 1;
 
 	mc.pos = position;
@@ -350,8 +350,8 @@ ID EntityManager::createDummySquare(const glm::vec2& position) {
 
 	mc.maxVelLength = 4.0f;
 
-	rc.xoffset = 0;
-	rc.yoffset = 0;
+	rc.offset.x = 0;
+	rc.offset.y = 0;
 	rc.zindex_base = 1;
 
 	mc.pos = position;
@@ -400,8 +400,8 @@ ID EntityManager::createStone(const glm::vec2& position) {
 	mc.oldPos = mc.pos;
 
 	rc.image = Image::STONE_1;
-	rc.xoffset = -7;
-	rc.yoffset = -12;
+	rc.offset.x = -7;
+	rc.offset.y = -12;
 	rc.zindex_base = 1;
 
 	sc.width = 28;
@@ -436,8 +436,8 @@ ID EntityManager::createBlueBird(const glm::vec2& position) {
 
 	rc.image = Image::BLUE_BIRD_WEST_3;
 	rc.zindex_base = 2;
-	rc.xoffset = -8;
-	rc.yoffset = -11;
+	rc.offset.x = -8;
+	rc.offset.y = -11;
 
 	nc.name = "blueBird";
 
