@@ -8,6 +8,7 @@
 #include "renderer.hpp"
 #include "logger.hpp"
 #include "timer.hpp"
+#include "boundingbox.hpp"
 
 RenderSystem::RenderSystem(
     Renderer* renderer,
@@ -41,22 +42,28 @@ void RenderSystem::update() {
 	while(!activeIds.empty() && allowedRendersThisFrame-- > 0 ) {
 		//Draw everything within the activeIds texturearea
         Rect drawArea {0, 0, 0, 0};
+        const auto id = activeIds.front();
+        const auto& renderComponent = componentManager->renderComponents.at(id);
         try {
-            drawArea = spatialIndexer->getBoundingBox(activeIds.front());
+            drawArea = getBoundingBox(
+                componentManager->moveComponents.at(id).pos,
+                renderer->getTextureDatas().at(renderComponent.image).dimension,
+                renderComponent.offset
+            );
 
             //Draw the new area that the entity moved to
             drawQueue.push(drawArea);
 
             //Also draw the area that the entity was before
-            drawQueue.push(oldDrawAreas[activeIds.front()]);
+            drawQueue.push(oldDrawAreas[id]);
 
             //Save drawarea so that next time this entity moves,
             //draw the area that will be drawn this time
-            oldDrawAreas[activeIds.front()] = drawArea;
+            oldDrawAreas[id] = drawArea;
 
         } catch (std::out_of_range oor) {
             std::ostringstream oss;
-            oss << "Couldn't render id " << activeIds.front() << " because boundingbox couldn't be retrieved";
+            oss << "Couldn't render id " << id << " because boundingbox couldn't be retrieved";
             Logger::log(oss, Log::ERROR);
         }
 
@@ -68,13 +75,20 @@ void RenderSystem::update() {
     while(!drawQueue.empty()) {
         const auto& drawArea = drawQueue.front();
 
+        /** FIXME: This is an expensive part
+            Profiling points to spatialIndexer->query(drawArea) as chokepoint.
+            Somehow the number of queries must be drastically reduced or query has to be drastically
+            optimized. There's no stuttering when the size of drawqueue is ~180, but when
+            size of the drawqueue approaches ~500, stuttering occurs...
+        **/
     	for(auto id : spatialIndexer->query(drawArea)) {
     		const auto& mc = componentManager->moveComponents.at(id);
     		const auto& rc = componentManager->renderComponents.at(id);
+            const auto& texture = renderer->getTextureDatas().at(rc.image);
 
     		//Get the intersection between an entity within drawarea and the drawarea
     		const auto intersection = Rect::getIntersection(
-                drawArea, spatialIndexer->getBoundingBox(id)
+                drawArea, getBoundingBox(mc.pos, texture.dimension, rc.offset)
             );
 
             const SDL_Rect clipSource = {
@@ -95,7 +109,7 @@ void RenderSystem::update() {
 
             const RenderData renderData = {
                 rc.image, clipSource, clipDestination,
-                (int)rc.zindex_base, (int)(mc.pos.y + textureData.height + rc.offset.y)
+                (int)rc.zindex_base, (int)(mc.pos.y + textureData.dimension.y + rc.offset.y)
             };
 
             std::ostringstream oss;
@@ -103,7 +117,7 @@ void RenderSystem::update() {
             Logger::log(oss, Log::VERBOSE);
 
     		pq.push(renderData);
-    	}
+    	} /** END OF EXPENSIVE PART **/
 
         //Dont move this piece of code. A reference to this element is used above!
         drawQueue.pop();

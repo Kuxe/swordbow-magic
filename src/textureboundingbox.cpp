@@ -24,8 +24,8 @@ const Rect TextureBoundingBox::getBoundingBox(ID id) const {
         return Rect {
             floorf(mc.pos.x + rc.offset.x),
             floorf(mc.pos.y + rc.offset.y),
-            static_cast<float>(textureData.width),
-            static_cast<float>(textureData.height),
+            static_cast<float>(textureData.dimension.x),
+            static_cast<float>(textureData.dimension.y),
         };
     } catch(std::out_of_range oor) {
         std::ostringstream oss;
@@ -43,8 +43,8 @@ const Rect TextureBoundingBox::getOldBoundingBox(ID id) const {
         return Rect {
             floorf(mc.oldPos.x + rc.offset.x),
             floorf(mc.oldPos.y + rc.offset.y),
-            static_cast<float>(textureData.width),
-            static_cast<float>(textureData.height),
+            static_cast<float>(textureData.dimension.x),
+            static_cast<float>(textureData.dimension.y),
         };
     } catch(std::out_of_range oor) {
         std::ostringstream oss;

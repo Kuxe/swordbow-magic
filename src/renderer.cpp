@@ -222,7 +222,7 @@ Renderer::Renderer(int argc, char** argv) {
                 SDL_FreeSurface(rawImage);
                 int w, h;
                 SDL_QueryTexture(texture, NULL, NULL, &w, &h);
-                textureDatas.insert({pair.first, {texture, w, h}});
+                textureDatas.insert({pair.first, {texture, {w, h}}});
             }
         }
     }

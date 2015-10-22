@@ -1,30 +1,27 @@
 #ifndef TEXTUREDATA_HPP
 #define TEXTUREDATA_HPP
 
+#include <glm/vec2.hpp>
+
 class SDL_Texture;
 struct TextureData {
     SDL_Texture* texture;
-	int width;
-	int height;
+	glm::vec2 dimension;
 
-    constexpr TextureData() :
+    TextureData() :
         texture(nullptr),
-        width(0),
-        height(0) { }
+        dimension(0.0f, 0.0f) { }
 
-    constexpr TextureData(
+    TextureData(
         SDL_Texture* texture,
-        const int width,
-        const int height
+        const glm::vec2& dimension
     ) :
     texture(texture),
-    width(width),
-    height(height) { }
+    dimension(dimension) { }
 
-    constexpr TextureData(const TextureData& rhs) :
+    TextureData(const TextureData& rhs) :
         texture(rhs.texture),
-        width(rhs.width),
-        height(rhs.height) { }
+        dimension(rhs.dimension) { }
 };
 
 
