@@ -40,6 +40,10 @@ void ClientDisconnectedState::receive() {
                     client->clientState = &client->clientReceiveInitialState;
                 } break;
 
+                case MESSAGE_TYPE::KEEP_ALIVE: {
+                    client->keepAlive.start();
+                } break;
+
                 default: {
                     std::ostringstream oss;
                     oss << "Received (unwanted) packet when in disconnected-state (type: " << type << ")";

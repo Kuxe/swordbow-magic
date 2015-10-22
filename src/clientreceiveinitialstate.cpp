@@ -47,6 +47,10 @@ void ClientReceiveInitialState::receive() {
                 client->soundEngine.playMusic(Music::NATURE_SOUNDS);
         	} break;
 
+            case MESSAGE_TYPE::KEEP_ALIVE: {
+                    client->keepAlive.start();
+                } break;
+
         	default: {
         	    std::ostringstream oss;
         	    oss << "Received (unwanted) packet when in receive-initial-state (type: " << type << ")";
