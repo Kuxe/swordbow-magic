@@ -40,7 +40,7 @@ void Logger::log(const std::string& str, const Log::Level level) {
 			#elif PLATFORM == UNKNOWN
 				//Disable logging by doing nothing
 			#endif
-			}
+			} break;
 
 			case Log::INFO: {
 			#if PLATFORM == PLATFORM_LINUX
