@@ -7,6 +7,7 @@ class Client;
 class ClientReceiveInitialState : public IClientState {
 private:
 	Client* client;
+	int receivedSmallContainers = 0;
 public:
 	ClientReceiveInitialState(Client* client);
 	void receive();

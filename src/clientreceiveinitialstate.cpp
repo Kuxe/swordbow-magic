@@ -23,7 +23,12 @@ void ClientReceiveInitialState::receive() {
             case MESSAGE_TYPE::INITIAL_COMPONENTS: {
             	Logger::log("Received INITIAL_COMPONENTS packet", Log::INFO);
                 client->renderer.hideOverlay(Image::CONNECT_OVERLAY);
-                const Text text = {"Receiving data from server...", 150, client->renderer.getScreenHeight()/2 - 10};
+                receivedSmallContainers++;
+                const Text text = {
+                    "Receiving data from server (" + std::to_string(receivedSmallContainers) + "/" + std::to_string(client->numberOfInitialSmallContainers) + ")",
+                    150,
+                    client->renderer.getScreenHeight()/2 - 10
+                };
                 client->renderer.showOverlay(Image::RECEIVING_DATA_OVERLAY, text);
 
 				using DataType = std::pair<Components<MoveComponent>, Components<RenderComponent>>;
@@ -42,9 +47,14 @@ void ClientReceiveInitialState::receive() {
 
         	case MESSAGE_TYPE::END_TRANSMITTING_INITIAL_COMPONENTS: {
         	    Logger::log("Received END_TRANSMITTING_INITIAL_COMPONENTS packet", Log::INFO);
-                client->clientState = &client->clientRunningState;
+
+                if(receivedSmallContainers < client->numberOfInitialSmallContainers) {
+                    Logger::log("Did not receive all initial components before END_TRANSMITTING_INITIAL_COMPONENTS (packets lost?)", Log::WARNING);
+                }
+
                 //Play some sweet music
                 client->soundEngine.playMusic(Music::NATURE_SOUNDS);
+                client->clientState = &client->clientRunningState;
         	} break;
 
             case MESSAGE_TYPE::KEEP_ALIVE: {
@@ -77,6 +87,19 @@ void ClientReceiveInitialState::step() {
             }
         }
     }
-
+    client->componentsMutex.lock();
+    client->renderer.hideOverlay(Image::RECEIVING_DATA_OVERLAY);
+    const Text text = {
+        "Receiving data from server (" + std::to_string(receivedSmallContainers) + "/" + std::to_string(client->numberOfInitialSmallContainers) + ")",
+        120,
+        client->renderer.getScreenHeight()/2 - 10
+    };
+    client->renderer.showOverlay(Image::RECEIVING_DATA_OVERLAY, text);
     client->renderer.renderOnlyOverlays();
+    client->componentsMutex.unlock();
+
+    //If it weren't for 10ms sleep, this thread would lock out
+    //the receive-thread to the extent of losing lots of packets
+    using namespace std::literals;
+    std::this_thread::sleep_for(10ms);
 }

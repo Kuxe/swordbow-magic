@@ -37,6 +37,10 @@ void ClientDisconnectedState::receive() {
                 //required entity-components have been received.
                 case MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS: {
                     Logger::log("Received BEGIN_TRANSMITTING_INITIAL_COMPONENTS packet", Log::INFO);
+                    using DataType = int;
+                    using PacketType = Packet<DataType>;
+                    auto typedPacket = client->socket.get<PacketType>(bytesRead);
+                    client->numberOfInitialSmallContainers = typedPacket.getData();
                     client->clientState = &client->clientReceiveInitialState;
                 } break;
 
@@ -71,4 +75,9 @@ void ClientDisconnectedState::step() {
         }
     }
     client->renderer.renderOnlyOverlays();
+
+    //If it weren't for 10ms sleep, this thread would lock out
+    //the receive-thread to the extent of losing lots of packets
+    using namespace std::literals;
+    std::this_thread::sleep_for(10ms);
 }

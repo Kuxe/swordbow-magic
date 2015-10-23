@@ -226,13 +226,17 @@ void Server::onDisconnect(const IpAddress& ipAddress) {
 }
 
 void Server::sendInitial(const IpAddress& ipAddress) {
-	send<bool>(ipAddress, true, MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS);
+
+	const auto& initialComponents = initialComponentsSystem.getInitialComponents();
+	const ID componentsPerContainer = 64;
+	const auto size = initialComponents.first.size();
+	const int numContainers = (size / componentsPerContainer) + ((size % componentsPerContainer) > 0 ? 1 : 0);
+	send<int>(ipAddress, numContainers, MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS);
+
 	std::ostringstream oss1;
 	oss1 << "Sending BEGIN_TRANSMITTING_INITIAL_COMPONENTS-packet to " << ipAddress;
 	Logger::log(oss1, Log::VERBOSE);
 
-	const ID componentsPerContainer = 64;
-	const auto& initialComponents = initialComponentsSystem.getInitialComponents();
 	const auto& initialMcs = initialComponents.first;
 	const auto& initialRcs = initialComponents.second;
 	const auto& smallerMcs = initialMcs.split(componentsPerContainer);

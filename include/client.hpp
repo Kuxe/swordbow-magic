@@ -53,6 +53,10 @@ private:
 
     std::mutex componentsMutex;
 
+    //This variable is received in BEGIN_TRANSMITTING_INITIAL_COMPONENTS from server
+    //Client needs this to know how many packets it should get from server
+    int numberOfInitialSmallContainers = 0;
+
     //ID that this client controlls
     ID playerId;
 
