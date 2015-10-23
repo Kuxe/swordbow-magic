@@ -106,14 +106,14 @@ void HashGridSystem::removeFromCellsOldBoundingBox(const ID id) {
 }
 
 //Returns all entities that are fully or partly contained by id's bounding box
-std::unordered_set<ID> HashGridSystem::overlaps(const ID id) const {
+const std::unordered_set<ID> HashGridSystem::overlaps(const ID id) const {
 	auto overlappingIds = query(boundingBox->getBoundingBox(id));
 	overlappingIds.erase(id);
 	return overlappingIds;
 }
 
 //Return all entities that are fully or partly contained by a queryArea
-std::unordered_set<ID> HashGridSystem::query(const Rect& queryArea) const {
+const std::unordered_set<ID> HashGridSystem::query(const Rect& queryArea) const {
 	std::unordered_set<ID> queryIds;
 
 	//Loop through all cells in which this ID is partly or fully contained

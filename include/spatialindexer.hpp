@@ -25,12 +25,12 @@ class SpatialIndexer {
 		 * Fills the list overlappingEntities with all IDs that overlap IDs texture.
 		 * Useful for overlapping textures.
 		 **/
-		virtual std::unordered_set<ID> overlaps(const ID id) const = 0;
+		virtual const std::unordered_set<ID> overlaps(const ID id) const = 0;
 
 		/**
 		 *	Return all ids within queryarea
 		 **/
-		virtual std::unordered_set<ID> query(const Rect& queryArea) const = 0;
+		virtual const std::unordered_set<ID> query(const Rect& queryArea) const = 0;
 
 		virtual Rect getBoundingBox(const ID id) const = 0;
 

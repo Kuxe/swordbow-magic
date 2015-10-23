@@ -9,6 +9,9 @@
 #include "logger.hpp"
 #include "timer.hpp"
 #include "boundingbox.hpp"
+#include <vector>
+#include <thread>
+#include <mutex>
 
 RenderSystem::RenderSystem(
     Renderer* renderer,
@@ -32,7 +35,7 @@ void RenderSystem::update() {
     updateTimer.start();
 
     //Will contain all rectangles where a redraw is required
-    std::queue<Rect> drawQueue;
+    std::vector<Rect> draws;
 
     //Cap the amount of IDs getting rendered each frame
     //this is only a quick-fix to ensure no program-freeze
@@ -52,10 +55,10 @@ void RenderSystem::update() {
             );
 
             //Draw the new area that the entity moved to
-            drawQueue.push(drawArea);
+            draws.push_back(drawArea);
 
             //Also draw the area that the entity was before
-            drawQueue.push(oldDrawAreas[id]);
+            draws.push_back(oldDrawAreas[id]);
 
             //Save drawarea so that next time this entity moves,
             //draw the area that will be drawn this time
@@ -71,57 +74,65 @@ void RenderSystem::update() {
 	}
 
     std::priority_queue<RenderData> pq;
+    std::mutex pqlock;
+    std::mutex qlock;
+    static constexpr char NUMBER_OF_WORKERS = 4;
+    const int WORK_PER_WORKER = draws.size() / NUMBER_OF_WORKERS;
 
-    while(!drawQueue.empty()) {
-        const auto& drawArea = drawQueue.front();
+    const auto work = [this, &draws, &pq, &pqlock](const auto& beginIterator, const auto& endIterator) {
+        for(auto it = beginIterator; it != endIterator; it++) {
+            const auto& drawArea = *it;
+            for(auto id : spatialIndexer->query(drawArea)) {
+                const auto& mc = componentManager->moveComponents.at(id);
+                const auto& rc = componentManager->renderComponents.at(id);
+                const auto& texture = renderer->getTextureDatas().at(rc.image);
 
-        /** FIXME: This is an expensive part
-            Profiling points to spatialIndexer->query(drawArea) as chokepoint.
-            Somehow the number of queries must be drastically reduced or query has to be drastically
-            optimized. There's no stuttering when the size of drawqueue is ~180, but when
-            size of the drawqueue approaches ~500, stuttering occurs...
-        **/
-    	for(auto id : spatialIndexer->query(drawArea)) {
-    		const auto& mc = componentManager->moveComponents.at(id);
-    		const auto& rc = componentManager->renderComponents.at(id);
-            const auto& texture = renderer->getTextureDatas().at(rc.image);
+                //Get the intersection between an entity within drawarea and the drawarea
+                const auto intersection = Rect::getIntersection(
+                    drawArea, getBoundingBox(mc.pos, texture.dimension, rc.offset)
+                );
 
-    		//Get the intersection between an entity within drawarea and the drawarea
-    		const auto intersection = Rect::getIntersection(
-                drawArea, getBoundingBox(mc.pos, texture.dimension, rc.offset)
-            );
+                const SDL_Rect clipSource = {
+                    int(intersection.x) - int(mc.pos.x) - int(rc.offset.x),
+                    int(intersection.y) - int(mc.pos.y) - int(rc.offset.y),
+                    int(intersection.w),
+                    int(intersection.h)
+                };
 
-            const SDL_Rect clipSource = {
-                int(intersection.x) - int(mc.pos.x) - int(rc.offset.x),
-                int(intersection.y) - int(mc.pos.y) - int(rc.offset.y),
-                int(intersection.w),
-                int(intersection.h)
-            };
+                const SDL_Rect clipDestination = {
+                    (int)intersection.x,
+                    (int)intersection.y,
+                    (int)intersection.w,
+                    (int)intersection.h
+                };
 
-            const SDL_Rect clipDestination = {
-                (int)intersection.x,
-                (int)intersection.y,
-                (int)intersection.w,
-                (int)intersection.h
-            };
+                const TextureData& textureData = renderer->getTextureDatas().at(rc.image);
 
-            const TextureData& textureData = renderer->getTextureDatas().at(rc.image);
+                const RenderData renderData = {
+                    rc.image, clipSource, clipDestination,
+                    (int)rc.zindex_base, (int)(mc.pos.y + textureData.dimension.y + rc.offset.y)
+                };
 
-            const RenderData renderData = {
-                rc.image, clipSource, clipDestination,
-                (int)rc.zindex_base, (int)(mc.pos.y + textureData.dimension.y + rc.offset.y)
-            };
+                std::ostringstream oss;
+                oss << "Rendering id " << id;
+                Logger::log(oss, Log::VERBOSE);
 
-            std::ostringstream oss;
-            oss << "Rendering id " << id;
-            Logger::log(oss, Log::VERBOSE);
+                pqlock.lock();
+                pq.push(renderData);
+                pqlock.unlock();
+            }
+        }
+    };
 
-    		pq.push(renderData);
-    	} /** END OF EXPENSIVE PART **/
+    auto begin = draws.begin(), end = draws.end();
+    std::array<std::thread, NUMBER_OF_WORKERS> threads {
+        std::thread{work, begin + 0*WORK_PER_WORKER, begin + 1*WORK_PER_WORKER},
+        std::thread{work, begin + 1*WORK_PER_WORKER, begin + 2*WORK_PER_WORKER},
+        std::thread{work, begin + 2*WORK_PER_WORKER, begin + 3*WORK_PER_WORKER},
+        std::thread{work, begin + 3*WORK_PER_WORKER, end}
+    };
 
-        //Dont move this piece of code. A reference to this element is used above!
-        drawQueue.pop();
-    }
+    for(auto& thread : threads) { thread.join(); }
 
     const auto updateElapsed = updateTimer.elapsed();
     if(updateElapsed > 1.0f/50.0f) {

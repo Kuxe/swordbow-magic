@@ -33,10 +33,10 @@ class HashGridSystem : public SpatialIndexer, public ISystem {
 
 		virtual ~HashGridSystem();
 
-		virtual void add(ID id);
-		virtual void remove(ID id);
-		virtual std::unordered_set<ID> overlaps(const ID id) const;
-		virtual std::unordered_set<ID> query(const Rect& queryArea) const ;
+		void add(ID id);
+		void remove(ID id);
+		const std::unordered_set<ID> overlaps(const ID id) const;
+		const std::unordered_set<ID> query(const Rect& queryArea) const ;
 		inline Rect getBoundingBox(const ID id) const;
 
 		bool activateId(ID id);
