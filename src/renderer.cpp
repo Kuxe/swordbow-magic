@@ -198,9 +198,9 @@ Renderer::Renderer(int argc, char** argv) {
         {Image::BLUE_BIRD_EAST_3, imageDirectory + "bluebird_east_3.png"},
         {Image::BLUE_BIRD_EAST_4, imageDirectory + "bluebird_east_4.png"},
 
-        {Image::GREY_OVERLAY, imageDirectory + "grey_overlay.png"},
-        {Image::CONNECT_OVERLAY, imageDirectory + "grey_overlay.png"},
-        {Image::RECEIVING_DATA_OVERLAY, imageDirectory + "grey_overlay.png"},
+        {Image::GREY_OVERLAY, imageDirectory + "overlay.png"},
+        {Image::CONNECT_OVERLAY, imageDirectory + "overlay.png"},
+        {Image::RECEIVING_DATA_OVERLAY, imageDirectory + "overlay.png"},
     };
 
     //Bind each texture with a value in Image and load the texture
