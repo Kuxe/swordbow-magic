@@ -128,6 +128,9 @@ void ClientReceiveInitialState::step() {
 }
 
 void ClientReceiveInitialState::changeState(IClientState* state) {
+    //Reset all the data...
+    receivedSmallContainers = 0;
+    endPacketReceived = false;
     state->onChange(this);
 }
 

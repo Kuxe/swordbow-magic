@@ -2,11 +2,16 @@
 #define CLIENTDISCONNECTEDSTATE_HPP
 
 #include "iclientstate.hpp"
+#include <mutex>
 
 class Client;
 class ClientDisconnectedState : public IClientState {
 private:
 	Client* client;
+	std::mutex forceDisconnectMutex;
+	volatile bool forceDisconnectBool = false;
+	void forceDisconnect();
+	void pollForceDisconnect();
 public:
 	ClientDisconnectedState(Client* client);
 	void receive();

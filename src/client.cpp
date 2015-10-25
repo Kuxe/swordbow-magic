@@ -72,7 +72,6 @@ void Client::connect(const IpAddress& server) {
 }
 
 void Client::disconnect() {
-
     //Stop receiving data on socket
     receiveThreadRunning = false;
     receiveThread.join();
@@ -174,6 +173,7 @@ int main(int argc, char** argv) {
     client.connect(ipAddress);
     client.run();
     client.disconnect();
+    client.stop();
     Logger::closeLogfile();
     return 0;
 }

@@ -1,6 +1,21 @@
 #include "clientdisconnectedstate.hpp"
 #include "client.hpp"
 
+void ClientDisconnectedState::forceDisconnect() {
+    forceDisconnectMutex.lock();
+    forceDisconnectBool = true;
+    forceDisconnectMutex.unlock();
+}
+
+void ClientDisconnectedState::pollForceDisconnect() {
+    forceDisconnectMutex.lock();
+    if(forceDisconnectBool) {
+        client->disconnect();
+        forceDisconnectBool = false;
+    }
+    forceDisconnectMutex.unlock();
+}
+
 ClientDisconnectedState::ClientDisconnectedState(Client* client) : client(client) { }
 
 void ClientDisconnectedState::receive() {
@@ -90,6 +105,10 @@ void ClientDisconnectedState::step() {
     }
     client->renderer.renderOnlyOverlays();
 
+    //Receivethread can force client to disconnect (from state-transitions usually)
+    //In that case, this thread (main-thread) must poll that variable to see if it is set
+    pollForceDisconnect();
+
     //If it weren't for 10ms sleep, this thread would lock out
     //the receive-thread to the extent of losing lots of packets
     using namespace std::literals;
@@ -111,6 +130,7 @@ void ClientDisconnectedState::onChange(ClientReceiveInitialState* state) {
     client->clientState = this;
     client->renderer.hideOverlay(Image::RECEIVING_DATA_OVERLAY);
     client->renderer.showOverlay(Image::CONNECT_OVERLAY, {"Disconnected from server", 150, client->renderer.getScreenHeight() / 2 - 10});
+    forceDisconnect();
 }
 
 void ClientDisconnectedState::onChange(ClientRunningState* state) {
@@ -118,5 +138,6 @@ void ClientDisconnectedState::onChange(ClientRunningState* state) {
     client->clientState = this;
     client->soundEngine.stopMusic(Music::NATURE_SOUNDS);
     client->renderer.showOverlay(Image::CONNECT_OVERLAY, {"Disconnected from server", 150, client->renderer.getScreenHeight() / 2 - 10});
+    forceDisconnect();
 }
 
