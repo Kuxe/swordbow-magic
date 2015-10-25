@@ -72,21 +72,24 @@ void Client::connect(const IpAddress& server) {
 }
 
 void Client::disconnect() {
-    //Stop receiving data on socket
-    receiveThreadRunning = false;
-    receiveThread.join();
+    //receiveThreadRunning can be seen as "isConnected"
+    //So we don't need to disconnect if we're already disconnected.
+    if(receiveThreadRunning == true) {
+        receiveThreadRunning = false;
+        receiveThread.join();
 
-    //Disconnect-request packet
-    send<bool>(true, MESSAGE_TYPE::DISCONNECT);
+        //Disconnect-request packet
+        send<bool>(true, MESSAGE_TYPE::DISCONNECT);
 
-    keepAlive.stop();
+        keepAlive.stop();
 
-    std::ostringstream oss;
-    oss << "Disconnected from " << server;
-    Logger::log(oss, Log::INFO);
+        std::ostringstream oss;
+        oss << "Disconnected from " << server;
+        Logger::log(oss, Log::INFO);
 
-    //Indicate not connected to any server
-    server = IpAddress(0, 0, 0, 0, 0);
+        //Indicate not connected to any server
+        server = IpAddress(0, 0, 0, 0, 0);
+    }
 }
 
 void Client::receive() {
