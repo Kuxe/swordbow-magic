@@ -27,7 +27,12 @@ void HashGridSystem::add(const ID id) {
 
 void HashGridSystem::remove(const ID id) {
 	ids.erase(id);
-	removeFromCells(id);
+	try {
+		removeFromCells(id);
+	} catch(std::out_of_range oor) {
+		Logger::log("Couldn't remove " + std::to_string(id) + " from HashGridSystem because call to removeFromCells failed", Log::ERROR);
+		throw oor;
+	}
 }
 
 void HashGridSystem::addToCells(const ID id) {

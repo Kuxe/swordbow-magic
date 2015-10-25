@@ -158,6 +158,8 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 	registerIdToSystem(id, System::INPUT);
 	registerIdToSystem(id, System::ANIMATION);
 	registerIdToSystem(id, System::INITIAL_COMPONENTS);
+	registerIdToSystem(id, System::MOVEDIFF);
+	registerIdToSystem(id, System::RENDERDIFF);
 
 	return id;
 }
@@ -193,6 +195,8 @@ ID EntityManager::createTree(const glm::vec2& position) {
 	registerIdToSystem(id, System::COLLISION);
 	registerIdToSystem(id, System::HASHGRID_SIZE);
 	registerIdToSystem(id, System::INITIAL_COMPONENTS);
+	registerIdToSystem(id, System::MOVEDIFF);
+	registerIdToSystem(id, System::RENDERDIFF);
 
 	return id;
 }
@@ -219,6 +223,8 @@ ID EntityManager::createGrassTile(const glm::vec2& position) {
 	nameComponent.name = "grasstile";
 
 	registerIdToSystem(id, System::INITIAL_COMPONENTS);
+	registerIdToSystem(id, System::MOVEDIFF);
+	registerIdToSystem(id, System::RENDERDIFF);
 
 	return id;
 }
@@ -246,6 +252,8 @@ ID EntityManager::createWaterTile(const glm::vec2& position) {
 	nameComponent.name = "watertile";
 
 	registerIdToSystem(id, System::INITIAL_COMPONENTS);
+	registerIdToSystem(id, System::MOVEDIFF);
+	registerIdToSystem(id, System::RENDERDIFF);
 
 	return id;
 }
@@ -289,6 +297,8 @@ ID EntityManager::createBloodSplatter(const glm::vec2& position) {
 	registerIdToSystem(id, System::ANIMATION);
 	registerIdToSystem(id, System::MOVEDIFF);
 	registerIdToSystem(id, System::INITIAL_COMPONENTS);
+	registerIdToSystem(id, System::MOVEDIFF);
+	registerIdToSystem(id, System::RENDERDIFF);
 
 	return id;
 }
@@ -330,6 +340,8 @@ ID EntityManager::createFlower(const glm::vec2& position, const char color) {
 	nc.name = "flower";
 
 	registerIdToSystem(id, System::INITIAL_COMPONENTS);
+	registerIdToSystem(id, System::MOVEDIFF);
+	registerIdToSystem(id, System::RENDERDIFF);
 
 	return id;
 }
@@ -381,6 +393,8 @@ ID EntityManager::createDummySquare(const glm::vec2& position) {
 	registerIdToSystem(id, System::MOVE);
 	registerIdToSystem(id, System::INPUT);
 	registerIdToSystem(id, System::INITIAL_COMPONENTS);
+	registerIdToSystem(id, System::MOVEDIFF);
+	registerIdToSystem(id, System::RENDERDIFF);
 
 	return id;
 }
@@ -412,6 +426,8 @@ ID EntityManager::createStone(const glm::vec2& position) {
 	registerIdToSystem(id, System::COLLISION);
 	registerIdToSystem(id, System::HASHGRID_SIZE);
 	registerIdToSystem(id, System::INITIAL_COMPONENTS);
+	registerIdToSystem(id, System::MOVEDIFF);
+	registerIdToSystem(id, System::RENDERDIFF);
 
 	return id;
 }
@@ -467,6 +483,8 @@ ID EntityManager::createBlueBird(const glm::vec2& position) {
 	registerIdToSystem(id, System::BIRD);
 	registerIdToSystem(id, System::ACCELERATION);
 	registerIdToSystem(id, System::INITIAL_COMPONENTS);
+	registerIdToSystem(id, System::MOVEDIFF);
+	registerIdToSystem(id, System::RENDERDIFF);
 
 	return id;
 }
