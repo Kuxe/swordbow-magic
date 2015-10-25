@@ -98,6 +98,10 @@ void SoundEngine::playMusic(Music::Identifier music) const {
     Mix_PlayMusic(musics.at(music), -1);
 }
 
+void SoundEngine::stopMusic(Music::Identifier music) const {
+    Mix_HaltMusic();
+}
+
 void SoundEngine::playSound(SoundData& scSound) const {
     auto sound = sounds.at(scSound.sound); //Soundfile on soundPath
     auto channel = channels.at(sound); //Channel that the soundfile is played on

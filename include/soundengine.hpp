@@ -21,6 +21,7 @@ public:
     SoundEngine();
     ~SoundEngine();
     void playMusic(Music::Identifier music) const;
+    void stopMusic(Music::Identifier music) const;
     void playSound(SoundData& scSound) const;
     void stopSound(SoundData& scSound) const;
 };

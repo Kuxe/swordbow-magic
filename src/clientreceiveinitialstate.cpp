@@ -43,18 +43,32 @@ void ClientReceiveInitialState::receive() {
                     client->renderSystem.add(pair.first);
                 }
 
+                client->missingSequences.erase(typedPacket.getSequence());
+
+                //If END_TRANSMITTING_INITIAL_COMPONENTS is already received, that means that
+                //this INITIAL_COMPONENTS PACKET was 'late'.. So check if it was last one and if
+                //so change to next state as usual
+                if(endPacketReceived) {
+                    if(receivedSmallContainers == client->numberOfInitialSmallContainers) {
+                        changeState(&client->clientRunningState);
+                    }
+                }
+
         	} break;
 
         	case MESSAGE_TYPE::END_TRANSMITTING_INITIAL_COMPONENTS: {
         	    Logger::log("Received END_TRANSMITTING_INITIAL_COMPONENTS packet", Log::INFO);
+                endPacketReceived = true;
 
                 if(receivedSmallContainers < client->numberOfInitialSmallContainers) {
-                    Logger::log("Did not receive all initial components before END_TRANSMITTING_INITIAL_COMPONENTS (packets lost?)", Log::WARNING);
-                }
+                    Logger::log("Did not receive all initial components before END_TRANSMITTING_INITIAL_COMPONENTS (packets lost?)", Log::ERROR);
 
-                //Play some sweet music
-                client->soundEngine.playMusic(Music::NATURE_SOUNDS);
-                client->clientState = &client->clientRunningState;
+                    //TODO: At some point, instead of going into disconnect mode,
+                    //ask server to resend the lost packets.
+                    changeState(&client->clientDisconnectedState);
+                } else {
+                    changeState(&client->clientRunningState);
+                }
         	} break;
 
             case MESSAGE_TYPE::KEEP_ALIVE: {
@@ -96,10 +110,36 @@ void ClientReceiveInitialState::step() {
     };
     client->renderer.showOverlay(Image::RECEIVING_DATA_OVERLAY, text);
     client->renderer.renderOnlyOverlays();
+
+    /** Check for timeout **/
+    if(client->keepAlive.elapsed() > client->secondsUntilTimeout) {
+        std::ostringstream oss;
+        oss << "No packets from server received for " << client->keepAlive.elapsed() << "sec, server timeout";
+        Logger::log(oss, Log::ERROR);
+        changeState(&client->clientDisconnectedState);
+    }
+
     client->componentsMutex.unlock();
 
     //If it weren't for 10ms sleep, this thread would lock out
     //the receive-thread to the extent of losing lots of packets
     using namespace std::literals;
     std::this_thread::sleep_for(10ms);
+}
+
+void ClientReceiveInitialState::changeState(IClientState* state) {
+    state->onChange(this);
+}
+
+void ClientReceiveInitialState::onChange(ClientDisconnectedState* state) {
+    Logger::log("Client changing state from ClientDisconnectedState to ClientReceiveInitialState", Log::INFO);
+    client->clientState = this;
+}
+
+void ClientReceiveInitialState::onChange(ClientReceiveInitialState* state) {
+    Logger::log("Client can't change state from ClientReceiveInitialState to ClientReceiveInitialState", Log::WARNING);
+}
+
+void ClientReceiveInitialState::onChange(ClientRunningState* state) {
+    Logger::log("Client can't change state from ClientRunningState to ClientReceiveInitialState", Log::WARNING);
 }

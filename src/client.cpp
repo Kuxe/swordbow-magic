@@ -104,15 +104,11 @@ void Client::run() {
 
 void Client::step() {
     clientState->step();
+}
 
-    /** Code that is common for all client-states goes here **/
-    if(keepAlive.elapsed() > secondsUntilTimeout) {
-        running = false;
-        receiveThreadRunning = false;
-        std::ostringstream oss;
-        oss << "No packets from server received for " << keepAlive.elapsed() << "sec, server timeout";
-        Logger::log(oss, Log::ERROR);
-    }
+void Client::stop() {
+    running = false;
+    Logger::log("Stopping client...", Log::INFO);
 }
 
 int main(int argc, char** argv) {

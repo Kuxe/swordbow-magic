@@ -34,7 +34,6 @@ void ClientRunningState::receive() {
 
                 case MESSAGE_TYPE::CONNECT: {
                     Logger::log("Got camera ID from server", Log::INFO);
-                    client->renderer.fadeOutOverlay(Image::RECEIVING_DATA_OVERLAY, 0.5f);
 
                     //Got my id. Tell camerasystem to follow that id.
                     auto typedPacket = client->socket.get<Packet<std::pair<ID, System::Identifier>>>(bytesRead);
@@ -234,6 +233,14 @@ void ClientRunningState::step() {
         Logger::log(oss, Log::WARNING);
     }
 
+    /** Check for timeout **/
+    if(client->keepAlive.elapsed() > client->secondsUntilTimeout) {
+        std::ostringstream oss;
+        oss << "No packets from server received for " << client->keepAlive.elapsed() << "sec, server timeout";
+        Logger::log(oss, Log::ERROR);
+        changeState(&client->clientDisconnectedState);
+    }
+
     /** END OF CRITICAL SECTION **/
     client->componentsMutex.unlock();
 
@@ -247,4 +254,23 @@ void ClientRunningState::step() {
     std::this_thread::sleep_for(sleep);
 
     client->deltaTime.stop();
+}
+
+void ClientRunningState::changeState(IClientState* state) {
+    state->onChange(this);
+}
+
+void ClientRunningState::onChange(ClientDisconnectedState* state) {
+    Logger::log("Client can't change state from ClientDisconnectedState to ClientRunningState", Log::WARNING);
+}
+
+void ClientRunningState::onChange(ClientReceiveInitialState* state) {
+    Logger::log("Client changing state from ClientReceiveInitialState to ClientRunningState", Log::INFO);
+    client->soundEngine.playMusic(Music::NATURE_SOUNDS);
+    client->clientState = this;
+    client->renderer.fadeOutOverlay(Image::RECEIVING_DATA_OVERLAY, 0.5f);
+}
+
+void ClientRunningState::onChange(ClientRunningState* state) {
+    Logger::log("Client can't change state from ClientRunningState to ClientRunningState", Log::WARNING);
 }

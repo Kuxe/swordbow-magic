@@ -40,8 +40,22 @@ void ClientDisconnectedState::receive() {
                     using DataType = int;
                     using PacketType = Packet<DataType>;
                     auto typedPacket = client->socket.get<PacketType>(bytesRead);
-                    client->numberOfInitialSmallContainers = typedPacket.getData();
-                    client->clientState = &client->clientReceiveInitialState;
+                    auto numberOfInitialSmallContainers = typedPacket.getData();
+                    client->numberOfInitialSmallContainers = numberOfInitialSmallContainers;
+
+                    //As per (unwritten) specification, INITIAL_COMPONENTS-packets are directly followed by the
+                    //BEGIN_TRANSMITTING_INITIAL_COMPONENTS-packet. So it is safe to say that the sequenceNumbers
+                    //for all INITIAL_COMPONENTS-packets are:
+                    //BEGIN_TRANSMITTING_INITIAL_COMPONENTS.sequence ... BEGIN_TRANSMITTING_INITIAL_COMPONENTS.sequence + numberOfInitialSmallContainers
+                    //If the BEGIN_TRANSMITTING_INITIAL_COMPONENTS had sequence 3 and there are 7 small containers,
+                    //then 4, 5, 6 ..., 10 is expected to be the sequence number of initial components
+                    const auto firstSequence = typedPacket.getSequence()+1;
+                    const auto lastSequence = typedPacket.getSequence()+1 + numberOfInitialSmallContainers;
+                    for(auto sequence = firstSequence; sequence <= lastSequence; sequence++) {
+                        client->missingSequences.insert(sequence);
+                    }
+
+                    changeState(&client->clientReceiveInitialState);
                 } break;
 
                 case MESSAGE_TYPE::KEEP_ALIVE: {
@@ -81,3 +95,28 @@ void ClientDisconnectedState::step() {
     using namespace std::literals;
     std::this_thread::sleep_for(10ms);
 }
+
+void ClientDisconnectedState::changeState(IClientState* state) {
+    state->onChange(this);
+}
+
+void ClientDisconnectedState::onChange(ClientDisconnectedState* state) {
+    Logger::log("Client changing state from ClientDisconnectedState to ClientDisconnectedState", Log::WARNING);
+    client->clientState = this;
+    client->renderer.showOverlay(Image::CONNECT_OVERLAY, {"Disconnected from server", 150, client->renderer.getScreenHeight() / 2 - 10});
+}
+
+void ClientDisconnectedState::onChange(ClientReceiveInitialState* state) {
+    Logger::log("Client changing state from ClientReceiveInitialState to ClientDisconnectedState", Log::INFO);
+    client->clientState = this;
+    client->renderer.hideOverlay(Image::RECEIVING_DATA_OVERLAY);
+    client->renderer.showOverlay(Image::CONNECT_OVERLAY, {"Disconnected from server", 150, client->renderer.getScreenHeight() / 2 - 10});
+}
+
+void ClientDisconnectedState::onChange(ClientRunningState* state) {
+    Logger::log("Client changing state from ClientRunningState to ClientDisconnectedState", Log::WARNING);
+    client->clientState = this;
+    client->soundEngine.stopMusic(Music::NATURE_SOUNDS);
+    client->renderer.showOverlay(Image::CONNECT_OVERLAY, {"Disconnected from server", 150, client->renderer.getScreenHeight() / 2 - 10});
+}
+

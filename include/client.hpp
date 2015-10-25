@@ -56,6 +56,7 @@ private:
     //This variable is received in BEGIN_TRANSMITTING_INITIAL_COMPONENTS from server
     //Client needs this to know how many packets it should get from server
     int numberOfInitialSmallContainers = 0;
+    std::unordered_set<uint16_t> missingSequences;
 
     //ID that this client controlls
     ID playerId;
@@ -97,6 +98,7 @@ public:
     void disconnect();
     void run();
     void step();
+    void stop();
 };
 
 #endif //CLIENT_HPP
