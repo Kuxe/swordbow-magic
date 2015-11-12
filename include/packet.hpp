@@ -10,7 +10,7 @@
 //caution: objects with pointers wont work as data, obviously,
 //since memory pointed to by pointers aren't the same across
 //machines...
-template<class Data = unsigned int>
+template<class Data, MESSAGE_TYPE Message>
 class Packet {
 private:
     uint16_t protocol;
@@ -24,8 +24,8 @@ private:
     Data data;
 public:
     constexpr Packet() {}
-    constexpr Packet(const unsigned int protocol, uint16_t sequence, MESSAGE_TYPE type, const Data& data, unsigned int datasize) :
-        protocol(protocol), sequence(sequence), type(type), data(data), datasize(datasize) {
+    constexpr Packet(const unsigned int protocol, uint16_t sequence, const Data& data, unsigned int datasize) :
+        protocol(protocol), sequence(sequence), type(Message), data(data), datasize(datasize) {
             static_assert(
                 !std::is_pointer<Data>::value,
                 "Sending pointers over network can't work. Try to copy the data pointed to by the pointer instead"

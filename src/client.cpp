@@ -14,7 +14,7 @@
 #include <string>
 
 Client::Client(int argc, char** argv) :
-        socket("swordbow-magic"),
+        packetManager("swordbow-magic"),
         sequence(1),
         systemManager(&componentManager, &deltaTime),
         renderer(argc, argv),
@@ -39,7 +39,7 @@ Client::Client(int argc, char** argv) :
 		}
 	}
 
-    socket.open(port);
+    packetManager.open(port);
 
     systemManager.add(&textureHashGridSystem);
     systemManager.add(&renderSystem);
@@ -50,7 +50,7 @@ Client::Client(int argc, char** argv) :
 }
 
 Client::~Client() {
-    socket.close();
+    packetManager.close();
     Logger::log("Destroying client", Log::INFO);
 }
 
@@ -64,7 +64,7 @@ void Client::connect(const IpAddress& server) {
     this->server = server;
 
     //Connect-request packet
-    send<bool>(true, MESSAGE_TYPE::CONNECT);
+    send<bool, MESSAGE_TYPE::CONNECT>(true);
     keepAlive.start();
     std::ostringstream oss;
     oss << "Sent connect request to " << server;
@@ -79,7 +79,7 @@ void Client::disconnect() {
         receiveThread.join();
 
         //Disconnect-request packet
-        send<bool>(true, MESSAGE_TYPE::DISCONNECT);
+        send<bool, MESSAGE_TYPE::DISCONNECT>(true);
 
         keepAlive.stop();
 

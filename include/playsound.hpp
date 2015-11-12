@@ -11,19 +11,19 @@
 
 typedef unsigned int ID;
 
-class Socket;
+class PacketManager;
 
 /** Used when server should tell all clients to play a sound **/
 class PlaySound : public ICommand {
 private:
     SoundData sound;
     std::unordered_map<IpAddress, ClientData>* clients;
-    Socket* socket;
+    PacketManager* packetManager;
 public:
     PlaySound(
         SoundData sound,
         std::unordered_map<IpAddress, ClientData>* clients,
-        Socket* socket
+        PacketManager* packetManager
     );
     void execute();
 };

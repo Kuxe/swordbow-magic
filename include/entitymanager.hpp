@@ -20,7 +20,7 @@ class SystemManager;
 class ComponentManager;
 class IdManager;
 class ISystem;
-class Socket;
+class PacketManager;
 
 typedef unsigned int ID;
 
@@ -42,14 +42,14 @@ class EntityManager {
     std::unordered_map<IpAddress, ClientData>* clients;
 
     //Required during creation for some commands
-    Socket* socket;
+    PacketManager* packetManager;
 
 	EntityManager(
         SystemManager* systemManager,
         ComponentManager* componentManager,
         IdManager* idManager,
         std::unordered_map<IpAddress, ClientData>* clients,
-        Socket* socket
+        PacketManager* packetManager
     );
     const unsigned int& getId();
 

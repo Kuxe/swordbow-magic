@@ -4,7 +4,7 @@
 #include "sounddata.hpp"
 
 /** For network **/
-#include "socket.hpp"
+#include "packetmanager.hpp"
 #include "packet.hpp"
 #include "messagetypes.hpp"
 
@@ -14,10 +14,10 @@
 AttackSystem::AttackSystem(
     HashGridSystem* hashgrid,
     std::unordered_map<IpAddress, ClientData>* clients,
-    Socket* socket) :
+    PacketManager* packetManager) :
     hashgrid(hashgrid),
     clients(clients),
-    socket(socket) {
+    packetManager(packetManager) {
 
 }
 
@@ -88,15 +88,13 @@ void AttackSystem::update() {
                 //Broadcast hurtsound to all clients
                 for(auto& pair : *clients) {
                     auto& clientData = pair.second;
-                    using Type = Packet<SoundData>;
-                    auto packet = Type {
+                    auto packet = Packet<SoundData, MESSAGE_TYPE::PLAY_SOUND> {
                 		stringhash("swordbow-magic"),
                         clientData.sequence++,
-                		MESSAGE_TYPE::PLAY_SOUND,
                 		hurtSound,
                 		sizeof(hurtSound)
                 	};
-                	socket->send<Type>(pair.first, packet);
+                	packetManager->send<SoundData>(pair.first, packet);
                 }
             }
         }

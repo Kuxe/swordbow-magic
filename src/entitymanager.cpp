@@ -3,7 +3,7 @@
 #include "idmanager.hpp"
  
 /** For networking **/
-#include "socket.hpp"
+#include "packetmanager.hpp"
 #include "packet.hpp"
 #include "messagetypes.hpp"
 
@@ -22,12 +22,12 @@ EntityManager::EntityManager(
 	ComponentManager* componentManager,
 	IdManager* idManager,
 	std::unordered_map<IpAddress, ClientData>* clients,
-	Socket* socket) :
+	PacketManager* packetManager) :
 	systemManager(systemManager),
 	componentManager(componentManager),
 	idManager(idManager),
 	clients(clients),
-	socket(socket) {
+	packetManager(packetManager) {
 
 }
 
@@ -137,7 +137,7 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 		new PlaySound(
 			SoundData {Sound::BLOODSPLATTER},
 			clients,
-			socket
+			packetManager
 		),
 		new CreateBloodsplatter(this, id),
 	};
@@ -145,7 +145,7 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 	commandComponent[CommandComponent::Event::ON_MOVE] = {
 		new ActivateId(id, System::COLLISION, systemManager),
 		new ActivateId(id, System::HASHGRID_SIZE, systemManager),
-		new PlaySound(soundComponent.walk, clients, socket),
+		new PlaySound(soundComponent.walk, clients, packetManager),
 		new AddIdToSystem(id, System::MOVEDIFF, systemManager)
 	};
 
@@ -524,15 +524,13 @@ void EntityManager::remove(ID id) {
 	for(auto& pair : *clients) {
 		auto& clientData = pair.second;
 
-		using Type = Packet<ID>;
-		auto packet = Type {
+		auto packet = Packet<ID, MESSAGE_TYPE::REMOVE_ID> {
 			stringhash("swordbow-magic"),
 			clientData.sequence++,
-			MESSAGE_TYPE::REMOVE_ID,
 			id,
 			sizeof(id)
 		};
-		socket->send<Type>(pair.first, packet);
+		packetManager->send<ID>(pair.first, packet);
 	}
 
 	//3. Remove from componentManager

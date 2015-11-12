@@ -2,18 +2,18 @@
 
 /** For network **/
 #include "clientdata.hpp"
-#include "socket.hpp"
+#include "packetmanager.hpp"
 #include "messagetypes.hpp"
 #include "packet.hpp"
 
 PlaySound::PlaySound(
     SoundData sound,
     std::unordered_map<IpAddress, ClientData>* clients,
-    Socket* socket
+    PacketManager* packetManager
     ) :
     sound(sound),
     clients(clients),
-    socket(socket) { }
+    packetManager(packetManager) { }
 
 void PlaySound::execute() {
 
@@ -24,15 +24,13 @@ void PlaySound::execute() {
 
         for(auto& pair : *clients) {
             auto& clientData = pair.second;
-            using Type = Packet<SoundData>;
-            auto packet = Type {
+            const auto packet = Packet<SoundData, MESSAGE_TYPE::PLAY_SOUND> {
                 stringhash("swordbow-magic"),
                 clientData.sequence++,
-                MESSAGE_TYPE::PLAY_SOUND,
                 sound,
                 sizeof(sound)
             };
-            socket->send<Type>(pair.first, packet);
+            packetManager->send<SoundData>(pair.first, packet);
         }
     }
 }

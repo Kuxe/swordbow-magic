@@ -10,7 +10,7 @@
 #include "camerasystem.hpp"
 #include "textureboundingbox.hpp"
 #include "soundengine.hpp"
-#include "socket.hpp"
+#include "packetmanager.hpp"
 #include "messagetypes.hpp"
 #include "timer.hpp"
 
@@ -28,7 +28,7 @@ typedef unsigned int ID;
 class ClientState;
 class Client {
 private:
-    Socket socket;
+    PacketManager packetManager;
     IpAddress server;
     uint16_t sequence;
 
@@ -76,19 +76,16 @@ public:
     bool running = true;
 
     //Helper method for sending packets
-    template<class DataType>
-    void send(DataType data, MESSAGE_TYPE message) {
-
-        using PacketType = Packet<DataType>;
-        PacketType cameraPacket = {
+    template<class DataType, MESSAGE_TYPE Message>
+    void send(DataType data) {
+        Packet<DataType, Message> cameraPacket = {
             stringhash("swordbow-magic"),
             sequence++,
-            message,
             data,
             sizeof(data)
         };
 
-        socket.send<PacketType>(server, cameraPacket);
+        packetManager.send<DataType>(server, cameraPacket);
     }
 
     Client(int argc, char** argv);

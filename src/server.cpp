@@ -15,21 +15,21 @@
 #include <SDL2/SDL.h> //For SDL_keys
 
 Server::Server(int argc, char** argv) :
-		socket("swordbow-magic"),
+		packetManager("swordbow-magic"),
 		systemManager(&componentManager, &deltaTime),
 		sizeBoundingBox(&componentManager),
-		entityManager(&systemManager, &componentManager, &idManager, &clients, &socket),
+		entityManager(&systemManager, &componentManager, &idManager, &clients, &packetManager),
 		sizeHashGridSystem(&sizeBoundingBox),
 		collisionSystem(&sizeHashGridSystem),
 		removeSystem(&entityManager),
-		attackSystem(&sizeHashGridSystem, &clients, &socket),
+		attackSystem(&sizeHashGridSystem, &clients, &packetManager),
 		birdSystem(&entityManager) {
 
 	Logger::log("Starting server", Log::INFO);
 	printGeneralInfo();
 
 	constexpr short port = 47293;
-	socket.open(port);
+	packetManager.open(port);
 
 	//Initialize time in deltatimer to something not zero, just to avoid velocities going to zero
 	deltaTime.start();
@@ -76,7 +76,7 @@ Server::Server(int argc, char** argv) :
 }
 
 Server::~Server() {
-	socket.close();
+	packetManager.close();
 }
 
 void Server::run() {
@@ -105,71 +105,7 @@ void Server::step() {
 	sendKeepAlive();
 
 	//Receive data from clients...
-    IpAddress clientIp;
-    MESSAGE_TYPE type;
-    int bytesRead;
-    socket.receive(clientIp, type, bytesRead);
-
-	//If any data was received, check its type and take appropiate action
-    if(bytesRead > 0) {
-
-        switch(type) {
-			case MESSAGE_TYPE::OUTDATED: {
-				Logger::log("This packet is outdated, to late! Sluggish!", Log::WARNING);
-            } break;
-
-			case MESSAGE_TYPE::CONNECT: {
-				Logger::log("Received CONNECT packet", Log::INFO);
-				onConnect(clientIp);
-			} break;
-
-			case MESSAGE_TYPE::DISCONNECT: {
-				Logger::log("Received DISCONNECT packet", Log::INFO);
-				onDisconnect(clientIp);
-			} break;
-
-			case MESSAGE_TYPE::INPUTDATA: {
-				Logger::log("Received INPUTDATA packet", Log::VERBOSE);
-				auto typedPacket = socket.get<Packet<InputData>>(bytesRead);
-
-				//Check if client established a connection to the server, ie
-				//asked for a entity id. It could be that the client had a connection
-				//to another session of the server, in which case the clients id might
-				//not be present on this session of the server... Those clients should
-				//restart / reconnect. So don't do anything with this packet if
-				//the server doesn't think the client has connected. It might be the
-				//case that the id is connected currently, but was just killed but hasnt
-				//been notified of its death so it keeps trying to move. In that case,
-				//its fine to ignore any input trying to steer the deceased entity.
-				auto& ics = componentManager.inputComponents;
-				if(clients.find(clientIp) != clients.end() && ics.find(clients.at(clientIp).id) != ics.end()) {
-					inputDataToInputComponent(clientIp, typedPacket.getData());
-				}
-
-			} break;
-
-			case MESSAGE_TYPE::CONGESTED_CLIENT: {
-				Logger::log("Received CONGESTED_CLIENT packet", Log::INFO);
-				auto& client = clients.at(clientIp);
-				client.congested = true;
-				client.congestionTimer.start();
-			} break;
-
-			case MESSAGE_TYPE::NOT_CONGESTED_CLIENT: {
-				Logger::log("Received NOT_CONGESTED_CLIENT packet", Log::INFO);
-				clients.at(clientIp).congested = false;
-			} break;
-
-			default: {
-				std::ostringstream oss;
-                oss << "Message without proper type received. This is probably a bug.";
-                oss << " Either server-side handling for that message isn't implemented";
-                oss << " or a client sent a message with a bogus messagetype";
-                oss << " or the messagetype was wrongly altered somewhere (type: " << type << ")";
-                Logger::log(oss, Log::WARNING);
-            };
-        }
-	}
+    packetManager.receive(*this);
 
 	//Limit server-speed to 60fps (rather 60 tick per second)
 	//Check the elapsed time for the current step, if it is lower than
@@ -190,10 +126,10 @@ void Server::onConnect(const IpAddress& ipAddress) {
 	auto playerId = entityManager.createFatMan({10.0f, 20.0f});
 	clients.insert({ipAddress, {1, playerId}});
 
-	//In case a client reconnects, the socket shouldn't reject the newly
-	//reconnected clients packets since the socket knows of latter remoteSequences
+	//In case a client reconnects, the packetManager shouldn't reject the newly
+	//reconnected clients packets since the packetManager knows of latter remoteSequences
 	//since the previous session on client machine
-	socket.resetRemoteSequenceNumber(ipAddress);
+	packetManager.resetRemoteSequenceNumber(ipAddress);
 
 	//Client should get a copy of all components
 	sendInitial(ipAddress);
@@ -201,7 +137,7 @@ void Server::onConnect(const IpAddress& ipAddress) {
 	//Make the client aware of its ID and register the ID to client camerasytem
 	using DataType = std::pair<ID, System::Identifier>;
 	const DataType data {playerId, System::CAMERA};
-	send<DataType>(ipAddress, data, MESSAGE_TYPE::CONNECT);
+	send<DataType, MESSAGE_TYPE::CONNECT>(ipAddress, data);
 }
 
 void Server::onDisconnect(const IpAddress& ipAddress) {
@@ -231,7 +167,7 @@ void Server::sendInitial(const IpAddress& ipAddress) {
 	const ID componentsPerContainer = 64;
 	const auto size = initialComponents.first.size();
 	const int numContainers = (size / componentsPerContainer) + ((size % componentsPerContainer) > 0 ? 1 : 0);
-	send<int>(ipAddress, numContainers, MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS);
+	send<int, MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS>(ipAddress, numContainers);
 
 	std::ostringstream oss1;
 	oss1 << "Sending BEGIN_TRANSMITTING_INITIAL_COMPONENTS-packet to " << ipAddress;
@@ -249,14 +185,14 @@ void Server::sendInitial(const IpAddress& ipAddress) {
 	using namespace std::literals;
 	using DataType = const std::pair<const Components<const MoveComponent&>, const Components<const RenderComponent&>>;
 	for(int i = 0; i < smallerMcs.size(); i++) {
-		send<DataType>(ipAddress, {smallerMcs[i], smallerRcs[i]}, MESSAGE_TYPE::INITIAL_COMPONENTS);
+		send<DataType, MESSAGE_TYPE::INITIAL_COMPONENTS>(ipAddress, {smallerMcs[i], smallerRcs[i]});
 		std::this_thread::sleep_for(1ms);
 	}
 
 	std::ostringstream oss2;
 	oss2 << "Sending END_TRANSMITTING_INITIAL_COMPONENTS-packet to " << ipAddress;
 	Logger::log(oss2, Log::VERBOSE);
-	send<bool>(ipAddress, true, MESSAGE_TYPE::END_TRANSMITTING_INITIAL_COMPONENTS);
+	send<bool, MESSAGE_TYPE::END_TRANSMITTING_INITIAL_COMPONENTS>(ipAddress, true);
 }
 
 void Server::sendInitial() {
@@ -275,7 +211,7 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 	}
 
 	if(!movediffs.empty()) {
-		send<Components<MoveComponent>>(ipAddress, movediffs, MESSAGE_TYPE::MOVECOMPONENTSDIFF);
+		send<Components<MoveComponent>, MESSAGE_TYPE::MOVECOMPONENTSDIFF>(ipAddress, movediffs);
 		std::ostringstream oss;
 		oss << "Sending MOVECOMPONENTSDIFF-packet containing ids: ";
 		for(auto pair : movediffs) {
@@ -292,7 +228,7 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 	}
 
 	if(!renderdiffs.empty()) {
-		send<Components<RenderComponent>>(ipAddress, renderdiffs, MESSAGE_TYPE::RENDERCOMPONENTSDIFF);
+		send<Components<RenderComponent>, MESSAGE_TYPE::RENDERCOMPONENTSDIFF>(ipAddress, renderdiffs);
 		std::ostringstream oss;
 		oss << "Sending RENDERCOMPONENTSDIFF-packet containing ids: ";
 		for(auto pair : renderdiffs) {
@@ -329,7 +265,7 @@ void Server::sendKeepAlive() {
 		for(auto it : clients) {
 			const auto& client(it.second);
 			const auto& ipAddress = it.first;
-			send<bool>(ipAddress, true, MESSAGE_TYPE::KEEP_ALIVE);
+			send<bool, MESSAGE_TYPE::KEEP_ALIVE>(ipAddress, true);
 			Logger::log("Sending KEEP_ALIVE-packet", Log::VERBOSE);
 		}
 	}
@@ -418,6 +354,98 @@ void Server::printGeneralInfo() {
 	oss << "bytes (" << allEntitiesMegabyteSize;
 	oss << "MB)";
 	Logger::log(oss, Log::INFO);
+}
+
+void Server::accept(Packet<OUTDATED_TYPE, MESSAGE_TYPE::OUTDATED>& packet, const IpAddress& sender) {
+	Logger::log("This packet is outdated, to late! Sluggish!", Log::WARNING);
+}
+
+void Server::accept(Packet<CONNECT_TYPE, MESSAGE_TYPE::CONNECT>& packet, const IpAddress& sender) {
+	Logger::log("Received CONNECT packet", Log::INFO);
+	onConnect(sender);
+}
+
+void Server::accept(Packet<DISCONNECT_TYPE, MESSAGE_TYPE::DISCONNECT>& packet, const IpAddress& sender) {
+	Logger::log("Received DISCONNECT packet", Log::INFO);
+	onDisconnect(sender);
+}
+
+void Server::accept(Packet<INPUTDATA_TYPE, MESSAGE_TYPE::INPUTDATA>& packet, const IpAddress& sender) {
+	Logger::log("Received INPUTDATA packet", Log::VERBOSE);
+
+	//Check if client established a connection to the server, ie
+	//asked for a entity id. It could be that the client had a connection
+	//to another session of the server, in which case the clients id might
+	//not be present on this session of the server... Those clients should
+	//restart / reconnect. So don't do anything with this packet if
+	//the server doesn't think the client has connected. It might be the
+	//case that the id is connected currently, but was just killed but hasnt
+	//been notified of its death so it keeps trying to move. In that case,
+	//its fine to ignore any input trying to steer the deceased entity.
+	auto& ics = componentManager.inputComponents;
+	if(clients.find(sender) != clients.end() && ics.find(clients.at(sender).id) != ics.end()) {
+		inputDataToInputComponent(sender, packet.getData());
+	}
+}
+
+void Server::accept(Packet<BEGIN_TRANSMITTING_INITIAL_COMPONENTS_TYPE, MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS>& packet, const IpAddress& sender) {
+
+}
+
+void Server::accept(Packet<INITIAL_COMPONENTS_TYPE, MESSAGE_TYPE::INITIAL_COMPONENTS>& packet, const IpAddress& sender) {
+
+}
+
+void Server::accept(Packet<END_TRANSMITTING_INITIAL_COMPONENTS_TYPE, MESSAGE_TYPE::END_TRANSMITTING_INITIAL_COMPONENTS>& packet, const IpAddress& sender) {
+
+}
+
+void Server::accept(Packet<MOVECOMPONENTSDIFF_TYPE, MESSAGE_TYPE::MOVECOMPONENTSDIFF>& packet, const IpAddress& sender) {
+
+}
+
+void Server::accept(Packet<RENDERCOMPONENTSDIFF_TYPE, MESSAGE_TYPE::RENDERCOMPONENTSDIFF>& packet, const IpAddress& sender) {
+
+}
+
+void Server::accept(Packet<PLAY_SOUND_TYPE, MESSAGE_TYPE::PLAY_SOUND>& packet, const IpAddress& sender) {
+
+}
+
+void Server::accept(Packet<REGISTER_ID_TO_SYSTEM_TYPE, MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM>& packet, const IpAddress& sender) {
+
+}
+
+void Server::accept(Packet<REMOVE_ID_TYPE, MESSAGE_TYPE::REMOVE_ID>& packet, const IpAddress& sender) {
+
+}
+
+void Server::accept(Packet<REMOVE_ID_FROM_SYSTEM_TYPE, MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM>& packet, const IpAddress& sender) {
+
+}
+
+void Server::accept(Packet<REMOVE_ID_FROM_SYSTEMS_TYPE, MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEMS>& packet, const IpAddress& sender) {
+
+}
+
+void Server::accept(Packet<ACTIVATE_ID_TYPE, MESSAGE_TYPE::ACTIVATE_ID>& packet, const IpAddress& sender) {
+
+}
+
+void Server::accept(Packet<CONGESTED_CLIENT_TYPE, MESSAGE_TYPE::CONGESTED_CLIENT>& packet, const IpAddress& sender) {
+	Logger::log("Received CONGESTED_CLIENT packet", Log::INFO);
+	auto& client = clients.at(sender);
+	client.congested = true;
+	client.congestionTimer.start();
+}
+
+void Server::accept(Packet<NOT_CONGESTED_CLIENT_TYPE, MESSAGE_TYPE::NOT_CONGESTED_CLIENT>& packet, const IpAddress& sender) {
+	Logger::log("Received NOT_CONGESTED_CLIENT packet", Log::INFO);
+	clients.at(sender).congested = false;
+}
+
+void Server::accept(Packet<KEEP_ALIVE_TYPE, MESSAGE_TYPE::KEEP_ALIVE>& packet, const IpAddress& sender) {
+    
 }
 
 int main(int argc, char** argv) {
