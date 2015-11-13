@@ -271,9 +271,11 @@ void Server::sendKeepAlive() {
 	}
 }
 
-void Server::inputDataToInputComponent(const IpAddress& ipAddress, InputData& data) {
+void Server::inputDataToInputComponent(const IpAddress& ipAddress, const InputData& data) {
 	//Get id of client
-	auto id = clients.at(ipAddress).id;
+	
+	//FIXME: Cant iterate through const InputData& data if data.data is queue. Must be other datatype than std::queue
+	/*auto id = clients.at(ipAddress).id;
 	auto& ic = componentManager.inputComponents.at(id);
 
 	ic.presses = data.presses;
@@ -336,7 +338,7 @@ void Server::inputDataToInputComponent(const IpAddress& ipAddress, InputData& da
 		}
 	}
 
-	inputSystem.activateId(id);
+	inputSystem.activateId(id);*/
 }
 
 void Server::printGeneralInfo() {
@@ -356,21 +358,21 @@ void Server::printGeneralInfo() {
 	Logger::log(oss, Log::INFO);
 }
 
-void Server::accept(Packet<OUTDATED_TYPE, MESSAGE_TYPE::OUTDATED>& packet, const IpAddress& sender) {
+void Server::accept(const OutdatedData&, const IpAddress& sender) {
 	Logger::log("This packet is outdated, to late! Sluggish!", Log::WARNING);
 }
 
-void Server::accept(Packet<CONNECT_TYPE, MESSAGE_TYPE::CONNECT>& packet, const IpAddress& sender) {
+void Server::accept(const ConnectData&, const IpAddress& sender) {
 	Logger::log("Received CONNECT packet", Log::INFO);
 	onConnect(sender);
 }
 
-void Server::accept(Packet<DISCONNECT_TYPE, MESSAGE_TYPE::DISCONNECT>& packet, const IpAddress& sender) {
+void Server::accept(const DisconnectData&, const IpAddress& sender) {
 	Logger::log("Received DISCONNECT packet", Log::INFO);
 	onDisconnect(sender);
 }
 
-void Server::accept(Packet<INPUTDATA_TYPE, MESSAGE_TYPE::INPUTDATA>& packet, const IpAddress& sender) {
+void Server::accept(const InputDataData& data, const IpAddress& sender) {
 	Logger::log("Received INPUTDATA packet", Log::VERBOSE);
 
 	//Check if client established a connection to the server, ie
@@ -384,68 +386,20 @@ void Server::accept(Packet<INPUTDATA_TYPE, MESSAGE_TYPE::INPUTDATA>& packet, con
 	//its fine to ignore any input trying to steer the deceased entity.
 	auto& ics = componentManager.inputComponents;
 	if(clients.find(sender) != clients.end() && ics.find(clients.at(sender).id) != ics.end()) {
-		inputDataToInputComponent(sender, packet.getData());
+		inputDataToInputComponent(sender, data.data);
 	}
 }
 
-void Server::accept(Packet<BEGIN_TRANSMITTING_INITIAL_COMPONENTS_TYPE, MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS>& packet, const IpAddress& sender) {
-
-}
-
-void Server::accept(Packet<INITIAL_COMPONENTS_TYPE, MESSAGE_TYPE::INITIAL_COMPONENTS>& packet, const IpAddress& sender) {
-
-}
-
-void Server::accept(Packet<END_TRANSMITTING_INITIAL_COMPONENTS_TYPE, MESSAGE_TYPE::END_TRANSMITTING_INITIAL_COMPONENTS>& packet, const IpAddress& sender) {
-
-}
-
-void Server::accept(Packet<MOVECOMPONENTSDIFF_TYPE, MESSAGE_TYPE::MOVECOMPONENTSDIFF>& packet, const IpAddress& sender) {
-
-}
-
-void Server::accept(Packet<RENDERCOMPONENTSDIFF_TYPE, MESSAGE_TYPE::RENDERCOMPONENTSDIFF>& packet, const IpAddress& sender) {
-
-}
-
-void Server::accept(Packet<PLAY_SOUND_TYPE, MESSAGE_TYPE::PLAY_SOUND>& packet, const IpAddress& sender) {
-
-}
-
-void Server::accept(Packet<REGISTER_ID_TO_SYSTEM_TYPE, MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM>& packet, const IpAddress& sender) {
-
-}
-
-void Server::accept(Packet<REMOVE_ID_TYPE, MESSAGE_TYPE::REMOVE_ID>& packet, const IpAddress& sender) {
-
-}
-
-void Server::accept(Packet<REMOVE_ID_FROM_SYSTEM_TYPE, MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM>& packet, const IpAddress& sender) {
-
-}
-
-void Server::accept(Packet<REMOVE_ID_FROM_SYSTEMS_TYPE, MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEMS>& packet, const IpAddress& sender) {
-
-}
-
-void Server::accept(Packet<ACTIVATE_ID_TYPE, MESSAGE_TYPE::ACTIVATE_ID>& packet, const IpAddress& sender) {
-
-}
-
-void Server::accept(Packet<CONGESTED_CLIENT_TYPE, MESSAGE_TYPE::CONGESTED_CLIENT>& packet, const IpAddress& sender) {
+void Server::accept(const CongestedClientData& data, const IpAddress& sender) {
 	Logger::log("Received CONGESTED_CLIENT packet", Log::INFO);
 	auto& client = clients.at(sender);
 	client.congested = true;
 	client.congestionTimer.start();
 }
 
-void Server::accept(Packet<NOT_CONGESTED_CLIENT_TYPE, MESSAGE_TYPE::NOT_CONGESTED_CLIENT>& packet, const IpAddress& sender) {
+void Server::accept(const NotCongestedClientData& data, const IpAddress& sender) {
 	Logger::log("Received NOT_CONGESTED_CLIENT packet", Log::INFO);
 	clients.at(sender).congested = false;
-}
-
-void Server::accept(Packet<KEEP_ALIVE_TYPE, MESSAGE_TYPE::KEEP_ALIVE>& packet, const IpAddress& sender) {
-    
 }
 
 int main(int argc, char** argv) {

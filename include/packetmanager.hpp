@@ -50,25 +50,17 @@ public:
 		    return packet;
 		} catch (cereal::Exception e) {
 			std::ostringstream oss;
-			oss << "Could not deserialize packet (" << e.what() << ", typeid of Data: " << typeid(Data).name() << ", message number: " << Message << ")";
+			oss << "Could not deserialize packet (" << e.what() << ", message number: " << Message << ")";
 			Logger::log(oss, Log::ERROR);
 		}
 	}
 
-	template<typename Data, MESSAGE_TYPE Message>
-	void accept(auto& acceptor, const char* buffer, int bytesRead, const IpAddress& sender) {
-		auto typedPacket = deserialize<Data, Message>(buffer, bytesRead);
-		try {
-			acceptor.accept(typedPacket, sender);
-		} catch (std::exception e) {
-			std::ostringstream oss;
-			oss << "Could not accept packet (" << e.what() << ")";
-			Logger::log(oss, Log::ERROR);
-		}
+	template<MESSAGE_TYPE Message>
+	void accept(auto& acceptor, auto message, const char* buffer, int bytesRead, const IpAddress& sender) {
+		acceptor.accept(deserialize<decltype(message.data), MESSAGE_TYPE::ANY>(buffer, bytesRead).getData(), sender);
 	}
 
-	template<class T>
-	std::string serialize(const T& object) {
+	std::string serialize(const auto& object) {
         std::ostringstream oss;
         cereal::PortableBinaryOutputArchive pboa(oss);
         pboa(object);
@@ -88,65 +80,65 @@ public:
 		try {
 			//Deserialize contents of buffer into untyped packet
 	        std::string serializedPacket(buffer, bytesRead);
-			auto untypedPacket = deserialize<char, MESSAGE_TYPE::UNKNOWN>(buffer, bytesRead);
+			auto untypedPacket = deserialize<decltype(UNKNOWN), MESSAGE_TYPE::UNKNOWN>(buffer, bytesRead);
 	        validatePacket(sender, untypedPacket);
 	        storePacket(sender, serializedPacket);
 
 	        //1. Check type of packet
 	        switch(untypedPacket.getType()) {
-	        	case OUTDATED: {
-	        		accept<OUTDATED_TYPE, MESSAGE_TYPE::OUTDATED>(acceptor, buffer, bytesRead, sender);
+	        	case OUTDATED: { 
+	        		accept<MESSAGE_TYPE::OUTDATED>(acceptor, OutdatedData(), buffer, bytesRead, sender);
 	        	} break;
-	        	case CONNECT: {
-	        		accept<CONNECT_TYPE, MESSAGE_TYPE::CONNECT>(acceptor, buffer, bytesRead, sender);
+	        	case CONNECT: { 
+	        		accept<MESSAGE_TYPE::CONNECT>(acceptor, ConnectData(), buffer, bytesRead, sender);
 	        	} break;
-	        	case DISCONNECT: {
-	        		accept<DISCONNECT_TYPE, MESSAGE_TYPE::DISCONNECT>(acceptor, buffer, bytesRead, sender);
+	        	case DISCONNECT: { 
+	        		accept<MESSAGE_TYPE::DISCONNECT>(acceptor, DisconnectData(), buffer, bytesRead, sender);
 	        	} break;
-	        	case INPUTDATA: {
-	        		accept<INPUTDATA_TYPE, MESSAGE_TYPE::INPUTDATA>(acceptor, buffer, bytesRead, sender);
+	        	case INPUTDATA: { 
+	        		accept<MESSAGE_TYPE::INPUTDATA>(acceptor, InputDataData(), buffer, bytesRead, sender);
 	        	} break;
 	        	case BEGIN_TRANSMITTING_INITIAL_COMPONENTS: {
-	        		accept<BEGIN_TRANSMITTING_INITIAL_COMPONENTS_TYPE, MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS>(acceptor, buffer, bytesRead, sender);
+	        		accept<MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS>(acceptor, BeginTransmittingInitialComponentsData(), buffer, bytesRead, sender);
 	        	} break;
-	        	case INITIAL_COMPONENTS: {
-	        		accept<INITIAL_COMPONENTS_TYPE, MESSAGE_TYPE::INITIAL_COMPONENTS>(acceptor, buffer, bytesRead, sender);
+	        	case INITIAL_COMPONENTS: { 
+	        		accept<MESSAGE_TYPE::INITIAL_COMPONENTS>(acceptor, InitialComponentsData(), buffer, bytesRead, sender);
 	        	} break;
-	        	case END_TRANSMITTING_INITIAL_COMPONENTS: {
-	        		accept<END_TRANSMITTING_INITIAL_COMPONENTS_TYPE, MESSAGE_TYPE::END_TRANSMITTING_INITIAL_COMPONENTS>(acceptor, buffer, bytesRead, sender);
+	        	case END_TRANSMITTING_INITIAL_COMPONENTS: { 
+	        		accept<MESSAGE_TYPE::END_TRANSMITTING_INITIAL_COMPONENTS>(acceptor, EndTransmittingInitialComponentsData(), buffer, bytesRead, sender); 
 	        	} break;
 	        	case MOVECOMPONENTSDIFF: {
-	        		accept<MOVECOMPONENTSDIFF_TYPE, MESSAGE_TYPE::MOVECOMPONENTSDIFF>(acceptor, buffer, bytesRead, sender);
+	        		accept<MESSAGE_TYPE::MOVECOMPONENTSDIFF>(acceptor, MoveComponentsDiffData(), buffer, bytesRead, sender);
 	        	} break;
 	        	case RENDERCOMPONENTSDIFF: {
-	        		accept<RENDERCOMPONENTSDIFF_TYPE, MESSAGE_TYPE::RENDERCOMPONENTSDIFF>(acceptor, buffer, bytesRead, sender);
+	        		accept<MESSAGE_TYPE::RENDERCOMPONENTSDIFF>(acceptor, RenderComponentsDiffData(), buffer, bytesRead, sender);
 	        	} break;
 	        	case PLAY_SOUND: {
-	        		accept<PLAY_SOUND_TYPE, MESSAGE_TYPE::PLAY_SOUND>(acceptor, buffer, bytesRead, sender);
+	        		accept<MESSAGE_TYPE::PLAY_SOUND>(acceptor, PlaySoundData(), buffer, bytesRead, sender);
 	        	} break;
 	        	case REGISTER_ID_TO_SYSTEM: {
-	        		accept<REGISTER_ID_TO_SYSTEM_TYPE, MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM>(acceptor, buffer, bytesRead, sender);
+	        		accept<MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM>(acceptor, RegisterIdToSystemData(), buffer, bytesRead, sender);
 	        	} break;
 	        	case REMOVE_ID: {
-	        		accept<REMOVE_ID_TYPE, MESSAGE_TYPE::REMOVE_ID>(acceptor, buffer, bytesRead, sender);
+	        		accept<MESSAGE_TYPE::REMOVE_ID>(acceptor, RemoveIdData(), buffer, bytesRead, sender);
 	        	} break;
 	        	case REMOVE_ID_FROM_SYSTEM: {
-	        		accept<REMOVE_ID_FROM_SYSTEM_TYPE, MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM>(acceptor, buffer, bytesRead, sender);
+	        		accept<MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM>(acceptor, RemoveIdFromSystemData(), buffer, bytesRead, sender);
 	        	} break;
 	        	case REMOVE_ID_FROM_SYSTEMS: {
-	        		accept<REMOVE_ID_FROM_SYSTEMS_TYPE, MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEMS>(acceptor, buffer, bytesRead, sender);
+	        		accept<MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEMS>(acceptor, RemoveIdFromSystemsData(), buffer, bytesRead, sender);
 	        	} break;
 	        	case ACTIVATE_ID: {
-	        		accept<ACTIVATE_ID_TYPE, MESSAGE_TYPE::ACTIVATE_ID>(acceptor, buffer, bytesRead, sender);
+	        		accept<MESSAGE_TYPE::ACTIVATE_ID>(acceptor, ActivateIdData(), buffer, bytesRead, sender);
 	        	} break;
 	        	case CONGESTED_CLIENT: {
-	        		accept<CONGESTED_CLIENT_TYPE, MESSAGE_TYPE::CONGESTED_CLIENT>(acceptor, buffer, bytesRead, sender);
+	        		accept<MESSAGE_TYPE::CONGESTED_CLIENT>(acceptor, CongestedClientData(), buffer, bytesRead, sender);
 	        	} break;
 	        	case NOT_CONGESTED_CLIENT: {
-	        		accept<NOT_CONGESTED_CLIENT_TYPE, MESSAGE_TYPE::NOT_CONGESTED_CLIENT>(acceptor, buffer, bytesRead, sender);
+	        		accept<MESSAGE_TYPE::NOT_CONGESTED_CLIENT>(acceptor, NotCongestedClientData(), buffer, bytesRead, sender);
 	        	} break;
 	        	case KEEP_ALIVE: {
-	        		accept<KEEP_ALIVE_TYPE, MESSAGE_TYPE::KEEP_ALIVE>(acceptor, buffer, bytesRead, sender);
+	        		accept<MESSAGE_TYPE::KEEP_ALIVE>(acceptor, KeepAliveData(), buffer, bytesRead, sender);
 	        	} break;
 	        }
         } catch(cereal::Exception e) {
@@ -158,13 +150,8 @@ public:
 
 	template<class T, MESSAGE_TYPE messageType>
 	bool send(const IpAddress& ipAddress, const Packet<T, messageType>& packet) {
-		//Serialize the packet
-        std::ostringstream oss;
-        cereal::PortableBinaryOutputArchive pboa(oss);
-        pboa(packet);
-
 		//Save serialized packet on ipaddress
-		const std::string serializedPacket = oss.str();
+		const auto serializedPacket = serialize(packet);
         connections[ipAddress].rawPackets[packet.getSequence()] = serializedPacket;
 
 		//Send serialized packet to the ipaddress via socket

@@ -11,6 +11,7 @@
 **/
 enum MESSAGE_TYPE {
     UNKNOWN,
+    ANY,
     OUTDATED,
     CONNECT,
     DISCONNECT,
@@ -38,26 +39,26 @@ enum MESSAGE_TYPE {
 #include "systemidentifiers.hpp"
 #include "inputdata.hpp"
 
-/** If the type of a packet ever changes, this is the place to change in
-    Changes here should propagate through all out the program **/
-using UNKNOWN_TYPE = bool;
-using OUTDATED_TYPE = bool;
-using CONNECT_TYPE = std::pair<ID, System::Identifier>;
-using DISCONNECT_TYPE = bool;
-using INPUTDATA_TYPE = InputData;
-using BEGIN_TRANSMITTING_INITIAL_COMPONENTS_TYPE = int;
-using INITIAL_COMPONENTS_TYPE = std::pair<Components<MoveComponent>, Components<RenderComponent>>;
-using END_TRANSMITTING_INITIAL_COMPONENTS_TYPE = bool;
-using MOVECOMPONENTSDIFF_TYPE = Components<MoveComponent>;
-using RENDERCOMPONENTSDIFF_TYPE = Components<RenderComponent>;
-using PLAY_SOUND_TYPE = SoundData;
-using REGISTER_ID_TO_SYSTEM_TYPE = std::pair<ID, System::Identifier>;
-using REMOVE_ID_TYPE = ID;
-using REMOVE_ID_FROM_SYSTEM_TYPE = std::pair<ID, System::Identifier>;
-using REMOVE_ID_FROM_SYSTEMS_TYPE = bool;
-using ACTIVATE_ID_TYPE = std::pair<ID, System::Identifier>;
-using CONGESTED_CLIENT_TYPE = bool;
-using NOT_CONGESTED_CLIENT_TYPE = bool;
-using KEEP_ALIVE_TYPE = bool;
+/** This is where messages is tied with the expected datatype on that message **/
+/** These structs are used when doing multiple-dispatch on different client-states **/
+struct UnknownData { bool data; };
+struct OutdatedData { bool data; };
+struct ConnectData { std::pair<ID, System::Identifier> data; };
+struct DisconnectData { bool data; };
+struct InputDataData { InputData data; };
+struct BeginTransmittingInitialComponentsData { int data; };
+struct InitialComponentsData { std::pair<Components<MoveComponent>, Components<RenderComponent>> data; };
+struct EndTransmittingInitialComponentsData { bool data; };
+struct MoveComponentsDiffData { Components<MoveComponent> data; };
+struct RenderComponentsDiffData { Components<RenderComponent> data; };
+struct PlaySoundData { SoundData data; };
+struct RegisterIdToSystemData { std::pair<ID, System::Identifier> data; };
+struct RemoveIdData { ID data; };
+struct RemoveIdFromSystemData { std::pair<ID, System::Identifier> data; };
+struct RemoveIdFromSystemsData { bool data; };
+struct ActivateIdData { std::pair<ID, System::Identifier> data; };
+struct CongestedClientData { bool data; };
+struct NotCongestedClientData { bool data; };
+struct KeepAliveData { bool data; };
 
 #endif //MESSAGETYPES_HPP

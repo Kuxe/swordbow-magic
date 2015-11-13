@@ -2,10 +2,11 @@
 #define CLIENTRUNNINGSTATE_HPP
 
 #include "iclientstate.hpp"
-#include "ipacketacceptor.hpp"
+#include "messagetypes.hpp"
+#include "ipaddress.hpp"
 
 class Client;
-class ClientRunningState : public IClientState, IPacketAcceptor {
+class ClientRunningState : public IClientState {
 private:
 	Client* client;
 public:
@@ -18,25 +19,18 @@ public:
 	void onChange(ClientReceiveInitialState* state);
 	void onChange(ClientRunningState* state);
 
-	//This handles the default case (ie any of the cases where accept isnt specialized)
-	void accept(Packet<OUTDATED_TYPE, 								MESSAGE_TYPE::OUTDATED>& packet, const IpAddress& sender);
-	void accept(Packet<CONNECT_TYPE, 								MESSAGE_TYPE::CONNECT>& packet, const IpAddress& sender);
-	void accept(Packet<DISCONNECT_TYPE,								MESSAGE_TYPE::DISCONNECT>& packet, const IpAddress& sender);
-	void accept(Packet<INPUTDATA_TYPE,								MESSAGE_TYPE::INPUTDATA>& packet, const IpAddress& sender);
-	void accept(Packet<BEGIN_TRANSMITTING_INITIAL_COMPONENTS_TYPE,	MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS>& packet, const IpAddress& sender);
-	void accept(Packet<INITIAL_COMPONENTS_TYPE,						MESSAGE_TYPE::INITIAL_COMPONENTS>& packet, const IpAddress& sender);
-	void accept(Packet<END_TRANSMITTING_INITIAL_COMPONENTS_TYPE,	MESSAGE_TYPE::END_TRANSMITTING_INITIAL_COMPONENTS>& packet, const IpAddress& sender);
-	void accept(Packet<MOVECOMPONENTSDIFF_TYPE,						MESSAGE_TYPE::MOVECOMPONENTSDIFF>& packet, const IpAddress& sender);
-	void accept(Packet<RENDERCOMPONENTSDIFF_TYPE,					MESSAGE_TYPE::RENDERCOMPONENTSDIFF>& packet, const IpAddress& sender);
-	void accept(Packet<PLAY_SOUND_TYPE,								MESSAGE_TYPE::PLAY_SOUND>& packet, const IpAddress& sender);
-	void accept(Packet<REGISTER_ID_TO_SYSTEM_TYPE,					MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM>& packet, const IpAddress& sender);
-	void accept(Packet<REMOVE_ID_TYPE,								MESSAGE_TYPE::REMOVE_ID>& packet, const IpAddress& sender);
-	void accept(Packet<REMOVE_ID_FROM_SYSTEM_TYPE, 					MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM>& packet, const IpAddress& sender);
-	void accept(Packet<REMOVE_ID_FROM_SYSTEMS_TYPE, 				MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEMS>& packet, const IpAddress& sender);
-	void accept(Packet<ACTIVATE_ID_TYPE, 							MESSAGE_TYPE::ACTIVATE_ID>& packet, const IpAddress& sender);
-	void accept(Packet<CONGESTED_CLIENT_TYPE, 						MESSAGE_TYPE::CONGESTED_CLIENT>& packet, const IpAddress& sender);
-	void accept(Packet<NOT_CONGESTED_CLIENT_TYPE, 					MESSAGE_TYPE::NOT_CONGESTED_CLIENT>& packet, const IpAddress& sender);
-	void accept(Packet<KEEP_ALIVE_TYPE, 							MESSAGE_TYPE::KEEP_ALIVE>& packet, const IpAddress& sender);
+	void accept(const OutdatedData& data, const IpAddress& sender);
+	void accept(const ConnectData& data, const IpAddress& sender);
+	void accept(MoveComponentsDiffData& data, const IpAddress& sender);
+	void accept(RenderComponentsDiffData& data, const IpAddress& sender);
+	void accept(PlaySoundData& data, const IpAddress& sender);
+	void accept(const RegisterIdToSystemData& data, const IpAddress& sender);
+	void accept(const RemoveIdData& data, const IpAddress& sender);
+	void accept(const RemoveIdFromSystemData& data, const IpAddress& sender);
+	void accept(const RemoveIdFromSystemsData& data, const IpAddress& sender);
+	void accept(const ActivateIdData& data, const IpAddress& sender);
+	void accept(const KeepAliveData& data, const IpAddress& sender);
+	void accept(const auto& data, const IpAddress& sender) {;}
 };
 
 #endif //CLIENTRUNNINGSTATE_HPP

@@ -69,27 +69,11 @@ void ClientReceiveInitialState::onChange(ClientRunningState* state) {
     Logger::log("Client can't change state from ClientRunningState to ClientReceiveInitialState", Log::WARNING);
 }
 
-void ClientReceiveInitialState::accept(Packet<OUTDATED_TYPE, MESSAGE_TYPE::OUTDATED>& packet, const IpAddress& sender) {
+void ClientReceiveInitialState::accept(const OutdatedData& data, const IpAddress& sender) {
     Logger::log("This packet is outdated, to late! Sluggish!", Log::WARNING);
 }
 
-void ClientReceiveInitialState::accept(Packet<CONNECT_TYPE, MESSAGE_TYPE::CONNECT>& packet, const IpAddress& sender) {
-	Logger::log("Received (unwanted) packet when in receive-initial-state (type: " + std::to_string(MESSAGE_TYPE::CONNECT) + ")", Log::WARNING);
-}
-
-void ClientReceiveInitialState::accept(Packet<DISCONNECT_TYPE, MESSAGE_TYPE::DISCONNECT>& packet, const IpAddress& sender) {
-	Logger::log("Received (unwanted) packet when in receive-initial-state (type: " + std::to_string(MESSAGE_TYPE::DISCONNECT) + ")", Log::WARNING);
-}
-
-void ClientReceiveInitialState::accept(Packet<INPUTDATA_TYPE, MESSAGE_TYPE::INPUTDATA>& packet, const IpAddress& sender) {
-	Logger::log("Received (unwanted) packet when in receive-initial-state (type: " + std::to_string(MESSAGE_TYPE::INPUTDATA) + ")", Log::WARNING);
-}
-
-void ClientReceiveInitialState::accept(Packet<BEGIN_TRANSMITTING_INITIAL_COMPONENTS_TYPE, MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS>& packet, const IpAddress& sender) {
-	Logger::log("Received (unwanted) packet when in receive-initial-state (type: " + std::to_string(MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS) + ")", Log::WARNING);
-}
-
-void ClientReceiveInitialState::accept(Packet<INITIAL_COMPONENTS_TYPE, MESSAGE_TYPE::INITIAL_COMPONENTS>& packet, const IpAddress& sender) {
+void ClientReceiveInitialState::accept(InitialComponentsData& data, const IpAddress& sender) {
 	Logger::log("Received INITIAL_COMPONENTS packet", Log::INFO);
 	client->renderer.hideOverlay(Image::CONNECT_OVERLAY);
 	receivedSmallContainers++;
@@ -100,15 +84,15 @@ void ClientReceiveInitialState::accept(Packet<INITIAL_COMPONENTS_TYPE, MESSAGE_T
 	};
 	client->renderer.showOverlay(Image::RECEIVING_DATA_OVERLAY, text);
 
-	client->componentManager.moveComponents.sync(packet.getData().first);
-	client->componentManager.renderComponents.sync(packet.getData().second);
+	client->componentManager.moveComponents.sync(data.data.first);
+	client->componentManager.renderComponents.sync(data.data.second);
 
-	for(auto& pair : packet.getData().first) {
+	for(auto& pair : data.data.first) {
 		client->textureHashGridSystem.add(pair.first);
 		client->renderSystem.add(pair.first);
 	}
 
-	client->missingSequences.erase(packet.getSequence());
+	//client->missingSequences.erase(packet.getSequence()); TODO: Re-implement this (now that packet isnt available here anymore)
 
     //If END_TRANSMITTING_INITIAL_COMPONENTS is already received, that means that
     //this INITIAL_COMPONENTS PACKET was 'late'.. So check if it was last one and if
@@ -120,7 +104,7 @@ void ClientReceiveInitialState::accept(Packet<INITIAL_COMPONENTS_TYPE, MESSAGE_T
 	}
 }
 
-void ClientReceiveInitialState::accept(Packet<END_TRANSMITTING_INITIAL_COMPONENTS_TYPE, MESSAGE_TYPE::END_TRANSMITTING_INITIAL_COMPONENTS>& packet, const IpAddress& sender) {
+void ClientReceiveInitialState::accept(const EndTransmittingInitialComponentsData&, const IpAddress& sender) {
 	Logger::log("Received END_TRANSMITTING_INITIAL_COMPONENTS packet", Log::INFO);
 	endPacketReceived = true;
 
@@ -135,46 +119,6 @@ void ClientReceiveInitialState::accept(Packet<END_TRANSMITTING_INITIAL_COMPONENT
 	}
 }
 
-void ClientReceiveInitialState::accept(Packet<MOVECOMPONENTSDIFF_TYPE, MESSAGE_TYPE::MOVECOMPONENTSDIFF>& packet, const IpAddress& sender) {
-	Logger::log("Received (unwanted) packet when in receive-initial-state (type: " + std::to_string(MESSAGE_TYPE::MOVECOMPONENTSDIFF) + ")", Log::WARNING);
-}
-
-void ClientReceiveInitialState::accept(Packet<RENDERCOMPONENTSDIFF_TYPE, MESSAGE_TYPE::RENDERCOMPONENTSDIFF>& packet, const IpAddress& sender) {
-	Logger::log("Received (unwanted) packet when in receive-initial-state (type: " + std::to_string(MESSAGE_TYPE::RENDERCOMPONENTSDIFF) + ")", Log::WARNING);
-}
-
-void ClientReceiveInitialState::accept(Packet<PLAY_SOUND_TYPE, MESSAGE_TYPE::PLAY_SOUND>& packet, const IpAddress& sender) {
-	Logger::log("Received (unwanted) packet when in receive-initial-state (type: " + std::to_string(MESSAGE_TYPE::PLAY_SOUND) + ")", Log::WARNING);
-}
-
-void ClientReceiveInitialState::accept(Packet<REGISTER_ID_TO_SYSTEM_TYPE, MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM>& packet, const IpAddress& sender) {
-	Logger::log("Received (unwanted) packet when in receive-initial-state (type: " + std::to_string(MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM) + ")", Log::WARNING);
-}
-
-void ClientReceiveInitialState::accept(Packet<REMOVE_ID_TYPE, MESSAGE_TYPE::REMOVE_ID>& packet, const IpAddress& sender) {
-	Logger::log("Received (unwanted) packet when in receive-initial-state (type: " + std::to_string(MESSAGE_TYPE::REMOVE_ID) + ")", Log::WARNING);
-}
-
-void ClientReceiveInitialState::accept(Packet<REMOVE_ID_FROM_SYSTEM_TYPE, MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM>& packet, const IpAddress& sender) {
-	Logger::log("Received (unwanted) packet when in receive-initial-state (type: " + std::to_string(MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM) + ")", Log::WARNING);
-}
-
-void ClientReceiveInitialState::accept(Packet<REMOVE_ID_FROM_SYSTEMS_TYPE, MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEMS>& packet, const IpAddress& sender) {
-	Logger::log("Received (unwanted) packet when in receive-initial-state (type: " + std::to_string(MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEMS) + ")", Log::WARNING);
-}
-
-void ClientReceiveInitialState::accept(Packet<ACTIVATE_ID_TYPE, MESSAGE_TYPE::ACTIVATE_ID>& packet, const IpAddress& sender) {
-	Logger::log("Received (unwanted) packet when in receive-initial-state (type: " + std::to_string(MESSAGE_TYPE::ACTIVATE_ID) + ")", Log::WARNING);
-}
-
-void ClientReceiveInitialState::accept(Packet<CONGESTED_CLIENT_TYPE, MESSAGE_TYPE::CONGESTED_CLIENT>& packet, const IpAddress& sender) {
-	Logger::log("Received (unwanted) packet when in receive-initial-state (type: " + std::to_string(MESSAGE_TYPE::CONGESTED_CLIENT) + ")", Log::WARNING);
-}
-
-void ClientReceiveInitialState::accept(Packet<NOT_CONGESTED_CLIENT_TYPE, MESSAGE_TYPE::NOT_CONGESTED_CLIENT>& packet, const IpAddress& sender) {
-	Logger::log("Received (unwanted) packet when in receive-initial-state (type: " + std::to_string(MESSAGE_TYPE::NOT_CONGESTED_CLIENT) + ")", Log::WARNING);
-}
-
-void ClientReceiveInitialState::accept(Packet<KEEP_ALIVE_TYPE, MESSAGE_TYPE::KEEP_ALIVE>& packet, const IpAddress& sender) {
+void ClientReceiveInitialState::accept(const KeepAliveData&, const IpAddress& sender) {
 	client->keepAlive.start();
 }

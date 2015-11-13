@@ -76,26 +76,18 @@ void ClientDisconnectedState::onChange(ClientRunningState* state) {
     forceDisconnect();
 }
 
-void ClientDisconnectedState::accept(Packet<OUTDATED_TYPE, MESSAGE_TYPE::OUTDATED>& packet, const IpAddress& sender) {
+void ClientDisconnectedState::accept(const OutdatedData& data, const IpAddress& sender) {
     Logger::log("This packet is outdated, to late! Sluggish!", Log::WARNING);
 }
 
-void ClientDisconnectedState::accept(Packet<CONNECT_TYPE, MESSAGE_TYPE::CONNECT>& packet, const IpAddress& sender) {
-    Logger::log("Received (unwanted) packet when in disconnected-state (type: " + std::to_string(MESSAGE_TYPE::CONNECT) + ")", Log::WARNING);
-}
-
-void ClientDisconnectedState::accept(Packet<DISCONNECT_TYPE, MESSAGE_TYPE::DISCONNECT>& packet, const IpAddress& sender) {
+void ClientDisconnectedState::accept(const DisconnectData& data, const IpAddress& sender) {
     //Server will send this to client for a couple of reasons.
     //In any case the client shouldn't be connected to the server.
     Logger::log("Received DISCONNECT packet", Log::INFO);
     client->disconnect();
 }
 
-void ClientDisconnectedState::accept(Packet<INPUTDATA_TYPE, MESSAGE_TYPE::INPUTDATA>& packet, const IpAddress& sender) {
-    Logger::log("Received (unwanted) packet when in disconnected-state (type: " + std::to_string(MESSAGE_TYPE::INPUTDATA) + ")", Log::WARNING);
-}
-
-void ClientDisconnectedState::accept(Packet<BEGIN_TRANSMITTING_INITIAL_COMPONENTS_TYPE, MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS>& packet, const IpAddress& sender) {
+void ClientDisconnectedState::accept(const BeginTransmittingInitialComponentsData& data, const IpAddress& sender) {
     //This message to client will put the client in a special "state"
     //where the client will only receive INITIAL_COMPONENTS-packet
     //and END_TRANSMITTING_INITIAL_COMPONENTS. ECS won't update.
@@ -104,7 +96,7 @@ void ClientDisconnectedState::accept(Packet<BEGIN_TRANSMITTING_INITIAL_COMPONENT
     //Client may NOT update ECS because it's not guaranteed that the all
     //required entity-components have been received.
     Logger::log("Received BEGIN_TRANSMITTING_INITIAL_COMPONENTS packet", Log::INFO);
-    auto numberOfInitialSmallContainers = packet.getData();
+    auto numberOfInitialSmallContainers = data.data;
     client->numberOfInitialSmallContainers = numberOfInitialSmallContainers;
 
     //As per (unwritten) specification, INITIAL_COMPONENTS-packets are directly followed by the
@@ -113,63 +105,15 @@ void ClientDisconnectedState::accept(Packet<BEGIN_TRANSMITTING_INITIAL_COMPONENT
     //BEGIN_TRANSMITTING_INITIAL_COMPONENTS.sequence ... BEGIN_TRANSMITTING_INITIAL_COMPONENTS.sequence + numberOfInitialSmallContainers
     //If the BEGIN_TRANSMITTING_INITIAL_COMPONENTS had sequence 3 and there are 7 small containers,
     //then 4, 5, 6 ..., 10 is expected to be the sequence number of initial components
-    const auto firstSequence = packet.getSequence()+1;
+    /*const auto firstSequence = packet.getSequence()+1;
     const auto lastSequence = packet.getSequence()+1 + numberOfInitialSmallContainers;
     for(auto sequence = firstSequence; sequence <= lastSequence; sequence++) {
         client->missingSequences.insert(sequence);
-    }
+    }*/
 
     changeState(&client->clientReceiveInitialState);
 }
 
-void ClientDisconnectedState::accept(Packet<INITIAL_COMPONENTS_TYPE, MESSAGE_TYPE::INITIAL_COMPONENTS>& packet, const IpAddress& sender) {
-    Logger::log("Received (unwanted) packet when in disconnected-state (type: " + std::to_string(MESSAGE_TYPE::INITIAL_COMPONENTS) + ")", Log::WARNING);
-}
-
-void ClientDisconnectedState::accept(Packet<END_TRANSMITTING_INITIAL_COMPONENTS_TYPE, MESSAGE_TYPE::END_TRANSMITTING_INITIAL_COMPONENTS>& packet, const IpAddress& sender) {
-    Logger::log("Received (unwanted) packet when in disconnected-state (type: " + std::to_string(MESSAGE_TYPE::END_TRANSMITTING_INITIAL_COMPONENTS) + ")", Log::WARNING);
-}
-
-void ClientDisconnectedState::accept(Packet<MOVECOMPONENTSDIFF_TYPE, MESSAGE_TYPE::MOVECOMPONENTSDIFF>& packet, const IpAddress& sender) {
-    Logger::log("Received (unwanted) packet when in disconnected-state (type: " + std::to_string(MESSAGE_TYPE::MOVECOMPONENTSDIFF) + ")", Log::WARNING);
-}
-
-void ClientDisconnectedState::accept(Packet<RENDERCOMPONENTSDIFF_TYPE, MESSAGE_TYPE::RENDERCOMPONENTSDIFF>& packet, const IpAddress& sender) {
-    Logger::log("Received (unwanted) packet when in disconnected-state (type: " + std::to_string(MESSAGE_TYPE::RENDERCOMPONENTSDIFF) + ")", Log::WARNING);
-}
-
-void ClientDisconnectedState::accept(Packet<PLAY_SOUND_TYPE, MESSAGE_TYPE::PLAY_SOUND>& packet, const IpAddress& sender) {
-    Logger::log("Received (unwanted) packet when in disconnected-state (type: " + std::to_string(MESSAGE_TYPE::PLAY_SOUND) + ")", Log::WARNING);
-}
-
-void ClientDisconnectedState::accept(Packet<REGISTER_ID_TO_SYSTEM_TYPE, MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM>& packet, const IpAddress& sender) {
-    Logger::log("Received (unwanted) packet when in disconnected-state (type: " + std::to_string(MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM) + ")", Log::WARNING);
-}
-
-void ClientDisconnectedState::accept(Packet<REMOVE_ID_TYPE, MESSAGE_TYPE::REMOVE_ID>& packet, const IpAddress& sender) {
-    Logger::log("Received (unwanted) packet when in disconnected-state (type: " + std::to_string(MESSAGE_TYPE::REMOVE_ID) + ")", Log::WARNING);
-}
-
-void ClientDisconnectedState::accept(Packet<REMOVE_ID_FROM_SYSTEM_TYPE, MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM>& packet, const IpAddress& sender) {
-    Logger::log("Received (unwanted) packet when in disconnected-state (type: " + std::to_string(MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM) + ")", Log::WARNING);
-}
-
-void ClientDisconnectedState::accept(Packet<REMOVE_ID_FROM_SYSTEMS_TYPE, MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEMS>& packet, const IpAddress& sender) {
-    Logger::log("Received (unwanted) packet when in disconnected-state (type: " + std::to_string(MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEMS) + ")", Log::WARNING);
-}
-
-void ClientDisconnectedState::accept(Packet<ACTIVATE_ID_TYPE, MESSAGE_TYPE::ACTIVATE_ID>& packet, const IpAddress& sender) {
-    Logger::log("Received (unwanted) packet when in disconnected-state (type: " + std::to_string(MESSAGE_TYPE::ACTIVATE_ID) + ")", Log::WARNING);
-}
-
-void ClientDisconnectedState::accept(Packet<CONGESTED_CLIENT_TYPE, MESSAGE_TYPE::CONGESTED_CLIENT>& packet, const IpAddress& sender) {
-    Logger::log("Received (unwanted) packet when in disconnected-state (type: " + std::to_string(MESSAGE_TYPE::CONGESTED_CLIENT) + ")", Log::WARNING);
-}
-
-void ClientDisconnectedState::accept(Packet<NOT_CONGESTED_CLIENT_TYPE, MESSAGE_TYPE::NOT_CONGESTED_CLIENT>& packet, const IpAddress& sender) {
-    Logger::log("Received (unwanted) packet when in disconnected-state (type: " + std::to_string(MESSAGE_TYPE::NOT_CONGESTED_CLIENT) + ")", Log::WARNING);
-}
-
-void ClientDisconnectedState::accept(Packet<KEEP_ALIVE_TYPE, MESSAGE_TYPE::KEEP_ALIVE>& packet, const IpAddress& sender) {
+void ClientDisconnectedState::accept(const KeepAliveData&, const IpAddress& sender) {
     client->keepAlive.start();
 }

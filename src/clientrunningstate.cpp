@@ -125,47 +125,27 @@ void ClientRunningState::onChange(ClientRunningState* state) {
     Logger::log("Client can't change state from ClientRunningState to ClientRunningState", Log::WARNING);
 }
 
-void ClientRunningState::accept(Packet<OUTDATED_TYPE, MESSAGE_TYPE::OUTDATED>& packet, const IpAddress& sender) {
+void ClientRunningState::accept(const OutdatedData& data, const IpAddress& sender) {
     Logger::log("This packet is outdated, to late! Sluggish!", Log::WARNING);
 }
 
-void ClientRunningState::accept(Packet<CONNECT_TYPE, MESSAGE_TYPE::CONNECT>& packet, const IpAddress& sender) {
+void ClientRunningState::accept(const ConnectData& data, const IpAddress& sender) {
     Logger::log("Got camera ID from server", Log::INFO);
 
     //Got my id. Tell camerasystem to follow that id.t
-    const auto& pair = packet.getData();
+    const auto& pair = data.data;
     const auto& id = pair.first;
     client->systemManager.getSystem(pair.second)->add(id);
     client->playerId = id;
 }
 
-void ClientRunningState::accept(Packet<DISCONNECT_TYPE, MESSAGE_TYPE::DISCONNECT>& packet, const IpAddress& sender) {
-
-}
-
-void ClientRunningState::accept(Packet<INPUTDATA_TYPE, MESSAGE_TYPE::INPUTDATA>& packet, const IpAddress& sender) {
-
-}
-
-void ClientRunningState::accept(Packet<BEGIN_TRANSMITTING_INITIAL_COMPONENTS_TYPE, MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS>& packet, const IpAddress& sender) {
-
-}
-
-void ClientRunningState::accept(Packet<INITIAL_COMPONENTS_TYPE, MESSAGE_TYPE::INITIAL_COMPONENTS>& packet, const IpAddress& sender) {
-
-}
-
-void ClientRunningState::accept(Packet<END_TRANSMITTING_INITIAL_COMPONENTS_TYPE, MESSAGE_TYPE::END_TRANSMITTING_INITIAL_COMPONENTS>& packet, const IpAddress& sender) {
-
-}
-
-void ClientRunningState::accept(Packet<MOVECOMPONENTSDIFF_TYPE, MESSAGE_TYPE::MOVECOMPONENTSDIFF>& packet, const IpAddress& sender) {
+void ClientRunningState::accept(MoveComponentsDiffData& data, const IpAddress& sender) {
     Logger::log("Received MOVECOMPONENTSDIFF packet", Log::VERBOSE);
 
     //Diff movecomponents were received - handle it
-    client->componentManager.moveComponents.sync(packet.getData());
+    client->componentManager.moveComponents.sync(data.data);
 
-    for(auto& pair : packet.getData()) {
+    for(auto& pair : data.data) {
         //Try to activate id, but it could be the case that
         //the entity is newly created, in that case activation wont work
         //so just add it instead. But before adding/activating, make sure
@@ -186,13 +166,13 @@ void ClientRunningState::accept(Packet<MOVECOMPONENTSDIFF_TYPE, MESSAGE_TYPE::MO
     }
 }
 
-void ClientRunningState::accept(Packet<RENDERCOMPONENTSDIFF_TYPE, MESSAGE_TYPE::RENDERCOMPONENTSDIFF>& packet, const IpAddress& sender) {
+void ClientRunningState::accept(RenderComponentsDiffData& data, const IpAddress& sender) {
     Logger::log("Received RENDERCOMPONENTSDIFF packet", Log::VERBOSE);
 
     //Diff rendercomponents were received - handle it
-    client->componentManager.renderComponents.sync(packet.getData());
+    client->componentManager.renderComponents.sync(data.data);
 
-    for(auto& pair : packet.getData()) {
+    for(auto& pair : data.data) {
         const auto& id = pair.first;
         const auto& mcs = client->componentManager.moveComponents;
         const auto& rcs = client->componentManager.renderComponents;
@@ -208,22 +188,22 @@ void ClientRunningState::accept(Packet<RENDERCOMPONENTSDIFF_TYPE, MESSAGE_TYPE::
     }
 }
 
-void ClientRunningState::accept(Packet<PLAY_SOUND_TYPE, MESSAGE_TYPE::PLAY_SOUND>& packet, const IpAddress& sender) {
+void ClientRunningState::accept(PlaySoundData& data, const IpAddress& sender) {
     Logger::log("Received PLAY_SOUND packet", Log::VERBOSE);
-    client->soundEngine.playSound(packet.getData());
+    client->soundEngine.playSound(data.data);
 }
 
-void ClientRunningState::accept(Packet<REGISTER_ID_TO_SYSTEM_TYPE, MESSAGE_TYPE::REGISTER_ID_TO_SYSTEM>& packet, const IpAddress& sender) {
+void ClientRunningState::accept(const RegisterIdToSystemData& data, const IpAddress& sender) {
     Logger::log("Received REGISTER_ID_TO_SYSTEM packet", Log::INFO);
-    const auto& id = packet.getData().first;
-    const auto& systemIdentifier = packet.getData().second;
+    const auto& id = data.data.first;
+    const auto& systemIdentifier = data.data.second;
     client->systemManager.getSystem(systemIdentifier)->add(id);
 }
 
-void ClientRunningState::accept(Packet<REMOVE_ID_TYPE, MESSAGE_TYPE::REMOVE_ID>& packet, const IpAddress& sender) {
+void ClientRunningState::accept(const RemoveIdData& data, const IpAddress& sender) {
     Logger::log("Received REMOVE_ID packet", Log::INFO);
 
-    const auto& id = packet.getData();
+    const auto& id = data.data;
     client->systemManager.getSystem(System::RENDER)->remove(id);
     client->systemManager.getSystem(System::HASHGRID_TEXTURE)->remove(id);
     client->componentManager.clearComponents(id);
@@ -235,35 +215,27 @@ void ClientRunningState::accept(Packet<REMOVE_ID_TYPE, MESSAGE_TYPE::REMOVE_ID>&
     }
 }
 
-void ClientRunningState::accept(Packet<REMOVE_ID_FROM_SYSTEM_TYPE, MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEM>& packet, const IpAddress& sender) {
+void ClientRunningState::accept(const RemoveIdFromSystemData& data, const IpAddress& sender) {
     Logger::log("Received REMOVE_ID_FROM_SYSTEM packet", Log::INFO);
-    const auto& id = packet.getData().first;
-    const auto& systemIdentifier = packet.getData().second;
+    const auto& id = data.data.first;
+    const auto& systemIdentifier = data.data.second;
     client->systemManager.getSystem(systemIdentifier)->remove(id);
 }
 
-void ClientRunningState::accept(Packet<REMOVE_ID_FROM_SYSTEMS_TYPE, MESSAGE_TYPE::REMOVE_ID_FROM_SYSTEMS>& packet, const IpAddress& sender) {
+void ClientRunningState::accept(const RemoveIdFromSystemsData& data, const IpAddress& sender) {
     Logger::log("Received REMOVE_ID_FROM_SYSTEMS packet", Log::INFO);
-    const auto& id = packet.getData();
+    const auto& id = data.data;
     client->systemManager.getSystem(System::RENDER)->remove(id);
     client->systemManager.getSystem(System::HASHGRID_TEXTURE)->remove(id);
 }
 
-void ClientRunningState::accept(Packet<ACTIVATE_ID_TYPE, MESSAGE_TYPE::ACTIVATE_ID>& packet, const IpAddress& sender) {
+void ClientRunningState::accept(const ActivateIdData& data, const IpAddress& sender) {
     Logger::log("Received ACTIVATE_ID packet", Log::INFO);
-    const auto& id = packet.getData().first;
-    const auto& systemIdentifier = packet.getData().second;
+    const auto& id = data.data.first;
+    const auto& systemIdentifier = data.data.second;
     client->systemManager.getSystem(systemIdentifier)->activateId(id);
 }
 
-void ClientRunningState::accept(Packet<CONGESTED_CLIENT_TYPE, MESSAGE_TYPE::CONGESTED_CLIENT>& packet, const IpAddress& sender) {
-
-}
-
-void ClientRunningState::accept(Packet<NOT_CONGESTED_CLIENT_TYPE, MESSAGE_TYPE::NOT_CONGESTED_CLIENT>& packet, const IpAddress& sender) {
-
-}
-
-void ClientRunningState::accept(Packet<KEEP_ALIVE_TYPE, MESSAGE_TYPE::KEEP_ALIVE>& packet, const IpAddress& sender) {
+void ClientRunningState::accept(const KeepAliveData& data, const IpAddress& sender) {
     client->keepAlive.start();
 }
