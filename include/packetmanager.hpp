@@ -88,12 +88,6 @@ public:
 	        validatePacket(sender, untypedPacket);
 	        storePacket(sender, serializedPacket);
 
-	        {
-	        	std::ostringstream oss;
-	        	oss << "MESSAGE_TYPE=" << untypedPacket.getType();
-	        	Logger::log(oss, Log::ERROR);
-	        }
-
 	        //1. Check type of packet
 	        switch(untypedPacket.getType()) {
 	        	case OUTDATED: { 

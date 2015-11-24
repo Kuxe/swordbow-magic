@@ -114,8 +114,6 @@ void Client::stop() {
 }
 
 int main(int argc, char** argv) {
-    Logger::openLogfile("clientlog.txt");
-    Logger::level = Log::ERROR;
 
     /** Begin by parsing passed program arguments **/
     for(int i = 0; i < argc; i++) {
@@ -123,6 +121,8 @@ int main(int argc, char** argv) {
         size_t pos = command.rfind("--log=");
         if(pos != std::string::npos) {
             std::string logstr = command.substr(pos+6);
+            Logger::openLogfile("clientlog.txt");
+            Logger::enable();
 
             if(!logstr.compare("VERBOSE")) {
                 Logger::level = Log::VERBOSE;

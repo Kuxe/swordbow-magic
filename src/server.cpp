@@ -409,15 +409,14 @@ void Server::accept(const auto& data, const IpAddress& sender) {
 }
 
 int main(int argc, char** argv) {
-	Logger::openLogfile("serverlog.txt");
-	Logger::level = Log::ERROR; 
-
 	/** Begin by parsin passed program arguments **/
 	for(int i = 0; i < argc; i++) {
         std::string command(argv[i]);
         size_t pos = command.rfind("--log=");
         if(pos != std::string::npos) {
             std::string logstr = command.substr(pos+6);
+            Logger::openLogfile("serverlog.txt");
+            Logger::enable();
 
             if(!logstr.compare("VERBOSE")) {
             	Logger::level = Log::VERBOSE;

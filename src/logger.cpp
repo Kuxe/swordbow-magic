@@ -8,8 +8,8 @@
 //Default to flow-logging
 Log::Level Logger::level = Log::INFO;
 
-//Enabled by default
-bool Logger::enabled = true;
+//Disabled by default
+bool Logger::enabled = false;
 
 std::ofstream Logger::logfile;
 
