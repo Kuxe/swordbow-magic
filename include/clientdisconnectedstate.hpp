@@ -28,7 +28,7 @@ public:
 	void accept(const DisconnectData&, const IpAddress& sender);
 	void accept(const BeginTransmittingInitialComponentsData& data, const IpAddress& sender);
 	void accept(const KeepAliveData&, const IpAddress& sender);
-	void accept(const auto& data, const IpAddress& sender) {;}
+	void accept(const auto& data, const IpAddress& sender);
 };
 
 

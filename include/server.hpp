@@ -111,12 +111,12 @@ public:
     void printGeneralInfo();
 
     void accept(const OutdatedData&, const IpAddress& sender);
-    void accept(const ConnectData&, const IpAddress& sender);
+    void accept(const ConnectToServerData&, const IpAddress& sender);
     void accept(const DisconnectData&, const IpAddress& sender);
     void accept(const InputDataData& data, const IpAddress& sender);
     void accept(const CongestedClientData& data, const IpAddress& sender);
     void accept(const NotCongestedClientData& data, const IpAddress& sender);
-    void accept(const auto& data, const IpAddress& sender) {;}
+    void accept(const auto& data, const IpAddress& sender);
 };
 
 

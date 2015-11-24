@@ -137,7 +137,7 @@ void Server::onConnect(const IpAddress& ipAddress) {
 	//Make the client aware of its ID and register the ID to client camerasytem
 	using DataType = std::pair<ID, System::Identifier>;
 	const DataType data {playerId, System::CAMERA};
-	send<DataType, MESSAGE_TYPE::CONNECT>(ipAddress, data);
+	send<DataType, MESSAGE_TYPE::SERVER_REPLY_TO_CONNECT>(ipAddress, data);
 }
 
 void Server::onDisconnect(const IpAddress& ipAddress) {
@@ -362,7 +362,7 @@ void Server::accept(const OutdatedData&, const IpAddress& sender) {
 	Logger::log("This packet is outdated, to late! Sluggish!", Log::WARNING);
 }
 
-void Server::accept(const ConnectData&, const IpAddress& sender) {
+void Server::accept(const ConnectToServerData&, const IpAddress& sender) {
 	Logger::log("Received CONNECT packet", Log::INFO);
 	onConnect(sender);
 }
@@ -400,6 +400,12 @@ void Server::accept(const CongestedClientData& data, const IpAddress& sender) {
 void Server::accept(const NotCongestedClientData& data, const IpAddress& sender) {
 	Logger::log("Received NOT_CONGESTED_CLIENT packet", Log::INFO);
 	clients.at(sender).congested = false;
+}
+
+void Server::accept(const auto& data, const IpAddress& sender) {
+	std::ostringstream oss;
+	oss << "Received packet that has no overloaded accept (server, typeid: " << typeid(data).name() << ")";
+	Logger::log(oss, Log::WARNING);
 }
 
 int main(int argc, char** argv) {

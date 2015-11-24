@@ -39,25 +39,29 @@ public:
 	void registerClient();
 	void unregisterClient();
 
-	template<typename Data, MESSAGE_TYPE Message>
-	Packet<Data, Message> deserialize(const char* buffer, const int bytesRead) {
+	template<typename DataType, MESSAGE_TYPE Message>
+	Packet<DataType, Message> deserialize(const char* buffer, const int bytesRead) {
 		try {
-			std::string serializedPacket(static_cast<const char*>(buffer), bytesRead);
-			std::istringstream iss(serializedPacket);
+			std::string serializedPacket(buffer, bytesRead);
+			std::istringstream iss(serializedPacket, std::ios::binary);
 			cereal::PortableBinaryInputArchive pbia(iss);
-		    Packet<Data, Message> packet;
-		    pbia(packet);
+		    Packet<DataType, Message> packet;
+		    pbia(packet); 	//Crash here because client sends a packet with bool but the datatype of CONNECT-packet is std::pair<...>
+		    				//There needs to be two different connect packets "CLIENT_CONNECT_TO_SERVER" and "SERVER_REPLY_TO_CONNECT"
 		    return packet;
 		} catch (cereal::Exception e) {
 			std::ostringstream oss;
-			oss << "Could not deserialize packet (" << e.what() << ", message number: " << Message << ")";
+			oss << "Could not deserialize packet (" << e.what() << "), bytesRead: " << bytesRead << ", message number: " << Message << ")";
 			Logger::log(oss, Log::ERROR);
 		}
 	}
 
 	template<MESSAGE_TYPE Message>
 	void accept(auto& acceptor, auto message, const char* buffer, int bytesRead, const IpAddress& sender) {
-		acceptor.accept(deserialize<decltype(message.data), MESSAGE_TYPE::ANY>(buffer, bytesRead).getData(), sender);
+		//So get the data that is actually relevant, copy it to the message, then call the overloaded
+		//method of an acceptor (overloaded on message)
+		message.data = deserialize<decltype(message.data), Message>(buffer, bytesRead).getData();
+		acceptor.accept(message, sender);
 	}
 
 	std::string serialize(const auto& object) {
@@ -80,17 +84,26 @@ public:
 		try {
 			//Deserialize contents of buffer into untyped packet
 	        std::string serializedPacket(buffer, bytesRead);
-			auto untypedPacket = deserialize<decltype(UNKNOWN), MESSAGE_TYPE::UNKNOWN>(buffer, bytesRead);
+			auto untypedPacket = deserialize<bool, MESSAGE_TYPE::UNKNOWN>(buffer, bytesRead);
 	        validatePacket(sender, untypedPacket);
 	        storePacket(sender, serializedPacket);
+
+	        {
+	        	std::ostringstream oss;
+	        	oss << "MESSAGE_TYPE=" << untypedPacket.getType();
+	        	Logger::log(oss, Log::ERROR);
+	        }
 
 	        //1. Check type of packet
 	        switch(untypedPacket.getType()) {
 	        	case OUTDATED: { 
 	        		accept<MESSAGE_TYPE::OUTDATED>(acceptor, OutdatedData(), buffer, bytesRead, sender);
 	        	} break;
-	        	case CONNECT: { 
-	        		accept<MESSAGE_TYPE::CONNECT>(acceptor, ConnectData(), buffer, bytesRead, sender);
+	        	case CONNECT_TO_SERVER: { 
+	        		accept<MESSAGE_TYPE::CONNECT_TO_SERVER>(acceptor, ConnectToServerData(), buffer, bytesRead, sender);
+	        	} break;
+	        	case SERVER_REPLY_TO_CONNECT: { 
+	        		accept<MESSAGE_TYPE::SERVER_REPLY_TO_CONNECT>(acceptor, ServerReplyToConnectData(), buffer, bytesRead, sender);
 	        	} break;
 	        	case DISCONNECT: { 
 	        		accept<MESSAGE_TYPE::DISCONNECT>(acceptor, DisconnectData(), buffer, bytesRead, sender);

@@ -13,7 +13,8 @@ enum MESSAGE_TYPE {
     UNKNOWN,
     ANY,
     OUTDATED,
-    CONNECT,
+    CONNECT_TO_SERVER,
+    SERVER_REPLY_TO_CONNECT,
     DISCONNECT,
     INPUTDATA,
     BEGIN_TRANSMITTING_INITIAL_COMPONENTS,
@@ -43,7 +44,8 @@ enum MESSAGE_TYPE {
 /** These structs are used when doing multiple-dispatch on different client-states **/
 struct UnknownData { bool data; };
 struct OutdatedData { bool data; };
-struct ConnectData { std::pair<ID, System::Identifier> data; };
+struct ConnectToServerData { bool data; };
+struct ServerReplyToConnectData { std::pair<ID, System::Identifier> data; };
 struct DisconnectData { bool data; };
 struct InputDataData { InputData data; };
 struct BeginTransmittingInitialComponentsData { int data; };

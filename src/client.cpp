@@ -64,7 +64,7 @@ void Client::connect(const IpAddress& server) {
     this->server = server;
 
     //Connect-request packet
-    send<bool, MESSAGE_TYPE::CONNECT>(true);
+    send<bool, MESSAGE_TYPE::CONNECT_TO_SERVER>(true);
     keepAlive.start();
     std::ostringstream oss;
     oss << "Sent connect request to " << server;

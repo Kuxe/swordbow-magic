@@ -129,7 +129,7 @@ void ClientRunningState::accept(const OutdatedData& data, const IpAddress& sende
     Logger::log("This packet is outdated, to late! Sluggish!", Log::WARNING);
 }
 
-void ClientRunningState::accept(const ConnectData& data, const IpAddress& sender) {
+void ClientRunningState::accept(const ServerReplyToConnectData& data, const IpAddress& sender) {
     Logger::log("Got camera ID from server", Log::INFO);
 
     //Got my id. Tell camerasystem to follow that id.t
@@ -238,4 +238,8 @@ void ClientRunningState::accept(const ActivateIdData& data, const IpAddress& sen
 
 void ClientRunningState::accept(const KeepAliveData& data, const IpAddress& sender) {
     client->keepAlive.start();
+}
+
+void ClientRunningState::accept(const auto& data, const IpAddress& sender) {
+    Logger::log("Received packet that has no overloaded accept (ClientRunningState)", Log::WARNING);
 }

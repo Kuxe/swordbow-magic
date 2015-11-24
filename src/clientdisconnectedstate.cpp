@@ -117,3 +117,11 @@ void ClientDisconnectedState::accept(const BeginTransmittingInitialComponentsDat
 void ClientDisconnectedState::accept(const KeepAliveData&, const IpAddress& sender) {
     client->keepAlive.start();
 }
+
+void ClientDisconnectedState::accept(const auto& data, const IpAddress& sender) {
+    Logger::log("Received packet that has no overloaded accept (ClientDisconnectedState)", Log::WARNING);
+}
+
+
+
+

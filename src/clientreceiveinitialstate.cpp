@@ -119,6 +119,10 @@ void ClientReceiveInitialState::accept(const EndTransmittingInitialComponentsDat
 	}
 }
 
+void ClientReceiveInitialState::accept(const auto& data, const IpAddress& sender) {
+    Logger::log("Received packet that has no overloaded accept (ClientReceiveInitialState)", Log::WARNING);
+}
+
 void ClientReceiveInitialState::accept(const KeepAliveData&, const IpAddress& sender) {
 	client->keepAlive.start();
 }

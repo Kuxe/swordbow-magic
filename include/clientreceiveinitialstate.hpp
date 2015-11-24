@@ -25,7 +25,7 @@ public:
 	void accept(InitialComponentsData& data, const IpAddress& sender);
 	void accept(const EndTransmittingInitialComponentsData&, const IpAddress& sender);
 	void accept(const KeepAliveData&, const IpAddress& sender);
-	void accept(const auto& data, const IpAddress& sender) {;}
+	void accept(const auto& data, const IpAddress& sender);
 };
 
 #endif //CLIENTRECEIVEINITIALSTATE_HPP

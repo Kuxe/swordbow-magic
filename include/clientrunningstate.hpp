@@ -20,7 +20,7 @@ public:
 	void onChange(ClientRunningState* state);
 
 	void accept(const OutdatedData& data, const IpAddress& sender);
-	void accept(const ConnectData& data, const IpAddress& sender);
+	void accept(const ServerReplyToConnectData& data, const IpAddress& sender);
 	void accept(MoveComponentsDiffData& data, const IpAddress& sender);
 	void accept(RenderComponentsDiffData& data, const IpAddress& sender);
 	void accept(PlaySoundData& data, const IpAddress& sender);
@@ -30,7 +30,7 @@ public:
 	void accept(const RemoveIdFromSystemsData& data, const IpAddress& sender);
 	void accept(const ActivateIdData& data, const IpAddress& sender);
 	void accept(const KeepAliveData& data, const IpAddress& sender);
-	void accept(const auto& data, const IpAddress& sender) {;}
+	void accept(const auto& data, const IpAddress& sender);
 };
 
 #endif //CLIENTRUNNINGSTATE_HPP
