@@ -38,7 +38,7 @@ private:
     void renderTexts();
 
 public:
-    Renderer(int argc, char** argv);
+    Renderer(bool fullscreen, bool vsync);
     ~Renderer();
     const std::unordered_map<Image::Identifier, TextureData, std::hash<int>>& getTextureDatas() const;
     void render(std::priority_queue<RenderData>& pq, const SDL_Rect& camera);

@@ -54,8 +54,7 @@ public:
         address.sin_addr.s_addr = INADDR_ANY;
         address.sin_port = htons(port);
 
-        if(bind(socket, (const sockaddr*)&address, sizeof(sockaddr_in)) < 0 )
-        {
+        if(bind(socket, (const sockaddr*)&address, sizeof(sockaddr_in)) < 0 ) {
             Logger::log("Couldn't bind socket", Log::ERROR);
             close();
             return false;

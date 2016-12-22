@@ -88,7 +88,7 @@ public:
         packetManager.send<DataType>(server, cameraPacket);
     }
 
-    Client(int argc, char** argv);
+    Client(bool fullscreenFlag, bool vsyncFlag, unsigned short port);
     ~Client();
 
     void connect(const IpAddress& server);

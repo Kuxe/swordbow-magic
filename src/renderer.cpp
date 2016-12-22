@@ -7,44 +7,19 @@
 /** For strmcp **/
 #include <cstring>
 
-Renderer::Renderer(int argc, char** argv) {
+Renderer::Renderer(bool fullscreen, bool vsync) {
 
     //Check if fullscreen was set from command-line
     Uint32 fullscreenFlag = 0;
-    for(int i = 0; i < argc; i++) {
-        std::string command(argv[i]);
-        size_t pos = command.rfind("--fullscreen=");
-        if(pos != std::string::npos) {
-            std::string fsstr = command.substr(pos+13);
-            if(!fsstr.compare("true")) {
-                Logger::log("Fullscreen on", Log::ERROR);
-                fullscreenFlag = SDL_WINDOW_FULLSCREEN;
-            } else if (!fsstr.compare("false")) {
-                fullscreenFlag = 0;
-            } else {
-                Logger::log("Not valid value for --fullscreen=<true|false>, defaulting to false", Log::WARNING);
-            }
-            break;
-        }
+    if(fullscreen) {
+        Logger::log("Fullscreen on", Log::INFO);
+        fullscreenFlag = SDL_WINDOW_FULLSCREEN;
     }
 
-    //Check if vsync was set from command-line
     Uint32 vsyncFlag = 0;
-    for(int i = 0; i < argc; i++) {
-        std::string command(argv[i]);
-        size_t pos = command.rfind("--vsync=");
-        if(pos != std::string::npos) {
-            std::string vsyncstr = command.substr(pos+8);
-            if(!vsyncstr.compare("true")) {
-                Logger::log("VSync on", Log::ERROR);
-                vsyncFlag = SDL_RENDERER_PRESENTVSYNC;
-            } else if (!vsyncstr.compare("false")) {
-                vsyncFlag = 0;
-            } else {
-                Logger::log("Not valid value for --vsync=<true|false>, defaulting to false", Log::WARNING);
-            }
-            break;
-        }
+    if(vsync) {
+        Logger::log("VSync on", Log::INFO);
+        vsyncFlag = SDL_RENDERER_PRESENTVSYNC;
     }
 
     //Initialize SDL

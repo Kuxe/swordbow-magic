@@ -12,12 +12,13 @@
 
 /** For parsing **/
 #include <string>
+#include "args.hxx"
 
-Client::Client(int argc, char** argv) :
+Client::Client(bool fullscreenFlag, bool vsyncFlag, unsigned short port) :
         packetManager("swordbow-magic"),
         sequence(1),
         systemManager(&componentManager, &deltaTime),
-        renderer(argc, argv),
+        renderer(fullscreenFlag, vsyncFlag),
         textureBoundingBox(&componentManager, &renderer),
         textureHashGridSystem(&textureBoundingBox),
         cameraSystem(&renderer),
@@ -28,30 +29,18 @@ Client::Client(int argc, char** argv) :
         clientState(&clientDisconnectedState) {
 
     Logger::log("Starting client", Log::INFO);
-
-    //Default port
-    short port = 47294;
-
-    //Check if port is set
-    for(int i = 0; i < argc; i++) {
-		if(strcmp(argv[i], "port") == 0) {
-			port = std::atoi(argv[i+1]);
-		}
-	}
-
-    packetManager.open(port);
-
     systemManager.add(&textureHashGridSystem);
     systemManager.add(&renderSystem);
     systemManager.add(&cameraSystem);
 
+    packetManager.open(port);
     keepAlive.start();
     keepAlive.stop();
 }
 
 Client::~Client() {
-    packetManager.close();
     Logger::log("Destroying client", Log::INFO);
+    packetManager.close();
 }
 
 void Client::connect(const IpAddress& server) {
@@ -114,65 +103,78 @@ void Client::stop() {
 }
 
 int main(int argc, char** argv) {
+    /** Parse args (using nifty library by Taylor C. Richberger https://github.com/Taywee/args)**/
+    args::ArgumentParser parser("swordbow-magic-client.", "swordbow-magic-client says bye!.");
+    args::HelpFlag help(parser, "help", "Display this help menu", {'h', "help"});
+    args::Flag fullscreenFlag(parser, "fullscreen", "Enable fullscreen", {"fullscreen"});
+    args::Flag vsyncFlag(parser, "vsync", "Enable vsync", {"vsync"});
+    args::ValueFlag<std::string> ipFlag(parser, "address", "Connects client to server at address", {"ip"});
+    args::ValueFlag<unsigned short> portFlag(parser, "port", "Set port of client", {"port"});
 
-    /** Begin by parsing passed program arguments **/
-    for(int i = 0; i < argc; i++) {
-        std::string command(argv[i]);
-        size_t pos = command.rfind("--log=");
-        if(pos != std::string::npos) {
-            std::string logstr = command.substr(pos+6);
-            Logger::openLogfile("clientlog.txt");
-            Logger::enable();
+    std::unordered_map<std::string, Log::Level> map{
+        {"VERBOSE", Log::VERBOSE},
+        {"INFO", Log::INFO},
+        {"WARNING", Log::WARNING},
+        {"ERROR", Log::ERROR}
+    };
 
-            if(!logstr.compare("VERBOSE")) {
-                Logger::level = Log::VERBOSE;
-            } else if(!logstr.compare("INFO")) {
-                Logger::level = Log::INFO;
-            } else if(!logstr.compare("WARNING")) {
-                Logger::level = Log::WARNING;
-            } else if(!logstr.compare("ERROR")) {
-                Logger::level = Log::ERROR;
-            } else {
-                Logger::log("Not valid value for --log=<VERBOSE|INFO|WARNING|ERROR>", Log::ERROR);
-                return -1;
-            }
-        }
+    args::MapFlag<std::string, Log::Level> logflag(parser, "VERBOSE|INFO|WARNING|ERROR", "Set logging level", {"log"}, map);
+
+    try {
+        parser.ParseCLI(argc, argv);
+    } catch (args::Help) {
+        std::cout << parser;
+        return 0;
+    } catch (args::ParseError e) {
+        std::cerr << e.what() << std::endl;
+        std::cerr << parser;
+        return -1;
+    }
+
+    if(logflag) {
+        Logger::openLogfile("serverlog.txt");
+        Logger::enable();
+        Logger::level = args::get(logflag);
     }
 
     IpAddress ipAddress = {127, 0, 0, 1, 47293};
-    for(int i = 0; i < argc; i++) {
-        std::string command(argv[i]);
-        size_t pos = command.rfind("--ip=");
+
+    if(ipFlag) {
+        std::string ipstr = args::get(ipFlag);
+        size_t pos = ipstr.find_first_of(".");
+        unsigned char a = stoi(ipstr.substr(0, pos));
+
+        ipstr = ipstr.substr(pos+1);
+        pos = ipstr.find_first_of(".");
+        unsigned char b = stoi(ipstr.substr(0, pos));
+
+        ipstr = ipstr.substr(pos+1);
+        pos = ipstr.find_first_of(".");
+        unsigned char c = stoi(ipstr.substr(0, pos));
+
+        ipstr = ipstr.substr(pos+1);
+        pos = ipstr.find_first_of(".");
+        unsigned char d = stoi(ipstr.substr(0, pos));
+
+        ipstr = ipstr.substr(pos+1);
+        pos = ipstr.find_first_of(":");
+        unsigned short port = 47293;
         if(pos != std::string::npos) {
-            std::string ipstr = command.substr(pos+5);
-            pos = ipstr.find_first_of(".");
-            unsigned char a = stoi(ipstr.substr(0, pos));
-
-            ipstr = ipstr.substr(pos+1);
-            pos = ipstr.find_first_of(".");
-            unsigned char b = stoi(ipstr.substr(0, pos));
-
-            ipstr = ipstr.substr(pos+1);
-            pos = ipstr.find_first_of(".");
-            unsigned char c = stoi(ipstr.substr(0, pos));
-
-            ipstr = ipstr.substr(pos+1);
-            pos = ipstr.find_first_of(".");
-            unsigned char d = stoi(ipstr.substr(0, pos));
-
-            ipstr = ipstr.substr(pos+1);
-            pos = ipstr.find_first_of(":");
-            unsigned short port = 47293;
-            if(pos != std::string::npos) {
-                port = stoi(ipstr.substr(pos+1));
-            }
-
-            ipAddress = {a, b, c, d, port};
+            port = stoi(ipstr.substr(pos+1));
         }
+
+        ipAddress = {a, b, c, d, port};
     }
 
+    unsigned short port = 47294;
+    if(portFlag) port = args::get(portFlag);
+    bool fullscreen = false;
+    if(fullscreenFlag) fullscreen = args::get(fullscreenFlag);
+    bool vsync = false;
+    if(vsyncFlag) vsync = args::get(vsyncFlag);
+
     /** All arguments are parsed, now start the client **/
-    Client client(argc, argv);
+    Client client(fullscreen, vsync, port);
     client.connect(ipAddress);
     client.run();
     client.disconnect();
