@@ -28,8 +28,8 @@ void ClientRunningState::step() {
 	client->deltaTime.start();
 
     /** Get input from client **/
-    std::queue<int> presses;
-    std::queue<int> releases;
+    std::vector<int> presses;
+    std::vector<int> releases;
 
     //Fetch all events that ocurred...
     while(SDL_PollEvent(&client->event) != 0) {
@@ -43,12 +43,12 @@ void ClientRunningState::step() {
                 }
                 //If this event was a keydown...
                 case SDL_KEYDOWN: {
-                    presses.push(client->event.key.keysym.sym);
+                    presses.push_back(client->event.key.keysym.sym);
                 } break;
 
                 //If user released a key
                 case SDL_KEYUP: {
-                    releases.push(client->event.key.keysym.sym);
+                    releases.push_back(client->event.key.keysym.sym);
 
                 } break;
             }

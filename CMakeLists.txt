@@ -272,6 +272,7 @@ ADD_EXECUTABLE(swordbow-magic-client src/client.cpp)
 #What linker flags are required for swordbow-magic-client?
 TARGET_LINK_LIBRARIES(swordbow-magic-client PUBLIC
     sbm-client
+    pthread
 )
 
 #Create a client-executable

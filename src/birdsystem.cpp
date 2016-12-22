@@ -1,5 +1,6 @@
 #include "birdsystem.hpp"
 #include "componentmanager.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/vector_angle.hpp>
 #include <chrono>
 #include "deltatime.hpp"

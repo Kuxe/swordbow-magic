@@ -1,11 +1,11 @@
 #ifndef INPUTDATA_HPP
 #define INPUTDATA_HPP
 
-#include <queue>
+#include <vector>
 
 struct InputData {
-    std::queue<int> presses; //Filled with whatever keyes that was pressed a tick
-    std::queue<int> releases; //Filled with whatever keyes that was released a tick
+    std::vector<int> presses; //Filled with whatever keyes that was pressed a tick
+    std::vector<int> releases; //Filled with whatever keyes that was released a tick
 
     template<class Archive>
     void serialize(Archive& ar) {

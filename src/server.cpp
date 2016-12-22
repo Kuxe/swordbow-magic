@@ -54,7 +54,7 @@ Server::Server(int argc, char** argv) :
 	World world(&entityManager);
 
 
-	bool bigworld = false;
+	bool bigworld = true;
 	for(int i = 0; i < argc; i++) {
 		if(strcmp(argv[i], "bigworld") == 0) {
 			bigworld = true;
@@ -275,14 +275,12 @@ void Server::inputDataToInputComponent(const IpAddress& ipAddress, const InputDa
 	//Get id of client
 	
 	//FIXME: Cant iterate through const InputData& data if data.data is queue. Must be other datatype than std::queue
-	/*auto id = clients.at(ipAddress).id;
+	auto id = clients.at(ipAddress).id;
 	auto& ic = componentManager.inputComponents.at(id);
 
 	ic.presses = data.presses;
 
-	while(!data.presses.empty()) {
-		auto keypress = data.presses.front(); data.presses.pop();
-
+	for(auto keypress : data.presses) {
 		//Figure out what key was pressed
 		switch(keypress) {
 			case SDLK_w: {
@@ -310,9 +308,7 @@ void Server::inputDataToInputComponent(const IpAddress& ipAddress, const InputDa
 
 	ic.releases = data.releases;
 
-	while(!data.releases.empty()) {
-		auto keyrelease = data.releases.front(); data.releases.pop();
-
+	for(auto keyrelease : data.releases) {
 		//Figure out what key was released
 		switch(keyrelease) {
 			case SDLK_w: {
@@ -338,7 +334,7 @@ void Server::inputDataToInputComponent(const IpAddress& ipAddress, const InputDa
 		}
 	}
 
-	inputSystem.activateId(id);*/
+	inputSystem.activateId(id);
 }
 
 void Server::printGeneralInfo() {

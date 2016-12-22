@@ -2,7 +2,7 @@
 #define INPUTCOMPONENT_H
 
 #include <unordered_map>
-#include <queue>
+#include <vector>
 
 class InputComponent {
 public:
@@ -13,8 +13,8 @@ public:
      d{false},
      space{false};
      std::unordered_map<int, int> bindings; //The key to bindings is a keyboard-key, the value is an action (enum)
-     std::queue<int> presses; //Filled with whatever keyes that was pressed a tick
-     std::queue<int> releases; //Filled with whatever keyes that was released a tick
+     std::vector<int> presses; //Filled with whatever keyes that was pressed a tick
+     std::vector<int> releases; //Filled with whatever keyes that was released a tick
 };
 
 #endif //INPUTCOMPONENT_H

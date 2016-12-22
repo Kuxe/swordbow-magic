@@ -23,16 +23,16 @@ void InputSystem::update() {
         auto& cc = componentManager->commandComponents.at(id);
 
         //For all keypresses registered on this entity...
-        while(!ic.presses.empty()) {
-
+        for(auto press : ic.presses) {
             //Resolve keybinding, as in get event bound to the keypress
             //Note that indexing unordered_map with [] creates an element
             //with key as key... The value (forward_list) will be empty though.
-            for(ICommand* command : cc[ic.bindings[ic.presses.front()]]) {
+            for(ICommand* command : cc[ic.bindings[press]]) {
                 command->execute();
             }
-            ic.presses.pop();
         }
+
+        ic.presses.clear();
     }
 }
 unsigned int InputSystem::count() const {
