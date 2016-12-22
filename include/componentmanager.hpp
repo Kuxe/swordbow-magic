@@ -90,7 +90,8 @@ class ComponentManager {
             sizeof(HealthComponent) +
             sizeof(AttackComponent) +
             sizeof(CommandComponent) +
-            sizeof(AccelerationComponent);
+            sizeof(AccelerationComponent) +
+            sizeof(BirdComponent);
     }
 
     void clearComponents(ID id);
