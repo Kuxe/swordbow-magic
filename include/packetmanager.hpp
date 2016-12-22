@@ -4,7 +4,6 @@
 #include "ipaddress.hpp"
 #include "connection.hpp"
 #include "packet.hpp"
-#include "ipacketacceptor.hpp"
 #include "socket.hpp"
 #include <tuple>
 
