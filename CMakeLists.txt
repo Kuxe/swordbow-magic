@@ -152,6 +152,15 @@ EXTERNALPROJECT_ADD(Catch
 )
 ADD_DEPENDENCIES(setup Catch)
 
+EXTERNALPROJECT_ADD(args
+    PREFIX ${DEP_DIR}/args
+    GIT_REPOSITORY https://github.com/Taywee/args
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+)
+ADD_DEPENDENCIES(setup args)
+
 
 #As for the platform dependant dependencies (such as SDL2 which isn't header only)
 #Different platforms get ahold of the libraries in different ways
@@ -227,6 +236,7 @@ TARGET_INCLUDE_DIRECTORIES(sbm PUBLIC
     ${CMAKE_SOURCE_DIR}/include/
     ${DEP_DIR}/cereal/src/Cereal/include/
     ${DEP_DIR}/GLM/src/GLM/
+    ${DEP_DIR}/args/src/args
 )
 TARGET_INCLUDE_DIRECTORIES(sbm-client PUBLIC
     ${CMAKE_SOURCE_DIR}/include/

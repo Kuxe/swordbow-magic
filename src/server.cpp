@@ -12,9 +12,12 @@
 /** For logging **/
 #include "logger.hpp"
 
+/** For command line argument parsing **/
+#include "args.hxx"
+
 #include <SDL2/SDL.h> //For SDL_keys
 
-Server::Server(int argc, char** argv) :
+Server::Server(bool smallWorld, float tps) :
 		packetManager("swordbow-magic"),
 		systemManager(&componentManager, &deltaTime),
 		sizeBoundingBox(&componentManager),
@@ -23,7 +26,8 @@ Server::Server(int argc, char** argv) :
 		collisionSystem(&sizeHashGridSystem),
 		removeSystem(&entityManager),
 		attackSystem(&sizeHashGridSystem, &clients, &packetManager),
-		birdSystem(&entityManager) {
+		birdSystem(&entityManager),
+		tps(tps) {
 
 	Logger::log("Starting server", Log::INFO);
 	printGeneralInfo();
@@ -52,26 +56,10 @@ Server::Server(int argc, char** argv) :
 
 	//Populate world with... world
 	World world(&entityManager);
-
-
-	bool bigworld = true;
-	for(int i = 0; i < argc; i++) {
-		if(strcmp(argv[i], "bigworld") == 0) {
-			bigworld = true;
-			break;
-		}
-	}
-	if(bigworld) {
-		world.createWorld();
-	} else {
+	if(smallWorld) {
 		world.createDebugWorld();
-	}
-
-	for(int i = 0; i < argc; i++) {
-		if(strcmp(argv[i], "tps") == 0) {
-			tps = atof(argv[i+1]);
-			break;
-		}
+	} else {
+		world.createWorld();
 	}
 }
 
@@ -405,31 +393,53 @@ void Server::accept(const auto& data, const IpAddress& sender) {
 }
 
 int main(int argc, char** argv) {
-	/** Begin by parsin passed program arguments **/
-	for(int i = 0; i < argc; i++) {
-        std::string command(argv[i]);
-        size_t pos = command.rfind("--log=");
-        if(pos != std::string::npos) {
-            std::string logstr = command.substr(pos+6);
-            Logger::openLogfile("serverlog.txt");
-            Logger::enable();
 
-            if(!logstr.compare("VERBOSE")) {
-            	Logger::level = Log::VERBOSE;
-            } else if(!logstr.compare("INFO")) {
-                Logger::level = Log::INFO;
-            } else if(!logstr.compare("WARNING")) {
-                Logger::level = Log::WARNING;
-            } else if(!logstr.compare("ERROR")) {
-                Logger::level = Log::ERROR;
-            } else {
-                Logger::log("Not valid value for --log=<VERBOSE|INFO|WARNING|ERROR>", Log::ERROR);
-                return -1;
-            }
-        }
+	/** Parse args (using nifty library by Taylor C. Richberger https://github.com/Taywee/args)**/
+	args::ArgumentParser parser("swordbow-magic.", "swordbow-magic says bye!.");
+	args::HelpFlag help(parser, "help", "Display this help menu", {'h', "help"});
+	args::Flag printVasFlag(parser, "printvas", "Print integer handle to vertex arrays loaded by renderer", {"printvas"});
+	args::ValueFlag<float> gametimeSpeedFactor(parser, "gametime", "Increases gametime speed by a factor", {"gt", "gametimespeedfactor"});
+	args::Flag forceDaytime(parser, "forcedaytime", "Disable day/night cycle", {"forcedaytime"});
+	args::Flag smallWorldFlag(parser, "smallworld", "Create a tiny world", {"smallworld"});
+	args::ValueFlag<float> tpsflag(parser, "tick per second", "Set server tickrate", {"tps"});
+
+	std::unordered_map<std::string, Log::Level> map{
+		{"VERBOSE", Log::VERBOSE},
+		{"INFO", Log::INFO},
+		{"WARNING", Log::WARNING},
+		{"ERROR", Log::ERROR}
+	};
+
+	args::MapFlag<std::string, Log::Level> logflag(parser, "VERBOSE|INFO|WARNING|ERROR", "Set logging level", {"log"}, map);
+
+    try {
+    	parser.ParseCLI(argc, argv);
+    } catch (args::Help) {
+    	std::cout << parser;
+    	return 0;
+    } catch (args::ParseError e) {
+    	std::cerr << e.what() << std::endl;
+    	std::cerr << parser;
+    	return -1;
     }
 
-	Server server(argc, argv);
+    if(logflag) {
+		Logger::openLogfile("serverlog.txt");
+		Logger::enable();
+		Logger::level = args::get(logflag);
+	}
+
+	float tps = 60.0f;
+	if(tpsflag) {
+		tps = args::get(tpsflag);
+	}
+
+	bool smallWorld = false;
+	if(smallWorldFlag) {
+		smallWorld = args::get(smallWorldFlag);
+	}
+
+	Server server(smallWorld, tps);
 	server.run();
 	Logger::closeLogfile();
 	return 0;

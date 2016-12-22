@@ -91,7 +91,7 @@ private:
 public:
     bool running = true;
 
-    Server(int argc, char** argv);
+    Server(bool smallWorld, float tps);
     ~Server();
     void onConnect(const IpAddress& ipAddress);
     void onDisconnect(const IpAddress& ipAddress);
