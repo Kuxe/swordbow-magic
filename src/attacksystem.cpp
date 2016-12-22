@@ -94,7 +94,7 @@ void AttackSystem::update() {
                 		hurtSound,
                 		sizeof(hurtSound)
                 	};
-                	packetManager->send<SoundData>(pair.first, packet);
+                	packetManager->send(pair.first, packet);
                 }
             }
         }

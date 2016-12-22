@@ -30,7 +30,7 @@ void PlaySound::execute() {
                 sound,
                 sizeof(sound)
             };
-            packetManager->send<SoundData>(pair.first, packet);
+            packetManager->send(pair.first, packet);
         }
     }
 }

@@ -4,9 +4,7 @@
 
 typedef unsigned int ID;
 
-/**
-	This will cause some bugs if program creates more Id's than unsigned int can handle
-**/
+/** This will cause some bugs if program creates more Id's than unsigned int can handle **/
 class IdManager {
 private:
     std::stack<ID> freeIds;
