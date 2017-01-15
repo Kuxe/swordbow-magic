@@ -1,15 +1,15 @@
 #ifndef TEXT_H
 #define TEXT_H
 
-//TODO: Use lowpoly3d
+#include <glm/glm.hpp>
 #include <string>
 
 class Text {
 public:
     const std::string text;
-    //const SDL_Color color;
-    const int x, y;
-    Text(const std::string& text, int x, int y);
+    const glm::ivec2 pos; //Top-left position of text in screen-space
+    const glm::vec3 color;
+    Text(const std::string& text, const glm::ivec2& pos, const glm::vec3& color);
 };
 
 

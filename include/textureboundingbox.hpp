@@ -3,15 +3,12 @@
 
 #include "boundingbox.hpp"
 
-class Renderer;
+class IRenderer;
 class TextureBoundingBox : public BoundingBox {
 private:
-    const Renderer* renderer;
+    IRenderer* const renderer;
 public:
-    TextureBoundingBox(
-        const ComponentManager* const componentManager,
-        const Renderer* renderer
-    );
+    TextureBoundingBox(const ComponentManager* const componentManager, IRenderer* const renderer);
     const Rect getBoundingBox(ID id) const;
     const Rect getOldBoundingBox(ID id) const;
     const System::Identifier getSystemName() const;

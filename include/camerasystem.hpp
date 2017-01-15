@@ -6,14 +6,14 @@
 #include "isystem.hpp"
 
 typedef unsigned int ID;
-class Renderer;
+class IRenderer;
 class CameraSystem : public ISystem {
 private:
     ID cameraSource = 0;
-    Renderer* renderer;
+    IRenderer* const renderer;
 
 public:
-    CameraSystem(Renderer* renderer);
+    CameraSystem(IRenderer* const renderer);
     void add(ID id);
     void remove(ID id);
     void update();

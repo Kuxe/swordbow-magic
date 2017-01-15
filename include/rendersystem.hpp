@@ -10,7 +10,7 @@
 
 typedef unsigned int ID;
 
-class Renderer;
+class IRenderer;
 class SpatialIndexer;
 class CameraSystem;
 
@@ -26,16 +26,12 @@ private:
 	std::queue<ID> activeIds;
 	std::unordered_map<ID, Rect> oldDrawAreas;
 
-    Renderer* renderer;
+    IRenderer* const renderer;
     SpatialIndexer* spatialIndexer;
     CameraSystem* cameraSystem;
 
 public:
-    RenderSystem(
-    	Renderer* renderer,
-    	SpatialIndexer* spatialIndexer,
-    	CameraSystem* cameraSystem
-    );
+    RenderSystem(IRenderer* const enderer, SpatialIndexer* spatialIndexer, CameraSystem* cameraSystem);
 
 	void add(ID id);
 	void remove(ID id);

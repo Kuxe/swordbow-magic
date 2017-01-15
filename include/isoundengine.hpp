@@ -1,5 +1,5 @@
-#ifndef SOUNDSYSTEM_H
-#define SOUNDSYSTEM_H
+#ifndef ISOUNDENGINE_HPP
+#define ISOUNDENGINE_HPP
 
 #include <unordered_map>
 #include "sounddata.hpp"
@@ -19,16 +19,12 @@
 
 typedef unsigned int ID;
 
-class SoundEngine {
-private:
-
-public:
-    SoundEngine();
-    ~SoundEngine();
-    void playMusic(Music::Identifier music) const;
-    void stopMusic(Music::Identifier music) const;
-    void playSound(SoundData& scSound) const;
-    void stopSound(SoundData& scSound) const;
+struct ISoundEngine {
+    virtual ~ISoundEngine() { }
+    virtual void playMusic(Music::Identifier music) const = 0;
+    virtual void stopMusic(Music::Identifier music) const = 0;
+    virtual void playSound(SoundData& scSound) const = 0;
+    virtual void stopSound(SoundData& scSound) const = 0;
 };
 
-#endif //SOUNDSYSTEM_H
+#endif //ISOUNDENGINE_HPP

@@ -3,6 +3,8 @@
 #include "inputdata.hpp"
 #include "timer.hpp"
 #include "logger.hpp"
+#include "irenderer.hpp"
+#include "isoundengine.hpp"
 
 ClientRunningState::ClientRunningState(Client* client) : client(client) { }
 
@@ -33,29 +35,7 @@ void ClientRunningState::step() {
     std::vector<int> releases;
 
     //Fetch all events that ocurred...
-    //TODO: Need to replace SDL-related code with corresponding lowpoly3d code
-    /*while(SDL_PollEvent(&client->event) != 0) {
-        //Dont consider keyrepeat as keypress
-        if(client->event.key.repeat == 0) {
-            //And take appropiate action!
-            switch(client->event.type) {
-                case SDL_QUIT: {
-                    client->running = false;
-                    break;
-                }
-                //If this event was a keydown...
-                case SDL_KEYDOWN: {
-                    presses.push_back(client->event.key.keysym.sym);
-                } break;
-
-                //If user released a key
-                case SDL_KEYUP: {
-                    releases.push_back(client->event.key.keysym.sym);
-
-                } break;
-            }
-        }
-    }*/
+    client->renderer->pollEvents(this);
 
     //If user either pressed or released a key
     //then send keystrokes to server
@@ -118,9 +98,9 @@ void ClientRunningState::onChange(ClientDisconnectedState* state) {
 
 void ClientRunningState::onChange(ClientReceiveInitialState* state) {
     Logger::log("Client changing state from ClientReceiveInitialState to ClientRunningState", Logger::INFO);
-    client->soundEngine.playMusic(Music::NATURE_SOUNDS);
+    client->soundEngine->playMusic(Music::NATURE_SOUNDS);
     client->clientState = this;
-    client->renderer.fadeOutOverlay(Image::RECEIVING_DATA_OVERLAY, 0.5f);
+    client->renderer->fadeOutOverlay(Image::RECEIVING_DATA_OVERLAY, 0.5f);
 }
 
 void ClientRunningState::onChange(ClientRunningState* state) {
@@ -192,7 +172,7 @@ void ClientRunningState::accept(RenderComponentsDiffData& data, const IpAddress&
 
 void ClientRunningState::accept(PlaySoundData& data, const IpAddress& sender) {
     Logger::log("Received PLAY_SOUND packet", Logger::VERBOSE);
-    client->soundEngine.playSound(data.data);
+    client->soundEngine->playSound(data.data);
 }
 
 void ClientRunningState::accept(const RegisterIdToSystemData& data, const IpAddress& sender) {

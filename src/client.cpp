@@ -1,5 +1,11 @@
 #include "client.hpp"
 
+/** Graphics **/
+#include "lowpolyadaptor.hpp"
+
+/** Sound **/
+#include "oggadaptor.hpp"
+
 /** For logging **/
 #include "logger.hpp"
 
@@ -14,15 +20,16 @@
 #include <string>
 #include "args.hxx"
 
-Client::Client(bool fullscreenFlag, bool vsyncFlag, unsigned short port) :
+Client::Client(IRenderer* const renderer, ISoundEngine* const soundEngine, unsigned short port) :
+        renderer(renderer),
+        soundEngine(soundEngine),
         packetManager("swordbow-magic"),
         sequence(1),
         systemManager(&componentManager, &deltaTime),
-        renderer(fullscreenFlag, vsyncFlag),
-        textureBoundingBox(&componentManager, &renderer),
+        textureBoundingBox(&componentManager, renderer),
         textureHashGridSystem(&textureBoundingBox),
-        cameraSystem(&renderer),
-        renderSystem(&renderer, &textureHashGridSystem, &cameraSystem),
+        cameraSystem(renderer),
+        renderSystem(renderer, &textureHashGridSystem, &cameraSystem),
         clientDisconnectedState(this),
         clientReceiveInitialState(this),
         clientRunningState(this),
@@ -44,7 +51,7 @@ Client::~Client() {
 }
 
 void Client::connect(const IpAddress& server) {
-    renderer.showOverlay(Image::CONNECT_OVERLAY, {"Connecting to server...", 150, renderer.getScreenHeight() / 2 - 10});
+    renderer->showOverlay(Image::CONNECT_OVERLAY, {"Connecting to server...", glm::ivec2{150, renderer->getWindowResolution().y / 2 - 10}, glm::vec3(1.0)});
 
     //Start a thread that checks socket for any recieved data
     receiveThreadRunning = true;
@@ -173,8 +180,15 @@ int main(int argc, char** argv) {
     bool vsync = false;
     if(vsyncFlag) vsync = args::get(vsyncFlag);
 
+    /** Adaptor classes are stored on stack here. If I ever want to swap out
+        graphics or sound, or some library, it should be as simple as writing
+        a new adaptor class and replacing current one here with the new adaptor class
+        without bothering with other swordbow-magic code **/
+    LowpolyAdaptor lowpolyAdaptor(fullscreen, vsync);
+    OggAdaptor oggAdaptor;
+
     /** All arguments are parsed, now start the client **/
-    Client client(fullscreen, vsync, port);
+    Client client(&lowpolyAdaptor, &oggAdaptor, port);
     client.connect(ipAddress);
     client.run();
     client.disconnect();

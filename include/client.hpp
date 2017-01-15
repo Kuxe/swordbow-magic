@@ -4,12 +4,10 @@
 #include "deltatime.hpp"
 #include "componentmanager.hpp"
 #include "systemmanager.hpp"
-#include "renderer.hpp"
 #include "rendersystem.hpp"
 #include "hashgridsystem.hpp"
 #include "camerasystem.hpp"
 #include "textureboundingbox.hpp"
-#include "soundengine.hpp"
 #include "packetmanager.hpp"
 #include "messagetypes.hpp"
 #include "timer.hpp"
@@ -24,9 +22,15 @@
 
 typedef unsigned int ID;
 
+class IRenderer;
+class ISoundEngine;
 class ClientState;
 class Client {
 private:
+
+    IRenderer* const renderer;
+    ISoundEngine* const soundEngine;
+
     PacketManager packetManager;
     IpAddress server;
     uint16_t sequence;
@@ -37,7 +41,6 @@ private:
     DeltaTime deltaTime;
     ComponentManager componentManager;
     SystemManager systemManager;
-    Renderer renderer;
     TextureBoundingBox textureBoundingBox;
     Timer keepAlive;
     static constexpr float secondsUntilTimeout = 10;
@@ -46,7 +49,6 @@ private:
     HashGridSystem textureHashGridSystem;
     CameraSystem cameraSystem;
     RenderSystem renderSystem;
-    SoundEngine soundEngine;
 
     std::mutex componentsMutex;
 
@@ -85,7 +87,7 @@ public:
         packetManager.send<DataType>(server, cameraPacket);
     }
 
-    Client(bool fullscreenFlag, bool vsyncFlag, unsigned short port);
+    Client(IRenderer* const renderer, ISoundEngine* const soundEngine, unsigned short port);
     ~Client();
 
     void connect(const IpAddress& server);

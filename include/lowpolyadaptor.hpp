@@ -1,14 +1,14 @@
-#ifndef RENDERER_HPP
-#define RENDERER_HPP
+#ifndef LOWPOLYADAPTOR_HPP
+#define LOWPOLYADAPTOR_HPP
 
 #include <unordered_map>
 #include <unordered_set>
 #include <queue>
 
 #include "text.hpp"
-#include "texturedata.hpp"
 #include "imageidentifiers.hpp"
 #include "overlay.hpp"
+#include "irenderer.hpp"
 
 //TODO: Use lowpoly3d
 /** If this class is an interface, IRenderer, then there can be another class called Lowpoly3dRenderer which realizes this interface.
@@ -17,34 +17,29 @@
     which is nice. I think this is the adaptor-pattern. **/
 
 
-class Renderer {
+class LowpolyAdaptor : public IRenderer {
 private:
     std::queue<Text> texts;
-
-    static constexpr uint16_t SCREEN_WIDTH = 1920 / 4;
-	static constexpr uint16_t SCREEN_HEIGHT = 1080 / 4;
-
     void renderTexts();
 public:
-    Renderer(bool fullscreen, bool vsync);
-    ~Renderer();
-    const std::unordered_map<Image::Identifier, TextureData, std::hash<int>>& getTextureDatas() const;
+    LowpolyAdaptor(bool fullscreen, bool vsync);
+    ~LowpolyAdaptor();
     
     //Difference between renderOverlays and renderOnlyOverlays is that
     //renderOverlays doesn't call RenderPresent, it calls RenderCopy and copies
     //overlays onto overlayTexture while renderOnlyOverlays does that AND
     //clear default-texture and renders it (clear everything + draw only overlay)
+    void render();
     void renderOverlays();
     void renderOnlyOverlays();
-    void showOverlay(Image::Identifier identifier, Text text = {"", 0, 0});
-    void fadeInOverlay(Image::Identifier identifier, float seconds, Text text = {"", 0, 0});
-    void hideOverlay(Image::Identifier identifier);
-    void fadeOutOverlay(Image::Identifier identifier, float seconds);
-
+    void showOverlay(const Image::Identifier& identifier, const Text& text = {"", glm::ivec2(0.0), glm::vec3(0.0)});
+    void fadeInOverlay(const Image::Identifier& identifier, float seconds, const Text& text = {"", glm::ivec2(0.0), glm::vec3(0.0)});
+    void hideOverlay(const Image::Identifier& identifier);
+    void fadeOutOverlay(const Image::Identifier& identifier, float seconds);
     void printText(const Text& text);
-    static constexpr uint16_t getScreenWidth() { return SCREEN_WIDTH; }
-    static constexpr uint16_t getScreenHeight() { return SCREEN_HEIGHT; }
+    virtual glm::ivec2 getWindowResolution() { return {0, 0}; } //TODO: Implement
+    void pollEvents(IClientState* clientState);
 };
 
 
-#endif //RENDERER_HPP
+#endif //LOWPOLYADAPTOR_HPP

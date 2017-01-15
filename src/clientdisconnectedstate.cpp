@@ -1,5 +1,7 @@
 #include "clientdisconnectedstate.hpp"
 #include "client.hpp"
+#include "irenderer.hpp"
+#include "isoundengine.hpp"
 
 void ClientDisconnectedState::forceDisconnect() {
     forceDisconnectMutex.lock();
@@ -26,20 +28,8 @@ void ClientDisconnectedState::receive() {
 
 void ClientDisconnectedState::step() {
     //Fetch all events that ocurred...
-    //TODO: Need to replace SDL-related code with corresponding lowpoly3d code
-    /*while(SDL_PollEvent(&client->event) != 0) {
-        //Dont consider keyrepeat as keypress
-        if(client->event.key.repeat == 0) {
-            //And take appropiate action!
-            switch(client->event.type) {
-                case SDL_QUIT: {
-                    client->running = false;
-                    break;
-                }
-            }
-        }
-    }*/
-    client->renderer.renderOnlyOverlays();
+    client->renderer->pollEvents(this);
+    client->renderer->renderOnlyOverlays();
 
     //Receivethread can force client to disconnect (from state-transitions usually)
     //In that case, this thread (main-thread) must poll that variable to see if it is set
@@ -58,22 +48,22 @@ void ClientDisconnectedState::changeState(IClientState* state) {
 void ClientDisconnectedState::onChange(ClientDisconnectedState* state) {
     Logger::log("Client changing state from ClientDisconnectedState to ClientDisconnectedState", Logger::WARNING);
     client->clientState = this;
-    client->renderer.showOverlay(Image::CONNECT_OVERLAY, {"Disconnected from server", 150, client->renderer.getScreenHeight() / 2 - 10});
+    client->renderer->showOverlay(Image::CONNECT_OVERLAY, {"Disconnected from server", glm::ivec2{150, client->renderer->getWindowResolution().y / 2 - 10}, glm::vec3(1.0)});
 }
 
 void ClientDisconnectedState::onChange(ClientReceiveInitialState* state) {
     Logger::log("Client changing state from ClientReceiveInitialState to ClientDisconnectedState", Logger::INFO);
     client->clientState = this;
-    client->renderer.hideOverlay(Image::RECEIVING_DATA_OVERLAY);
-    client->renderer.showOverlay(Image::CONNECT_OVERLAY, {"Disconnected from server", 150, client->renderer.getScreenHeight() / 2 - 10});
+    client->renderer->hideOverlay(Image::RECEIVING_DATA_OVERLAY);
+    client->renderer->showOverlay(Image::CONNECT_OVERLAY, {"Disconnected from server", glm::ivec2{150, client->renderer->getWindowResolution().y / 2 - 10}, glm::vec3(1.0)});
     forceDisconnect();
 }
 
 void ClientDisconnectedState::onChange(ClientRunningState* state) {
     Logger::log("Client changing state from ClientRunningState to ClientDisconnectedState", Logger::WARNING);
     client->clientState = this;
-    client->soundEngine.stopMusic(Music::NATURE_SOUNDS);
-    client->renderer.showOverlay(Image::CONNECT_OVERLAY, {"Disconnected from server", 150, client->renderer.getScreenHeight() / 2 - 10});
+    client->soundEngine->stopMusic(Music::NATURE_SOUNDS);
+    client->renderer->showOverlay(Image::CONNECT_OVERLAY, {"Disconnected from server", glm::ivec2{150, client->renderer->getWindowResolution().y / 2 - 10}, glm::vec3(1.0)});
     forceDisconnect();
 }
 

@@ -72,9 +72,9 @@ ADD_LIBRARY(sbm-client SHARED
     src/clientreceiveinitialstate.cpp
     src/clientrunningstate.cpp
     src/overlay.cpp
-    src/renderer.cpp
+    src/lowpolyadaptor.cpp
     src/rendersystem.cpp
-    src/soundengine.cpp
+    src/oggadaptor.cpp
     src/text.cpp
     src/textureboundingbox.cpp
 )
@@ -149,6 +149,14 @@ EXTERNALPROJECT_ADD(args
     INSTALL_COMMAND ""
 )
 ADD_DEPENDENCIES(setup args)
+
+EXTERNALPROJECT_ADD(lowpoly3d
+    GIT_REPOSITORY https://github.com/kuxe/lowpoly3d
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+)
+ADD_DEPENDENCIES(setup lowpoly3d)
 
 TARGET_INCLUDE_DIRECTORIES(sbm PUBLIC
     ${CMAKE_SOURCE_DIR}/include/

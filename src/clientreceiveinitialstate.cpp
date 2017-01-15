@@ -1,5 +1,7 @@
 #include "clientreceiveinitialstate.hpp"
 #include "client.hpp"
+#include "irenderer.hpp"
+#include "isoundengine.hpp"
 
 ClientReceiveInitialState::ClientReceiveInitialState(Client* client) : client(client) { }
 
@@ -11,28 +13,15 @@ void ClientReceiveInitialState::receive() {
 
 void ClientReceiveInitialState::step() {
     //Fetch all events that ocurred...
-    //TODO: Need to replace SDL-related code with corresponding lowpoly3d code
-    /*while(SDL_PollEvent(&client->event) != 0) {
-        //Dont consider keyrepeat as keypress
-        if(client->event.key.repeat == 0) {
-            //And take appropiate action!
-            switch(client->event.type) {
-                case SDL_QUIT: {
-                    client->running = false;
-                    break;
-                }
-            }
-        }
-    }*/
+    client->renderer->pollEvents(this);
     client->componentsMutex.lock();
-    client->renderer.hideOverlay(Image::RECEIVING_DATA_OVERLAY);
+    client->renderer->hideOverlay(Image::RECEIVING_DATA_OVERLAY);
     const Text text = {
         "Receiving data from server (" + std::to_string(receivedSmallContainers) + "/" + std::to_string(client->numberOfInitialSmallContainers) + ")",
-        120,
-        client->renderer.getScreenHeight()/2 - 10
+        {120, client->renderer->getWindowResolution().x/2 - 10}, glm::vec3(1.0)
     };
-    client->renderer.showOverlay(Image::RECEIVING_DATA_OVERLAY, text);
-    client->renderer.renderOnlyOverlays();
+    client->renderer->showOverlay(Image::RECEIVING_DATA_OVERLAY, text);
+    client->renderer->renderOnlyOverlays();
 
     /** Check for timeout **/
     if(client->keepAlive.elapsed() > client->secondsUntilTimeout) {
@@ -76,14 +65,13 @@ void ClientReceiveInitialState::accept(const OutdatedData& data, const IpAddress
 
 void ClientReceiveInitialState::accept(InitialComponentsData& data, const IpAddress& sender) {
 	Logger::log("Received INITIAL_COMPONENTS packet", Logger::INFO);
-	client->renderer.hideOverlay(Image::CONNECT_OVERLAY);
+	client->renderer->hideOverlay(Image::CONNECT_OVERLAY);
 	receivedSmallContainers++;
 	const Text text = {
 		"Receiving data from server (" + std::to_string(receivedSmallContainers) + "/" + std::to_string(client->numberOfInitialSmallContainers) + ")",
-		150,
-		client->renderer.getScreenHeight()/2 - 10
+        {120, client->renderer->getWindowResolution().x/2 - 10}, glm::vec3(1.0)
 	};
-	client->renderer.showOverlay(Image::RECEIVING_DATA_OVERLAY, text);
+	client->renderer->showOverlay(Image::RECEIVING_DATA_OVERLAY, text);
 
 	client->componentManager.moveComponents.sync(data.data.first);
 	client->componentManager.renderComponents.sync(data.data.second);

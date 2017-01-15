@@ -15,7 +15,7 @@ private:
 	const Text text;
 public:
 	const Image::Identifier identifier;
-	Overlay(Image::Identifier identifier, const Text text = {"", 0, 0});
+	Overlay(Image::Identifier identifier, const Text text = {"", glm::ivec2(0.0), glm::vec3(0.0)});
 	void show();
 	void hide();
 	void fadeIn(float seconds);

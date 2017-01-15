@@ -5,7 +5,7 @@
 #include "movecomponent.hpp"
 #include "spatialindexer.hpp"
 #include "camerasystem.hpp"
-#include "renderer.hpp"
+#include "irenderer.hpp"
 #include "logger.hpp"
 #include "timer.hpp"
 #include "boundingbox.hpp"
@@ -13,13 +13,8 @@
 #include <thread>
 #include <mutex>
 
-RenderSystem::RenderSystem(
-    Renderer* renderer,
-    SpatialIndexer* spatialIndexer,
-    CameraSystem* cameraSystem) :
-    renderer(renderer),
-    spatialIndexer(spatialIndexer),
-    cameraSystem(cameraSystem) { }
+RenderSystem::RenderSystem(IRenderer* const renderer, SpatialIndexer* spatialIndexer, CameraSystem* cameraSystem) :
+    renderer(renderer), spatialIndexer(spatialIndexer), cameraSystem(cameraSystem) { }
 
 void RenderSystem::add(ID id) {
 	ids.insert(id);
@@ -32,7 +27,7 @@ void RenderSystem::remove(ID id) {
 
 void RenderSystem::update() {
     //TODO: Use lowpoly3d
-    //This place would be a nice place to perform various culling
+    //This place would be a nice place to perform various culling (or not, various culling should be a feature of Lowpoly3d)
     //Active ids in this system should be sent to lowpoly3d 
 }
 
