@@ -105,7 +105,6 @@ ADD_CUSTOM_TARGET(setup
 #Without these, no dependencies can be downloaded
 #Hence these must be setup by everyone intended to build swordbow-magic
 FIND_PACKAGE(Git REQUIRED)
-FIND_PACKAGE(Hg REQUIRED)
 
 SET(DEP_DIR "${CMAKE_SOURCE_DIR}/deps")
 SET_DIRECTORY_PROPERTIES(PROPERTIES EP_BASE "${DEP_DIR}")

@@ -1,25 +1,25 @@
 [![Stories in Ready](https://badge.waffle.io/kuxe/swordbow-magic.png?label=ready&title=Ready)](https://waffle.io/kuxe/swordbow-magic)
 swordbow-magic
 ==============
-A multiplayer 2D top-down game with procedurally generated worlds. Very much in-progress.
+A multiplayer 3D first-person game with procedurally generated worlds. Very much in-progress.
 
 # Dependencies
-Dependencies are installed locally (inside the repo, not in system-directories) by cmake. The build-system downloads the repositories using git and mercurial, so both git and mercurial need to be installed by you manually.
+Dependencies are installed locally (inside the repo, not in system-directories) by cmake. The build-system downloads the repositories using git. Currently swordbow-magic is transitioning from 2D graphics to 3D graphics. Because of this, swordbow-magic compiles but there is no graphics, input or sound present any longer. These features will be back soon™.
 
 ## Software
 * C++14 compliant compiler
 * CMake
 * make
 * git
-* mercurial (hg)
 
 ## Libraries
-* SDL2
-* SDL2_image
-* SDL2_ttf
-* SDL2_mixer
-* OGG (as in Ogg Vorbis libraries)
+* <a href=https://github.com/Taywee/args>args</a>
+* <a https://github.com/philsquared/Catch>Catch</a>
 * <a href=https://github.com/USCiLab/cereal>Cereal</a>
+* <a http://glm.g-truc.net/0.9.8/index.html>glm</a>
+* <a https://github.com/soundcloud/ogg>Ogg</a>
+* Soon: https://github.com/kuxe/Subber>Subber</a>
+* Soon: lowpoly3d (still private, will make it public soon)
 
 # Building
 ## Linux and OSX
