@@ -2,9 +2,6 @@
 #define SOCKET_HPP
 
 #include "ipaddress.hpp"
-#include "socket.hpp"
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <fcntl.h>
 #include <unistd.h> //close()
 #include "logger.hpp"
@@ -14,11 +11,13 @@
 
 #include "platform.hpp"
 
-#if PLATFORM == PLATFORM_WINDOWS
-    #include <winsock2.h>
-#endif //PLATFORM == PLATFORM_WINDOWS
+#if PLATFORM == PLATFORM_LINUX
+    #include <sys/socket.h>
+    #include <netinet/in.h>
+#endif
 
 #if PLATFORM == PLATFORM_WINDOWS
+    #include <winsock2.h>
     typedef int socklen_t;
 #endif //PLATFORM == PLATFORM_WINDOWS
 
@@ -28,24 +27,19 @@ private:
     char buffer[8192];
 
 public:
-    Socket() {
+    bool open(unsigned short port) {
+
         #if PLATFORM == PLATFORM_WINDOWS
             WSADATA WsaData;
-            return WSAStartup(MAKEWORD(2,2), &WsaData) == NO_ERROR;
+            if(WSAStartup(MAKEWORD(2,2), &WsaData) != NO_ERROR) {
+                return false;
+            }
         #endif //PLATFORM == PLATFORM_WINDOWS
-    }
 
-    ~Socket() {
-        #if PLATFORM == PLATFORM_WINDOWS
-            WSACleanup();
-        #endif //PLATFORM == PLATFORM_WINDOWS
-    }
-
-    bool open(unsigned short port) {
         //Create a socket and check for failure
         socket = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
         if(socket <= 0) {
-            Logger::log("Couldn't create socket", Log::ERROR);
+            Logger::error("Couldn't create socket");
             return false;
         }
 
@@ -55,7 +49,7 @@ public:
         address.sin_port = htons(port);
 
         if(bind(socket, (const sockaddr*)&address, sizeof(sockaddr_in)) < 0 ) {
-            Logger::log("Couldn't bind socket", Log::ERROR);
+            Logger::log("Couldn't bind socket");
             close();
             return false;
         }
@@ -65,7 +59,7 @@ public:
         #if PLATFORM == PLATFORM_LINUX || PLATFORM == PLATFORM_APPLE
             constexpr int nonBlocking = 0;
             if(fcntl(socket, F_SETFL, O_NONBLOCK, nonBlocking) == -1) {
-                Logger::log("Failed to set non-blocking", Log::ERROR);
+                Logger::log("Failed to set non-blocking");
                 close();
                 return false;
             }
@@ -73,7 +67,7 @@ public:
         #elif PLATFORM == PLATFORM_WINDOWS
             DWORD nonBlocking = 0;
             if(ioctlsocket(socket, FIONBIO, &nonBlocking) != 0) {
-                Logger::log("Failed to set non-blocking", Log::ERROR);
+                Logger::log("Failed to set non-blocking");
                 close();
                 return false;
             }
@@ -87,6 +81,7 @@ public:
             ::close(socket);
         #elif PLATFORM == PLATFORM_WINDOWS
             closesocket(socket);
+            WSACleanup();
         #endif
     }
     bool isOpen() const {
@@ -95,7 +90,7 @@ public:
 
     bool send(const IpAddress& destination, const std::string& serializedObject) {
         if(!isOpen()) {
-            Logger::log("Cannot send because socket isn't open", Log::ERROR);
+            Logger::log("Cannot send because socket isn't open");
             return false;
         }
 
@@ -123,29 +118,29 @@ public:
         if(sendBytes != size) {
             switch(errno) {
                 case EWOULDBLOCK: {
-                    Logger::log("Can't send packet, error EWOULDBLOCK (Socket is non-blocking and requested operation would block)", Log::ERROR);
+                    Logger::error("Can't send packet, error EWOULDBLOCK (Socket is non-blocking and requested operation would block)");
                 } break;
                 case EINTR: {
-                    Logger::log("Can't send packet, error EINTR (A signal interrupted sendto() before any data was transmitted)", Log::ERROR);
+                    Logger::error("Can't send packet, error EINTR (A signal interrupted sendto() before any data was transmitted)");
                 } break;
                 case EMSGSIZE: {
                     std::ostringstream oss;
                     oss << "Can't send packet, error EMSGSIZE (Packet size to large, size: " << size << "bytes)";
-                    Logger::log(oss, Log::ERROR);
+                    Logger::error(oss);
                 } break;
                 case EIO: {
-                    Logger::log("Can't send packet, error EIO (An I/O error occurred while reading from or writing to the file system)", Log::ERROR);
+                    Logger::error("Can't send packet, error EIO (An I/O error occurred while reading from or writing to the file system)");
                 } break;
                 case ENOBUFS: {
-                    Logger::log("Can't send packet, error ENOBUFS (Output queue for network interface is full)", Log::ERROR);
+                    Logger::error("Can't send packet, error ENOBUFS (Output queue for network interface is full)");
                 } break;
                 case ENOMEM: {
-                    Logger::log("Can't send packet, error ENOMEM (Out of memory)", Log::ERROR);
+                    Logger::error("Can't send packet, error ENOMEM (Out of memory)");
                 } break;
                 default: {
                     std::ostringstream oss;
                     oss << "Failed to send packet for unknown reason (errorcode: " << errno << ")";
-                    Logger::log(oss, Log::ERROR);
+                    Logger::error(oss);
                 } break;
             }
             return false;
@@ -159,7 +154,7 @@ public:
     //return the buffer
     const char* receive(IpAddress& sender, int& bytesRead) {
         if(socket == 0) {
-            Logger::log("Cannot receive because socket isn't open", Log::WARNING);
+            Logger::warning("Cannot receive because socket isn't open");
         }
 
         sockaddr_in from;
@@ -175,7 +170,7 @@ public:
 
         std::ostringstream oss;
         oss << "Recieved packet from " << sender << " (" << std::to_string(bytesRead) << "bytes)";
-        Logger::log(oss, Log::VERBOSE);
+        Logger::log(oss, Logger::VERBOSE);
         /** END OF POSSIBLE IF-CHECK PART **/
 
         return buffer;

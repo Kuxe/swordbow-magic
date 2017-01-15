@@ -5,43 +5,30 @@
 #include <unordered_set>
 #include <queue>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
-
 #include "text.hpp"
 #include "texturedata.hpp"
-#include "renderdata.hpp"
 #include "imageidentifiers.hpp"
 #include "overlay.hpp"
+
+//TODO: Use lowpoly3d
+/** If this class is an interface, IRenderer, then there can be another class called Lowpoly3dRenderer which realizes this interface.
+    Lowpoly3dRenderer in turn has a member of type lowpoly3d::Renderer. This architecture means that I can if ever redoing renderer
+    just swap out the Lowpoly3dRenderer for some other NextgenRenderer without ever redoing anything within swordbow-magic
+    which is nice. I think this is the adaptor-pattern. **/
+
 
 class Renderer {
 private:
     std::queue<Text> texts;
 
-    static constexpr ushort SCREEN_WIDTH = 1920 / 4;
-	static constexpr ushort SCREEN_HEIGHT = 1080 / 4;
-
-	SDL_Renderer* renderer = nullptr;
-	SDL_Window* window = nullptr;
-
-    //WorldTexture is rendered fisrt, then fontTexture, then overlayTexture and finally textOverlayTexture
-	SDL_Texture* worldTexture = nullptr;
-	SDL_Texture* fontTexture = nullptr;
-    SDL_Texture* overlayTexture = nullptr;
-
-
-	TTF_Font* font;
-	std::unordered_map<Image::Identifier, TextureData, std::hash<int>> textureDatas;
-    std::unordered_map<Image::Identifier, Overlay, std::hash<int>> overlays;
+    static constexpr uint16_t SCREEN_WIDTH = 1920 / 4;
+	static constexpr uint16_t SCREEN_HEIGHT = 1080 / 4;
 
     void renderTexts();
-
 public:
     Renderer(bool fullscreen, bool vsync);
     ~Renderer();
     const std::unordered_map<Image::Identifier, TextureData, std::hash<int>>& getTextureDatas() const;
-    void render(std::priority_queue<RenderData>& pq, const SDL_Rect& camera);
     
     //Difference between renderOverlays and renderOnlyOverlays is that
     //renderOverlays doesn't call RenderPresent, it calls RenderCopy and copies
@@ -55,9 +42,9 @@ public:
     void fadeOutOverlay(Image::Identifier identifier, float seconds);
 
     void printText(const Text& text);
-    static constexpr ushort getScreenWidth() { return SCREEN_WIDTH; }
-    static constexpr ushort getScreenHeight() { return SCREEN_HEIGHT; }
-
+    static constexpr uint16_t getScreenWidth() { return SCREEN_WIDTH; }
+    static constexpr uint16_t getScreenHeight() { return SCREEN_HEIGHT; }
 };
+
 
 #endif //RENDERER_HPP

@@ -1,7 +1,7 @@
 #include "componentmanager.hpp"
 
 void ComponentManager::clearComponents(ID id) {
-    Logger::log("Clearing components of " + std::to_string(id), Log::VERBOSE);
+    Logger::log("Clearing components of " + std::to_string(id), Logger::VERBOSE);
 	moveComponents.erase(id);
 	renderComponents.erase(id);
 	inputComponents.erase(id);

@@ -3,8 +3,7 @@
 #include "renderer.hpp"
 
 CameraSystem::CameraSystem(Renderer* renderer) :
-    renderer(renderer),
-    camera{0, 0, 640, 480} {
+    renderer(renderer) {
 
 }
 
@@ -15,15 +14,10 @@ void CameraSystem::remove(ID id) {
     if(this->cameraSource == id) this->cameraSource = 0;
 }
 void CameraSystem::update() {
+    //If there is a camera source (id which controlls camera)
     if(cameraSource != 0) {
-        const auto& cameraXpos = componentManager->moveComponents.at(cameraSource).pos.x - renderer->getScreenWidth()/2;
-    	const auto& cameraYpos = componentManager->moveComponents.at(cameraSource).pos.y - renderer->getScreenHeight()/2;
-    	camera = {
-    		cameraXpos < 0 ? 0 : (int)cameraXpos,
-    		cameraYpos < 0 ? 0 : (int)cameraYpos,
-            renderer->getScreenWidth(),
-            renderer->getScreenHeight()
-    	};
+        //then follow that id
+        //TODO: Implement
     }
 }
 unsigned int CameraSystem::count() const {
@@ -36,6 +30,3 @@ bool CameraSystem::activateId(ID id) {
 
 }
 
-SDL_Rect& CameraSystem::getCamera() {
-    return camera;
-}

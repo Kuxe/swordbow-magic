@@ -19,7 +19,6 @@
 #include "clientreceiveinitialstate.hpp"
 #include "clientrunningstate.hpp"
 
-#include <SDL2/SDL.h>
 #include <mutex>
 #include <thread>
 
@@ -34,8 +33,6 @@ private:
 
     std::thread receiveThread;
     bool receiveThreadRunning;
-
-    SDL_Event event;
 
     DeltaTime deltaTime;
     ComponentManager componentManager;

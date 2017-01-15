@@ -26,7 +26,7 @@ void AttackSystem::add(ID id) {
 }
 void AttackSystem::remove(ID id) {
     if(ids.find(id) == ids.end()) {
-        Logger::log("Tried to remove unpresent id from AttackSystem", Log::WARNING);
+        Logger::log("Tried to remove unpresent id from AttackSystem", Logger::WARNING);
     }
     ids.erase(id);
 }

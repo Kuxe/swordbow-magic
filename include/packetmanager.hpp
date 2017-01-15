@@ -1,10 +1,12 @@
 #ifndef PACKETMANAGER_HPP
+#define PACKETMANAGER_HPP
 
 #include <unordered_map>
 #include "ipaddress.hpp"
 #include "connection.hpp"
 #include "packet.hpp"
 #include "socket.hpp"
+#include "logger.hpp"
 #include <tuple>
 
 /** For portable serialization using cereal **/
@@ -51,7 +53,7 @@ public:
 		} catch (cereal::Exception e) {
 			std::ostringstream oss;
 			oss << "Could not deserialize packet (" << e.what() << "), bytesRead: " << bytesRead << ", message number: " << Message << ")";
-			Logger::log(oss, Log::ERROR);
+			Logger::error(oss);
 		}
 	}
 
@@ -150,7 +152,7 @@ public:
         } catch(cereal::Exception e) {
         	std::ostringstream oss;
         	oss << "Could not deserialize and apply packet (" << e.what() << ")";
-			Logger::log(oss, Log::ERROR);
+			Logger::error(oss);
 		}
 	}
 

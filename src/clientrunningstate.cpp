@@ -2,6 +2,7 @@
 #include "client.hpp"
 #include "inputdata.hpp"
 #include "timer.hpp"
+#include "logger.hpp"
 
 ClientRunningState::ClientRunningState(Client* client) : client(client) { }
 
@@ -17,7 +18,7 @@ void ClientRunningState::receive() {
         if(elapsed > 1.0f/50.0f) {
             std::ostringstream oss;
             oss << "Receive-thread waited for " << elapsed << "s on componentsMutex. This is a probable cause of stuttering.";
-            Logger::log(oss, Log::WARNING);
+            Logger::log(oss, Logger::WARNING);
          }
 
         client->packetManager.receive<ClientRunningState>(*this);
@@ -32,7 +33,8 @@ void ClientRunningState::step() {
     std::vector<int> releases;
 
     //Fetch all events that ocurred...
-    while(SDL_PollEvent(&client->event) != 0) {
+    //TODO: Need to replace SDL-related code with corresponding lowpoly3d code
+    /*while(SDL_PollEvent(&client->event) != 0) {
         //Dont consider keyrepeat as keypress
         if(client->event.key.repeat == 0) {
             //And take appropiate action!
@@ -53,7 +55,7 @@ void ClientRunningState::step() {
                 } break;
             }
         }
-    }
+    }*/
 
     //If user either pressed or released a key
     //then send keystrokes to server
@@ -69,7 +71,7 @@ void ClientRunningState::step() {
     if(elapsed > 1.0f/50.0f) {
         std::ostringstream oss;
         oss << "Main-thread waited for " << elapsed << "s on componentsMutex. This is a probable cause of stuttering.";
-        Logger::log(oss, Log::WARNING);
+        Logger::log(oss, Logger::WARNING);
     }
 
     /** Update client-side ECS **/
@@ -80,14 +82,14 @@ void ClientRunningState::step() {
     if(updateElapsed > 1.0f/50.0f) {
         std::ostringstream oss;
         oss << "Updating systems took " << updateElapsed << "s. This is a probable cause of stuttering.";
-        Logger::log(oss, Log::WARNING);
+        Logger::log(oss, Logger::WARNING);
     }
 
     /** Check for timeout **/
     if(client->keepAlive.elapsed() > client->secondsUntilTimeout) {
         std::ostringstream oss;
         oss << "No packets from server received for " << client->keepAlive.elapsed() << "sec, server timeout";
-        Logger::log(oss, Log::ERROR);
+        Logger::error(oss);
         changeState(&client->clientDisconnectedState);
     }
 
@@ -111,26 +113,26 @@ void ClientRunningState::changeState(IClientState* state) {
 }
 
 void ClientRunningState::onChange(ClientDisconnectedState* state) {
-    Logger::log("Client can't change state from ClientDisconnectedState to ClientRunningState", Log::WARNING);
+    Logger::log("Client can't change state from ClientDisconnectedState to ClientRunningState", Logger::WARNING);
 }
 
 void ClientRunningState::onChange(ClientReceiveInitialState* state) {
-    Logger::log("Client changing state from ClientReceiveInitialState to ClientRunningState", Log::INFO);
+    Logger::log("Client changing state from ClientReceiveInitialState to ClientRunningState", Logger::INFO);
     client->soundEngine.playMusic(Music::NATURE_SOUNDS);
     client->clientState = this;
     client->renderer.fadeOutOverlay(Image::RECEIVING_DATA_OVERLAY, 0.5f);
 }
 
 void ClientRunningState::onChange(ClientRunningState* state) {
-    Logger::log("Client can't change state from ClientRunningState to ClientRunningState", Log::WARNING);
+    Logger::log("Client can't change state from ClientRunningState to ClientRunningState", Logger::WARNING);
 }
 
 void ClientRunningState::accept(const OutdatedData& data, const IpAddress& sender) {
-    Logger::log("This packet is outdated, to late! Sluggish!", Log::WARNING);
+    Logger::log("This packet is outdated, to late! Sluggish!", Logger::WARNING);
 }
 
 void ClientRunningState::accept(const ServerReplyToConnectData& data, const IpAddress& sender) {
-    Logger::log("Got camera ID from server", Log::INFO);
+    Logger::log("Got camera ID from server", Logger::INFO);
 
     //Got my id. Tell camerasystem to follow that id.t
     const auto& pair = data.data;
@@ -140,7 +142,7 @@ void ClientRunningState::accept(const ServerReplyToConnectData& data, const IpAd
 }
 
 void ClientRunningState::accept(MoveComponentsDiffData& data, const IpAddress& sender) {
-    Logger::log("Received MOVECOMPONENTSDIFF packet", Log::VERBOSE);
+    Logger::log("Received MOVECOMPONENTSDIFF packet", Logger::VERBOSE);
 
     //Diff movecomponents were received - handle it
     client->componentManager.moveComponents.sync(data.data);
@@ -167,7 +169,7 @@ void ClientRunningState::accept(MoveComponentsDiffData& data, const IpAddress& s
 }
 
 void ClientRunningState::accept(RenderComponentsDiffData& data, const IpAddress& sender) {
-    Logger::log("Received RENDERCOMPONENTSDIFF packet", Log::VERBOSE);
+    Logger::log("Received RENDERCOMPONENTSDIFF packet", Logger::VERBOSE);
 
     //Diff rendercomponents were received - handle it
     client->componentManager.renderComponents.sync(data.data);
@@ -189,19 +191,19 @@ void ClientRunningState::accept(RenderComponentsDiffData& data, const IpAddress&
 }
 
 void ClientRunningState::accept(PlaySoundData& data, const IpAddress& sender) {
-    Logger::log("Received PLAY_SOUND packet", Log::VERBOSE);
+    Logger::log("Received PLAY_SOUND packet", Logger::VERBOSE);
     client->soundEngine.playSound(data.data);
 }
 
 void ClientRunningState::accept(const RegisterIdToSystemData& data, const IpAddress& sender) {
-    Logger::log("Received REGISTER_ID_TO_SYSTEM packet", Log::INFO);
+    Logger::log("Received REGISTER_ID_TO_SYSTEM packet", Logger::INFO);
     const auto& id = data.data.first;
     const auto& systemIdentifier = data.data.second;
     client->systemManager.getSystem(systemIdentifier)->add(id);
 }
 
 void ClientRunningState::accept(const RemoveIdData& data, const IpAddress& sender) {
-    Logger::log("Received REMOVE_ID packet", Log::INFO);
+    Logger::log("Received REMOVE_ID packet", Logger::INFO);
 
     const auto& id = data.data;
     client->systemManager.getSystem(System::RENDER)->remove(id);
@@ -216,21 +218,21 @@ void ClientRunningState::accept(const RemoveIdData& data, const IpAddress& sende
 }
 
 void ClientRunningState::accept(const RemoveIdFromSystemData& data, const IpAddress& sender) {
-    Logger::log("Received REMOVE_ID_FROM_SYSTEM packet", Log::INFO);
+    Logger::log("Received REMOVE_ID_FROM_SYSTEM packet", Logger::INFO);
     const auto& id = data.data.first;
     const auto& systemIdentifier = data.data.second;
     client->systemManager.getSystem(systemIdentifier)->remove(id);
 }
 
 void ClientRunningState::accept(const RemoveIdFromSystemsData& data, const IpAddress& sender) {
-    Logger::log("Received REMOVE_ID_FROM_SYSTEMS packet", Log::INFO);
+    Logger::log("Received REMOVE_ID_FROM_SYSTEMS packet", Logger::INFO);
     const auto& id = data.data;
     client->systemManager.getSystem(System::RENDER)->remove(id);
     client->systemManager.getSystem(System::HASHGRID_TEXTURE)->remove(id);
 }
 
 void ClientRunningState::accept(const ActivateIdData& data, const IpAddress& sender) {
-    Logger::log("Received ACTIVATE_ID packet", Log::INFO);
+    Logger::log("Received ACTIVATE_ID packet", Logger::INFO);
     const auto& id = data.data.first;
     const auto& systemIdentifier = data.data.second;
     client->systemManager.getSystem(systemIdentifier)->activateId(id);
@@ -241,5 +243,5 @@ void ClientRunningState::accept(const KeepAliveData& data, const IpAddress& send
 }
 
 void ClientRunningState::accept(const auto& data, const IpAddress& sender) {
-    Logger::log("Received packet that has no overloaded accept (ClientRunningState)", Log::WARNING);
+    Logger::log("Received packet that has no overloaded accept (ClientRunningState)", Logger::WARNING);
 }

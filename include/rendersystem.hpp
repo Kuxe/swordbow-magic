@@ -7,7 +7,6 @@
 #include <queue>
 #include "rect.hpp"
 #include "text.hpp"
-#include "renderdata.hpp"
 
 typedef unsigned int ID;
 

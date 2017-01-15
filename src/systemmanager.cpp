@@ -47,7 +47,7 @@ ISystem* SystemManager::getSystem(System::Identifier identifier) {
 			"\nThings will go wrong from now on!\n"
 		);
 
-		Logger::log(logstr, Log::ERROR);
+		Logger::log(logstr, Logger::ERROR);
 	}
 
 

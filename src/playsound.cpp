@@ -6,7 +6,7 @@
 #include "messagetypes.hpp"
 #include "packet.hpp"
 
-PlaySound::PlaySound(
+/*PlaySound::PlaySound(
     SoundData sound,
     std::unordered_map<IpAddress, ClientData>* clients,
     PacketManager* packetManager
@@ -15,8 +15,7 @@ PlaySound::PlaySound(
     clients(clients),
     packetManager(packetManager) { }
 
-void PlaySound::execute() {
-
+void PlaySound::execute() { 
     const auto now = std::chrono::high_resolution_clock::now();
     const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - sound.startTime).count();
     if(elapsed > sound.duration) {
@@ -33,4 +32,4 @@ void PlaySound::execute() {
             packetManager->send(pair.first, packet);
         }
     }
-}
+}*/

@@ -13,7 +13,7 @@ World::World(EntityManager* entityManager) :
 
 void World::createWorld() {
 
-	Logger::log("Creating world...", Log::INFO);
+	Logger::log("Creating world...", Logger::INFO);
 
 	//Fill world with grass
 	for(short y = 0; y < NUM_TILES; y++) {
@@ -83,8 +83,8 @@ void World::createWorld() {
 	std::uniform_real_distribution<double> stoneUniformx(0.0, NUM_TILES * TILE_SIZE);
 	std::uniform_real_distribution<double> stoneUniformy(0.0, NUM_TILES * TILE_SIZE);
 
-	const uint NUM_STONES = 100;
-	for(uint i = 0; i < NUM_STONES; i++) {
+	const uint16_t NUM_STONES = 100;
+	for(uint16_t i = 0; i < NUM_STONES; i++) {
 		entityManager->createStone({stoneUniformx(generator), stoneUniformy(generator)});
 	}
 
@@ -93,7 +93,7 @@ void World::createWorld() {
 	auto birdSystem = static_cast<BirdSystem*>(entityManager->systemManager->getSystem(System::BIRD));
 	std::uniform_real_distribution<double> swarmUniformx(0.0, NUM_TILES * TILE_SIZE);
 	std::uniform_real_distribution<double> swarmUniformy(0.0, NUM_TILES * TILE_SIZE);
-	constexpr uint birdVariance = 400;
+	constexpr uint16_t birdVariance = 400;
 	std::normal_distribution<double> numberOfSwarmsDist(10, 0.5);
 	std::normal_distribution<double> numberOfBirdsPerSwarmDist(8, 3);
 

@@ -16,7 +16,7 @@ void MoveSystem::add(ID id) {
 
 void MoveSystem::remove(ID id) {
 	if(ids.erase(id) == 0) {
-		Logger::log("MoveSystem tried to erase unpresent ID" + std::to_string(id), Log::WARNING);
+		Logger::log("MoveSystem tried to erase unpresent ID" + std::to_string(id), Logger::WARNING);
 		return;
 	}
 

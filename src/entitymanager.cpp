@@ -41,7 +41,7 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 	//Get unique ID
 	auto id = getId();
 
-	Logger::log("Creating fatman with id" + std::to_string(id), Log::INFO);
+	Logger::log("Creating fatman with id" + std::to_string(id), Logger::INFO);
 
 	//Create components from componentmanager
 	auto& moveComponent = componentManager->createMoveComponent(id);
@@ -133,6 +133,7 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 		new ActivateId(id, System::ATTACK, systemManager),
 	};
 
+	/* FIXME: The PlaySoundA compilation error
 	commandComponent[CommandComponent::Event::ON_DEATH] = {
 		new PlaySound(
 			SoundData {Sound::BLOODSPLATTER},
@@ -141,11 +142,12 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 		),
 		new CreateBloodsplatter(this, id),
 	};
+	*/
 
 	commandComponent[CommandComponent::Event::ON_MOVE] = {
 		new ActivateId(id, System::COLLISION, systemManager),
 		new ActivateId(id, System::HASHGRID_SIZE, systemManager),
-		new PlaySound(soundComponent.walk, clients, packetManager),
+		//new PlaySound(soundComponent.walk, clients, packetManager), //FIXME: The PlaySoundA compilation error
 		new AddIdToSystem(id, System::MOVEDIFF, systemManager)
 	};
 
@@ -171,7 +173,7 @@ ID EntityManager::createFatMan() {
 ID EntityManager::createTree(const glm::vec2& position) {
 	auto id = getId();
 
-	Logger::log("Creating tree with id" + std::to_string(id), Log::INFO);
+	Logger::log("Creating tree with id" + std::to_string(id), Logger::INFO);
 
 	auto& moveComponent = componentManager->createMoveComponent(id);
 	componentManager->createInputComponent(id);
@@ -203,7 +205,7 @@ ID EntityManager::createTree(const glm::vec2& position) {
 ID EntityManager::createGrassTile(const glm::vec2& position) {
 	auto id = getId();
 
-	Logger::log("Creating grass with id" + std::to_string(id), Log::INFO);
+	Logger::log("Creating grass with id" + std::to_string(id), Logger::INFO);
 
 	auto& mc = componentManager->createMoveComponent(id);
 	auto& tc = componentManager->createTileComponent(id);
@@ -232,7 +234,7 @@ ID EntityManager::createGrassTile(const glm::vec2& position) {
 ID EntityManager::createWaterTile(const glm::vec2& position) {
 	auto id = getId();
 
-	Logger::log("Creating water with id" + std::to_string(id), Log::INFO);
+	Logger::log("Creating water with id" + std::to_string(id), Logger::INFO);
 
 	auto& mc = componentManager->createMoveComponent(id);
 	componentManager->createTileComponent(id);
@@ -261,7 +263,7 @@ ID EntityManager::createWaterTile(const glm::vec2& position) {
 ID EntityManager::createBloodSplatter(const glm::vec2& position) {
 	auto id = getId();
 
-	Logger::log("Creating bloodsplatter with id" + std::to_string(id), Log::INFO);
+	Logger::log("Creating bloodsplatter with id" + std::to_string(id), Logger::INFO);
 
 	auto& mc = componentManager->createMoveComponent(id);
 	auto& rc = componentManager->createRenderComponent(id);
@@ -306,7 +308,7 @@ ID EntityManager::createBloodSplatter(const glm::vec2& position) {
 ID EntityManager::createFlower(const glm::vec2& position, const char color) {
 	auto id = getId();
 
-	Logger::log("Creating flower with id" + std::to_string(id), Log::INFO);
+	Logger::log("Creating flower with id" + std::to_string(id), Logger::INFO);
 
 	auto& mc = componentManager->createMoveComponent(id);
 	auto& rc = componentManager->createRenderComponent(id);
@@ -349,7 +351,7 @@ ID EntityManager::createFlower(const glm::vec2& position, const char color) {
 ID EntityManager::createDummySquare(const glm::vec2& position) {
 	auto id = getId();
 
-	Logger::log("Creating dummysquare with id" + std::to_string(id), Log::INFO);
+	Logger::log("Creating dummysquare with id" + std::to_string(id), Logger::INFO);
 
 	auto& mc = componentManager->createMoveComponent(id);
 	auto& rc = componentManager->createRenderComponent(id);
@@ -402,7 +404,7 @@ ID EntityManager::createDummySquare(const glm::vec2& position) {
 ID EntityManager::createStone(const glm::vec2& position) {
 	auto id = getId();
 
-	Logger::log("Creating stone with id" + std::to_string(id), Log::INFO);
+	Logger::log("Creating stone with id" + std::to_string(id), Logger::INFO);
 
 	auto& mc = componentManager->createMoveComponent(id);
 	auto& rc = componentManager->createRenderComponent(id);
@@ -435,7 +437,7 @@ ID EntityManager::createStone(const glm::vec2& position) {
 ID EntityManager::createBlueBird(const glm::vec2& position) {
 	auto id = getId();
 
-	Logger::log("Creating blueBird with id" + std::to_string(id), Log::INFO);
+	Logger::log("Creating blueBird with id" + std::to_string(id), Logger::INFO);
 
 	auto& mc = componentManager->createMoveComponent(id);
 	auto& rc = componentManager->createRenderComponent(id);
@@ -507,7 +509,7 @@ ID EntityManager::createSwarmPoint(const glm::vec2& position) {
 }
 
 void EntityManager::remove(ID id) {
-	Logger::log("Removing id" + std::to_string(id) + " from entitymanager", Log::INFO);
+	Logger::log("Removing id" + std::to_string(id) + " from entitymanager", Logger::INFO);
 
 	//1. Remove from server systemManager
 	for(auto system : entityServerSystemMap.at(id)) {
@@ -548,23 +550,9 @@ bool EntityManager::idExists(ID id) {
 }
 
 void EntityManager::registerIdToSystem(ID id, System::Identifier system) {
-	Logger::log("Registering id " + std::to_string(id) + " to system " + std::to_string(system), Log::VERBOSE);
+	Logger::log("Registering id " + std::to_string(id) + " to system " + std::to_string(system), Logger::VERBOSE);
 	
 	auto systemptr = systemManager->getSystem(system);
 	entityServerSystemMap[id].push_back(systemptr);
 	systemptr->add(id);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-//

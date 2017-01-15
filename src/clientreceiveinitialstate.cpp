@@ -11,7 +11,8 @@ void ClientReceiveInitialState::receive() {
 
 void ClientReceiveInitialState::step() {
     //Fetch all events that ocurred...
-    while(SDL_PollEvent(&client->event) != 0) {
+    //TODO: Need to replace SDL-related code with corresponding lowpoly3d code
+    /*while(SDL_PollEvent(&client->event) != 0) {
         //Dont consider keyrepeat as keypress
         if(client->event.key.repeat == 0) {
             //And take appropiate action!
@@ -22,7 +23,7 @@ void ClientReceiveInitialState::step() {
                 }
             }
         }
-    }
+    }*/
     client->componentsMutex.lock();
     client->renderer.hideOverlay(Image::RECEIVING_DATA_OVERLAY);
     const Text text = {
@@ -37,7 +38,7 @@ void ClientReceiveInitialState::step() {
     if(client->keepAlive.elapsed() > client->secondsUntilTimeout) {
         std::ostringstream oss;
         oss << "No packets from server received for " << client->keepAlive.elapsed() << "sec, server timeout";
-        Logger::log(oss, Log::ERROR);
+        Logger::error(oss);
         changeState(&client->clientDisconnectedState);
     }
 
@@ -57,24 +58,24 @@ void ClientReceiveInitialState::changeState(IClientState* state) {
 }
 
 void ClientReceiveInitialState::onChange(ClientDisconnectedState* state) {
-    Logger::log("Client changing state from ClientDisconnectedState to ClientReceiveInitialState", Log::INFO);
+    Logger::log("Client changing state from ClientDisconnectedState to ClientReceiveInitialState", Logger::INFO);
     client->clientState = this;
 }
 
 void ClientReceiveInitialState::onChange(ClientReceiveInitialState* state) {
-    Logger::log("Client can't change state from ClientReceiveInitialState to ClientReceiveInitialState", Log::WARNING);
+    Logger::log("Client can't change state from ClientReceiveInitialState to ClientReceiveInitialState", Logger::WARNING);
 }
 
 void ClientReceiveInitialState::onChange(ClientRunningState* state) {
-    Logger::log("Client can't change state from ClientRunningState to ClientReceiveInitialState", Log::WARNING);
+    Logger::log("Client can't change state from ClientRunningState to ClientReceiveInitialState", Logger::WARNING);
 }
 
 void ClientReceiveInitialState::accept(const OutdatedData& data, const IpAddress& sender) {
-    Logger::log("This packet is outdated, to late! Sluggish!", Log::WARNING);
+    Logger::log("This packet is outdated, to late! Sluggish!", Logger::WARNING);
 }
 
 void ClientReceiveInitialState::accept(InitialComponentsData& data, const IpAddress& sender) {
-	Logger::log("Received INITIAL_COMPONENTS packet", Log::INFO);
+	Logger::log("Received INITIAL_COMPONENTS packet", Logger::INFO);
 	client->renderer.hideOverlay(Image::CONNECT_OVERLAY);
 	receivedSmallContainers++;
 	const Text text = {
@@ -105,11 +106,11 @@ void ClientReceiveInitialState::accept(InitialComponentsData& data, const IpAddr
 }
 
 void ClientReceiveInitialState::accept(const EndTransmittingInitialComponentsData&, const IpAddress& sender) {
-	Logger::log("Received END_TRANSMITTING_INITIAL_COMPONENTS packet", Log::INFO);
+	Logger::info("Received END_TRANSMITTING_INITIAL_COMPONENTS packet");
 	endPacketReceived = true;
 
 	if(receivedSmallContainers < client->numberOfInitialSmallContainers) {
-		Logger::log("Did not receive all initial components before END_TRANSMITTING_INITIAL_COMPONENTS (packets lost?)", Log::ERROR);
+		Logger::error("Did not receive all initial components before END_TRANSMITTING_INITIAL_COMPONENTS (packets lost?)");
 
         //TODO: At some point, instead of going into disconnect mode,
         //ask server to resend the lost packets.
@@ -120,7 +121,7 @@ void ClientReceiveInitialState::accept(const EndTransmittingInitialComponentsDat
 }
 
 void ClientReceiveInitialState::accept(const auto& data, const IpAddress& sender) {
-    Logger::log("Received packet that has no overloaded accept (ClientReceiveInitialState)", Log::WARNING);
+    Logger::warning("Received packet that has no overloaded accept (ClientReceiveInitialState)");
 }
 
 void ClientReceiveInitialState::accept(const KeepAliveData&, const IpAddress& sender) {

@@ -7,7 +7,7 @@
 IdManager::IdManager() {
 	std::ostringstream oss;
 	oss << "Available IDs: " << MAX_IDS << ", IdManager memory footprint: " << MAX_IDS * sizeof(ID) / 1048576 << "MB";
-	Logger::log(oss, Log::INFO);
+	Logger::log(oss, Logger::INFO);
 }
 
 unsigned int IdManager::acquireId() {
@@ -21,7 +21,7 @@ unsigned int IdManager::acquireId() {
 	//Else get next free id;
 	id += 1;
 	if(id == MAX_IDS) {
-		Logger::log("Ran out of free ids (idmanager.cpp). Either increase the amount of freeIds or reduce entities in world", Log::ERROR);
+		Logger::log("Ran out of free ids (idmanager.cpp). Either increase the amount of freeIds or reduce entities in world", Logger::ERROR);
 	}
 	return id;
 }

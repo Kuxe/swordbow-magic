@@ -30,7 +30,7 @@ void HashGridSystem::remove(const ID id) {
 	try {
 		removeFromCells(id);
 	} catch(std::out_of_range oor) {
-		Logger::log("Couldn't remove " + std::to_string(id) + " from HashGridSystem because call to removeFromCells failed", Log::ERROR);
+		Logger::log("Couldn't remove " + std::to_string(id) + " from HashGridSystem because call to removeFromCells failed", Logger::ERROR);
 		throw oor;
 	}
 }
@@ -40,7 +40,7 @@ void HashGridSystem::addToCells(const ID id) {
 
 	std::ostringstream oss;
 	oss << "Adding id " << id << " to hashgrid cells";
-	Logger::log(oss, Log::VERBOSE);
+	Logger::log(oss, Logger::VERBOSE);
 
 	//Place ID in all cells which partially or completely contains the ID
 	for(unsigned int y = bb.y/side; y < (bb.y + bb.h)/side; y++) {
@@ -48,7 +48,7 @@ void HashGridSystem::addToCells(const ID id) {
 			if(y*width + x < cellsCapacity) {
 				cells[y*width + x].insert(id);
 			} else {
-				Logger::log("Tried to index out of HashGrid cellsCapacity", Log::WARNING);
+				Logger::log("Tried to index out of HashGrid cellsCapacity", Logger::WARNING);
 			}
 		}
 	}
@@ -68,7 +68,7 @@ void HashGridSystem::removeFromCells(const ID id) {
 							" couldn't erase " +
 							std::to_string(id) +
 							" from grid because it didn't exist"
-						), Log::WARNING
+						), Logger::WARNING
 					);
 				};
 			}
@@ -77,7 +77,7 @@ void HashGridSystem::removeFromCells(const ID id) {
 		std::ostringstream oss;
 		oss << "Couldn't remove id " << id << " from hashgrid-cells using bounding box";
 		oss << " because the bounding box couldn't be retrieved";
-		Logger::log(oss, Log::ERROR);
+		Logger::log(oss, Logger::ERROR);
 		throw oor;
 	}
 }
@@ -96,7 +96,7 @@ void HashGridSystem::removeFromCellsOldBoundingBox(const ID id) {
 							" couldn't erase " +
 							std::to_string(id) +
 							" (old boundingbox) from grid because it didn't exist"
-						), Log::WARNING
+						), Logger::WARNING
 					);
 				};
 			}
@@ -105,7 +105,7 @@ void HashGridSystem::removeFromCellsOldBoundingBox(const ID id) {
 		std::ostringstream oss;
 		oss << "Couldn't remove id " << id << " from hashgrid-cells using old bounding box";
 		oss << " because the old bounding box couldn't be retrieved";
-		Logger::log(oss, Log::ERROR);
+		Logger::log(oss, Logger::ERROR);
 		throw oor;
 	}
 }
@@ -143,7 +143,7 @@ Rect HashGridSystem::getBoundingBox(ID id) const {
 	} catch(std::out_of_range oor) {
 		std::ostringstream oss;
 		oss << "HashGridSystem couldn't get the bounding box of id " << id;
-		Logger::log(oss, Log::ERROR);
+		Logger::log(oss, Logger::ERROR);
 		throw oor;
 	}
 }
@@ -169,7 +169,7 @@ void HashGridSystem::update() {
 		} catch (std::out_of_range oor) {
 			std::ostringstream oss;
 			oss << "Call to removeFromCellsOldBoundingBox failed for id " << id;
-			Logger::log(oss, Log::ERROR);
+			Logger::log(oss, Logger::ERROR);
 			throw oor;
 		}
 

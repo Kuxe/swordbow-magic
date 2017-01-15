@@ -67,6 +67,7 @@ ADD_LIBRARY(sbm-server SHARED
 #Client specific sources
 ADD_LIBRARY(sbm-client SHARED
     src/camerasystem.cpp
+    src/client.cpp
     src/clientdisconnectedstate.cpp
     src/clientreceiveinitialstate.cpp
     src/clientrunningstate.cpp
@@ -83,13 +84,6 @@ SET(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -pthread -std=c++14")
 SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Os -pthread -fomit-frame-pointer -march=native -flto -s -std=c++14")
-
-#Need to link to wsock32 on windows
-IF(${CMAKE_SYSTEM_NAME} EQUAL "Windows")
-    TARGET_LINK_LIBRARIES(sbm PUBLIC
-        -lwsock32
-    )
-ENDIF()
 
 #===========================
 #====SETUP DEPENDENCIES=====
@@ -114,10 +108,10 @@ FIND_PACKAGE(Git REQUIRED)
 FIND_PACKAGE(Hg REQUIRED)
 
 SET(DEP_DIR "${CMAKE_SOURCE_DIR}/deps")
+SET_DIRECTORY_PROPERTIES(PROPERTIES EP_BASE "${DEP_DIR}")
 
 #PLATFORM INDEPENDENT DOWNLOADS
 EXTERNALPROJECT_ADD(Cereal
-    PREFIX ${DEP_DIR}/cereal
     GIT_REPOSITORY https://github.com/USCiLab/cereal
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
@@ -126,7 +120,6 @@ EXTERNALPROJECT_ADD(Cereal
 ADD_DEPENDENCIES(setup Cereal)
 
 EXTERNALPROJECT_ADD(GLM
-    PREFIX ${DEP_DIR}/GLM
     GIT_REPOSITORY https://github.com/g-truc/glm
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
@@ -135,7 +128,6 @@ EXTERNALPROJECT_ADD(GLM
 ADD_DEPENDENCIES(setup GLM)
 
 EXTERNALPROJECT_ADD(OGG
-    PREFIX ${DEP_DIR}/OGG
     GIT_REPOSITORY https://github.com/soundcloud/ogg
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
@@ -144,7 +136,6 @@ EXTERNALPROJECT_ADD(OGG
 ADD_DEPENDENCIES(setup OGG)
 
 EXTERNALPROJECT_ADD(Catch
-    PREFIX ${DEP_DIR}/Catch
     GIT_REPOSITORY https://github.com/philsquared/Catch
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
@@ -153,7 +144,6 @@ EXTERNALPROJECT_ADD(Catch
 ADD_DEPENDENCIES(setup Catch)
 
 EXTERNALPROJECT_ADD(args
-    PREFIX ${DEP_DIR}/args
     GIT_REPOSITORY https://github.com/Taywee/args
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
@@ -161,115 +151,18 @@ EXTERNALPROJECT_ADD(args
 )
 ADD_DEPENDENCIES(setup args)
 
-
-#As for the platform dependant dependencies (such as SDL2 which isn't header only)
-#Different platforms get ahold of the libraries in different ways
-#sbm, sbm-client and sbm-server expects, for each platform, that these variables are
-#set to valid directories containing either headers or libraries:
-#   SLD2_INCLUDE_DIR
-#   SDL2_IMAGE_INCLUDE_DIR
-#   SDL2_TTF_INCLUDE_DIR
-#   SDL2_MIXER_INCLUDE_DIR
-#   SDL2_LIB_DIR
-#   SDL2_IMAGE_LIB_DIR
-#   SDL2_TTF_LIB_DIR
-#   SDL2_MIXER_LIB_DIR
-
-IF(UNIX)
-    SET(SDL2_INSTALL_PREFIX "${DEP_DIR}/SDL2-install")
-    FILE(MAKE_DIRECTORY "${SDL2_INSTALL_PREFIX}")
-
-    EXTERNALPROJECT_ADD(SDL2_project
-        PREFIX ${DEP_DIR}/SDL2
-        HG_REPOSITORY http://hg.libsdl.org/SDL
-        CONFIGURE_COMMAND ${DEP_DIR}/SDL2/src/SDL2_project/configure --prefix=${SDL2_INSTALL_PREFIX}
-        INSTALL_COMMAND make install
-    )
-    SET(SDL2_INCLUDE_DIR "${SDL2_INSTALL_PREFIX}/include/")
-    SET(SDL2_LIB_DIR "${SDL2_INSTALL_PREFIX}/lib/")
-    ADD_DEPENDENCIES(setup SDL2_project)
-
-    EXTERNALPROJECT_ADD(SDL2_image_project
-        PREFIX ${DEP_DIR}/SDL2_image
-        HG_REPOSITORY http://hg.libsdl.org/SDL_image
-        CONFIGURE_COMMAND cd ${DEP_DIR}/SDL2_image/src/SDL2_image_project && ./autogen.sh && ./configure --prefix=${SDL2_INSTALL_PREFIX} --with-sdl-prefix=${SDL2_INSTALL_PREFIX}
-        BUILD_COMMAND cd ${DEP_DIR}/SDL2_image/src/SDL2_image_project && make
-        INSTALL_COMMAND cd ${DEP_DIR}/SDL2_image/src/SDL2_image_project && make install
-    )
-    SET(SDL2_IMAGE_INCLUDE_DIR "${SDL2_INSTALL_PREFIX}/include/")
-    SET(SDL2_IMAGE_LIB_DIR "${SDL2_INSTALL_PREFIX}/lib/")
-    ADD_DEPENDENCIES(SDL2_image_project SDL2_project)
-    ADD_DEPENDENCIES(setup SDL2_image_project)
-
-    EXTERNALPROJECT_ADD(SDL2_ttf_project
-        PREFIX ${DEP_DIR}/SDL2_ttf
-        HG_REPOSITORY http://hg.libsdl.org/SDL_ttf/
-        CONFIGURE_COMMAND cd ${DEP_DIR}/SDL2_ttf/src/SDL2_ttf_project && ./autogen.sh && ./configure --prefix=${SDL2_INSTALL_PREFIX} --with-sdl-prefix=${SDL2_INSTALL_PREFIX}
-        BUILD_COMMAND cd ${DEP_DIR}/SDL2_ttf/src/SDL2_ttf_project && make
-        INSTALL_COMMAND cd ${DEP_DIR}/SDL2_ttf/src/SDL2_ttf_project && make install
-    )
-    SET(SDL2_TTF_INCLUDE_DIR "${SDL2_INSTALL_PREFIX}/include/")
-    SET(SDL2_TTF_LIB_DIR "${SDL2_INSTALL_PREFIX}/lib/")
-    ADD_DEPENDENCIES(SDL2_ttf_project SDL2_project)
-    ADD_DEPENDENCIES(setup SDL2_ttf_project)
-
-    EXTERNALPROJECT_ADD(SDL2_mixer_project
-        PREFIX ${DEP_DIR}/SDL2_mixer
-        HG_REPOSITORY http://hg.libsdl.org/SDL_mixer/
-        CONFIGURE_COMMAND cd ${DEP_DIR}/SDL2_mixer/src/SDL2_mixer_project && ./autogen.sh && ./configure --prefix=${SDL2_INSTALL_PREFIX} --with-sdl-prefix=${SDL2_INSTALL_PREFIX}
-        BUILD_COMMAND cd ${DEP_DIR}/SDL2_mixer/src/SDL2_mixer_project && make
-        INSTALL_COMMAND cd ${DEP_DIR}/SDL2_mixer/src/SDL2_mixer_project && make install
-    )
-    SET(SDL2_MIXER_INCLUDE_DIR "${SDL2_INSTALL_PREFIX}/include/")
-    SET(SDL2_MIXER_LIB_DIR "${SDL2_INSTALL_PREFIX}/lib/")
-    ADD_DEPENDENCIES(SDL2_mixer_project SDL2_project)
-    ADD_DEPENDENCIES(setup SDL2_mixer_project)
-
-ELSEIF(WIN32)
-    #TODO: Download dependencies and set variables as described couple of lines above
-    MESSAGE(FATAL_ERROR "Windows not supported yet (but it will be 'soon')")
-ELSEIF()
-    MESSAGE(FATAL_ERROR "Could not indentify platform. I (the cmake file) doesn't think this is a Linux, OSX or Windows computer and therefore goodbye")
-ENDIF()
-
 TARGET_INCLUDE_DIRECTORIES(sbm PUBLIC
     ${CMAKE_SOURCE_DIR}/include/
-    ${DEP_DIR}/cereal/src/Cereal/include/
-    ${DEP_DIR}/GLM/src/GLM/
-    ${DEP_DIR}/args/src/args
+    ${DEP_DIR}/Source/Cereal/include/
+    ${DEP_DIR}/Source/GLM/
+    ${DEP_DIR}/Source/args
 )
 TARGET_INCLUDE_DIRECTORIES(sbm-client PUBLIC
     ${CMAKE_SOURCE_DIR}/include/
-    ${SDL2_INCLUDE_DIR}
-    ${SDL2_IMAGE_INCLUDE_DIR}
-    ${SDL2_TTF_INCLUDE_DIR}
-    ${SDL2_MIXER_INCLUDE_DIR}
-    ${DEP_DIR}/cereal/src/Cereal/include/
+    ${DEP_DIR}/Source/Cereal/include/
 )
 TARGET_INCLUDE_DIRECTORIES(sbm-server PUBLIC
     ${CMAKE_SOURCE_DIR}/include/
-    ${SDL2_INCLUDE_DIR}
-)
-
-
-SET(SDL_LIBS "${SDL2_INSTALL_PREFIX}/lib")
-ADD_LIBRARY(SDL2 SHARED IMPORTED)
-ADD_LIBRARY(SDL2_image SHARED IMPORTED)
-ADD_LIBRARY(SDL2_ttf SHARED IMPORTED)
-ADD_LIBRARY(SDL2_mixer SHARED IMPORTED)
-IF(UNIX AND NOT APPLE)
-    SET_TARGET_PROPERTIES(SDL2 PROPERTIES IMPORTED_LOCATION "${SDL_LIBS}/libSDL2.so")
-    SET_TARGET_PROPERTIES(SDL2_image PROPERTIES IMPORTED_LOCATION "${SDL_LIBS}/libSDL2_image.so")
-    SET_TARGET_PROPERTIES(SDL2_ttf PROPERTIES IMPORTED_LOCATION "${SDL_LIBS}/libSDL2_ttf.so")
-    SET_TARGET_PROPERTIES(SDL2_mixer PROPERTIES IMPORTED_LOCATION "${SDL_LIBS}/libSDL2_mixer.so")
-ENDIF()
-
-TARGET_LINK_LIBRARIES(sbm-client PUBLIC
-    sbm
-    SDL2
-    SDL2_image
-    SDL2_ttf
-    SDL2_mixer
 )
 
 #===========================
@@ -279,6 +172,11 @@ TARGET_LINK_LIBRARIES(sbm-client PUBLIC
 #Create a client-executable
 ADD_EXECUTABLE(swordbow-magic-client src/client.cpp)
 
+IF(UNIX)
+    TARGET_LINK_LIBRARIES(sbm-client PUBLIC sbm)
+ELSEIF(WIN32)
+    TARGET_LINK_LIBRARIES(sbm-client PUBLIC sbm wsock32 ws2_32)
+ENDIF()
 #What linker flags are required for swordbow-magic-client?
 TARGET_LINK_LIBRARIES(swordbow-magic-client PUBLIC
     sbm-client
@@ -289,12 +187,12 @@ TARGET_LINK_LIBRARIES(swordbow-magic-client PUBLIC
 ADD_EXECUTABLE(swordbow-magic-server src/server.cpp)
 
 #What linker flags are required for swordbow-magic-server?
-TARGET_LINK_LIBRARIES(sbm-server PUBLIC
-    sbm #sbm-server depends on sbm
-)
-TARGET_LINK_LIBRARIES(swordbow-magic-server PUBLIC
-    sbm-server
-)
+IF(UNIX)
+    TARGET_LINK_LIBRARIES(sbm-server PUBLIC sbm)
+ELSEIF(WIN32)
+    TARGET_LINK_LIBRARIES(sbm-server PUBLIC sbm wsock32 ws2_32)
+ENDIF()
+TARGET_LINK_LIBRARIES(swordbow-magic-server PUBLIC sbm-server)
 
 #Create a test-executable using Catch
 ADD_EXECUTABLE(swordbow-magic-test

@@ -28,7 +28,7 @@ Client::Client(bool fullscreenFlag, bool vsyncFlag, unsigned short port) :
         clientRunningState(this),
         clientState(&clientDisconnectedState) {
 
-    Logger::log("Starting client", Log::INFO);
+    Logger::info("Starting client");
     systemManager.add(&textureHashGridSystem);
     systemManager.add(&renderSystem);
     systemManager.add(&cameraSystem);
@@ -39,7 +39,7 @@ Client::Client(bool fullscreenFlag, bool vsyncFlag, unsigned short port) :
 }
 
 Client::~Client() {
-    Logger::log("Destroying client", Log::INFO);
+    Logger::info("Destroying client");
     packetManager.close();
 }
 
@@ -57,7 +57,7 @@ void Client::connect(const IpAddress& server) {
     keepAlive.start();
     std::ostringstream oss;
     oss << "Sent connect request to " << server;
-    Logger::log(oss, Log::INFO);
+    Logger::log(oss, Logger::INFO);
 }
 
 void Client::disconnect() {
@@ -74,7 +74,7 @@ void Client::disconnect() {
 
         std::ostringstream oss;
         oss << "Disconnected from " << server;
-        Logger::log(oss, Log::INFO);
+        Logger::info(oss);
 
         //Indicate not connected to any server
         server = IpAddress(0, 0, 0, 0, 0);
@@ -99,7 +99,7 @@ void Client::step() {
 
 void Client::stop() {
     running = false;
-    Logger::log("Stopping client...", Log::INFO);
+    Logger::info("Stopping client...");
 }
 
 int main(int argc, char** argv) {
@@ -111,14 +111,14 @@ int main(int argc, char** argv) {
     args::ValueFlag<std::string> ipFlag(parser, "address", "Connects client to server at address", {"ip"});
     args::ValueFlag<unsigned short> portFlag(parser, "port", "Set port of client", {"port"});
 
-    std::unordered_map<std::string, Log::Level> map{
-        {"VERBOSE", Log::VERBOSE},
-        {"INFO", Log::INFO},
-        {"WARNING", Log::WARNING},
-        {"ERROR", Log::ERROR}
+    std::unordered_map<std::string, Log> map{
+        {"VERBOSE", 1},
+        {"INFO", 2},
+        {"WARNING", 3},
+        {"ERROR", 4},
     };
 
-    args::MapFlag<std::string, Log::Level> logflag(parser, "VERBOSE|INFO|WARNING|ERROR", "Set logging level", {"log"}, map);
+    args::MapFlag<std::string, uint8_t> logflag(parser, "VERBOSE|INFO|WARNING|ERROR", "Set logging level", {"log"}, map);
 
     try {
         parser.ParseCLI(argc, argv);

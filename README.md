@@ -35,7 +35,16 @@ You can build either a release build or debug build.
 3. Two executables (client and server) is present inside /swordbow-magic/release/\<executables should be here>
 
 ## Windows
-Not yet.
+You can build either a release build or debug build.
+### Debug
+1. Open up PowerShell and navigate to /swordbow-magic/\<You should be here>.
+2. Type this: `mkdir debug; cd debug; cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug ..; make setup build`
+3. Two executables (client and server) is present inside /swordbow-magic/debug/\<executables should be here>
+
+### Release
+1. Open PowerShell and navigate to /swordbow-magic/\<You should be here>.
+2. Type this: `mkdir debug; cd debug; cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release ..; make setup build`
+3. Two executables (client and server) is present inside /swordbow-magic/release/\<executables should be here>
 
 ## Running
 There can be some bootup-time for server if running with parameter bigworld. Be patient before connecting a client. There should be two executables in the same directory that `make build` was executed:

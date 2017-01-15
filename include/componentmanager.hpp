@@ -77,7 +77,7 @@ class ComponentManager {
         return birdComponents[id] = BirdComponent();
     }
 
-    static constexpr uint sizePerEntity() {
+    static constexpr size_t sizePerEntity() {
         return
             sizeof(MoveComponent) +
             sizeof(RenderComponent) +

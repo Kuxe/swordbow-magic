@@ -26,7 +26,8 @@ void ClientDisconnectedState::receive() {
 
 void ClientDisconnectedState::step() {
     //Fetch all events that ocurred...
-    while(SDL_PollEvent(&client->event) != 0) {
+    //TODO: Need to replace SDL-related code with corresponding lowpoly3d code
+    /*while(SDL_PollEvent(&client->event) != 0) {
         //Dont consider keyrepeat as keypress
         if(client->event.key.repeat == 0) {
             //And take appropiate action!
@@ -37,7 +38,7 @@ void ClientDisconnectedState::step() {
                 }
             }
         }
-    }
+    }*/
     client->renderer.renderOnlyOverlays();
 
     //Receivethread can force client to disconnect (from state-transitions usually)
@@ -55,13 +56,13 @@ void ClientDisconnectedState::changeState(IClientState* state) {
 }
 
 void ClientDisconnectedState::onChange(ClientDisconnectedState* state) {
-    Logger::log("Client changing state from ClientDisconnectedState to ClientDisconnectedState", Log::WARNING);
+    Logger::log("Client changing state from ClientDisconnectedState to ClientDisconnectedState", Logger::WARNING);
     client->clientState = this;
     client->renderer.showOverlay(Image::CONNECT_OVERLAY, {"Disconnected from server", 150, client->renderer.getScreenHeight() / 2 - 10});
 }
 
 void ClientDisconnectedState::onChange(ClientReceiveInitialState* state) {
-    Logger::log("Client changing state from ClientReceiveInitialState to ClientDisconnectedState", Log::INFO);
+    Logger::log("Client changing state from ClientReceiveInitialState to ClientDisconnectedState", Logger::INFO);
     client->clientState = this;
     client->renderer.hideOverlay(Image::RECEIVING_DATA_OVERLAY);
     client->renderer.showOverlay(Image::CONNECT_OVERLAY, {"Disconnected from server", 150, client->renderer.getScreenHeight() / 2 - 10});
@@ -69,7 +70,7 @@ void ClientDisconnectedState::onChange(ClientReceiveInitialState* state) {
 }
 
 void ClientDisconnectedState::onChange(ClientRunningState* state) {
-    Logger::log("Client changing state from ClientRunningState to ClientDisconnectedState", Log::WARNING);
+    Logger::log("Client changing state from ClientRunningState to ClientDisconnectedState", Logger::WARNING);
     client->clientState = this;
     client->soundEngine.stopMusic(Music::NATURE_SOUNDS);
     client->renderer.showOverlay(Image::CONNECT_OVERLAY, {"Disconnected from server", 150, client->renderer.getScreenHeight() / 2 - 10});
@@ -77,13 +78,13 @@ void ClientDisconnectedState::onChange(ClientRunningState* state) {
 }
 
 void ClientDisconnectedState::accept(const OutdatedData& data, const IpAddress& sender) {
-    Logger::log("This packet is outdated, to late! Sluggish!", Log::WARNING);
+    Logger::log("This packet is outdated, to late! Sluggish!", Logger::WARNING);
 }
 
 void ClientDisconnectedState::accept(const DisconnectData& data, const IpAddress& sender) {
     //Server will send this to client for a couple of reasons.
     //In any case the client shouldn't be connected to the server.
-    Logger::log("Received DISCONNECT packet", Log::INFO);
+    Logger::log("Received DISCONNECT packet", Logger::INFO);
     client->disconnect();
 }
 
@@ -95,7 +96,7 @@ void ClientDisconnectedState::accept(const BeginTransmittingInitialComponentsDat
     //due to packet limitation size, and then sent separately to client.
     //Client may NOT update ECS because it's not guaranteed that the all
     //required entity-components have been received.
-    Logger::log("Received BEGIN_TRANSMITTING_INITIAL_COMPONENTS packet", Log::INFO);
+    Logger::log("Received BEGIN_TRANSMITTING_INITIAL_COMPONENTS packet", Logger::INFO);
     auto numberOfInitialSmallContainers = data.data;
     client->numberOfInitialSmallContainers = numberOfInitialSmallContainers;
 
@@ -119,7 +120,7 @@ void ClientDisconnectedState::accept(const KeepAliveData&, const IpAddress& send
 }
 
 void ClientDisconnectedState::accept(const auto& data, const IpAddress& sender) {
-    Logger::log("Received packet that has no overloaded accept (ClientDisconnectedState)", Log::WARNING);
+    Logger::log("Received packet that has no overloaded accept (ClientDisconnectedState)", Logger::WARNING);
 }
 
 

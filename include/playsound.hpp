@@ -13,9 +13,11 @@ typedef unsigned int ID;
 
 class PacketManager;
 
+//FIXME: Weird compilation where compiler nags about "PlaySoundA" is not a class.. which it isn't, but in source code I've never refered to PlaySoundA so it's strange.
+
 /** Used when server should tell all clients to play a sound **/
 class PlaySound : public ICommand {
-private:
+/*private:
     SoundData sound;
     std::unordered_map<IpAddress, ClientData>* clients;
     PacketManager* packetManager;
@@ -25,7 +27,7 @@ public:
         std::unordered_map<IpAddress, ClientData>* clients,
         PacketManager* packetManager
     );
-    void execute();
+    void execute();*/
 };
 
 #endif //PLAYSOUND_HPP

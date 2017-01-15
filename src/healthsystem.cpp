@@ -11,7 +11,7 @@ void HealthSystem::add(ID id) {
 }
 void HealthSystem::remove(ID id) {
     if(ids.find(id) == ids.end()) {
-        Logger::log("Tried to remove unpresent ID from HealthSystem", Log::WARNING);
+        Logger::log("Tried to remove unpresent ID from HealthSystem", Logger::WARNING);
         return;
     }
     ids.erase(id);

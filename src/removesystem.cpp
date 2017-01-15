@@ -14,7 +14,7 @@ void RemoveSystem::add(ID id) {
 }
 void RemoveSystem::remove(ID id) {
     if(ids.find(id) == ids.end()) {
-        Logger::log("Tried to remove unpresent ID from RemoveSystem. Anything can happen!", Log::WARNING);
+        Logger::log("Tried to remove unpresent ID from RemoveSystem. Anything can happen!", Logger::WARNING);
         return;
     }
     ids.erase(id);

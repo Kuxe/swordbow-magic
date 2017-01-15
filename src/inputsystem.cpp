@@ -10,7 +10,7 @@ void InputSystem::add(ID id) {
 }
 void InputSystem::remove(ID id) {
     if(ids.find(id) == ids.end()) {
-        Logger::log("Tried to remove unpresent ID from InputSystem", Log::WARNING);
+        Logger::log("Tried to remove unpresent ID from InputSystem", Logger::WARNING);
         return;
     }
     ids.erase(id);

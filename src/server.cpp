@@ -15,8 +15,6 @@
 /** For command line argument parsing **/
 #include "args.hxx"
 
-#include <SDL2/SDL.h> //For SDL_keys
-
 Server::Server(bool smallWorld, float tps) :
 		packetManager("swordbow-magic"),
 		systemManager(&componentManager, &deltaTime),
@@ -29,7 +27,7 @@ Server::Server(bool smallWorld, float tps) :
 		birdSystem(&entityManager),
 		tps(tps) {
 
-	Logger::log("Starting server", Log::INFO);
+	Logger::log("Starting server", Logger::INFO);
 	printGeneralInfo();
 
 	constexpr short port = 47293;
@@ -110,7 +108,7 @@ void Server::step() {
 void Server::onConnect(const IpAddress& ipAddress) {
 	std::ostringstream oss;
 	oss << ipAddress << " connected";
-	Logger::log(oss, Log::INFO);
+	Logger::log(oss, Logger::INFO);
 	auto playerId = entityManager.createFatMan({10.0f, 20.0f});
 	clients.insert({ipAddress, {1, playerId}});
 
@@ -134,7 +132,7 @@ void Server::onDisconnect(const IpAddress& ipAddress) {
 
 		std::ostringstream oss;
 		oss << ipAddress << " disconnected";
-		Logger::log(oss, Log::INFO);
+		Logger::log(oss, Logger::INFO);
 
 		const auto& clientData = clients.at(ipAddress);
 
@@ -159,7 +157,7 @@ void Server::sendInitial(const IpAddress& ipAddress) {
 
 	std::ostringstream oss1;
 	oss1 << "Sending BEGIN_TRANSMITTING_INITIAL_COMPONENTS-packet to " << ipAddress;
-	Logger::log(oss1, Log::VERBOSE);
+	Logger::log(oss1, Logger::VERBOSE);
 
 	const auto& initialMcs = initialComponents.first;
 	const auto& initialRcs = initialComponents.second;
@@ -168,7 +166,7 @@ void Server::sendInitial(const IpAddress& ipAddress) {
 
 	std::ostringstream oss;
 	oss << "About to send #" << smallerMcs.size() << " small containers to client";
-	Logger::log(oss, Log::VERBOSE);
+	Logger::log(oss, Logger::VERBOSE);
 
 	using namespace std::literals;
 	using DataType = const std::pair<const Components<const MoveComponent&>, const Components<const RenderComponent&>>;
@@ -179,7 +177,7 @@ void Server::sendInitial(const IpAddress& ipAddress) {
 
 	std::ostringstream oss2;
 	oss2 << "Sending END_TRANSMITTING_INITIAL_COMPONENTS-packet to " << ipAddress;
-	Logger::log(oss2, Log::VERBOSE);
+	Logger::log(oss2, Logger::VERBOSE);
 	send<bool, MESSAGE_TYPE::END_TRANSMITTING_INITIAL_COMPONENTS>(ipAddress, true);
 }
 
@@ -205,7 +203,7 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 		for(auto pair : movediffs) {
 			oss << pair.first << ", ";
 		}
-		Logger::log(oss, Log::VERBOSE);
+		Logger::log(oss, Logger::VERBOSE);
 	}
 
 	//Get all rendercomponents of members of renderdiffsystem
@@ -222,7 +220,7 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 		for(auto pair : renderdiffs) {
 			oss << pair.first << ", ";
 		}
-		Logger::log(oss, Log::VERBOSE);
+		Logger::log(oss, Logger::VERBOSE);
 	}
 }
 
@@ -254,7 +252,7 @@ void Server::sendKeepAlive() {
 			const auto& client(it.second);
 			const auto& ipAddress = it.first;
 			send<bool, MESSAGE_TYPE::KEEP_ALIVE>(ipAddress, true);
-			Logger::log("Sending KEEP_ALIVE-packet", Log::VERBOSE);
+			Logger::log("Sending KEEP_ALIVE-packet", Logger::VERBOSE);
 		}
 	}
 }
@@ -269,7 +267,9 @@ void Server::inputDataToInputComponent(const IpAddress& ipAddress, const InputDa
 	ic.presses = data.presses;
 
 	for(auto keypress : data.presses) {
+		//TODO: set input component according to keypress
 		//Figure out what key was pressed
+		/*
 		switch(keypress) {
 			case SDLK_w: {
 				ic.w = true;
@@ -292,12 +292,15 @@ void Server::inputDataToInputComponent(const IpAddress& ipAddress, const InputDa
 				break;
 			}
 		}
+		*/
 	}
 
 	ic.releases = data.releases;
 
 	for(auto keyrelease : data.releases) {
+		//TODO: set input component according to keypress
 		//Figure out what key was released
+		/*
 		switch(keyrelease) {
 			case SDLK_w: {
 				ic.w = false;
@@ -319,7 +322,7 @@ void Server::inputDataToInputComponent(const IpAddress& ipAddress, const InputDa
 				ic.space = false;
 				break;
 			}
-		}
+		}*/
 	}
 
 	inputSystem.activateId(id);
@@ -339,25 +342,25 @@ void Server::printGeneralInfo() {
 	oss << " up to " << allEntitiesByteSize;
 	oss << "bytes (" << allEntitiesMegabyteSize;
 	oss << "MB)";
-	Logger::log(oss, Log::INFO);
+	Logger::log(oss, Logger::INFO);
 }
 
 void Server::accept(const OutdatedData&, const IpAddress& sender) {
-	Logger::log("This packet is outdated, to late! Sluggish!", Log::WARNING);
+	Logger::log("This packet is outdated, to late! Sluggish!", Logger::WARNING);
 }
 
 void Server::accept(const ConnectToServerData&, const IpAddress& sender) {
-	Logger::log("Received CONNECT packet", Log::INFO);
+	Logger::log("Received CONNECT packet", Logger::INFO);
 	onConnect(sender);
 }
 
 void Server::accept(const DisconnectData&, const IpAddress& sender) {
-	Logger::log("Received DISCONNECT packet", Log::INFO);
+	Logger::log("Received DISCONNECT packet", Logger::INFO);
 	onDisconnect(sender);
 }
 
 void Server::accept(const InputDataData& data, const IpAddress& sender) {
-	Logger::log("Received INPUTDATA packet", Log::VERBOSE);
+	Logger::log("Received INPUTDATA packet", Logger::VERBOSE);
 
 	//Check if client established a connection to the server, ie
 	//asked for a entity id. It could be that the client had a connection
@@ -375,21 +378,21 @@ void Server::accept(const InputDataData& data, const IpAddress& sender) {
 }
 
 void Server::accept(const CongestedClientData& data, const IpAddress& sender) {
-	Logger::log("Received CONGESTED_CLIENT packet", Log::INFO);
+	Logger::log("Received CONGESTED_CLIENT packet", Logger::INFO);
 	auto& client = clients.at(sender);
 	client.congested = true;
 	client.congestionTimer.start();
 }
 
 void Server::accept(const NotCongestedClientData& data, const IpAddress& sender) {
-	Logger::log("Received NOT_CONGESTED_CLIENT packet", Log::INFO);
+	Logger::log("Received NOT_CONGESTED_CLIENT packet", Logger::INFO);
 	clients.at(sender).congested = false;
 }
 
 void Server::accept(const auto& data, const IpAddress& sender) {
 	std::ostringstream oss;
 	oss << "Received packet that has no overloaded accept (server, typeid: " << typeid(data).name() << ")";
-	Logger::log(oss, Log::WARNING);
+	Logger::log(oss, Logger::WARNING);
 }
 
 int main(int argc, char** argv) {
@@ -403,14 +406,15 @@ int main(int argc, char** argv) {
 	args::Flag smallWorldFlag(parser, "smallworld", "Create a tiny world", {"smallworld"});
 	args::ValueFlag<float> tpsflag(parser, "tick per second", "Set server tickrate", {"tps"});
 
-	std::unordered_map<std::string, Log::Level> map{
-		{"VERBOSE", Log::VERBOSE},
-		{"INFO", Log::INFO},
-		{"WARNING", Log::WARNING},
-		{"ERROR", Log::ERROR}
-	};
+    std::unordered_map<std::string, Log> map{
+        {"VERBOSE", 1},
+        {"INFO", 2},
+        {"WARNING", 3},
+        {"ERROR", 4},
+    };
 
-	args::MapFlag<std::string, Log::Level> logflag(parser, "VERBOSE|INFO|WARNING|ERROR", "Set logging level", {"log"}, map);
+    args::MapFlag<std::string, uint8_t> logflag(parser, "VERBOSE|INFO|WARNING|ERROR", "Set logging level", {"log"}, map);
+
 
     try {
     	parser.ParseCLI(argc, argv);

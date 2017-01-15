@@ -10,7 +10,7 @@ void AnimationSystem::add(ID id) {
 }
 void AnimationSystem::remove(ID id) {
     if(ids.find(id) == ids.end()) {
-        Logger::log("Tried to remove unpresent ID from AnimationSystem. Don't know what will happen from now on!", Log::ERROR);
+        Logger::log("Tried to remove unpresent ID from AnimationSystem. Don't know what will happen from now on!", Logger::ERROR);
         return;
     }
     ids.erase(id);

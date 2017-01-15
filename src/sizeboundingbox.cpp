@@ -19,7 +19,7 @@ const Rect SizeBoundingBox::getBoundingBox(ID id) const {
     } catch(std::out_of_range oor) {
         std::ostringstream oss;
         oss << "Tried getting sizeboundingbox on id " << id << " but components or image were missing";
-        Logger::log(oss, Log::ERROR);
+        Logger::log(oss, Logger::ERROR);
         throw oor;
     }
 }
@@ -37,7 +37,7 @@ const Rect SizeBoundingBox::getOldBoundingBox(ID id) const {
     } catch(std::out_of_range oor) {
         std::ostringstream oss;
         oss << "Tried getting oldsizeboundingbox on id " << id << " but components or image were missing";
-        Logger::log(oss, Log::ERROR);
+        Logger::log(oss, Logger::ERROR);
         throw oor;
     }
 }

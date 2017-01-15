@@ -6,7 +6,7 @@
 
 
 //Default to flow-logging
-Log::Level Logger::level = Log::INFO;
+Log Logger::level = Logger::INFO;
 
 //Disabled by default
 bool Logger::enabled = false;
@@ -26,61 +26,14 @@ void Logger::closeLogfile() {
 	}
 }
 
-void Logger::log(const std::string& str, const Log::Level level) {
+void Logger::log(const std::string& str, const Log level) {
 	if(level >= Logger::level && Logger::enabled) {
-
 		switch(level) {
-			case Log::VERBOSE: {
-			#if PLATFORM == PLATFORM_LINUX
-				std::cout << "\033[1;36mVERBOSE\033[0m: " << str << std::endl;
-			#elif PLATFORM == PLATFORM_APPLE
-				std::cout << "Log(VERBOSE):\t" << str << std::endl;
-			#elif PLATFORM == PLATFORM_WINDOWS
-				std::cout << "Log(VERBOSE):\t" << str << std::endl;
-			#elif PLATFORM == UNKNOWN
-				//Disable logging by doing nothing
-			#endif
-			} break;
-
-			case Log::INFO: {
-			#if PLATFORM == PLATFORM_LINUX
-				std::cout << "\033[1;32mINFO\033[0m: " << str << std::endl;
-			#elif PLATFORM == PLATFORM_APPLE
-				std::cout << "Log(INFO):\t" << str << std::endl;
-			#elif PLATFORM == PLATFORM_WINDOWS
-				std::cout << "Log(INFO):\t" << str << std::endl;
-			#elif PLATFORM == UNKNOWN
-				//Disable logging by doing nothing
-			#endif
-			} break;
-
-			case Log::WARNING: {
-			#if PLATFORM == PLATFORM_LINUX
-				std::cout << "\033[1;33mWARNING\033[0m: " << str << std::endl;
-			#elif PLATFORM == PLATFORM_APPLE
-				std::cout << "Log(WARNING):\t" << str << std::endl;
-			#elif PLATFORM == PLATFORM_WINDOWS
-				std::cout << "Log(WARNING):\t" << str << std::endl;
-			#elif PLATFORM == UNKNOWN
-				//Disable logging by doing nothing
-			#endif
-			} break;
-
-			case Log::ERROR: {
-			#if PLATFORM == PLATFORM_LINUX
-				std::cout << "\033[1;31mERROR\033[0m: " << str << std::endl;
-			#elif PLATFORM == PLATFORM_APPLE
-				std::cout << "Log(ERROR):\t" << str << std::endl;
-			#elif PLATFORM == PLATFORM_WINDOWS
-				std::cout << "Log(ERROR):\t" << str << std::endl;
-			#elif PLATFORM == UNKNOWN
-				//Disable logging by doing nothing
-			#endif
-			} break;
-
-			case Log::UNDEFINED: {
-				//Disable logging by doing nothing
-			} break;
+			case Logger::VERBOSE: { verbose(str); } break;
+			case Logger::INFO: { info(str); } break;
+			case Logger::WARNING: { warning(str); } break;
+			case Logger::ERROR: { error(str); } break;
+			case Logger::UNDEFINED: { /*Disable logging by doing nothing */ } break;
 		}
 	}
 
@@ -90,8 +43,68 @@ void Logger::log(const std::string& str, const Log::Level level) {
 	}
 }
 
-void Logger::log(std::ostringstream& oss, const Log::Level level) {
+void Logger::log(std::ostringstream& oss, const Log level) {
 	Logger::log(oss.str(), level);
+}
+
+void Logger::verbose(const std::string& str) {
+	#if PLATFORM == PLATFORM_LINUX
+		std::cout << "\033[1;36mVERBOSE\033[0m: " << str << std::endl;
+	#elif PLATFORM == PLATFORM_APPLE
+		std::cout << "Log(VERBOSE):\t" << str << std::endl;
+	#elif PLATFORM == PLATFORM_WINDOWS
+		std::cout << "Log(VERBOSE):\t" << str << std::endl;
+	#elif PLATFORM == UNKNOWN
+		//Disable logging by doing nothing
+	#endif
+}
+void Logger::verbose(std::ostringstream& oss) {
+	Logger::verbose(oss.str());
+}
+
+void Logger::info(const std::string& str) {
+	#if PLATFORM == PLATFORM_LINUX
+		std::cout << "\033[1;32mINFO\033[0m: " << str << std::endl;
+	#elif PLATFORM == PLATFORM_APPLE
+		std::cout << "Log(INFO):\t" << str << std::endl;
+	#elif PLATFORM == PLATFORM_WINDOWS
+		std::cout << "Log(INFO):\t" << str << std::endl;
+	#elif PLATFORM == UNKNOWN
+		//Disable logging by doing nothing
+	#endif
+}
+void Logger::info(std::ostringstream& oss) {
+	Logger::info(oss.str());
+}
+
+void Logger::warning(const std::string& str) {
+	#if PLATFORM == PLATFORM_LINUX
+		std::cout << "\033[1;33mWARNING\033[0m: " << str << std::endl;
+	#elif PLATFORM == PLATFORM_APPLE
+		std::cout << "Log(WARNING):\t" << str << std::endl;
+	#elif PLATFORM == PLATFORM_WINDOWS
+		std::cout << "Log(WARNING):\t" << str << std::endl;
+	#elif PLATFORM == UNKNOWN
+		//Disable logging by doing nothing
+	#endif
+}
+void Logger::warning(std::ostringstream& oss) {
+	Logger::warning(oss.str());
+}
+
+void Logger::error(const std::string& str) {
+	#if PLATFORM == PLATFORM_LINUX
+		std::cout << "\033[1;31mERROR\033[0m: " << str << std::endl;
+	#elif PLATFORM == PLATFORM_APPLE
+		std::cout << "Log(ERROR):\t" << str << std::endl;
+	#elif PLATFORM == PLATFORM_WINDOWS
+		std::cout << "Log(ERROR):\t" << str << std::endl;
+	#elif PLATFORM == UNKNOWN
+		//Disable logging by doing nothing
+	#endif
+}
+void Logger::error(std::ostringstream& oss) {
+	Logger::error(oss.str());
 }
 
 void Logger::disable() {
