@@ -14,11 +14,11 @@ Dependencies are installed locally (inside the repo, not in system-directories) 
 
 ## Libraries
 * <a href=https://github.com/Taywee/args>args</a>
-* <a https://github.com/philsquared/Catch>Catch</a>
+* <a href=https://github.com/philsquared/Catch>Catch</a>
 * <a href=https://github.com/USCiLab/cereal>Cereal</a>
-* <a http://glm.g-truc.net/0.9.8/index.html>glm</a>
-* <a https://github.com/soundcloud/ogg>Ogg</a>
-* Soon: https://github.com/kuxe/Subber>Subber</a>
+* <a href=http://glm.g-truc.net/0.9.8/index.html>glm</a>
+* <a href=https://github.com/soundcloud/ogg>Ogg</a>
+* Soon: <a href=https://github.com/kuxe/Subber>Subber</a>
 * Soon: lowpoly3d (still private, will make it public soon)
 
 # Building
