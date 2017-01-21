@@ -109,6 +109,16 @@ void Client::stop() {
     Logger::info("Stopping client...");
 }
 
+
+/**********************************************************************************/
+/**********************************************************************************/
+/**********************************************************************************/
+/******FIXME: liblowpoly3d.dll not copied into build so exe cant find it  *********/
+/******(double click swordbow-magic-client.exe in explorer)************************/
+/**********************************************************************************/
+/**********************************************************************************/
+/**********************************************************************************/
+
 int main(int argc, char** argv) {
     /** Parse args (using nifty library by Taylor C. Richberger https://github.com/Taywee/args)**/
     args::ArgumentParser parser("swordbow-magic-client.", "swordbow-magic-client says bye!.");
