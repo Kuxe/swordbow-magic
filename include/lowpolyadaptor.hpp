@@ -9,6 +9,7 @@
 #include "imageidentifiers.hpp"
 #include "overlay.hpp"
 #include "irenderer.hpp"
+#include "lowpoly3d.hpp"
 
 //TODO: Use lowpoly3d
 /** If this class is an interface, IRenderer, then there can be another class called Lowpoly3dRenderer which realizes this interface.
@@ -16,15 +17,21 @@
     just swap out the Lowpoly3dRenderer for some other NextgenRenderer without ever redoing anything within swordbow-magic
     which is nice. I think this is the adaptor-pattern. **/
 
-
-class LowpolyAdaptor : public IRenderer {
+class LowpolyAdaptor : public IRenderer, public RenderQuerier, public ILowpolyInput {
 private:
     std::queue<Text> texts;
+    Renderer renderer;
+    std::vector<RenderData> rds;
     void renderTexts();
 public:
     LowpolyAdaptor(bool fullscreen, bool vsync);
     ~LowpolyAdaptor();
+
+    /** Since lowpoly3d is blocking, whatever thread that calls run will be blocked
+        until window is closed **/
+    void run();
     
+    /** Methods required by IRenderer **/
     //Difference between renderOverlays and renderOnlyOverlays is that
     //renderOverlays doesn't call RenderPresent, it calls RenderCopy and copies
     //overlays onto overlayTexture while renderOnlyOverlays does that AND
@@ -39,6 +46,19 @@ public:
     void printText(const Text& text);
     virtual glm::ivec2 getWindowResolution() { return {0, 0}; } //TODO: Implement
     void pollEvents(IClientState* clientState);
+    /** End of methods required by IRenderer **/
+
+    /** Methods required by RenderQuerier **/
+    const std::vector<RenderData>& getRenderDatas() const;
+    const glm::mat4 getView() const;
+    const float getGametime() const;
+    const float getSunRadians() const;
+    /** End of methods required by RenderQuerier **/
+
+    /** Methods required by ILowpolyInput **/
+    void onKey(int key, int scancode, int action, int mods);
+    void onMouse(double xpos, double ypos);
+    /** End of methods required by ILowpolyInput **/
 };
 
 

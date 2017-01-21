@@ -1,4 +1,5 @@
 #include "client.hpp"
+#include <thread>
 
 /** Graphics **/
 #include "lowpolyadaptor.hpp"
@@ -95,9 +96,8 @@ void Client::receive() {
 }
 
 void Client::run() {
-    while(running) {
-        step();
-    }
+    //Start client in a thread
+    while(running) step();
 }
 
 void Client::step() {
@@ -187,21 +187,16 @@ int main(int argc, char** argv) {
     LowpolyAdaptor lowpolyAdaptor(fullscreen, vsync);
     OggAdaptor oggAdaptor;
 
-    /** All arguments are parsed, now start the client **/
-    Client client(&lowpolyAdaptor, &oggAdaptor, port);
-    client.connect(ipAddress);
-    client.run();
-    client.disconnect();
-    client.stop();
+    std::thread clientThread([&]() {
+        /** All arguments are parsed, now start the client **/
+        Client client(&lowpolyAdaptor, &oggAdaptor, port);
+        client.connect(ipAddress);
+        client.run();
+        client.disconnect();
+        client.stop();
+    });
+    lowpolyAdaptor.run(); //Blocked in here until lowpoly3d renderer terminates
+    clientThread.join();
     Logger::closeLogfile();
     return 0;
 }
-
-
-
-
-
-
-
-
-//

@@ -150,13 +150,11 @@ EXTERNALPROJECT_ADD(args
 )
 ADD_DEPENDENCIES(setup args)
 
-EXTERNALPROJECT_ADD(lowpoly3d
+EXTERNALPROJECT_ADD(lp3d
     GIT_REPOSITORY https://github.com/kuxe/lowpoly3d
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${DEP_DIR}/Install/lp3d/
 )
-ADD_DEPENDENCIES(setup lowpoly3d)
+ADD_DEPENDENCIES(setup lp3d)
 
 TARGET_INCLUDE_DIRECTORIES(sbm PUBLIC
     ${CMAKE_SOURCE_DIR}/include/
@@ -167,6 +165,7 @@ TARGET_INCLUDE_DIRECTORIES(sbm PUBLIC
 TARGET_INCLUDE_DIRECTORIES(sbm-client PUBLIC
     ${CMAKE_SOURCE_DIR}/include/
     ${DEP_DIR}/Source/Cereal/include/
+    ${DEP_DIR}/Install/lp3d/include
 )
 TARGET_INCLUDE_DIRECTORIES(sbm-server PUBLIC
     ${CMAKE_SOURCE_DIR}/include/
@@ -180,9 +179,13 @@ TARGET_INCLUDE_DIRECTORIES(sbm-server PUBLIC
 ADD_EXECUTABLE(swordbow-magic-client src/client.cpp)
 
 IF(UNIX)
-    TARGET_LINK_LIBRARIES(sbm-client PUBLIC sbm)
+    TARGET_LINK_LIBRARIES(sbm-client PUBLIC sbm
+        ${DEP_DIR}/Install/lp3d/lib/liblowpoly3d.so
+    )
 ELSEIF(WIN32)
-    TARGET_LINK_LIBRARIES(sbm-client PUBLIC sbm wsock32 ws2_32)
+    TARGET_LINK_LIBRARIES(sbm-client PUBLIC sbm wsock32 ws2_32
+        ${DEP_DIR}/Install/lp3d/lib/liblowpoly3d.dll
+    )
 ENDIF()
 #What linker flags are required for swordbow-magic-client?
 TARGET_LINK_LIBRARIES(swordbow-magic-client PUBLIC
