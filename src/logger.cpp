@@ -48,6 +48,7 @@ void Logger::log(std::ostringstream& oss, const Log level) {
 }
 
 void Logger::verbose(const std::string& str) {
+	if(Logger::VERBOSE < Logger::level || !Logger::enabled) return;
 	#if PLATFORM == PLATFORM_LINUX
 		std::cout << "\033[1;36mVERBOSE\033[0m: " << str << std::endl;
 	#elif PLATFORM == PLATFORM_APPLE
@@ -63,6 +64,7 @@ void Logger::verbose(std::ostringstream& oss) {
 }
 
 void Logger::info(const std::string& str) {
+	if(Logger::INFO < Logger::level || !Logger::enabled) return;
 	#if PLATFORM == PLATFORM_LINUX
 		std::cout << "\033[1;32mINFO\033[0m: " << str << std::endl;
 	#elif PLATFORM == PLATFORM_APPLE
@@ -78,6 +80,7 @@ void Logger::info(std::ostringstream& oss) {
 }
 
 void Logger::warning(const std::string& str) {
+	if(Logger::WARNING < Logger::level || !Logger::enabled) return;
 	#if PLATFORM == PLATFORM_LINUX
 		std::cout << "\033[1;33mWARNING\033[0m: " << str << std::endl;
 	#elif PLATFORM == PLATFORM_APPLE
@@ -93,6 +96,7 @@ void Logger::warning(std::ostringstream& oss) {
 }
 
 void Logger::error(const std::string& str) {
+	if(Logger::ERROR < Logger::level || !Logger::enabled) return;
 	#if PLATFORM == PLATFORM_LINUX
 		std::cout << "\033[1;31mERROR\033[0m: " << str << std::endl;
 	#elif PLATFORM == PLATFORM_APPLE
