@@ -21,9 +21,13 @@ void ClientDisconnectedState::pollForceDisconnect() {
 ClientDisconnectedState::ClientDisconnectedState(Client* client) : client(client) { }
 
 void ClientDisconnectedState::receive() {
-        client->componentsMutex.lock();
-        client->packetManager.receive<ClientDisconnectedState>(*this);
-        client->componentsMutex.unlock();
+    Logger::verbose("ClientDisconnectedState locking componentsMutex in receive...");
+    client->componentsMutex.lock();
+    Logger::verbose("ClientDisconnectedState locked componentsMutex in receive");
+    client->packetManager.receive<ClientDisconnectedState>(*this);
+    Logger::verbose("ClientDisconnectedState unlocking componentsMutex in receive...");
+    client->componentsMutex.unlock();
+    Logger::verbose("ClientDisconnectedState unlocked componentsMutex in receive");
 }
 
 void ClientDisconnectedState::step() {

@@ -72,8 +72,15 @@ void Client::disconnect() {
     //receiveThreadRunning can be seen as "isConnected"
     //So we don't need to disconnect if we're already disconnected.
     if(receiveThreadRunning == true) {
+        {
+            std::ostringstream oss;
+            oss << "Disconnecting from " << server << "...";
+            Logger::info(oss);
+        }
         receiveThreadRunning = false;
+        Logger::verbose("Joining recieveThread in Client::disconnect()...");
         receiveThread.join();
+        Logger::verbose("Joined recieveThread in Client::disconnect()");
 
         //Disconnect-request packet
         send<bool, MESSAGE_TYPE::DISCONNECT>(true);
@@ -86,13 +93,17 @@ void Client::disconnect() {
 
         //Indicate not connected to any server
         server = IpAddress(0, 0, 0, 0, 0);
+    } else {
+        Logger::warning("Not connected to any server so could not disconnect");
     }
 }
 
 void Client::receive() {
+    Logger::info("Client is about to let client state receive packets");
     while(receiveThreadRunning) {
         clientState->receive();
     }
+     Logger::info("Receive thread no longer running");
 }
 
 void Client::run() {
@@ -196,16 +207,12 @@ int main(int argc, char** argv) {
         without bothering with other swordbow-magic code **/
     LowpolyAdaptor lowpolyAdaptor(fullscreen, vsync);
     OggAdaptor oggAdaptor;
-
-    std::thread clientThread([&]() {
-        /** All arguments are parsed, now start the client **/
-        Client client(&lowpolyAdaptor, &oggAdaptor, port);
-        client.connect(ipAddress);
-        client.run();
-        client.disconnect();
-        client.stop();
-    });
+    Client client(&lowpolyAdaptor, &oggAdaptor, port);
+    client.connect(ipAddress);
+    std::thread clientThread(&Client::run, &client); //Run game in a thread
     lowpolyAdaptor.run(); //Blocked in here until lowpoly3d renderer terminates
+    client.disconnect();
+    client.stop();
     clientThread.join();
     Logger::closeLogfile();
     return 0;

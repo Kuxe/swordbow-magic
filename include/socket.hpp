@@ -57,7 +57,7 @@ public:
         //Dont wait until a message is recieved
 
         #if PLATFORM == PLATFORM_LINUX || PLATFORM == PLATFORM_APPLE
-            constexpr int nonBlocking = 0;
+            constexpr int nonBlocking = 1;
             if(fcntl(socket, F_SETFL, O_NONBLOCK, nonBlocking) == -1) {
                 Logger::log("Failed to set non-blocking");
                 close();
@@ -65,7 +65,7 @@ public:
             }
 
         #elif PLATFORM == PLATFORM_WINDOWS
-            DWORD nonBlocking = 0;
+            DWORD nonBlocking = 1;
             if(ioctlsocket(socket, FIONBIO, &nonBlocking) != 0) {
                 Logger::log("Failed to set non-blocking");
                 close();
@@ -160,7 +160,12 @@ public:
         sockaddr_in from;
         socklen_t fromLength = sizeof(from);
 
-        //FIXME: recvfrom should be blocking
+        {
+            std::ostringstream oss;
+            oss << "Receiving packet from " << sender;
+            Logger::log(oss, Logger::VERBOSE);
+        }
+        //FIXME: recvfrom should be blocking (why? I do not understand why as of 2017-01-22)
         bytesRead = recvfrom(socket, (char*)buffer, sizeof(buffer), 0, (sockaddr*)&from, &fromLength);
 
         /** Should there be a bytes > 0 check before this part? **/
@@ -168,9 +173,11 @@ public:
         unsigned int fromPort = ntohs(from.sin_port);
         sender = IpAddress(fromAddress, fromPort);
 
-        std::ostringstream oss;
-        oss << "Recieved packet from " << sender << " (" << std::to_string(bytesRead) << "bytes)";
-        Logger::log(oss, Logger::VERBOSE);
+        {
+            std::ostringstream oss;
+            oss << "Recieved packet from " << sender << " (" << std::to_string(bytesRead) << "bytes)";
+            Logger::log(oss, Logger::VERBOSE);
+        }
         /** END OF POSSIBLE IF-CHECK PART **/
 
         return buffer;

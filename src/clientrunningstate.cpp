@@ -14,7 +14,9 @@ void ClientRunningState::receive() {
         Timer waitTimer;
         waitTimer.start();
 
+        Logger::verbose("ClientReceiveInitialState locking componentsMutex in receive...");
         client->componentsMutex.lock();
+        Logger::verbose("ClientReceiveInitialState locked componentsMutex in receive");
 
         const auto elapsed = waitTimer.elapsed();
         if(elapsed > 1.0f/50.0f) {
@@ -24,7 +26,9 @@ void ClientRunningState::receive() {
          }
 
         client->packetManager.receive<ClientRunningState>(*this);
+        Logger::verbose("ClientReceiveInitialState unlocking componentsMutex in receive...");
         client->componentsMutex.unlock();
+        Logger::verbose("ClientReceiveInitialState unlocked componentsMutex in receive");
 }
 
 void ClientRunningState::step() {
@@ -46,7 +50,9 @@ void ClientRunningState::step() {
     /** CRITICAL-SECTION **/
     Timer waitTimer;
     waitTimer.start();
+    Logger::verbose("ClientReceiveInitialState locking componentsMutex in step...");
     client->componentsMutex.lock();
+    Logger::verbose("ClientReceiveInitialState locked componentsMutex in step");
     const auto elapsed = waitTimer.elapsed();
     if(elapsed > 1.0f/50.0f) {
         std::ostringstream oss;
@@ -75,6 +81,7 @@ void ClientRunningState::step() {
 
     /** END OF CRITICAL SECTION **/
     client->componentsMutex.unlock();
+    Logger::verbose("ClientReceiveInitialState unlocked componentsMutex in step");
 
     //Limit client-speed to 60fps (rather 60 tick per second)
     //Check the elapsed time for the current step, if it is lower than

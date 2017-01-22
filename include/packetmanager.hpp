@@ -82,6 +82,8 @@ public:
 			return;
 		}
 
+		Logger::verbose("Deserializing and applying packet");
+
 		try {
 			//Deserialize contents of buffer into untyped packet
 	        std::string serializedPacket(buffer, bytesRead);
