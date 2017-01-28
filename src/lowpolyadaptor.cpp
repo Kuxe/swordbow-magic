@@ -6,8 +6,10 @@
 
 #include "iclientstate.hpp"
 
+using namespace lowpoly3d;
+
 LowpolyAdaptor::LowpolyAdaptor(bool fullscreen, bool vsync) {
-	renderer.initialize(this);
+	renderer.initialize(this, "../contrib/Install/lp3d/shaders/");
 }
 
 LowpolyAdaptor::~LowpolyAdaptor() {

@@ -80,4 +80,4 @@ swordbow-magic-test
 /doxygen/
 
 #Dependencies is platform dependent and handled by CMake (not git)
-/deps/
+/contrib/

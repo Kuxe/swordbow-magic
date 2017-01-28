@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Kuxe/swordbow-magic.svg?branch=master)](https://travis-ci.org/Kuxe/swordbow-magic)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/kuxe/swordbow-magic?svg=true)](https://ci.appveyor.com/project/Kuxe/swordbow-magic)
 [![Stories in Ready](https://badge.waffle.io/kuxe/swordbow-magic.png?label=ready&title=Ready)](https://waffle.io/kuxe/swordbow-magic)
 swordbow-magic
 ==============

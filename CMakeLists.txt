@@ -91,7 +91,7 @@ SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Os -pthread -fomit-fram
 #NOTE: For lots of dependencies, INSTALL_COMMAND is just set to ""
 #this is because they shouldn't be installed on the system (ie in /usr/local/libs or alikes)
 #This is fine, because all required files will be
-#somewhere inside ${CMAKE_SOURCE_DIR}/deps/<somehere here or further down>/
+#somewhere inside ${CMAKE_SOURCE_DIR}/contrib/<somehere here or further down>/
 
 #Run "make setup" to download dependencies required
 #Other target are dependant on this target but not
@@ -106,8 +106,8 @@ ADD_CUSTOM_TARGET(setup
 #Hence these must be setup by everyone intended to build swordbow-magic
 FIND_PACKAGE(Git REQUIRED)
 
-SET(DEP_DIR "${CMAKE_SOURCE_DIR}/deps")
-SET_DIRECTORY_PROPERTIES(PROPERTIES EP_BASE "${DEP_DIR}")
+SET(CONTRIB_DIR "${CMAKE_SOURCE_DIR}/contrib")
+SET_DIRECTORY_PROPERTIES(PROPERTIES EP_BASE "${CONTRIB_DIR}")
 
 #PLATFORM INDEPENDENT DOWNLOADS
 EXTERNALPROJECT_ADD(Cereal
@@ -134,14 +134,6 @@ EXTERNALPROJECT_ADD(OGG
 )
 ADD_DEPENDENCIES(setup OGG)
 
-EXTERNALPROJECT_ADD(Catch
-    GIT_REPOSITORY https://github.com/philsquared/Catch
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-)
-ADD_DEPENDENCIES(setup Catch)
-
 EXTERNALPROJECT_ADD(args
     GIT_REPOSITORY https://github.com/Taywee/args
     CONFIGURE_COMMAND ""
@@ -150,25 +142,25 @@ EXTERNALPROJECT_ADD(args
 )
 ADD_DEPENDENCIES(setup args)
 
-SET(LOWPOLY3D_INSTALL_DIR ${DEP_DIR}/Install/lp3d)
+SET(LOWPOLY3D_INSTALL_DIR ${CONTRIB_DIR}/Install/lp3d)
 SET(LOWPOLY3D_LIBRARY_DIR ${LOWPOLY3D_INSTALL_DIR}/lib)
 SET(LOWPOLY3D_INCLUDE_DIR ${LOWPOLY3D_INSTALL_DIR}/include)
 SET(LOWPOLY3D_SHADERS_DIR ${LOWPOLY3D_INSTALL_DIR}/shaders)
 EXTERNALPROJECT_ADD(lp3d
     GIT_REPOSITORY https://github.com/kuxe/lowpoly3d
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=LOWPOLY3D_INSTALL_DIR
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${LOWPOLY3D_INSTALL_DIR}
 )
 ADD_DEPENDENCIES(setup lp3d)
 
 TARGET_INCLUDE_DIRECTORIES(sbm PUBLIC
     ${CMAKE_SOURCE_DIR}/include/
-    ${DEP_DIR}/Source/Cereal/include/
-    ${DEP_DIR}/Source/GLM/
-    ${DEP_DIR}/Source/args
+    ${CONTRIB_DIR}/Source/Cereal/include/
+    ${CONTRIB_DIR}/Source/GLM/
+    ${CONTRIB_DIR}/Source/args
 )
 TARGET_INCLUDE_DIRECTORIES(sbm-client PUBLIC
     ${CMAKE_SOURCE_DIR}/include/
-    ${DEP_DIR}/Source/Cereal/include/
+    ${CONTRIB_DIR}/Source/Cereal/include/
     ${LOWPOLY3D_INCLUDE_DIR}
 )
 TARGET_INCLUDE_DIRECTORIES(sbm-server PUBLIC
@@ -182,13 +174,27 @@ TARGET_INCLUDE_DIRECTORIES(sbm-server PUBLIC
 #Create a client-executable
 ADD_EXECUTABLE(swordbow-magic-client src/client.cpp)
 
-IF(UNIX)
+IF(UNIX AND NOT APPLE)
     TARGET_LINK_LIBRARIES(sbm-client PUBLIC sbm
-        ${DEP_DIR}/Install/lp3d/lib/liblowpoly3d.so
+        ${CONTRIB_DIR}/Install/lp3d/lib/liblowpoly3d.so
+    )
+    ADD_CUSTOM_COMMAND(TARGET sbm-client POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${LOWPOLY3D_LIBRARY_DIR}/liblowpoly3d.so
+        ${CMAKE_BINARY_DIR}/liblowpoly3d.so
+    )
+ELSEIF(APPLE)
+    TARGET_LINK_LIBRARIES(sbm-client PUBLIC sbm
+        ${CONTRIB_DIR}/Install/lp3d/lib/liblowpoly3d.dylib
+    )
+    ADD_CUSTOM_COMMAND(TARGET sbm-client POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${LOWPOLY3D_LIBRARY_DIR}/liblowpoly3d.dylib
+        ${CMAKE_BINARY_DIR}/liblowpoly3d.dylib
     )
 ELSEIF(WIN32)
     TARGET_LINK_LIBRARIES(sbm-client PUBLIC sbm wsock32 ws2_32
-        ${DEP_DIR}/Install/lp3d/lib/liblowpoly3d.dll
+        ${CONTRIB_DIR}/Install/lp3d/lib/liblowpoly3d.dll
     )
     ADD_CUSTOM_COMMAND(TARGET sbm-client POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -212,21 +218,6 @@ ELSEIF(WIN32)
     TARGET_LINK_LIBRARIES(sbm-server PUBLIC sbm wsock32 ws2_32)
 ENDIF()
 TARGET_LINK_LIBRARIES(swordbow-magic-server PUBLIC sbm-server)
-
-#Create a test-executable using Catch
-ADD_EXECUTABLE(swordbow-magic-test
-    catch/src/config.cpp
-    catch/src/hashgridsystem_test.cpp
-    catch/src/rect_test.cpp
-    catch/src/rendersystem_test.cpp
-)
-
-#What linker flags are required for swordbow-magic-test?
-TARGET_LINK_LIBRARIES(swordbow-magic-test PUBLIC
-    sbm
-    sbm-server
-    sbm-client
-)
 
 #===========================
 #=======SETUP TARGETS=======

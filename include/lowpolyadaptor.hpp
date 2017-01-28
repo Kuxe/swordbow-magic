@@ -10,18 +10,22 @@
 #include "overlay.hpp"
 #include "irenderer.hpp"
 #include "lowpoly3d.hpp"
+#include "renderquerier.hpp"
+#include "ilowpolyinput.hpp"
 
-//TODO: Use lowpoly3d
 /** If this class is an interface, IRenderer, then there can be another class called Lowpoly3dRenderer which realizes this interface.
     Lowpoly3dRenderer in turn has a member of type lowpoly3d::Renderer. This architecture means that I can if ever redoing renderer
     just swap out the Lowpoly3dRenderer for some other NextgenRenderer without ever redoing anything within swordbow-magic
     which is nice. I think this is the adaptor-pattern. **/
 
-class LowpolyAdaptor : public IRenderer, public RenderQuerier, public ILowpolyInput {
+class LowpolyAdaptor :
+    public IRenderer,
+    public lowpoly3d::RenderQuerier,
+    public lowpoly3d::ILowpolyInput {
 private:
     std::queue<Text> texts;
-    Renderer renderer;
-    std::vector<RenderData> rds;
+    lowpoly3d::Renderer renderer;
+    std::vector<lowpoly3d::RenderData> rds;
     void renderTexts();
 public:
     LowpolyAdaptor(bool fullscreen, bool vsync);
@@ -49,7 +53,7 @@ public:
     /** End of methods required by IRenderer **/
 
     /** Methods required by RenderQuerier **/
-    const std::vector<RenderData>& getRenderDatas() const;
+    const std::vector<lowpoly3d::RenderData>& getRenderDatas() const;
     const glm::mat4 getView() const;
     const float getGametime() const;
     const float getSunRadians() const;
