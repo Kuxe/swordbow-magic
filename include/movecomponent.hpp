@@ -18,7 +18,7 @@ struct MoveComponent {
     MoveComponent(
     	const glm::vec2& pos = {0, 0},
     	const glm::vec2& oldPos = {0, 0},
-    	const float maxVelLength = {100.0f}) :
+    	const float maxVelLength = 100.0f) :
     	pos(pos),
     	oldPos(pos),
     	maxVelLength(maxVelLength) { }
