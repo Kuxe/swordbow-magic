@@ -31,5 +31,6 @@ matrix:
 
 # Build steps
 script:
-  - cd build
-  - cmake .. && cmake --build .
+  - mkdir debug
+  - cd debug
+  - cmake -DCMAKE_BUILD_TYPE=Debug .. && cmake --build .
