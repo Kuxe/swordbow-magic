@@ -17,4 +17,5 @@ build_script:
   - mkdir debug
   - cd debug
   - cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug ..
-  - cmake --build .
+  - cmake --build . --target setup
+  - cmake --build . --target build

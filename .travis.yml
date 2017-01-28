@@ -33,4 +33,6 @@ matrix:
 script:
   - mkdir debug
   - cd debug
-  - cmake -DCMAKE_BUILD_TYPE=Debug .. && cmake --build .
+  - cmake -DCMAKE_BUILD_TYPE=Debug ..
+  - cmake --build . --target setup
+  - cmake --build . --target build
