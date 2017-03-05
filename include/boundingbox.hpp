@@ -20,7 +20,7 @@ public:
     virtual const System::Identifier getSystemName() const = 0;
 };
 
-static inline constexpr Rect getBoundingBox(
+static inline Rect getBoundingBox(
 	const glm::vec2& position,
 	const glm::vec2& dimension,
 	const glm::vec2& offset = {0.0f, 0.0f}) {
