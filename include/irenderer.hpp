@@ -2,17 +2,20 @@
 #define IRENDERER_HPP
 
 #include <glm/glm.hpp>
+#include <vector>
+#include "idmanager.hpp" //for definition of ID
 
 //Forward declarations
 namespace Image { enum Identifier; }
 class Text;
 class IClientState;
+class ComponentManager;
 
 /** IRenderer is an interface used by swordbow-magic client. IRenderer provides various graphical
 	functionality that the swordbow-magic client may need. **/
 struct IRenderer {
 	virtual ~IRenderer() { };
-	virtual void render() = 0;
+	virtual void render(const std::vector<ID>& activeIds, const ComponentManager& cm) = 0;
     virtual void renderOverlays() = 0;
     virtual void renderOnlyOverlays() = 0;
     virtual void showOverlay(const Image::Identifier& identifier, const Text& text) = 0;

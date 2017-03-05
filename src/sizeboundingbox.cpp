@@ -11,8 +11,8 @@ const Rect SizeBoundingBox::getBoundingBox(ID id) const {
         const auto& mc = componentManager->moveComponents.at(id);
         const auto& sc = componentManager->sizeComponents.at(id);
         return Rect {
-            mc.pos.x,
-            mc.pos.y,
+            0, //TODO: Convert from 2D to 3D mc.pos.x,
+            0, //TODO: Convert from 2D to 3D mc.pos.y,
             static_cast<float>(sc.width - 1),
             static_cast<float>(sc.height - 1),
         };
@@ -29,8 +29,8 @@ const Rect SizeBoundingBox::getOldBoundingBox(ID id) const {
         const auto& mc = componentManager->moveComponents.at(id);
         const auto& sc = componentManager->sizeComponents.at(id);
         return Rect {
-            floorf(mc.oldPos.x),
-            floorf(mc.oldPos.y),
+            0, //TODO: Convert from 2D to 3D floorf(mc.oldPos.x),
+            0, //TODO: Convert from 2D to 3D floorf(mc.oldPos.y),
             static_cast<float>(sc.width - 1),
             static_cast<float>(sc.height - 1),
         };

@@ -109,7 +109,7 @@ void Server::onConnect(const IpAddress& ipAddress) {
 	std::ostringstream oss;
 	oss << ipAddress << " connected";
 	Logger::log(oss, Logger::INFO);
-	auto playerId = entityManager.createFatMan({10.0f, 20.0f});
+	auto playerId = entityManager.createFatMan(glm::mat4());
 	clients.insert({ipAddress, {1, playerId}});
 
 	//In case a client reconnects, the packetManager shouldn't reject the newly

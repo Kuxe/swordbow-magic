@@ -2,7 +2,7 @@
 #define BIRDSYSTEM_HPP
 
 #include "isystem.hpp"
-#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 #include <unordered_set>
 #include <unordered_map>
 #include <random>
@@ -16,13 +16,13 @@ class BirdSystem : public ISystem {
 private:
 	std::unordered_set<ID> birdIds;
 	std::unordered_set<ID> swarmIds;
-	std::unordered_map<ID, glm::vec2> fixedPoints;
+	std::unordered_map<ID, glm::vec3> fixedPoints;
 	Timer seedTimer;
 
 	EntityManager* const entityManager;
 
-	glm::vec2 getRandomAcceleration(
-		const glm::vec2& v,
+	glm::vec3 getRandomAcceleration(
+		const glm::vec3& v,
 		const unsigned short variance,
 		const float eagerness) const;
 
@@ -40,7 +40,7 @@ public:
     //For any entity to be attached to the swarm, the entity
     //needs a birdComponent with swarmIndex = createSwarm({x, y});
     //For several birds to be part of a swarm, give them the same swarmIndex
-    ID createSwarm(const glm::vec2& fixedPoint);
+    ID createSwarm(const glm::vec3& fixedPoint);
 
     //Swarm won't any longer affect birds in swarm 
     bool dissolveSwarm(ID swarmId);

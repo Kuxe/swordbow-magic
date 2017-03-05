@@ -4,6 +4,9 @@
 #include "logger.hpp"
 #include <ostream>
 
+/** For converting active ids to lowpoly3d format **/
+#include "componentmanager.hpp"
+
 #include "iclientstate.hpp"
 
 using namespace lowpoly3d;
@@ -27,7 +30,21 @@ void LowpolyAdaptor::run() {
 	}
 }
 
-void LowpolyAdaptor::render() {
+void LowpolyAdaptor::render(const std::vector<ID>& activeIds, const ComponentManager& cm) {
+	/** Lowpoly3d reads from member "rds" so here I should convert
+		activeIds (the set of all entities which should be rendered)
+		and populate "rds" with the conversions. This is why componentmanager is known
+		here, so that actual data can be converted into something which lowpoly3d digest...
+		only ids can not be interpreted by lowpoly3d! **/
+
+	//Currently I wont bother thinking about doing clever conversions (= no copying of data)
+
+	rds.clear();
+	for(const ID& id : activeIds) {
+		const auto& rd = cm.renderComponents.at(id);
+		rds.push_back({glm::mat4(), rd.model, rd.shader});
+	}
+
 	signalRenderer();
 }
 

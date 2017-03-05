@@ -9,16 +9,13 @@
 #include "logger.hpp"
 #include "timer.hpp"
 #include "boundingbox.hpp"
-#include <vector>
-#include <thread>
-#include <mutex>
 
 RenderSystem::RenderSystem(IRenderer* const renderer, SpatialIndexer* spatialIndexer, CameraSystem* cameraSystem) :
     renderer(renderer), spatialIndexer(spatialIndexer), cameraSystem(cameraSystem) { }
 
 void RenderSystem::add(ID id) {
 	ids.insert(id);
-	activeIds.push(id);
+	activeIds.push_back(id);
 }
 
 void RenderSystem::remove(ID id) {
@@ -26,9 +23,11 @@ void RenderSystem::remove(ID id) {
 }
 
 void RenderSystem::update() {
-    //TODO: Use lowpoly3d
     //This place would be a nice place to perform various culling (or not, various culling should be a feature of Lowpoly3d)
-    //Active ids in this system should be sent to lowpoly3d 
+    //Active ids in this system should be sent to lowpoly3d
+
+	//Render the scene
+    renderer->render(activeIds, *componentManager);
 }
 
 unsigned int RenderSystem::count() const {
@@ -42,7 +41,7 @@ const System::Identifier RenderSystem::getIdentifier() const {
 bool RenderSystem::activateId(ID id) {
 	//Only make the id active if it is a member of rendersystem
 	if(ids.find(id) != ids.end()) {
-		activeIds.push(id);
+		activeIds.push_back(id);
         return true;
 	}
     return false;

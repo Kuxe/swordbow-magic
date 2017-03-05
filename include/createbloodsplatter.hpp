@@ -16,7 +16,7 @@ struct CreateBloodsplatter : public ICommand {
         id(id) { }
 
     void execute() {
-        entityManager->createBloodSplatter(entityManager->componentManager->moveComponents.at(id).pos);
+        entityManager->createBloodSplatter(entityManager->componentManager->moveComponents.at(id).transform);
     }
 };
 

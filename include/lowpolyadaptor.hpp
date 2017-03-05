@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <queue>
+#include <vector>
 
 #include "text.hpp"
 #include "imageidentifiers.hpp"
@@ -40,7 +41,7 @@ public:
     //renderOverlays doesn't call RenderPresent, it calls RenderCopy and copies
     //overlays onto overlayTexture while renderOnlyOverlays does that AND
     //clear default-texture and renders it (clear everything + draw only overlay)
-    void render();
+    void render(const std::vector<ID>& activeIds, const ComponentManager& cm);
     void renderOverlays();
     void renderOnlyOverlays();
     void showOverlay(const Image::Identifier& identifier, const Text& text = {"", glm::ivec2(0.0), glm::vec3(0.0)});

@@ -45,6 +45,9 @@ void AttackSystem::update() {
         //In words: Draw a vector of length 'weaponLength' from the center of the
         //entity in it's facing direction. Place a box with the size of ac.impactArea
         //with the tip of the vector as the box's center
+
+        // TODO: Reimplement from 2D to 3D
+        /*
         float x = mc.pos.x + ac.impactArea.x + mc.dir.x*ac.weaponLength - ac.impactArea.w/2;
         float y = mc.pos.y + ac.impactArea.y + mc.dir.y*ac.weaponLength - ac.impactArea.h/2;
         if(x < 0 || y < 0) return; //If someone tries to strike outside of world, disallow the strike
@@ -98,7 +101,7 @@ void AttackSystem::update() {
                 }
             }
         }
-
+    */
     }
 }
 unsigned int AttackSystem::count() const {

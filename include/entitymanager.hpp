@@ -54,16 +54,16 @@ class EntityManager {
     const unsigned int& getId();
 
 	ID createFatMan();
-    ID createFatMan(const glm::vec2& position);
-    ID createTree(const glm::vec2& position);
-	ID createGrassTile(const glm::vec2& position);
-    ID createWaterTile(const glm::vec2& position);
-    ID createBloodSplatter(const glm::vec2& position);
-    ID createFlower(const glm::vec2& position, const char color);
-    ID createDummySquare(const glm::vec2& poisiton);
-    ID createStone(const glm::vec2& position);
-    ID createBlueBird(const glm::vec2& position);
-    ID createSwarmPoint(const glm::vec2& position);
+    ID createFatMan(const glm::mat4& transform);
+    ID createTree(const glm::mat4& transform);
+	ID createGrassTile(const glm::mat4& transform);
+    ID createWaterTile(const glm::mat4& transform);
+    ID createBloodSplatter(const glm::mat4& transform);
+    ID createFlower(const glm::mat4& transform, const char color);
+    ID createDummySquare(const glm::mat4& transform);
+    ID createStone(const glm::mat4& transform);
+    ID createBlueBird(const glm::mat4& transform);
+    ID createSwarmPoint(const glm::mat4& transform);
 	void remove(ID id);
     bool idExists(ID id);
 

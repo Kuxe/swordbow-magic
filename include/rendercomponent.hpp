@@ -9,6 +9,7 @@ class RenderComponent {
  public:
  	Image::Identifier image = Image::UNDEFINED;
  	glm::vec2 offset = {0.0f, 0.0f};
+ 	std::string model = "sphere", shader = "default";
 
 	//is set to y+height during runtime
 	//used in painters algorithm

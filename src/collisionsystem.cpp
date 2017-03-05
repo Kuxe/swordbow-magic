@@ -18,8 +18,8 @@ void CollisionSystem::remove(ID id) {
 void CollisionSystem::update() {
 	while(!activeIds.empty()) {
 		auto id = activeIds.front(); activeIds.pop();
-
-		for(auto overlap : spatialIndexer->overlaps(id)) {
+		//TODO: Convert from 2D to 3D
+		/*for(auto overlap : spatialIndexer->overlaps(id)) {
 			auto& outerMc = componentManager->moveComponents.at(id);
 			outerMc.pos.x = outerMc.oldPos.x;
 			outerMc.pos.y = outerMc.oldPos.y;
@@ -27,7 +27,7 @@ void CollisionSystem::update() {
 			auto& innerMc = componentManager->moveComponents.at(overlap);
 			innerMc.pos.x = innerMc.oldPos.x;
 			innerMc.pos.y = innerMc.oldPos.y;
-		}
+		} */
 	}
 }
 

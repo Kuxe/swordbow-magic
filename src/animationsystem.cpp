@@ -21,10 +21,12 @@ void AnimationSystem::update() {
         auto& ac = componentManager->animationComponents.at(id);
         auto& mc = componentManager->moveComponents.at(id);
 
+        //TODO: Implement
+
         //create a unique number for each possible direction
         //if its an entity without direction, such as bloodsplatter, it will be 0
         //and neither switch-statement will occur.
-		const char dirhash = mc.dir.x * 2 + mc.dir.y * 3;
+		/*const char dirhash = mc.dir.x * 2 + mc.dir.y * 3;
 
 		//If this entity is moving, play animation in correct direction
 		if(glm::length(mc.vel) > 0) {
@@ -116,7 +118,7 @@ void AnimationSystem::update() {
                 //the ids of the components upon receival on the clients
                 systemManager->getSystem(System::RENDERDIFF)->add(id);
             }
-        }
+        }*/
     }
 }
 unsigned int AnimationSystem::count() const {

@@ -18,8 +18,8 @@ const Rect TextureBoundingBox::getBoundingBox(ID id) const {
         auto& rc = componentManager->renderComponents.at(id);
         //auto& textureData = renderer->getTextureDatas().at(rc.image); //TODO: Use lowpoly3d
         return Rect {
-            floorf(mc.pos.x + rc.offset.x),
-            floorf(mc.pos.y + rc.offset.y),
+            0, //TODO: Convert from 2D to 3D floorf(mc.pos.x + rc.offset.x),
+            0, //TODO: Convert from 2D to 3D floorf(mc.pos.y + rc.offset.y),
             static_cast<float>(0.0/*textureData.dimension.x*/),
             static_cast<float>(0.0/*textureData.dimension.y*/),
         };
@@ -37,8 +37,8 @@ const Rect TextureBoundingBox::getOldBoundingBox(ID id) const {
         auto& rc = componentManager->renderComponents.at(id);
         //auto& textureData = renderer->getTextureDatas().at(rc.image); //TODO: Use lowpoly3d
         return Rect {
-            floorf(mc.oldPos.x + rc.offset.x),
-            floorf(mc.oldPos.y + rc.offset.y),
+            0, //TODO: Convert from 2D to 3D floorf(mc.oldPos.x + rc.offset.x),
+            0, //TODO: Convert from 2D to 3D floorf(mc.oldPos.y + rc.offset.y),
             static_cast<float>(0.0/*textureData.dimension.x*/), //TODO: Use lowpoly3d
             static_cast<float>(0.0/*textureData.dimension.y*/), //TODO: Use lowpoly3d
         };

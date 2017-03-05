@@ -4,7 +4,7 @@
 #include "isystem.hpp"
 #include <unordered_set>
 #include <unordered_map>
-#include <queue>
+#include <vector>
 #include "rect.hpp"
 #include "text.hpp"
 
@@ -23,7 +23,7 @@ class CameraSystem;
 class RenderSystem : public ISystem {
 private:
 	std::unordered_set<ID> ids;
-	std::queue<ID> activeIds;
+	std::vector<ID> activeIds;
 	std::unordered_map<ID, Rect> oldDrawAreas;
 
     IRenderer* const renderer;

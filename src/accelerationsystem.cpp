@@ -14,7 +14,7 @@ void AccelerationSystem::update() {
 	for(auto id : ids) {
 		auto& mc = componentManager->moveComponents.at(id);
 		const auto& ac = componentManager->accelerationComponents.at(id);
-		mc.vel += ac.vec * deltaTime->delta();
+		mc.velocity += ac.acceleration * deltaTime->delta();
 	}
 }
 

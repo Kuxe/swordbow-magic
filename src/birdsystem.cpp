@@ -24,18 +24,18 @@ void BirdSystem::update() {
 	for(const auto& id : swarmIds) {
 		//TODO: fixedPoint could be data in a swarmcomponent, right?§
 		const auto& fixedPoint = fixedPoints.at(id);
-		const auto& moveComponent = componentManager->moveComponents.at(id);
-		auto& accelerationComponent = componentManager->accelerationComponents.at(id);
-		accelerationComponent.vec = accelerationComponent.vec*0.9995f + getRandomAcceleration(moveComponent.pos - fixedPoint, 2000, 0.001f);
+		const auto& mc = componentManager->moveComponents.at(id);
+		auto& ac = componentManager->accelerationComponents.at(id);
+		//TODO: Convert from 2D to 3D ac.acceleration = ac.acceleration*0.9995f + getRandomAcceleration(mc.pos - fixedPoint, 2000, 0.001f);
 	}
 
 	for(auto id : birdIds) {
 		const auto& birdComponent = componentManager->birdComponents.at(id);
-		const auto& moveComponent = componentManager->moveComponents.at(id);
+		const auto& mc = componentManager->moveComponents.at(id);
 		const auto& swarmId = birdComponent.swarmId;
-		const auto& swarmPoint = componentManager->moveComponents.at(swarmId).pos;
-		auto& accelerationComponent = componentManager->accelerationComponents.at(id);
-		accelerationComponent.vec = accelerationComponent.vec*0.995f + getRandomAcceleration(moveComponent.pos - swarmPoint, 333, 0.01f);
+		//TODO: Convert from 2D to 3D const auto& swarmPoint = componentManager->moveComponents.at(swarmId).pos;
+		auto& ac = componentManager->accelerationComponents.at(id);
+		//TODO: Convert from 2D to 3D ac.acceleration = ac.acceleration*0.995f + getRandomAcceleration(mc.pos - swarmPoint, 333, 0.01f);
 	}
 }
 
@@ -51,10 +51,10 @@ bool BirdSystem::activateId(ID id) {
 	return false;
 }
 
-ID BirdSystem::createSwarm(const glm::vec2& fixedPoint) {
+ID BirdSystem::createSwarm(const glm::vec3& fixedPoint) {
 	//TODO: Generate swarmPoint
-	glm::vec2 position = {0, 400};
-	auto swarmId = entityManager->createSwarmPoint(position);
+	glm::mat3 transform = glm::mat3();
+	auto swarmId = entityManager->createSwarmPoint(transform);
 	fixedPoints.insert({swarmId, fixedPoint});
 	swarmIds.insert(swarmId);
 	return swarmId;
@@ -72,13 +72,14 @@ bool BirdSystem::dissolveSwarm(ID swarmId) {
 	return false;
 }
 
-glm::vec2 BirdSystem::getRandomAcceleration(
-	const glm::vec2& v,
+glm::vec3 BirdSystem::getRandomAcceleration(
+	const glm::vec3& v,
 	const unsigned short variance,
 	const float eagerness) const {
 
 	std::normal_distribution<double> xdist = std::normal_distribution<double>(-v.x, variance);
 	std::normal_distribution<double> ydist = std::normal_distribution<double>(-v.y, variance);
+	std::normal_distribution<double> zdist = std::normal_distribution<double>(-v.z, variance);
 	std::default_random_engine generator(seedTimer.elapsed()*1000000000.0f);
-	return glm::vec2 {xdist(generator), ydist(generator)} * (float)pow(glm::length(v), eagerness);
+	return glm::vec3 {xdist(generator), ydist(generator), zdist(generator)} * (float)pow(glm::length(v), eagerness);
 }

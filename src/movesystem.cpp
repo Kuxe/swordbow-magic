@@ -19,22 +19,11 @@ void MoveSystem::remove(ID id) {
 		Logger::log("MoveSystem tried to erase unpresent ID" + std::to_string(id), Logger::WARNING);
 		return;
 	}
-
-	//since ID isnt moving anymore, oldxpos should be equal to xpos
-	//but that update wont happen within update() method since
-	//this id wont be iterated over within that loop after this call
-	//so it is neccesary to force-update oldxpos here
-	auto& mc = componentManager->moveComponents.at(id);
-	mc.oldPos.x = mc.pos.x;
-	mc.oldPos.y = mc.pos.y;
 }
 
 void MoveSystem::update() {
 	for(auto id : ids) {
 		auto& mc = componentManager->moveComponents.at(id);
-
-		mc.oldPos.x = mc.pos.x;
-		mc.oldPos.y = mc.pos.y;
 
 		//If this entity has an inputComponent,
 		//check if buttons are pressed in order to move entity.
@@ -48,34 +37,34 @@ void MoveSystem::update() {
 			auto& ic = componentManager->inputComponents.at(id);
 
 			//If no key was pressed
-			if(ic.d != 0 || ic.a != 0 || ic.s != 0 || ic.w != 0) {
+			/** TODO: Convert from 2D to 3D if(ic.d != 0 || ic.a != 0 || ic.s != 0 || ic.w != 0) {
 				mc.dir.x = ic.d - ic.a;
 				mc.dir.y = ic.s - ic.w;
-			}
+			} **/
 
-			mc.vel = glm::vec2{ic.d - ic.a, ic.s - ic.w} * mc.maxVelLength; //temporary solution
+			//TODO: Convert from 2D to 3D mc.velocity = glm::vec2{ic.d - ic.a, ic.s - ic.w} * mc.maxVelLength; //temporary solution
 		}
 
 		//If some input was recieved which caused a move (mc.vel isn't of length 0)
-		if(glm::length(mc.vel) > 0) {
-			if(glm::length(mc.vel) > mc.maxVelLength) {
-				mc.vel = glm::normalize(mc.vel);
-				mc.vel *= mc.maxVelLength;
+		if(glm::length(mc.velocity) > 0) {
+			if(glm::length(mc.velocity) > mc.maxVelLength) {
+				mc.velocity = glm::normalize(mc.velocity);
+				mc.velocity *= mc.maxVelLength;
 			}
 
 
 			//Adjust for dt
-			mc.vel *= deltaTime->delta();
+			mc.velocity *= deltaTime->delta();
 
 			//Finally update position
-			mc.pos += mc.vel;
-
-			//It might be handy to normalize the dir for other systems
-			mc.dir = normalize(mc.dir);
+			//TODO: Convert from 2D to 3D mc.transform += mc.velocity;
 		}
 
 		//Do something defined by the entity if the entity moved
-		if(!(mc.pos.x == mc.oldPos.x && mc.pos.y == mc.oldPos.y)) {
+
+		//TODO: Aha, this is why I need an "oldPos" member (I realize this as of 2017-03-06)
+		//Ill comment this out and reintroduce oldPos in later stages
+		/*if(!(mc.pos.x == mc.oldPos.x && mc.pos.y == mc.oldPos.y)) {
 
 			//But only if it has a commandComponent. This "onMove" events
 			//should probably be handled in a system of its own, ie a
@@ -84,7 +73,7 @@ void MoveSystem::update() {
 				auto& cc = componentManager->commandComponents.at(id);
 				cc.execute(CommandComponent::Event::ON_MOVE);
 			}
-		}
+		}*/
 	}
 }
 

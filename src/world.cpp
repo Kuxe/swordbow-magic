@@ -19,7 +19,7 @@ void World::createWorld() {
 	for(short y = 0; y < NUM_TILES; y++) {
 		for(short x = 0; x < NUM_TILES; x++) {
 			tiles[x][y] = entityManager->createGrassTile(
-				{x * TILE_SIZE, y * TILE_SIZE}
+				glm::mat4() //TODO: Convert from 2D to 3D {x * TILE_SIZE, 0, y * TILE_SIZE}
 			);
 		}
 	}
@@ -51,7 +51,7 @@ void World::createWorld() {
 			//only accept generated flowers within world
 			auto point = noise.getPoint();
 			if(point.x >= 0 && point.y >= 0) {
-				auto id = entityManager->createFlower(point, flowercolor);
+				//TODO: Convert from 2D to 3D auto id = entityManager->createFlower({point.x, 0, point.y}, flowercolor);
 			}
 		}
 	}
@@ -74,7 +74,7 @@ void World::createWorld() {
 			//only accept generated trees within world
 			auto point = noise.getPoint();
 			if(point.x >= 0 && point.y >= 0) {
-				auto id = entityManager->createTree(point);
+				//TODO: Convert from 2D to 3D auto id = entityManager->createTree(point);
 			}
 		}
 	}
@@ -85,30 +85,30 @@ void World::createWorld() {
 
 	const uint16_t NUM_STONES = 100;
 	for(uint16_t i = 0; i < NUM_STONES; i++) {
-		entityManager->createStone({stoneUniformx(generator), stoneUniformy(generator)});
+		//TODO: Convert from 2D to 3D entityManager->createStone({stoneUniformx(generator), stoneUniformy(generator)});
 	}
 
 	//Create some birds
 	auto& componentManager = entityManager->componentManager;
 	auto birdSystem = static_cast<BirdSystem*>(entityManager->systemManager->getSystem(System::BIRD));
 	std::uniform_real_distribution<double> swarmUniformx(0.0, NUM_TILES * TILE_SIZE);
-	std::uniform_real_distribution<double> swarmUniformy(0.0, NUM_TILES * TILE_SIZE);
+	std::uniform_real_distribution<double> swarmUniformz(0.0, NUM_TILES * TILE_SIZE);
 	constexpr uint16_t birdVariance = 400;
 	std::normal_distribution<double> numberOfSwarmsDist(10, 0.5);
 	std::normal_distribution<double> numberOfBirdsPerSwarmDist(8, 3);
 
 	const auto numberOfSwarms = numberOfSwarmsDist(generator);
 	for(int i = 0; i < numberOfSwarms; i++) {
-		const glm::vec2 swarmPos = {swarmUniformx(generator), swarmUniformy(generator)};
+		const glm::vec3 swarmPos = {swarmUniformx(generator), 0.0f, swarmUniformz(generator)};
 		std::normal_distribution<double> birdNormalx(swarmPos.x, birdVariance);
-		std::normal_distribution<double> birdNormaly(swarmPos.y, birdVariance);
+		std::normal_distribution<double> birdNormalz(swarmPos.y, birdVariance);
 		const auto swarmId = birdSystem->createSwarm(swarmPos);
 		const auto numberOfBirds = numberOfBirdsPerSwarmDist(generator);
 		for(int j = 0; j < numberOfBirds; j++) {
-			const glm::vec2 birdPos = {birdNormalx(generator), birdNormaly(generator)};
-			const auto id = entityManager->createBlueBird(birdPos);
-			auto& bc = componentManager->birdComponents.at(id);
-			bc.swarmId = swarmId;
+			const glm::vec3 birdPos = {birdNormalx(generator), 0.0f, birdNormalz(generator)};
+			//TODO: Convert from 2D to 3D const auto id = entityManager->createBlueBird(birdPos);
+			//TODO: Convert from 2D to 3D (id is commented out currently) auto& bc = componentManager->birdComponents.at(id);
+			//TODO: Convert from 2D to 3D (bc is commented out currently) bc.swarmId = swarmId;
 		}
 	}
 }
@@ -118,11 +118,14 @@ void World::createDebugWorld() {
 	const char NUM_TILES = 8;
 	for(short y = 0; y < NUM_TILES; y++) {
 		for(short x = 0; x < NUM_TILES; x++) {
+			/** TODO: Convert from 2D to 3D
 			tiles[x][y] = entityManager->createGrassTile(
-				{x * TILE_SIZE, y * TILE_SIZE}
-			);
+				{x * TILE_SIZE, 0, y * TILE_SIZE}
+			); **/
 		}
 	}
+
+	/** TODO: Convert from 2D to 3D
 
 	//This tree might be invisible
 	entityManager->createTree({100, 50});
@@ -142,23 +145,29 @@ void World::createDebugWorld() {
 	//test stuff on this guy
 	entityManager->createFatMan({50, 100});
 
+	**/
+
 	//Create some birds in two separate flocks
 	auto& componentManager = entityManager->componentManager;
 	auto birdSystem = static_cast<BirdSystem*>(entityManager->systemManager->getSystem(System::BIRD));
-	auto swarmId = birdSystem->createSwarm({20, 40});
-	std::vector<glm::vec2> birdPoints = {{300, 50}, {20, 30}, {50, 50}, {50, 300}, {62, 86}, {68, 28}};
+	auto swarmId = birdSystem->createSwarm({20, 40, 0});
+	std::vector<glm::vec3> birdPoints = {{300, 50, 0}, {20, 30, 0}, {50, 50, 0}, {50, 300, 0}, {62, 86, 0}, {68, 28, 0}};
 	for(const auto& point : birdPoints) {
+		/** TODO: Convert from 2D to 3D
 		auto id = entityManager->createBlueBird(point);
 		auto& bc = componentManager->birdComponents.at(id);
 		bc.swarmId = swarmId;
+		**/
 	}
 
-	swarmId = birdSystem->createSwarm({40, 70});
-	birdPoints = {{23, 32}, {123, 15}, {32, 43}, {46, 17}, {57, 32}, {87, 36}};
+	swarmId = birdSystem->createSwarm({40, 70, 0});
+	birdPoints = {{23, 32, 0}, {123, 15, 0}, {32, 43, 0}, {46, 17, 0}, {57, 32, 0}, {87, 36, 0}};
 	for(const auto& point : birdPoints) {
+		/** TODO: Convert from 2D to 3D
 		auto id = entityManager->createBlueBird(point);
 		auto& bc = componentManager->birdComponents.at(id);
 		bc.swarmId = swarmId;
+		**/
 	}
 
 }

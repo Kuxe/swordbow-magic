@@ -37,7 +37,7 @@ const unsigned int& EntityManager::getId() {
 	return *ids.find(id);
 }
 
-ID EntityManager::createFatMan(const glm::vec2& position) {
+ID EntityManager::createFatMan(const glm::mat4& transform) {
 	//Get unique ID
 	auto id = getId();
 
@@ -62,9 +62,8 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 	renderComponent.offset.x = -7;
 	renderComponent.offset.y = -7;
 
-	moveComponent.pos = position;
-	moveComponent.vel.x = 200;
-	moveComponent.vel.y = 200;
+	moveComponent.transform = transform;
+	moveComponent.velocity = {200, 200, 0};
 
 	//Width of a player is 20x20
 	sizeComponent.width = 20;
@@ -167,10 +166,10 @@ ID EntityManager::createFatMan(const glm::vec2& position) {
 }
 
 ID EntityManager::createFatMan() {
-	return createFatMan({10, 10});
+	return createFatMan(glm::mat4());
 }
 
-ID EntityManager::createTree(const glm::vec2& position) {
+ID EntityManager::createTree(const glm::mat4& transform) {
 	auto id = getId();
 
 	Logger::log("Creating tree with id" + std::to_string(id), Logger::INFO);
@@ -186,8 +185,7 @@ ID EntityManager::createTree(const glm::vec2& position) {
 	renderComponent.offset.x = -24;
 	renderComponent.offset.y = -54;
 
-	moveComponent.pos = position;
-	moveComponent.oldPos = moveComponent.pos;
+	moveComponent.transform = transform;
 
 	sizeComponent.width = 36;
 	sizeComponent.height = 10;
@@ -202,7 +200,7 @@ ID EntityManager::createTree(const glm::vec2& position) {
 
 	return id;
 }
-ID EntityManager::createGrassTile(const glm::vec2& position) {
+ID EntityManager::createGrassTile(const glm::mat4& transform) {
 	auto id = getId();
 
 	Logger::log("Creating grass with id" + std::to_string(id), Logger::INFO);
@@ -216,8 +214,7 @@ ID EntityManager::createGrassTile(const glm::vec2& position) {
 	rc.image = Image::GRASS;
 	rc.zindex_base = 0;
 
-	mc.pos = position;
-	mc.oldPos = mc.pos;
+	mc.transform = transform;
 
 	sizeComponent.width = 32;
 	sizeComponent.height = 32;
@@ -231,7 +228,7 @@ ID EntityManager::createGrassTile(const glm::vec2& position) {
 	return id;
 }
 
-ID EntityManager::createWaterTile(const glm::vec2& position) {
+ID EntityManager::createWaterTile(const glm::mat4& transform) {
 	auto id = getId();
 
 	Logger::log("Creating water with id" + std::to_string(id), Logger::INFO);
@@ -245,8 +242,7 @@ ID EntityManager::createWaterTile(const glm::vec2& position) {
 	rc.image = Image::WATER;
 	rc.zindex_base = 0;
 
-	mc.pos = position;
-	mc.oldPos = mc.pos;
+	mc.transform = transform;
 
 	sizeComponent.width = 32;
 	sizeComponent.height = 32;
@@ -260,7 +256,7 @@ ID EntityManager::createWaterTile(const glm::vec2& position) {
 	return id;
 }
 
-ID EntityManager::createBloodSplatter(const glm::vec2& position) {
+ID EntityManager::createBloodSplatter(const glm::mat4& transform) {
 	auto id = getId();
 
 	Logger::log("Creating bloodsplatter with id" + std::to_string(id), Logger::INFO);
@@ -275,7 +271,7 @@ ID EntityManager::createBloodSplatter(const glm::vec2& position) {
 	rc.offset.y = -10;
 	rc.zindex_base = 1;
 
-	mc.pos = position;
+	mc.transform = transform;
 
 	nc.name = "bloodsplatter";
 
@@ -305,7 +301,7 @@ ID EntityManager::createBloodSplatter(const glm::vec2& position) {
 	return id;
 }
 
-ID EntityManager::createFlower(const glm::vec2& position, const char color) {
+ID EntityManager::createFlower(const glm::mat4& transform, const char color) {
 	auto id = getId();
 
 	Logger::log("Creating flower with id" + std::to_string(id), Logger::INFO);
@@ -337,7 +333,7 @@ ID EntityManager::createFlower(const glm::vec2& position, const char color) {
 	rc.offset.y = -5;
 	rc.zindex_base = 1;
 
-	mc.pos = position;
+	mc.transform = transform;
 
 	nc.name = "flower";
 
@@ -348,7 +344,7 @@ ID EntityManager::createFlower(const glm::vec2& position, const char color) {
 	return id;
 }
 
-ID EntityManager::createDummySquare(const glm::vec2& position) {
+ID EntityManager::createDummySquare(const glm::mat4& transform) {
 	auto id = getId();
 
 	Logger::log("Creating dummysquare with id" + std::to_string(id), Logger::INFO);
@@ -368,7 +364,7 @@ ID EntityManager::createDummySquare(const glm::vec2& position) {
 	rc.offset.y = 0;
 	rc.zindex_base = 1;
 
-	mc.pos = position;
+	mc.transform = transform;
 
 	nc.name = "testsquare1x1";
 
@@ -401,7 +397,7 @@ ID EntityManager::createDummySquare(const glm::vec2& position) {
 	return id;
 }
 
-ID EntityManager::createStone(const glm::vec2& position) {
+ID EntityManager::createStone(const glm::mat4& transform) {
 	auto id = getId();
 
 	Logger::log("Creating stone with id" + std::to_string(id), Logger::INFO);
@@ -412,8 +408,7 @@ ID EntityManager::createStone(const glm::vec2& position) {
 	auto& nc = componentManager->createNameComponent(id);
 
 
-	mc.pos = position;
-	mc.oldPos = mc.pos;
+	mc.transform = transform;
 
 	rc.image = Image::STONE_1;
 	rc.offset.x = -7;
@@ -434,7 +429,7 @@ ID EntityManager::createStone(const glm::vec2& position) {
 	return id;
 }
 
-ID EntityManager::createBlueBird(const glm::vec2& position) {
+ID EntityManager::createBlueBird(const glm::mat4& transform) {
 	auto id = getId();
 
 	Logger::log("Creating blueBird with id" + std::to_string(id), Logger::INFO);
@@ -447,9 +442,8 @@ ID EntityManager::createBlueBird(const glm::vec2& position) {
 	auto& bc = componentManager->createBirdComponent(id);
 	auto& cc = componentManager->createCommandComponent(id);
 
-	mc.pos = position;
-	mc.oldPos = mc.pos;
-	mc.vel = {0, 0};
+	mc.transform = transform;
+	mc.velocity = {0, 0, 0};
 	mc.maxVelLength = 150.0f;
 
 	rc.image = Image::BLUE_BIRD_WEST_3;
@@ -491,14 +485,14 @@ ID EntityManager::createBlueBird(const glm::vec2& position) {
 	return id;
 }
 
-ID EntityManager::createSwarmPoint(const glm::vec2& position) {
+ID EntityManager::createSwarmPoint(const glm::mat4& transform) {
 	auto id = getId();
 
 	auto& mc = componentManager->createMoveComponent(id);
 	auto& ac = componentManager->createAccelerationComponent(id);
 	auto& nc = componentManager->createNameComponent(id);
 
-	mc.pos = mc.oldPos = position;
+	mc.transform = transform;
 
 	nc.name = "SwarmPoint";
 
