@@ -142,14 +142,34 @@ EXTERNALPROJECT_ADD(args
 )
 ADD_DEPENDENCIES(setup args)
 
-SET(LOWPOLY3D_INSTALL_DIR ${CONTRIB_DIR}/Install/lp3d)
+SET(LOWPOLY3D_INSTALL_DIR ${CONTRIB_DIR}/Source/lp3d)
 SET(LOWPOLY3D_LIBRARY_DIR ${LOWPOLY3D_INSTALL_DIR}/lib)
 SET(LOWPOLY3D_INCLUDE_DIR ${LOWPOLY3D_INSTALL_DIR}/include)
 SET(LOWPOLY3D_SHADERS_DIR ${LOWPOLY3D_INSTALL_DIR}/shaders)
-EXTERNALPROJECT_ADD(lp3d
-    GIT_REPOSITORY https://github.com/kuxe/lowpoly3d
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${LOWPOLY3D_INSTALL_DIR}
-)
+
+IF(UNIX AND NOT APPLE)
+    EXTERNALPROJECT_ADD(lp3d
+        URL https://github.com/Kuxe/lowpoly3d/releases/download/0.0.16/lowpoly3d-0.0.16-Linux.tar.gz
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
+    )
+ELSEIF(APPLE)
+    EXTERNALPROJECT_ADD(lp3d
+        URL https://github.com/Kuxe/lowpoly3d/releases/download/0.0.16/lowpoly3d-0.0.16-Darwin.tar.gz
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
+    )
+ELSEIF(WIN32)
+    EXTERNALPROJECT_ADD(lp3d
+        URL https://github.com/Kuxe/lowpoly3d/releases/download/0.0.16/lowpoly3d-0.0.16-win64.zip
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
+    )
+ENDIF()
+
 ADD_DEPENDENCIES(setup lp3d)
 
 TARGET_INCLUDE_DIRECTORIES(sbm PUBLIC
@@ -176,7 +196,7 @@ ADD_EXECUTABLE(swordbow-magic-client src/client.cpp)
 
 IF(UNIX AND NOT APPLE)
     TARGET_LINK_LIBRARIES(sbm-client PUBLIC sbm
-        ${CONTRIB_DIR}/Install/lp3d/lib/liblowpoly3d.so
+        ${LOWPOLY3D_LIBRARY_DIR}/liblowpoly3d.so
     )
     ADD_CUSTOM_COMMAND(TARGET sbm-client POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -185,7 +205,7 @@ IF(UNIX AND NOT APPLE)
     )
 ELSEIF(APPLE)
     TARGET_LINK_LIBRARIES(sbm-client PUBLIC sbm
-        ${CONTRIB_DIR}/Install/lp3d/lib/liblowpoly3d.dylib
+        ${LOWPOLY3D_LIBRARY_DIR}/liblowpoly3d.dylib
     )
     ADD_CUSTOM_COMMAND(TARGET sbm-client POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -194,7 +214,7 @@ ELSEIF(APPLE)
     )
 ELSEIF(WIN32)
     TARGET_LINK_LIBRARIES(sbm-client PUBLIC sbm wsock32 ws2_32
-        ${CONTRIB_DIR}/Install/lp3d/lib/liblowpoly3d.dll
+        ${LOWPOLY3D_LIBRARY_DIR}/liblowpoly3d.dll
     )
     ADD_CUSTOM_COMMAND(TARGET sbm-client POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -202,6 +222,14 @@ ELSEIF(WIN32)
         ${CMAKE_BINARY_DIR}/liblowpoly3d.dll
     )
 ENDIF()
+
+#Copy lowpoly3d shaders to build dir
+ADD_CUSTOM_COMMAND(TARGET sbm-client POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${LOWPOLY3D_SHADERS_DIR}
+    ${CMAKE_BINARY_DIR}/shaders
+)
+
 #What linker flags are required for swordbow-magic-client?
 TARGET_LINK_LIBRARIES(swordbow-magic-client PUBLIC
     sbm-client

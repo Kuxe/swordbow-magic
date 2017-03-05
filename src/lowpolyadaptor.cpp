@@ -9,7 +9,8 @@
 using namespace lowpoly3d;
 
 LowpolyAdaptor::LowpolyAdaptor(bool fullscreen, bool vsync) {
-	renderer.initialize(this, "../contrib/Install/lp3d/shaders/");
+	const std::string shaderDirectory = "shaders/";
+	renderer.initialize(this, shaderDirectory);
 }
 
 LowpolyAdaptor::~LowpolyAdaptor() {
