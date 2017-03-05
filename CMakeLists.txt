@@ -149,7 +149,7 @@ SET(LOWPOLY3D_SHADERS_DIR ${LOWPOLY3D_INSTALL_DIR}/shaders)
 
 IF(UNIX AND NOT APPLE)
     EXTERNALPROJECT_ADD(lp3d
-        DOWNLOAD_COMMAND wget https://github.com/Kuxe/lowpoly3d/releases/download/0.0.16/lowpoly3d-0.0.16-Linux.tar.gz && tar xvzf * -C ../Source/
+        DOWNLOAD_COMMAND wget https://github.com/Kuxe/lowpoly3d/releases/download/0.0.16/lowpoly3d-0.0.16-Linux.tar.gz && tar xvzf lowpoly3d-0.0.16-Linux.tar.gz -C ../Source/
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
