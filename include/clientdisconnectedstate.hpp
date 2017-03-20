@@ -29,6 +29,9 @@ public:
 	void accept(const BeginTransmittingInitialComponentsData& data, const IpAddress& sender);
 	void accept(const KeepAliveData&, const IpAddress& sender);
 	void accept(const auto& data, const IpAddress& sender);
+
+	void onEvent(const KeyEvent& evt);
+	void onEvent(const MouseEvent& evt);
 };
 
 

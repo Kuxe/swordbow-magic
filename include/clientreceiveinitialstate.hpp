@@ -26,6 +26,9 @@ public:
 	void accept(const EndTransmittingInitialComponentsData&, const IpAddress& sender);
 	void accept(const KeepAliveData&, const IpAddress& sender);
 	void accept(const auto& data, const IpAddress& sender);
+
+	void onEvent(const KeyEvent& evt);
+	void onEvent(const MouseEvent& evt);
 };
 
 #endif //CLIENTRECEIVEINITIALSTATE_HPP

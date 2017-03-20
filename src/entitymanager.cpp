@@ -1,6 +1,8 @@
 #include "entitymanager.hpp"
 #include "componentmanager.hpp"
 #include "idmanager.hpp"
+
+#include <glm/gtc/matrix_transform.hpp> //glm::translate
  
 /** For networking **/
 #include "packetmanager.hpp"
@@ -169,6 +171,10 @@ ID EntityManager::createFatMan() {
 	return createFatMan(glm::mat4());
 }
 
+ID EntityManager::createFatMan(const glm::vec2& pos) {
+	return createFatMan(glm::translate(glm::mat4(), glm::vec3(pos.x, 0, pos.y)));
+}
+
 ID EntityManager::createTree(const glm::mat4& transform) {
 	auto id = getId();
 
@@ -200,6 +206,11 @@ ID EntityManager::createTree(const glm::mat4& transform) {
 
 	return id;
 }
+
+ID EntityManager::createTree(const glm::vec2& pos) {
+	return createTree(glm::translate(glm::mat4(), glm::vec3(pos.x, 0, pos.y)));
+}
+
 ID EntityManager::createGrassTile(const glm::mat4& transform) {
 	auto id = getId();
 
@@ -344,6 +355,10 @@ ID EntityManager::createFlower(const glm::mat4& transform, const char color) {
 	return id;
 }
 
+ID EntityManager::createFlower(const glm::vec2& pos, const char color) {
+	return createFlower(glm::translate(glm::mat4(), glm::vec3(pos.x, 0, pos.y)), color);
+}
+
 ID EntityManager::createDummySquare(const glm::mat4& transform) {
 	auto id = getId();
 
@@ -483,6 +498,10 @@ ID EntityManager::createBlueBird(const glm::mat4& transform) {
 	registerIdToSystem(id, System::RENDERDIFF);
 
 	return id;
+}
+
+ID EntityManager::createBlueBird(const glm::vec2& pos) {
+	return createBlueBird(glm::translate(glm::mat4(), glm::vec3(pos.x, 0, pos.y)));
 }
 
 ID EntityManager::createSwarmPoint(const glm::mat4& transform) {

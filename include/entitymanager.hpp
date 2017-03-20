@@ -55,14 +55,18 @@ class EntityManager {
 
 	ID createFatMan();
     ID createFatMan(const glm::mat4& transform);
+    ID createFatMan(const glm::vec2& pos);
     ID createTree(const glm::mat4& transform);
+    ID createTree(const glm::vec2& pos);
 	ID createGrassTile(const glm::mat4& transform);
     ID createWaterTile(const glm::mat4& transform);
     ID createBloodSplatter(const glm::mat4& transform);
     ID createFlower(const glm::mat4& transform, const char color);
+    ID createFlower(const glm::vec2& pos, const char color);
     ID createDummySquare(const glm::mat4& transform);
     ID createStone(const glm::mat4& transform);
     ID createBlueBird(const glm::mat4& transform);
+    ID createBlueBird(const glm::vec2& pos);
     ID createSwarmPoint(const glm::mat4& transform);
 	void remove(ID id);
     bool idExists(ID id);

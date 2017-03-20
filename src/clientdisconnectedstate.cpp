@@ -117,6 +117,12 @@ void ClientDisconnectedState::accept(const auto& data, const IpAddress& sender) 
     Logger::log("Received packet that has no overloaded accept (ClientDisconnectedState)", Logger::WARNING);
 }
 
+void ClientDisconnectedState::onEvent(const KeyEvent& evt) {
 
+}
+
+void ClientDisconnectedState::onEvent(const MouseEvent& evt) {
+    
+}
 
 

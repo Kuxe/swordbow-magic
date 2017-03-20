@@ -31,7 +31,7 @@ private:
     CameraSystem* cameraSystem;
 
 public:
-    RenderSystem(IRenderer* const enderer, SpatialIndexer* spatialIndexer, CameraSystem* cameraSystem);
+    RenderSystem(IRenderer* const renderer, SpatialIndexer* spatialIndexer, CameraSystem* cameraSystem);
 
 	void add(ID id);
 	void remove(ID id);

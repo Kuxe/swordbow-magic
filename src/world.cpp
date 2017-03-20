@@ -7,6 +7,8 @@
 #include "systemmanager.hpp"
 #include "componentmanager.hpp"
 
+#include <glm/gtc/matrix_transform.hpp> //glm::translate
+
 World::World(EntityManager* entityManager) :
 		entityManager(entityManager)
 	{ }
@@ -18,9 +20,7 @@ void World::createWorld() {
 	//Fill world with grass
 	for(short y = 0; y < NUM_TILES; y++) {
 		for(short x = 0; x < NUM_TILES; x++) {
-			tiles[x][y] = entityManager->createGrassTile(
-				glm::mat4() //TODO: Convert from 2D to 3D {x * TILE_SIZE, 0, y * TILE_SIZE}
-			);
+			tiles[x][y] = entityManager->createGrassTile(glm::translate(glm::mat4(), {x * TILE_SIZE, 0, y * TILE_SIZE}));
 		}
 	}
 
@@ -51,7 +51,7 @@ void World::createWorld() {
 			//only accept generated flowers within world
 			auto point = noise.getPoint();
 			if(point.x >= 0 && point.y >= 0) {
-				//TODO: Convert from 2D to 3D auto id = entityManager->createFlower({point.x, 0, point.y}, flowercolor);
+				entityManager->createFlower(glm::translate(glm::mat4(), {point.x, 0, point.y}), flowercolor);
 			}
 		}
 	}
@@ -74,7 +74,7 @@ void World::createWorld() {
 			//only accept generated trees within world
 			auto point = noise.getPoint();
 			if(point.x >= 0 && point.y >= 0) {
-				//TODO: Convert from 2D to 3D auto id = entityManager->createTree(point);
+				auto id = entityManager->createTree(glm::translate(glm::mat4(), glm::vec3(point.x, 0, point.y)));
 			}
 		}
 	}
@@ -85,7 +85,7 @@ void World::createWorld() {
 
 	const uint16_t NUM_STONES = 100;
 	for(uint16_t i = 0; i < NUM_STONES; i++) {
-		//TODO: Convert from 2D to 3D entityManager->createStone({stoneUniformx(generator), stoneUniformy(generator)});
+		entityManager->createStone(glm::translate(glm::mat4(), {stoneUniformx(generator), 0, stoneUniformy(generator)}));
 	}
 
 	//Create some birds
@@ -106,9 +106,9 @@ void World::createWorld() {
 		const auto numberOfBirds = numberOfBirdsPerSwarmDist(generator);
 		for(int j = 0; j < numberOfBirds; j++) {
 			const glm::vec3 birdPos = {birdNormalx(generator), 0.0f, birdNormalz(generator)};
-			//TODO: Convert from 2D to 3D const auto id = entityManager->createBlueBird(birdPos);
-			//TODO: Convert from 2D to 3D (id is commented out currently) auto& bc = componentManager->birdComponents.at(id);
-			//TODO: Convert from 2D to 3D (bc is commented out currently) bc.swarmId = swarmId;
+			const auto id = entityManager->createBlueBird(glm::translate(glm::mat4(), birdPos));
+			auto& bc = componentManager->birdComponents.at(id);
+			bc.swarmId = swarmId;
 		}
 	}
 }
@@ -118,14 +118,9 @@ void World::createDebugWorld() {
 	const char NUM_TILES = 8;
 	for(short y = 0; y < NUM_TILES; y++) {
 		for(short x = 0; x < NUM_TILES; x++) {
-			/** TODO: Convert from 2D to 3D
-			tiles[x][y] = entityManager->createGrassTile(
-				{x * TILE_SIZE, 0, y * TILE_SIZE}
-			); **/
+			tiles[x][y] = entityManager->createGrassTile(glm::translate(glm::mat4(), glm::vec3(x * TILE_SIZE, 0, y * TILE_SIZE)));
 		}
 	}
-
-	/** TODO: Convert from 2D to 3D
 
 	//This tree might be invisible
 	entityManager->createTree({100, 50});
@@ -145,29 +140,23 @@ void World::createDebugWorld() {
 	//test stuff on this guy
 	entityManager->createFatMan({50, 100});
 
-	**/
-
 	//Create some birds in two separate flocks
 	auto& componentManager = entityManager->componentManager;
 	auto birdSystem = static_cast<BirdSystem*>(entityManager->systemManager->getSystem(System::BIRD));
 	auto swarmId = birdSystem->createSwarm({20, 40, 0});
 	std::vector<glm::vec3> birdPoints = {{300, 50, 0}, {20, 30, 0}, {50, 50, 0}, {50, 300, 0}, {62, 86, 0}, {68, 28, 0}};
 	for(const auto& point : birdPoints) {
-		/** TODO: Convert from 2D to 3D
 		auto id = entityManager->createBlueBird(point);
 		auto& bc = componentManager->birdComponents.at(id);
 		bc.swarmId = swarmId;
-		**/
 	}
 
 	swarmId = birdSystem->createSwarm({40, 70, 0});
 	birdPoints = {{23, 32, 0}, {123, 15, 0}, {32, 43, 0}, {46, 17, 0}, {57, 32, 0}, {87, 36, 0}};
 	for(const auto& point : birdPoints) {
-		/** TODO: Convert from 2D to 3D
 		auto id = entityManager->createBlueBird(point);
 		auto& bc = componentManager->birdComponents.at(id);
 		bc.swarmId = swarmId;
-		**/
 	}
 
 }

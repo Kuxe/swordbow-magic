@@ -123,3 +123,11 @@ void ClientReceiveInitialState::accept(const auto& data, const IpAddress& sender
 void ClientReceiveInitialState::accept(const KeepAliveData&, const IpAddress& sender) {
 	client->keepAlive.start();
 }
+
+void ClientReceiveInitialState::onEvent(const KeyEvent& evt) {
+
+}
+
+void ClientReceiveInitialState::onEvent(const MouseEvent& evt) {
+    
+}

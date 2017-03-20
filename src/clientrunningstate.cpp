@@ -34,10 +34,6 @@ void ClientRunningState::receive() {
 void ClientRunningState::step() {
 	client->deltaTime.start();
 
-    /** Get input from client **/
-    std::vector<int> presses;
-    std::vector<int> releases;
-
     //Fetch all events that ocurred...
     client->renderer->pollEvents(this);
 
@@ -46,6 +42,8 @@ void ClientRunningState::step() {
     if( !(presses.empty() && releases.empty()) ) {
         client->send<InputData, MESSAGE_TYPE::INPUTDATA>({presses, releases});
     }
+    presses.clear();
+    releases.clear();
 
     /** CRITICAL-SECTION **/
     Timer waitTimer;
@@ -232,3 +230,19 @@ void ClientRunningState::accept(const KeepAliveData& data, const IpAddress& send
 void ClientRunningState::accept(const auto& data, const IpAddress& sender) {
     Logger::log("Received packet that has no overloaded accept (ClientRunningState)", Logger::WARNING);
 }
+
+void ClientRunningState::onEvent(const KeyEvent& evt) {
+    std::ostringstream oss;
+    oss << "Received KeyEvent " << evt.key << evt.press << " (ClientRunningState)";
+    Logger::info(oss);
+    if(evt.press) {
+        presses.push_back(evt.key);
+    } else {
+        releases.push_back(evt.key);
+    }
+}
+
+void ClientRunningState::onEvent(const MouseEvent& evt) {
+    
+}
+

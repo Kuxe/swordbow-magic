@@ -9,6 +9,9 @@ class Client;
 class ClientRunningState : public IClientState {
 private:
 	Client* client;
+
+	std::vector<int> presses; //contains what keystrokes have been made (cleared on every gameloop)
+    std::vector<int> releases; //contains what keyreleases have been made (cleared on every gameloop)
 public:
 	ClientRunningState(Client* client);
 	void receive();
@@ -19,6 +22,7 @@ public:
 	void onChange(ClientReceiveInitialState* state);
 	void onChange(ClientRunningState* state);
 
+	/** Network related acceptor methods **/
 	void accept(const OutdatedData& data, const IpAddress& sender);
 	void accept(const ServerReplyToConnectData& data, const IpAddress& sender);
 	void accept(MoveComponentsDiffData& data, const IpAddress& sender);
@@ -31,6 +35,9 @@ public:
 	void accept(const ActivateIdData& data, const IpAddress& sender);
 	void accept(const KeepAliveData& data, const IpAddress& sender);
 	void accept(const auto& data, const IpAddress& sender);
+
+	void onEvent(const KeyEvent& evt);
+	void onEvent(const MouseEvent& evt);
 };
 
 #endif //CLIENTRUNNINGSTATE_HPP

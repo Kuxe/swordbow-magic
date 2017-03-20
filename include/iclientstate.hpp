@@ -1,6 +1,8 @@
 #ifndef ICLIENTSTATE_HPP
 #define ICLIENTSTATE_HPP
 
+#include "events.hpp"
+
 class ClientDisconnectedState;
 class ClientReceiveInitialState;
 class ClientRunningState;
@@ -24,6 +26,9 @@ public:
 	virtual void onChange(ClientDisconnectedState* state) = 0;
 	virtual void onChange(ClientReceiveInitialState* state) = 0;
 	virtual void onChange(ClientRunningState* state) = 0;
+
+	virtual void onEvent(const KeyEvent& evt) = 0;
+	virtual void onEvent(const MouseEvent& evt) = 0;
 };
 
 #endif //ICLIENTSTATE_HPP

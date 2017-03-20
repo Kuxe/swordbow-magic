@@ -14,6 +14,8 @@
 #include "renderquerier.hpp"
 #include "ilowpolyinput.hpp"
 
+#include "events.hpp" //Events which swordbow-magic (IClientState) can handle
+
 /** If this class is an interface, IRenderer, then there can be another class called Lowpoly3dRenderer which realizes this interface.
     Lowpoly3dRenderer in turn has a member of type lowpoly3d::Renderer. This architecture means that I can if ever redoing renderer
     just swap out the Lowpoly3dRenderer for some other NextgenRenderer without ever redoing anything within swordbow-magic
@@ -27,6 +29,13 @@ private:
     std::queue<Text> texts;
     lowpoly3d::Renderer renderer;
     std::vector<lowpoly3d::RenderData> rds;
+
+    /** Typed event queues. I could probably use templates here to
+        get rid of linear increase in code with events but the number
+        of different events lowpoly sends is manageable as of 2017-03-20 **/
+    std::vector<MouseEvent> mouseEvents;
+    std::vector<KeyEvent> keyEvents;
+
     void renderTexts();
 public:
     LowpolyAdaptor(bool fullscreen, bool vsync);

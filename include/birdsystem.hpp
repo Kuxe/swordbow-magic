@@ -21,11 +21,6 @@ private:
 
 	EntityManager* const entityManager;
 
-	glm::vec3 getRandomAcceleration(
-		const glm::vec3& v,
-		const unsigned short variance,
-		const float eagerness) const;
-
 public:
 	BirdSystem(EntityManager* const entityManager);
 

@@ -6,6 +6,8 @@
 #include "inputcomponent.hpp"
 #include "icommand.hpp"
 
+#include <glm/gtc/matrix_transform.hpp> //glm::translate
+
 /** For logging **/
 #include "logger.hpp"
 
@@ -33,16 +35,7 @@ void MoveSystem::update() {
 		//system should _only_ be engaged in updating positions...)
 		if( componentManager->inputComponents.find(id) !=
 			componentManager->inputComponents.end()) {
-
 			auto& ic = componentManager->inputComponents.at(id);
-
-			//If no key was pressed
-			/** TODO: Convert from 2D to 3D if(ic.d != 0 || ic.a != 0 || ic.s != 0 || ic.w != 0) {
-				mc.dir.x = ic.d - ic.a;
-				mc.dir.y = ic.s - ic.w;
-			} **/
-
-			//TODO: Convert from 2D to 3D mc.velocity = glm::vec2{ic.d - ic.a, ic.s - ic.w} * mc.maxVelLength; //temporary solution
 		}
 
 		//If some input was recieved which caused a move (mc.vel isn't of length 0)
@@ -57,7 +50,7 @@ void MoveSystem::update() {
 			mc.velocity *= deltaTime->delta();
 
 			//Finally update position
-			//TODO: Convert from 2D to 3D mc.transform += mc.velocity;
+			mc.transform = glm::translate(mc.transform, mc.velocity);
 		}
 
 		//Do something defined by the entity if the entity moved
