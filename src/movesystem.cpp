@@ -27,16 +27,26 @@ void MoveSystem::update() {
 	for(auto id : ids) {
 		auto& mc = componentManager->moveComponents.at(id);
 
+		glm::vec3 direction = {0.0f, 0.0f, 0.0f};
+
 		//If this entity has an inputComponent,
 		//check if buttons are pressed in order to move entity.
 		//This should probably be a system of its own that's being
 		//run before movesystem (requiring movecomponents and inputcomponents,
 		//a system for handling input->velocity on entities. Ideally, this 
 		//system should _only_ be engaged in updating positions...)
+		mc.oldTransform = mc.transform;
 		if( componentManager->inputComponents.find(id) !=
 			componentManager->inputComponents.end()) {
 			auto& ic = componentManager->inputComponents.at(id);
+
+			//Set velocity to work in the direction of WASD movement
+			//holding two opposite keys ie A and D will cancel out
+			direction = {ic.d - ic.a, ic.e - ic.q, ic.w - ic.s};
 		}
+
+		//TODO: Need to figure out how input should translate to movement on a per entity basis
+		mc.velocity = direction;
 
 		//If some input was recieved which caused a move (mc.vel isn't of length 0)
 		if(glm::length(mc.velocity) > 0) {
@@ -57,7 +67,7 @@ void MoveSystem::update() {
 
 		//TODO: Aha, this is why I need an "oldPos" member (I realize this as of 2017-03-06)
 		//Ill comment this out and reintroduce oldPos in later stages
-		/*if(!(mc.pos.x == mc.oldPos.x && mc.pos.y == mc.oldPos.y)) {
+		if(mc.transform != mc.oldTransform) {
 
 			//But only if it has a commandComponent. This "onMove" events
 			//should probably be handled in a system of its own, ie a
@@ -66,7 +76,7 @@ void MoveSystem::update() {
 				auto& cc = componentManager->commandComponents.at(id);
 				cc.execute(CommandComponent::Event::ON_MOVE);
 			}
-		}*/
+		}
 	}
 }
 

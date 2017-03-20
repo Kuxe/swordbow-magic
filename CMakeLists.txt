@@ -177,11 +177,11 @@ TARGET_INCLUDE_DIRECTORIES(sbm PUBLIC
     ${CONTRIB_DIR}/Source/Cereal/include/
     ${CONTRIB_DIR}/Source/GLM/
     ${CONTRIB_DIR}/Source/args
+    ${LOWPOLY3D_INCLUDE_DIR} #This should really be under client but I need glm serialization on serverside too
 )
 TARGET_INCLUDE_DIRECTORIES(sbm-client PUBLIC
     ${CMAKE_SOURCE_DIR}/include/
     ${CONTRIB_DIR}/Source/Cereal/include/
-    ${LOWPOLY3D_INCLUDE_DIR}
 )
 TARGET_INCLUDE_DIRECTORIES(sbm-server PUBLIC
     ${CMAKE_SOURCE_DIR}/include/

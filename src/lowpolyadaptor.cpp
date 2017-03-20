@@ -9,6 +9,8 @@
 
 #include "iclientstate.hpp"
 
+#include "deltatime.hpp" //lowpoly3d::Camera need it to run smooth
+
 using namespace lowpoly3d;
 
 LowpolyAdaptor::LowpolyAdaptor(bool fullscreen, bool vsync) {
@@ -30,7 +32,7 @@ void LowpolyAdaptor::run() {
 	}
 }
 
-void LowpolyAdaptor::render(const std::vector<ID>& activeIds, const ComponentManager& cm) {
+void LowpolyAdaptor::render(const std::vector<ID>& activeIds, const ComponentManager& cm, float dt) {
 	/** Lowpoly3d reads from member "rds" so here I should convert
 		activeIds (the set of all entities which should be rendered)
 		and populate "rds" with the conversions. This is why componentmanager is known
@@ -38,11 +40,23 @@ void LowpolyAdaptor::render(const std::vector<ID>& activeIds, const ComponentMan
 		only ids can not be interpreted by lowpoly3d! **/
 
 	//Currently I wont bother thinking about doing clever conversions (= no copying of data)
+	this->dt = dt;
+	for(const int key : heldKeys) {
+		switch(key) {
+			case GLFW_KEY_W: camera.dolly(-3.0f * dt); break;
+			case GLFW_KEY_A: camera.truck(-3.0f * dt); break;
+			case GLFW_KEY_S: camera.dolly(+3.0f * dt); break;
+			case GLFW_KEY_D: camera.truck(+3.0f * dt); break;
+			case GLFW_KEY_Q: camera.pedestal(-3.0f * dt); break;
+			case GLFW_KEY_E: camera.pedestal(+3.0f * dt); break;
+		}
+	}
 
 	rds.clear();
 	for(const ID& id : activeIds) {
 		const auto& rd = cm.renderComponents.at(id);
-		rds.push_back({glm::mat4(), rd.model, rd.shader});
+		const auto& mc = cm.moveComponents.at(id);
+		rds.push_back({mc.transform, rd.model, rd.shader});
 	}
 
 	signalRenderer();
@@ -111,25 +125,38 @@ const std::vector<RenderData>& LowpolyAdaptor::getRenderDatas() const {
 }
 
 const glm::mat4 LowpolyAdaptor::getView() const {
-	return glm::mat4();
+	return camera.get();
 }
 
+using namespace std::chrono;
 const float LowpolyAdaptor::getGametime() const {
-	return 0.0f;
+	/** TODO: Use servertime. Need to send servertime at some interval from server
+		and make sure that client uses that time. Dont want to send servertime to often
+		since client and server probably wont desync clocks to often. **/
+	static decltype(high_resolution_clock::now()) startTime = high_resolution_clock::now();
+	using ms = duration<float, std::milli>;
+	return duration_cast<ms>(high_resolution_clock::now() - startTime).count() / 1000.0f;
 }
 
 const float LowpolyAdaptor::getSunRadians() const {
-	return 0.0f;
+	return .01f*getGametime();
 }
 
 void LowpolyAdaptor::onKey(int key, int scancode, int action, int mods) {
 	std::ostringstream oss;
 	oss << "LowpolyAdaptor::onKey(" << key << ", " << scancode << ", " << action << ", " << mods << ")";
 	Logger::verbose(oss);
-	if(action == GLFW_PRESS) keyEvents.push_back({key, true});
-	if(action == GLFW_RELEASE) keyEvents.push_back({key, false});
+	if(action == GLFW_PRESS) {
+		keyEvents.push_back({key, true});
+		heldKeys.insert(key);
+	}
+	if(action == GLFW_RELEASE) {
+		keyEvents.push_back({key, false});
+		heldKeys.erase(key);
+	}
 }
 
 void LowpolyAdaptor::onMouse(double xpos, double ypos) {
 	mouseEvents.push_back({static_cast<float>(xpos), static_cast<float>(ypos)});
+	camera.look({xpos, ypos}, dt);
 }

@@ -10,8 +10,8 @@
 #include "timer.hpp"
 #include "boundingbox.hpp"
 
-RenderSystem::RenderSystem(IRenderer* const renderer, SpatialIndexer* spatialIndexer, CameraSystem* cameraSystem) :
-    renderer(renderer), spatialIndexer(spatialIndexer), cameraSystem(cameraSystem) { }
+RenderSystem::RenderSystem(IRenderer* const renderer, SpatialIndexer* spatialIndexer, CameraSystem* cameraSystem, DeltaTime* deltaTime) :
+    renderer(renderer), spatialIndexer(spatialIndexer), cameraSystem(cameraSystem), deltaTime(deltaTime) { }
 
 void RenderSystem::add(ID id) {
 	ids.insert(id);
@@ -27,7 +27,7 @@ void RenderSystem::update() {
     //Active ids in this system should be sent to lowpoly3d
 
 	//Render the scene
-    renderer->render(activeIds, *componentManager);
+    renderer->render(activeIds, *componentManager, deltaTime->delta());
 }
 
 unsigned int RenderSystem::count() const {

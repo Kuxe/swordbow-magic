@@ -59,10 +59,6 @@ ID EntityManager::createFatMan(const glm::mat4& transform) {
 
 	//If you'd like to change default initialization-data in a component
 	//Just save a pointer to the component like above and modify it like bellow
-	renderComponent.image = Image::PLAYER_V3_FRONT;
-	renderComponent.zindex_base = 1;
-	renderComponent.offset.x = -7;
-	renderComponent.offset.y = -7;
 
 	moveComponent.transform = transform;
 	moveComponent.velocity = {200, 200, 0};
@@ -186,11 +182,6 @@ ID EntityManager::createTree(const glm::mat4& transform) {
 	auto& renderComponent = componentManager->createRenderComponent(id);
 	auto& nameComponent = componentManager->createNameComponent(id);
 
-	renderComponent.image = Image::SMALL_TREE;
-	renderComponent.zindex_base = 1;
-	renderComponent.offset.x = -24;
-	renderComponent.offset.y = -54;
-
 	moveComponent.transform = transform;
 
 	sizeComponent.width = 36;
@@ -222,9 +213,6 @@ ID EntityManager::createGrassTile(const glm::mat4& transform) {
 	auto& rc = componentManager->createRenderComponent(id);
 	auto& nameComponent = componentManager->createNameComponent(id);
 
-	rc.image = Image::GRASS;
-	rc.zindex_base = 0;
-
 	mc.transform = transform;
 
 	sizeComponent.width = 32;
@@ -250,9 +238,6 @@ ID EntityManager::createWaterTile(const glm::mat4& transform) {
 	auto& rc = componentManager->createRenderComponent(id);
 	auto& nameComponent = componentManager->createNameComponent(id);
 
-	rc.image = Image::WATER;
-	rc.zindex_base = 0;
-
 	mc.transform = transform;
 
 	sizeComponent.width = 32;
@@ -276,11 +261,6 @@ ID EntityManager::createBloodSplatter(const glm::mat4& transform) {
 	auto& rc = componentManager->createRenderComponent(id);
 	auto& nc = componentManager->createNameComponent(id);
 	auto& ac = componentManager->createAnimationComponent(id);
-
-	rc.image = Image::BLOODSPLATTER_1_11;
-	rc.offset.x = -10;
-	rc.offset.y = -10;
-	rc.zindex_base = 1;
 
 	mc.transform = transform;
 
@@ -339,11 +319,6 @@ ID EntityManager::createFlower(const glm::mat4& transform, const char color) {
 		} break;
 	}
 
-	rc.image = flowercolor;
-	rc.offset.x = -1;
-	rc.offset.y = -5;
-	rc.zindex_base = 1;
-
 	mc.transform = transform;
 
 	nc.name = "flower";
@@ -371,13 +346,7 @@ ID EntityManager::createDummySquare(const glm::mat4& transform) {
 	auto& cc = componentManager->createCommandComponent(id);
 	auto& ac = componentManager->createAnimationComponent(id);
 
-	rc.image = Image::TEST_SQUARE_1x1;
-
 	mc.maxVelLength = 4.0f;
-
-	rc.offset.x = 0;
-	rc.offset.y = 0;
-	rc.zindex_base = 1;
 
 	mc.transform = transform;
 
@@ -425,11 +394,6 @@ ID EntityManager::createStone(const glm::mat4& transform) {
 
 	mc.transform = transform;
 
-	rc.image = Image::STONE_1;
-	rc.offset.x = -7;
-	rc.offset.y = -12;
-	rc.zindex_base = 1;
-
 	sc.width = 28;
 	sc.height = 15;
 
@@ -460,11 +424,6 @@ ID EntityManager::createBlueBird(const glm::mat4& transform) {
 	mc.transform = transform;
 	mc.velocity = {0, 0, 0};
 	mc.maxVelLength = 150.0f;
-
-	rc.image = Image::BLUE_BIRD_WEST_3;
-	rc.zindex_base = 2;
-	rc.offset.x = -8;
-	rc.offset.y = -11;
 
 	nc.name = "blueBird";
 
@@ -518,6 +477,46 @@ ID EntityManager::createSwarmPoint(const glm::mat4& transform) {
 	registerIdToSystem(id, System::ACCELERATION);
 	registerIdToSystem(id, System::MOVE);
 
+	return id;
+}
+
+ID EntityManager::createSkybox(const glm::mat4& transform) {
+	auto id = getId();
+
+	Logger::log("Creating skybox with id" + std::to_string(id), Logger::INFO);
+
+	auto& mc = componentManager->createMoveComponent(id);
+	auto& nc = componentManager->createNameComponent(id);
+	auto& rc = componentManager->createRenderComponent(id);
+	mc.transform = transform;
+	nc.name = "Skybox";
+
+	rc.model = "sphere";
+	rc.shader = "skybox";
+
+	registerIdToSystem(id, System::INITIAL_COMPONENTS);
+	return id;
+}
+
+ID EntityManager::createSkybox(const glm::vec3& pos) {
+	return createSkybox(glm::translate(glm::mat4(), pos));
+}
+
+ID EntityManager::createTerrain(const glm::mat4& transform) {
+	auto id = getId();
+
+	Logger::log("Creating terrain with id" + std::to_string(id), Logger::INFO);
+
+	auto& mc = componentManager->createMoveComponent(id);
+	auto& nc = componentManager->createNameComponent(id);
+	auto& rc = componentManager->createRenderComponent(id);
+	mc.transform = transform;
+	nc.name = "Terrain";
+
+	rc.model = "terrain";
+	rc.shader = "default";
+
+	registerIdToSystem(id, System::INITIAL_COMPONENTS);
 	return id;
 }
 

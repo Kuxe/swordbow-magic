@@ -68,6 +68,10 @@ class EntityManager {
     ID createBlueBird(const glm::mat4& transform);
     ID createBlueBird(const glm::vec2& pos);
     ID createSwarmPoint(const glm::mat4& transform);
+    ID createSkybox(const glm::mat4& transform);
+    ID createSkybox(const glm::vec3& pos);
+    ID createTerrain(const glm::mat4& transform);
+
 	void remove(ID id);
     bool idExists(ID id);
 

@@ -39,11 +39,12 @@ void ClientRunningState::step() {
 
     //If user either pressed or released a key
     //then send keystrokes to server
-    if( !(presses.empty() && releases.empty()) ) {
-        client->send<InputData, MESSAGE_TYPE::INPUTDATA>({presses, releases});
+    if(mouseIsMoving || !(presses.empty() && releases.empty())) {
+        client->send<InputData, MESSAGE_TYPE::INPUTDATA>({presses, releases, mousePos});
     }
     presses.clear();
     releases.clear();
+    mouseIsMoving = false;
 
     /** CRITICAL-SECTION **/
     Timer waitTimer;
@@ -243,6 +244,7 @@ void ClientRunningState::onEvent(const KeyEvent& evt) {
 }
 
 void ClientRunningState::onEvent(const MouseEvent& evt) {
-    
+    mousePos = {evt.x, evt.y};
+    mouseIsMoving = true;
 }
 

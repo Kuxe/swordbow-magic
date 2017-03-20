@@ -15,7 +15,7 @@ class ComponentManager;
 	functionality that the swordbow-magic client may need. **/
 struct IRenderer {
 	virtual ~IRenderer() { };
-	virtual void render(const std::vector<ID>& activeIds, const ComponentManager& cm) = 0;
+	virtual void render(const std::vector<ID>& activeIds, const ComponentManager& cm, float dt) = 0;
     virtual void renderOverlays() = 0;
     virtual void renderOnlyOverlays() = 0;
     virtual void showOverlay(const Image::Identifier& identifier, const Text& text) = 0;

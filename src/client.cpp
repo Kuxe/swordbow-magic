@@ -30,7 +30,7 @@ Client::Client(IRenderer* const renderer, ISoundEngine* const soundEngine, unsig
         textureBoundingBox(&componentManager, renderer),
         textureHashGridSystem(&textureBoundingBox),
         cameraSystem(renderer),
-        renderSystem(renderer, &textureHashGridSystem, &cameraSystem),
+        renderSystem(renderer, &textureHashGridSystem, &cameraSystem, &deltaTime),
         clientDisconnectedState(this),
         clientReceiveInitialState(this),
         clientRunningState(this),
@@ -160,7 +160,7 @@ int main(int argc, char** argv) {
     }
 
     if(logflag) {
-        Logger::openLogfile("serverlog.txt");
+        Logger::openLogfile("clientlog.txt");
         Logger::enable();
         Logger::level = args::get(logflag);
     }

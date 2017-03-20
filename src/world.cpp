@@ -8,6 +8,8 @@
 #include "componentmanager.hpp"
 
 #include <glm/gtc/matrix_transform.hpp> //glm::translate
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/transform.hpp> //glm::scale
 
 World::World(EntityManager* entityManager) :
 		entityManager(entityManager)
@@ -114,14 +116,6 @@ void World::createWorld() {
 }
 
 void World::createDebugWorld() {
-	//Place tiles in world
-	const char NUM_TILES = 8;
-	for(short y = 0; y < NUM_TILES; y++) {
-		for(short x = 0; x < NUM_TILES; x++) {
-			tiles[x][y] = entityManager->createGrassTile(glm::translate(glm::mat4(), glm::vec3(x * TILE_SIZE, 0, y * TILE_SIZE)));
-		}
-	}
-
 	//This tree might be invisible
 	entityManager->createTree({100, 50});
 
@@ -139,6 +133,12 @@ void World::createDebugWorld() {
 
 	//test stuff on this guy
 	entityManager->createFatMan({50, 100});
+
+	//Create skybox
+	entityManager->createSkybox(glm::scale(glm::vec3(-150.0f)));
+
+	//Create terrain
+	entityManager->createTerrain(glm::mat4());
 
 	//Create some birds in two separate flocks
 	auto& componentManager = entityManager->componentManager;

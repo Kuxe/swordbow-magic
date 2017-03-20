@@ -29,9 +29,10 @@ private:
     IRenderer* const renderer;
     SpatialIndexer* spatialIndexer;
     CameraSystem* cameraSystem;
+    DeltaTime* deltaTime;
 
 public:
-    RenderSystem(IRenderer* const renderer, SpatialIndexer* spatialIndexer, CameraSystem* cameraSystem);
+    RenderSystem(IRenderer* const renderer, SpatialIndexer* spatialIndexer, CameraSystem* cameraSystem, DeltaTime* deltaTime);
 
 	void add(ID id);
 	void remove(ID id);

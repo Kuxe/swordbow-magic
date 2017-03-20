@@ -12,6 +12,8 @@ private:
 
 	std::vector<int> presses; //contains what keystrokes have been made (cleared on every gameloop)
     std::vector<int> releases; //contains what keyreleases have been made (cleared on every gameloop)
+    glm::vec2 mousePos;
+    bool mouseIsMoving = false; //A InputData packet will be sent if this is true
 public:
 	ClientRunningState(Client* client);
 	void receive();

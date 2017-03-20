@@ -15,6 +15,9 @@
 /** For command line argument parsing **/
 #include "args.hxx"
 
+/** For keypress parsing **/
+#include <GLFW/glfw3.h>
+
 Server::Server(bool smallWorld, float tps) :
 		packetManager("swordbow-magic"),
 		systemManager(&componentManager, &deltaTime),
@@ -260,71 +263,75 @@ void Server::sendKeepAlive() {
 void Server::inputDataToInputComponent(const IpAddress& ipAddress, const InputData& data) {
 	//Get id of client
 	
-	//FIXME: Cant iterate through const InputData& data if data.data is queue. Must be other datatype than std::queue
 	auto id = clients.at(ipAddress).id;
 	auto& ic = componentManager.inputComponents.at(id);
 
 	ic.presses = data.presses;
 
 	for(auto keypress : data.presses) {
-		//TODO: set input component according to keypress
 		//Figure out what key was pressed
-		/*
 		switch(keypress) {
-			case SDLK_w: {
+			case GLFW_KEY_W: {
 				ic.w = true;
 				break;
 			}
-			case SDLK_a: {
+			case GLFW_KEY_A: {
 				ic.a = true;
 				break;
 			}
-			case SDLK_s: {
+			case GLFW_KEY_S: {
 				ic.s = true;
 			break;
 			}
-			case SDLK_d: {
+			case GLFW_KEY_D: {
 				ic.d = true;
 				break;
 			}
-			case SDLK_SPACE: {
+			case GLFW_KEY_SPACE: {
 				ic.space = true;
 				break;
 			}
 		}
-		*/
 	}
 
 	ic.releases = data.releases;
 
 	for(auto keyrelease : data.releases) {
-		//TODO: set input component according to keypress
 		//Figure out what key was released
-		/*
 		switch(keyrelease) {
-			case SDLK_w: {
+			case GLFW_KEY_W: {
 				ic.w = false;
 				break;
 			}
-			case SDLK_a: {
+			case GLFW_KEY_A: {
 				ic.a = false;
 				break;
 			}
-			case SDLK_s: {
+			case GLFW_KEY_S: {
 				ic.s = false;
 				break;
 			}
-			case SDLK_d: {
+			case GLFW_KEY_D: {
 				ic.d = false;
 				break;
 			}
-			case SDLK_SPACE: {
+			case GLFW_KEY_E: {
+				ic.e = false;
+				break;
+			}
+			case GLFW_KEY_Q: {
+				ic.q = false;
+				break;
+			}
+			case GLFW_KEY_SPACE: {
 				ic.space = false;
 				break;
 			}
-		}*/
+		}
 	}
 
+	ic.mousePos = data.mousePos;
+	
 	inputSystem.activateId(id);
 }
 

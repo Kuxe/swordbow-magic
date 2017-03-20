@@ -29,6 +29,9 @@ private:
     std::queue<Text> texts;
     lowpoly3d::Renderer renderer;
     std::vector<lowpoly3d::RenderData> rds;
+    lowpoly3d::Camera camera;
+    std::unordered_set<int> heldKeys; //Only used temporarily for camera. Input handling should not take place in lowpolyadaptor
+    float dt; //updated via render method. This is temporary until camera works as intended (ie following client player as opposed to free-cam)
 
     /** Typed event queues. I could probably use templates here to
         get rid of linear increase in code with events but the number
@@ -50,7 +53,7 @@ public:
     //renderOverlays doesn't call RenderPresent, it calls RenderCopy and copies
     //overlays onto overlayTexture while renderOnlyOverlays does that AND
     //clear default-texture and renders it (clear everything + draw only overlay)
-    void render(const std::vector<ID>& activeIds, const ComponentManager& cm);
+    void render(const std::vector<ID>& activeIds, const ComponentManager& cm, float dt);
     void renderOverlays();
     void renderOnlyOverlays();
     void showOverlay(const Image::Identifier& identifier, const Text& text = {"", glm::ivec2(0.0), glm::vec3(0.0)});
