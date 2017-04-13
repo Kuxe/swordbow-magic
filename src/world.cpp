@@ -138,7 +138,7 @@ void World::createDebugWorld() {
 	entityManager->createSkybox(glm::scale(glm::vec3(-150.0f)));
 
 	//Create terrain
-	entityManager->createTerrain(glm::mat4());
+	entityManager->createTerrain(glm::translate(glm::mat4(), glm::vec3(-100.0f, 0.0f, -100.0f)));
 
 	//Create some birds in two separate flocks
 	auto& componentManager = entityManager->componentManager;

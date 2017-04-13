@@ -15,6 +15,7 @@
 #include "commandcomponent.hpp"
 #include "accelerationcomponent.hpp"
 #include "birdcomponent.hpp"
+#include "cameracomponent.hpp"
 
 typedef unsigned int ID;
 
@@ -33,6 +34,7 @@ class ComponentManager {
     Components<CommandComponent> commandComponents;
     Components<AccelerationComponent> accelerationComponents;
     Components<BirdComponent> birdComponents;
+    Components<CameraComponent> cameraComponents;
 
     //Components<MoveComponent> moveComponentsDiff;
     //Components<RenderComponent> renderComponentsDiff;
@@ -76,6 +78,9 @@ class ComponentManager {
     BirdComponent& createBirdComponent(const ID id) {
         return birdComponents[id] = BirdComponent();
     }
+    CameraComponent& createCameraComponent(const ID id) {
+        return cameraComponents[id] = CameraComponent();
+    }
 
     static constexpr size_t sizePerEntity() {
         return
@@ -91,7 +96,8 @@ class ComponentManager {
             sizeof(AttackComponent) +
             sizeof(CommandComponent) +
             sizeof(AccelerationComponent) +
-            sizeof(BirdComponent);
+            sizeof(BirdComponent) +
+            sizeof(CameraComponent);
     }
 
     void clearComponents(ID id);

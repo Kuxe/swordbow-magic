@@ -32,7 +32,7 @@ void LowpolyAdaptor::run() {
 	}
 }
 
-void LowpolyAdaptor::render(const std::vector<ID>& activeIds, const ComponentManager& cm, float dt) {
+void LowpolyAdaptor::render(const std::vector<ID>& activeIds, const ComponentManager& cm, const glm::mat4& view) {
 	/** Lowpoly3d reads from member "rds" so here I should convert
 		activeIds (the set of all entities which should be rendered)
 		and populate "rds" with the conversions. This is why componentmanager is known
@@ -40,17 +40,6 @@ void LowpolyAdaptor::render(const std::vector<ID>& activeIds, const ComponentMan
 		only ids can not be interpreted by lowpoly3d! **/
 
 	//Currently I wont bother thinking about doing clever conversions (= no copying of data)
-	this->dt = dt;
-	for(const int key : heldKeys) {
-		switch(key) {
-			case GLFW_KEY_W: camera.dolly(-3.0f * dt); break;
-			case GLFW_KEY_A: camera.truck(-3.0f * dt); break;
-			case GLFW_KEY_S: camera.dolly(+3.0f * dt); break;
-			case GLFW_KEY_D: camera.truck(+3.0f * dt); break;
-			case GLFW_KEY_Q: camera.pedestal(-3.0f * dt); break;
-			case GLFW_KEY_E: camera.pedestal(+3.0f * dt); break;
-		}
-	}
 
 	rds.clear();
 	for(const ID& id : activeIds) {
@@ -58,6 +47,8 @@ void LowpolyAdaptor::render(const std::vector<ID>& activeIds, const ComponentMan
 		const auto& mc = cm.moveComponents.at(id);
 		rds.push_back({mc.transform, rd.model, rd.shader});
 	}
+
+	this->view = view;
 
 	signalRenderer();
 }
@@ -125,7 +116,7 @@ const std::vector<RenderData>& LowpolyAdaptor::getRenderDatas() const {
 }
 
 const glm::mat4 LowpolyAdaptor::getView() const {
-	return camera.get();
+	return view;
 }
 
 using namespace std::chrono;
@@ -143,20 +134,14 @@ const float LowpolyAdaptor::getSunRadians() const {
 }
 
 void LowpolyAdaptor::onKey(int key, int scancode, int action, int mods) {
-	std::ostringstream oss;
-	oss << "LowpolyAdaptor::onKey(" << key << ", " << scancode << ", " << action << ", " << mods << ")";
-	Logger::verbose(oss);
 	if(action == GLFW_PRESS) {
 		keyEvents.push_back({key, true});
-		heldKeys.insert(key);
 	}
 	if(action == GLFW_RELEASE) {
 		keyEvents.push_back({key, false});
-		heldKeys.erase(key);
 	}
 }
 
 void LowpolyAdaptor::onMouse(double xpos, double ypos) {
 	mouseEvents.push_back({static_cast<float>(xpos), static_cast<float>(ypos)});
-	camera.look({xpos, ypos}, dt);
 }

@@ -30,7 +30,7 @@ Client::Client(IRenderer* const renderer, ISoundEngine* const soundEngine, unsig
         textureBoundingBox(&componentManager, renderer),
         textureHashGridSystem(&textureBoundingBox),
         cameraSystem(renderer),
-        renderSystem(renderer, &textureHashGridSystem, &cameraSystem, &deltaTime),
+        renderSystem(renderer, &textureHashGridSystem, &cameraSystem),
         clientDisconnectedState(this),
         clientReceiveInitialState(this),
         clientRunningState(this),

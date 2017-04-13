@@ -287,6 +287,14 @@ void Server::inputDataToInputComponent(const IpAddress& ipAddress, const InputDa
 				ic.d = true;
 				break;
 			}
+			case GLFW_KEY_E: {
+				ic.e = true;
+				break;
+			}
+			case GLFW_KEY_Q: {
+				ic.q = true;
+				break;
+			}
 			case GLFW_KEY_SPACE: {
 				ic.space = true;
 				break;
@@ -330,6 +338,9 @@ void Server::inputDataToInputComponent(const IpAddress& ipAddress, const InputDa
 		}
 	}
 
+	/** Update position of mouse in input component
+		We need to keep the old mouse position in order
+		to compute delta mouse position whenever needed **/
 	ic.mousePos = data.mousePos;
 	
 	inputSystem.activateId(id);

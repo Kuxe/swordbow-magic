@@ -16,6 +16,8 @@ public:
         WALK_RIGHT,
         WALK_DOWN,
         WALK_LEFT,
+        FLY_UP,
+        FLY_DOWN,
         ATTACK,
     };
 

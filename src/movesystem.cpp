@@ -7,6 +7,7 @@
 #include "icommand.hpp"
 
 #include <glm/gtc/matrix_transform.hpp> //glm::translate
+#include <glm/gtc/matrix_access.hpp> //glm::column
 
 /** For logging **/
 #include "logger.hpp"
@@ -42,11 +43,21 @@ void MoveSystem::update() {
 
 			//Set velocity to work in the direction of WASD movement
 			//holding two opposite keys ie A and D will cancel out
-			direction = {ic.d - ic.a, ic.e - ic.q, ic.w - ic.s};
+			direction = {ic.a - ic.d, ic.q - ic.e, ic.w - ic.s};
+
+			//If entity has moved its mouse, rotate the view transform matrix
+			const glm::vec2 MOUSE_SENSITIVITY(0.01f, 0.003f);
+			const float horizontalMouseMovement = MOUSE_SENSITIVITY.x*(ic.mousePos.x - ic.oldMousePos.x);
+			const float verticalMouseMovement = MOUSE_SENSITIVITY.y*(ic.mousePos.y - ic.oldMousePos.y);
+			mc.transform = glm::rotate(mc.transform, horizontalMouseMovement, glm::vec3(0.0f, 1.0f, 0.0f));
+			mc.transform = glm::rotate(mc.transform, verticalMouseMovement, glm::vec3(glm::column(mc.transform, 0)));
+			//Finally update oldMousePos
+			ic.oldMousePos = ic.mousePos;
 		}
 
-		//TODO: Need to figure out how input should translate to movement on a per entity basis
-		mc.velocity = direction;
+		/** Change direction into basis of entity so that pressing 'w' actually makes
+			player go forward as opposed to going in {0.0f, 0.0f, 1.0f} direction**/
+		mc.velocity = glm::inverse(glm::mat3(mc.transform)) * direction;
 
 		//If some input was recieved which caused a move (mc.vel isn't of length 0)
 		if(glm::length(mc.velocity) > 0) {

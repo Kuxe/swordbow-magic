@@ -56,6 +56,7 @@ ID EntityManager::createFatMan(const glm::mat4& transform) {
 	componentManager->createHealthComponent(id);
 	componentManager->createAttackComponent(id);
 	auto& commandComponent = componentManager->createCommandComponent(id);
+	componentManager->createCameraComponent(id);
 
 	//If you'd like to change default initialization-data in a component
 	//Just save a pointer to the component like above and modify it like bellow
@@ -108,6 +109,8 @@ ID EntityManager::createFatMan(const glm::mat4& transform) {
 	inputComponent.bindings[100] = CommandComponent::Event::MOVE_RIGHT;
 	inputComponent.bindings[97] = CommandComponent::Event::MOVE_DOWN;
 	inputComponent.bindings[115] = CommandComponent::Event::MOVE_LEFT;
+	inputComponent.bindings[69] = CommandComponent::Event::FLY_UP;
+	inputComponent.bindings[81] = CommandComponent::Event::FLY_DOWN;
 	inputComponent.bindings[32] = CommandComponent::Event::ATTACK;
 
 	commandComponent[CommandComponent::Event::MOVE_UP] = {
@@ -123,6 +126,14 @@ ID EntityManager::createFatMan(const glm::mat4& transform) {
 	};
 
 	commandComponent[CommandComponent::Event::MOVE_LEFT] = {
+		new AddIdToSystem(id, System::MOVE, systemManager),
+	};
+
+	commandComponent[CommandComponent::Event::FLY_UP] = {
+		new AddIdToSystem(id, System::MOVE, systemManager),
+	};
+
+	commandComponent[CommandComponent::Event::FLY_DOWN] = {
 		new AddIdToSystem(id, System::MOVE, systemManager),
 	};
 

@@ -10,8 +10,8 @@
 #include "timer.hpp"
 #include "boundingbox.hpp"
 
-RenderSystem::RenderSystem(IRenderer* const renderer, SpatialIndexer* spatialIndexer, CameraSystem* cameraSystem, DeltaTime* deltaTime) :
-    renderer(renderer), spatialIndexer(spatialIndexer), cameraSystem(cameraSystem), deltaTime(deltaTime) { }
+RenderSystem::RenderSystem(IRenderer* const renderer, SpatialIndexer* spatialIndexer, CameraSystem* cameraSystem) :
+    renderer(renderer), spatialIndexer(spatialIndexer), cameraSystem(cameraSystem) { }
 
 void RenderSystem::add(ID id) {
 	ids.insert(id);
@@ -26,8 +26,8 @@ void RenderSystem::update() {
     //This place would be a nice place to perform various culling (or not, various culling should be a feature of Lowpoly3d)
     //Active ids in this system should be sent to lowpoly3d
 
-	//Render the scene
-    renderer->render(activeIds, *componentManager, deltaTime->delta());
+	//Tell IRenderer that the scene should be rendered
+    renderer->render(activeIds, *componentManager, cameraSystem->getView());
 }
 
 unsigned int RenderSystem::count() const {

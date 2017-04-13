@@ -19,6 +19,8 @@ struct CommandComponent {
         MOVE_RIGHT,
         MOVE_DOWN,
         MOVE_LEFT,
+        FLY_UP,
+        FLY_DOWN,
         ATTACK,
         ON_DEATH,
         ON_MOVE
