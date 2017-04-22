@@ -94,7 +94,8 @@ void Server::step() {
 	sendKeepAlive();
 
 	//Receive data from clients...
-    packetManager.receive(*this);
+    packetManager.receive();
+    packetManager.poll(*this);
 
 	//Limit server-speed to 60fps (rather 60 tick per second)
 	//Check the elapsed time for the current step, if it is lower than

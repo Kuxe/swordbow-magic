@@ -13,7 +13,6 @@ private:
 	bool endPacketReceived = false;
 public:
 	ClientReceiveInitialState(Client* client);
-	void receive();
 	void step();
 	
 	void changeState(IClientState* state);

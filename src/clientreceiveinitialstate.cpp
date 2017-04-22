@@ -5,19 +5,13 @@
 
 ClientReceiveInitialState::ClientReceiveInitialState(Client* client) : client(client) { }
 
-void ClientReceiveInitialState::receive() {
-    Logger::verbose("ClientReceiveInitialState locking componentsMutex in receive...");
-    client->componentsMutex.lock();
-    Logger::verbose("ClientReceiveInitialState locked componentsMutex in receive");
-    client->packetManager.receive<ClientReceiveInitialState>(*this);
-    Logger::verbose("ClientReceiveInitialState unlocking componentsMutex in receive...");
-    client->componentsMutex.unlock();
-    Logger::verbose("ClientReceiveInitialState unlocked componentsMutex in receive");
-}
-
 void ClientReceiveInitialState::step() {
     //Fetch all events that ocurred...
     client->renderer->pollEvents(this);
+
+    //Poll packets (internally applied packets onto *this)
+    client->packetManager.poll(*this);
+
     Logger::verbose("ClientReceiveInitialState locking componentsMutex in step...");
     client->componentsMutex.lock();
     Logger::verbose("ClientReceiveInitialState locked componentsMutex in step");

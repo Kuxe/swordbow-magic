@@ -20,20 +20,13 @@ void ClientDisconnectedState::pollForceDisconnect() {
 
 ClientDisconnectedState::ClientDisconnectedState(Client* client) : client(client) { }
 
-void ClientDisconnectedState::receive() {
-    Logger::verbose("ClientDisconnectedState locking componentsMutex in receive...");
-    client->componentsMutex.lock();
-    Logger::verbose("ClientDisconnectedState locked componentsMutex in receive");
-    client->packetManager.receive<ClientDisconnectedState>(*this);
-    Logger::verbose("ClientDisconnectedState unlocking componentsMutex in receive...");
-    client->componentsMutex.unlock();
-    Logger::verbose("ClientDisconnectedState unlocked componentsMutex in receive");
-}
-
 void ClientDisconnectedState::step() {
     //Fetch all events that ocurred...
     client->renderer->pollEvents(this);
     client->renderer->renderOnlyOverlays();
+
+    //Poll packets (internally applied packets onto *this)
+    client->packetManager.poll(*this);
 
     //Receivethread can force client to disconnect (from state-transitions usually)
     //In that case, this thread (main-thread) must poll that variable to see if it is set

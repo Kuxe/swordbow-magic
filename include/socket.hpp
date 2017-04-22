@@ -160,11 +160,6 @@ public:
         sockaddr_in from;
         socklen_t fromLength = sizeof(from);
 
-        {
-            std::ostringstream oss;
-            oss << "Receiving packet from " << sender;
-            Logger::log(oss, Logger::VERBOSE);
-        }
         //FIXME: recvfrom should be blocking (why? I do not understand why as of 2017-01-22)
         bytesRead = recvfrom(socket, (char*)buffer, sizeof(buffer), 0, (sockaddr*)&from, &fromLength);
 
@@ -172,12 +167,6 @@ public:
         unsigned int fromAddress = ntohl(from.sin_addr.s_addr);
         unsigned int fromPort = ntohs(from.sin_port);
         sender = IpAddress(fromAddress, fromPort);
-
-        {
-            std::ostringstream oss;
-            oss << "Recieved packet from " << sender << " (" << std::to_string(bytesRead) << "bytes)";
-            Logger::log(oss, Logger::VERBOSE);
-        }
         /** END OF POSSIBLE IF-CHECK PART **/
 
         return buffer;

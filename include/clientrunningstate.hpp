@@ -16,7 +16,6 @@ private:
     bool mouseIsMoving = false; //A InputData packet will be sent if this is true
 public:
 	ClientRunningState(Client* client);
-	void receive();
 	void step();
 	
 	void changeState(IClientState* state);

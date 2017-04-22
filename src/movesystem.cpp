@@ -50,7 +50,7 @@ void MoveSystem::update() {
 			const float horizontalMouseMovement = MOUSE_SENSITIVITY.x*(ic.mousePos.x - ic.oldMousePos.x);
 			const float verticalMouseMovement = MOUSE_SENSITIVITY.y*(ic.mousePos.y - ic.oldMousePos.y);
 			mc.transform = glm::rotate(mc.transform, horizontalMouseMovement, glm::vec3(0.0f, 1.0f, 0.0f));
-			mc.transform = glm::rotate(mc.transform, verticalMouseMovement, glm::vec3(glm::column(mc.transform, 0)));
+			//FIXME: Figure out to rotate camera around x-axis mc.transform = glm::rotate(mc.transform, verticalMouseMovement, glm::vec3(glm::column(mc.transform, 2)));
 			//Finally update oldMousePos
 			ic.oldMousePos = ic.mousePos;
 		}

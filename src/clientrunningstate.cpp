@@ -8,34 +8,14 @@
 
 ClientRunningState::ClientRunningState(Client* client) : client(client) { }
 
-void ClientRunningState::receive() {
-
-        //Receive data from server...
-        Timer waitTimer;
-        waitTimer.start();
-
-        Logger::verbose("ClientReceiveInitialState locking componentsMutex in receive...");
-        client->componentsMutex.lock();
-        Logger::verbose("ClientReceiveInitialState locked componentsMutex in receive");
-
-        const auto elapsed = waitTimer.elapsed();
-        if(elapsed > 1.0f/50.0f) {
-            std::ostringstream oss;
-            oss << "Receive-thread waited for " << elapsed << "s on componentsMutex. This is a probable cause of stuttering.";
-            Logger::log(oss, Logger::WARNING);
-         }
-
-        client->packetManager.receive<ClientRunningState>(*this);
-        Logger::verbose("ClientReceiveInitialState unlocking componentsMutex in receive...");
-        client->componentsMutex.unlock();
-        Logger::verbose("ClientReceiveInitialState unlocked componentsMutex in receive");
-}
-
 void ClientRunningState::step() {
 	client->deltaTime.start();
 
     //Fetch all events that ocurred...
     client->renderer->pollEvents(this);
+
+    //Poll packets (internally applied packets onto *this)
+    client->packetManager.poll(*this);
 
     //If user either pressed or released a key
     //then send keystrokes to server

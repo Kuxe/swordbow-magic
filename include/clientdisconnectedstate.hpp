@@ -16,7 +16,6 @@ private:
 	void pollForceDisconnect();
 public:
 	ClientDisconnectedState(Client* client);
-	void receive();
 	void step();
 
 	void changeState(IClientState* state);

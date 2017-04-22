@@ -101,7 +101,7 @@ void Client::disconnect() {
 void Client::receive() {
     Logger::info("Client is about to let client state receive packets");
     while(receiveThreadRunning) {
-        clientState->receive();
+        packetManager.receive();
     }
      Logger::info("Receive thread no longer running");
 }

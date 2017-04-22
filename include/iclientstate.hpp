@@ -12,7 +12,6 @@ class IClientState {
 public:
 
 	virtual void step() = 0;
-	virtual void receive() = 0;
 
 	//Visitor-pattern, visitable = visitor because all states can change to any other.
 	//changeState = accept, onChange = visist
