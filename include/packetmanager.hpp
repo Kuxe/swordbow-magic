@@ -80,8 +80,6 @@ public:
 		packet acceptor (which likely is something like "ClientRunningState", who defines behaviour
 		for each packet **/
 	void apply(auto& acceptor, const IpAddress& sender, const std::string& serializedPacket, const Packet<bool, MESSAGE_TYPE::UNKNOWN>& untypedPacket) {
-		Logger::verbose("Applying packet");
-
 		try {
 	        //1. Check type of packet
 	        switch(untypedPacket.getType()) {

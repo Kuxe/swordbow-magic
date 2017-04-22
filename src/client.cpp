@@ -103,7 +103,7 @@ void Client::receive() {
     while(receiveThreadRunning) {
         packetManager.receive();
     }
-     Logger::info("Receive thread no longer running");
+    Logger::info("Receive thread no longer running");
 }
 
 void Client::run() {

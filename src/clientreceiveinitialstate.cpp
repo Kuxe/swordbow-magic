@@ -12,9 +12,6 @@ void ClientReceiveInitialState::step() {
     //Poll packets (internally applied packets onto *this)
     client->packetManager.poll(*this);
 
-    Logger::verbose("ClientReceiveInitialState locking componentsMutex in step...");
-    client->componentsMutex.lock();
-    Logger::verbose("ClientReceiveInitialState locked componentsMutex in step");
     client->renderer->hideOverlay(Image::RECEIVING_DATA_OVERLAY);
     const Text text = {
         "Receiving data from server (" + std::to_string(receivedSmallContainers) + "/" + std::to_string(client->numberOfInitialSmallContainers) + ")",
@@ -30,10 +27,6 @@ void ClientReceiveInitialState::step() {
         Logger::error(oss);
         changeState(&client->clientDisconnectedState);
     }
-
-    Logger::verbose("ClientReceiveInitialState unlocking componentsMutex in step...");
-    client->componentsMutex.unlock();
-    Logger::verbose("ClientReceiveInitialState unlocked componentsMutex in step");
 
     //If it weren't for 10ms sleep, this thread would lock out
     //the receive-thread to the extent of losing lots of packets
