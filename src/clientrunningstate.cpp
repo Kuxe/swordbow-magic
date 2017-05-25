@@ -15,7 +15,7 @@ void ClientRunningState::step() {
     client->renderer->pollEvents(this);
 
     //Poll packets (internally applied packets onto *this)
-    client->packetManager.poll(*this);
+    client->packetManager.poll(client->clientState);
 
     //If user either pressed or released a key
     //then send keystrokes to server
@@ -93,27 +93,31 @@ void ClientRunningState::onChange(ClientRunningState* state) {
     Logger::log("Client can't change state from ClientRunningState to ClientRunningState", Logger::WARNING);
 }
 
-void ClientRunningState::accept(const OutdatedData& data, const IpAddress& sender) {
+void ClientRunningState::handle(IPacket* data) {
+    Logger::log("Received packet that has no overloaded handle (ClientRunningState)", Logger::WARNING);
+}
+
+void ClientRunningState::handle(const OutdatedData* data) {
     Logger::log("This packet is outdated, to late! Sluggish!", Logger::WARNING);
 }
 
-void ClientRunningState::accept(const ServerReplyToConnectData& data, const IpAddress& sender) {
+void ClientRunningState::handle(const ServerReplyToConnectData* data) {
     Logger::log("Got camera ID from server", Logger::INFO);
 
     //Got my id. Tell camerasystem to follow that id.t
-    const auto& pair = data.data;
+    const auto& pair = data->data;
     const auto& id = pair.first;
     client->systemManager.getSystem(pair.second)->add(id);
     client->playerId = id;
 }
 
-void ClientRunningState::accept(MoveComponentsDiffData& data, const IpAddress& sender) {
+void ClientRunningState::handle(MoveComponentsDiffData* data) {
     Logger::log("Received MOVECOMPONENTSDIFF packet", Logger::VERBOSE);
 
     //Diff movecomponents were received - handle it
-    client->componentManager.moveComponents.sync(data.data);
+    client->componentManager.moveComponents.sync(data->data);
 
-    for(auto& pair : data.data) {
+    for(auto& pair : data->data) {
         //Try to activate id, but it could be the case that
         //the entity is newly created, in that case activation wont work
         //so just add it instead. But before adding/activating, make sure
@@ -134,13 +138,13 @@ void ClientRunningState::accept(MoveComponentsDiffData& data, const IpAddress& s
     }
 }
 
-void ClientRunningState::accept(RenderComponentsDiffData& data, const IpAddress& sender) {
+void ClientRunningState::handle(RenderComponentsDiffData* data) {
     Logger::log("Received RENDERCOMPONENTSDIFF packet", Logger::VERBOSE);
 
     //Diff rendercomponents were received - handle it
-    client->componentManager.renderComponents.sync(data.data);
+    client->componentManager.renderComponents.sync(data->data);
 
-    for(auto& pair : data.data) {
+    for(auto& pair : data->data) {
         const auto& id = pair.first;
         const auto& mcs = client->componentManager.moveComponents;
         const auto& rcs = client->componentManager.renderComponents;
@@ -156,22 +160,22 @@ void ClientRunningState::accept(RenderComponentsDiffData& data, const IpAddress&
     }
 }
 
-void ClientRunningState::accept(PlaySoundData& data, const IpAddress& sender) {
+void ClientRunningState::handle(PlaySoundData* data) {
     Logger::log("Received PLAY_SOUND packet", Logger::VERBOSE);
-    client->soundEngine->playSound(data.data);
+    client->soundEngine->playSound(data->data);
 }
 
-void ClientRunningState::accept(const RegisterIdToSystemData& data, const IpAddress& sender) {
+void ClientRunningState::handle(const RegisterIdToSystemData* data) {
     Logger::log("Received REGISTER_ID_TO_SYSTEM packet", Logger::INFO);
-    const auto& id = data.data.first;
-    const auto& systemIdentifier = data.data.second;
+    const auto& id = data->data.first;
+    const auto& systemIdentifier = data->data.second;
     client->systemManager.getSystem(systemIdentifier)->add(id);
 }
 
-void ClientRunningState::accept(const RemoveIdData& data, const IpAddress& sender) {
+void ClientRunningState::handle(const RemoveIdData* data) {
     Logger::log("Received REMOVE_ID packet", Logger::INFO);
 
-    const auto& id = data.data;
+    const auto& id = data->data;
     client->systemManager.getSystem(System::RENDER)->remove(id);
     client->systemManager.getSystem(System::HASHGRID_TEXTURE)->remove(id);
     client->componentManager.clearComponents(id);
@@ -183,33 +187,29 @@ void ClientRunningState::accept(const RemoveIdData& data, const IpAddress& sende
     }
 }
 
-void ClientRunningState::accept(const RemoveIdFromSystemData& data, const IpAddress& sender) {
+void ClientRunningState::handle(const RemoveIdFromSystemData* data) {
     Logger::log("Received REMOVE_ID_FROM_SYSTEM packet", Logger::INFO);
-    const auto& id = data.data.first;
-    const auto& systemIdentifier = data.data.second;
+    const auto& id = data->data.first;
+    const auto& systemIdentifier = data->data.second;
     client->systemManager.getSystem(systemIdentifier)->remove(id);
 }
 
-void ClientRunningState::accept(const RemoveIdFromSystemsData& data, const IpAddress& sender) {
+void ClientRunningState::handle(const RemoveIdFromSystemsData* data) {
     Logger::log("Received REMOVE_ID_FROM_SYSTEMS packet", Logger::INFO);
-    const auto& id = data.data;
+    const auto& id = data->data;
     client->systemManager.getSystem(System::RENDER)->remove(id);
     client->systemManager.getSystem(System::HASHGRID_TEXTURE)->remove(id);
 }
 
-void ClientRunningState::accept(const ActivateIdData& data, const IpAddress& sender) {
+void ClientRunningState::handle(const ActivateIdData* data) {
     Logger::log("Received ACTIVATE_ID packet", Logger::INFO);
-    const auto& id = data.data.first;
-    const auto& systemIdentifier = data.data.second;
+    const auto& id = data->data.first;
+    const auto& systemIdentifier = data->data.second;
     client->systemManager.getSystem(systemIdentifier)->activateId(id);
 }
 
-void ClientRunningState::accept(const KeepAliveData& data, const IpAddress& sender) {
+void ClientRunningState::handle(const KeepAliveData* data) {
     client->keepAlive.start();
-}
-
-void ClientRunningState::accept(const auto& data, const IpAddress& sender) {
-    Logger::log("Received packet that has no overloaded accept (ClientRunningState)", Logger::WARNING);
 }
 
 void ClientRunningState::onEvent(const KeyEvent& evt) {

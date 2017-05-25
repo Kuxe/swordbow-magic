@@ -4,6 +4,7 @@
 #include "iclientstate.hpp"
 #include "messagetypes.hpp"
 #include "ipaddress.hpp"
+#include "packethandler.hpp"
 #include <mutex>
 
 class Client;
@@ -23,11 +24,11 @@ public:
 	void onChange(ClientReceiveInitialState* state);
 	void onChange(ClientRunningState* state);
 
-	void accept(const OutdatedData&, const IpAddress& sender);
-	void accept(const DisconnectData&, const IpAddress& sender);
-	void accept(const BeginTransmittingInitialComponentsData& data, const IpAddress& sender);
-	void accept(const KeepAliveData&, const IpAddress& sender);
-	void accept(const auto& data, const IpAddress& sender);
+	void handle(IPacket* data) override;
+	void handle(const OutdatedData*);
+	void handle(const DisconnectData*);
+	void handle(const BeginTransmittingInitialComponentsData* data);
+	void handle(const KeepAliveData*);
 
 	void onEvent(const KeyEvent& evt);
 	void onEvent(const MouseEvent& evt);

@@ -20,11 +20,11 @@ public:
 	void onChange(ClientReceiveInitialState* state);
 	void onChange(ClientRunningState* state);
 
-	void accept(const OutdatedData& data, const IpAddress& sender);
-	void accept(InitialComponentsData& data, const IpAddress& sender);
-	void accept(const EndTransmittingInitialComponentsData&, const IpAddress& sender);
-	void accept(const KeepAliveData&, const IpAddress& sender);
-	void accept(const auto& data, const IpAddress& sender);
+	void handle(IPacket* data) override;
+	void handle(const OutdatedData* data);
+	void handle(InitialComponentsData* data);
+	void handle(const EndTransmittingInitialComponentsData*);
+	void handle(const KeepAliveData*);
 
 	void onEvent(const KeyEvent& evt);
 	void onEvent(const MouseEvent& evt);

@@ -23,19 +23,19 @@ public:
 	void onChange(ClientReceiveInitialState* state);
 	void onChange(ClientRunningState* state);
 
-	/** Network related acceptor methods **/
-	void accept(const OutdatedData& data, const IpAddress& sender);
-	void accept(const ServerReplyToConnectData& data, const IpAddress& sender);
-	void accept(MoveComponentsDiffData& data, const IpAddress& sender);
-	void accept(RenderComponentsDiffData& data, const IpAddress& sender);
-	void accept(PlaySoundData& data, const IpAddress& sender);
-	void accept(const RegisterIdToSystemData& data, const IpAddress& sender);
-	void accept(const RemoveIdData& data, const IpAddress& sender);
-	void accept(const RemoveIdFromSystemData& data, const IpAddress& sender);
-	void accept(const RemoveIdFromSystemsData& data, const IpAddress& sender);
-	void accept(const ActivateIdData& data, const IpAddress& sender);
-	void accept(const KeepAliveData& data, const IpAddress& sender);
-	void accept(const auto& data, const IpAddress& sender);
+	/** Methods handling various packets**/
+	void handle(IPacket* data);
+	void handle(const OutdatedData* data);
+	void handle(const ServerReplyToConnectData* data);
+	void handle(MoveComponentsDiffData* data);
+	void handle(RenderComponentsDiffData* data);
+	void handle(PlaySoundData* data);
+	void handle(const RegisterIdToSystemData* data);
+	void handle(const RemoveIdData* data);
+	void handle(const RemoveIdFromSystemData* data);
+	void handle(const RemoveIdFromSystemsData* data);
+	void handle(const ActivateIdData* data);
+	void handle(const KeepAliveData* data);
 
 	void onEvent(const KeyEvent& evt);
 	void onEvent(const MouseEvent& evt);

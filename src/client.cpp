@@ -61,6 +61,7 @@ void Client::connect(const IpAddress& server) {
     this->server = server;
 
     //Connect-request packet
+    //TODO: Send IpAddress instead of bool=true
     send<bool, MESSAGE_TYPE::CONNECT_TO_SERVER>(true);
     keepAlive.start();
     std::ostringstream oss;

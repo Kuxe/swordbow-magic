@@ -4,6 +4,19 @@
 #include <type_traits>
 #include "stringhash.hpp"
 #include "messagetypes.hpp"
+#include "packethandler.hpp"
+
+/** MESSAGE TO SELF: If I ever get the idea that this packet-class should contain ip address,
+    DONT make it a member! Make it a feature of the Data instead. Otherwise I am at risk making
+    the ip address class making its way everywhere in the program **/
+
+/** Sole purpose of IPacket is to provide a function givetype in which
+    the realizing child of IPacket may pass *this to the PacketHandler,
+    such that the PacketHandler will know the underlying type of IPacket
+    (the IPacket is telling its type!) **/
+struct IPacket {
+    virtual void telltype(PacketHandler* ph) = 0;
+};
 
 //Representing objects as unsigned int is probably the easiest way
 //but template is here to allow user to pass any type in the packet
@@ -11,7 +24,7 @@
 //since memory pointed to by pointers aren't the same across
 //machines...
 template<class Data, MESSAGE_TYPE Message>
-class Packet {
+class Packet : public IPacket {
 private:
     uint16_t protocol;
     uint16_t sequence;
@@ -43,6 +56,9 @@ public:
     constexpr const Data& getData() const { return data; }
     constexpr Data& getData() { return data; }
     constexpr unsigned int getDataSize() { return datasize; }
+
+    void telltype(PacketHandler* ph) override { ph->handle(this); }
+
 };
 
 #endif //PACKET_HPP

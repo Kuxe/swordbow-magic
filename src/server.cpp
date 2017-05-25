@@ -95,7 +95,7 @@ void Server::step() {
 
 	//Receive data from clients...
     packetManager.receive();
-    packetManager.poll(*this);
+    packetManager.poll(this);
 
 	//Limit server-speed to 60fps (rather 60 tick per second)
 	//Check the elapsed time for the current step, if it is lower than
@@ -364,21 +364,29 @@ void Server::printGeneralInfo() {
 	Logger::log(oss, Logger::INFO);
 }
 
-void Server::accept(const OutdatedData&, const IpAddress& sender) {
+void Server::handle(IPacket* data) {
+	std::ostringstream oss;
+	oss << "Received packet that has no overloaded accept (server, typeid: " << typeid(data).name() << ")";
+	Logger::log(oss, Logger::WARNING);
+}
+
+void Server::handle(const OutdatedData*) {
 	Logger::log("This packet is outdated, to late! Sluggish!", Logger::WARNING);
 }
 
-void Server::accept(const ConnectToServerData&, const IpAddress& sender) {
+void Server::handle(const ConnectToServerData* data) {
 	Logger::log("Received CONNECT packet", Logger::INFO);
-	onConnect(sender);
+	//FIXME 2017-05-25: SEND SENDER IN PACKET
+	//onConnect(sender);
 }
 
-void Server::accept(const DisconnectData&, const IpAddress& sender) {
+void Server::handle(const DisconnectData*) {
 	Logger::log("Received DISCONNECT packet", Logger::INFO);
-	onDisconnect(sender);
+	//FIXME 2017-05-25: SEND SENDER IN PACKET
+	//onDisconnect(sender);
 }
 
-void Server::accept(const InputDataData& data, const IpAddress& sender) {
+void Server::handle(const InputDataData* data) {
 	Logger::log("Received INPUTDATA packet", Logger::VERBOSE);
 
 	//Check if client established a connection to the server, ie
@@ -390,28 +398,25 @@ void Server::accept(const InputDataData& data, const IpAddress& sender) {
 	//case that the id is connected currently, but was just killed but hasnt
 	//been notified of its death so it keeps trying to move. In that case,
 	//its fine to ignore any input trying to steer the deceased entity.
-	auto& ics = componentManager.inputComponents;
+	//FIXME 2017-05-25: SEND SENDER IN PACKET 
+	/*auto& ics = componentManager.inputComponents;
 	if(clients.find(sender) != clients.end() && ics.find(clients.at(sender).id) != ics.end()) {
 		inputDataToInputComponent(sender, data.data);
-	}
+	}*/
 }
 
-void Server::accept(const CongestedClientData& data, const IpAddress& sender) {
+void Server::handle(const CongestedClientData* data) {
 	Logger::log("Received CONGESTED_CLIENT packet", Logger::INFO);
-	auto& client = clients.at(sender);
+	//FIXME 2017-05-25: SEND SENDER IN PACKET 
+	/*auto& client = clients.at(sender);
 	client.congested = true;
-	client.congestionTimer.start();
+	client.congestionTimer.start();*/
 }
 
-void Server::accept(const NotCongestedClientData& data, const IpAddress& sender) {
+void Server::handle(const NotCongestedClientData* data) {
 	Logger::log("Received NOT_CONGESTED_CLIENT packet", Logger::INFO);
-	clients.at(sender).congested = false;
-}
-
-void Server::accept(const auto& data, const IpAddress& sender) {
-	std::ostringstream oss;
-	oss << "Received packet that has no overloaded accept (server, typeid: " << typeid(data).name() << ")";
-	Logger::log(oss, Logger::WARNING);
+	//FIXME 2017-05-25: SEND SENDER IN PACKET 
+	//clients.at(sender).congested = false;
 }
 
 int main(int argc, char** argv) {

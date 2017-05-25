@@ -26,7 +26,7 @@ void ClientDisconnectedState::step() {
     client->renderer->renderOnlyOverlays();
 
     //Poll packets (internally applied packets onto *this)
-    client->packetManager.poll(*this);
+    client->packetManager.poll(client->clientState);
 
     //Receivethread can force client to disconnect (from state-transitions usually)
     //In that case, this thread (main-thread) must poll that variable to see if it is set
@@ -64,18 +64,38 @@ void ClientDisconnectedState::onChange(ClientRunningState* state) {
     forceDisconnect();
 }
 
-void ClientDisconnectedState::accept(const OutdatedData& data, const IpAddress& sender) {
+void ClientDisconnectedState::handle(IPacket* data) {
+    /** FIXME: Some packets are applied onto disconnected state albeit a state change already occurred
+        this is because we are polling packets in a while-loop and applying packets onto *this instead
+        of clientState pointer. So when the state changes, poll() will keep applying packets to *this
+        instead of to clientState.
+
+        Two potential solutions:
+
+            1. call client->packetManager.poll(client->clientState) instead of call client->packetManager.poll(*this)
+            but then the auto-acceptor stuff break because interface needs to have all accept function virtual which
+            scales linearly with number of packets (times number of states, ugh). I could probably use visitor-pattern
+            to solve this but I am not sure.
+
+            2. Abort polling if change-state packet occured. This is tremendously ugly.
+
+            3. Designate packets for different states. This is not very maintainable at all **/
+
+    Logger::log("Received packet that has no overloaded accept (ClientDisconnectedState)", Logger::WARNING);
+}
+
+void ClientDisconnectedState::handle(const OutdatedData* data) {
     Logger::log("This packet is outdated, to late! Sluggish!", Logger::WARNING);
 }
 
-void ClientDisconnectedState::accept(const DisconnectData& data, const IpAddress& sender) {
+void ClientDisconnectedState::handle(const DisconnectData* data) {
     //Server will send this to client for a couple of reasons.
     //In any case the client shouldn't be connected to the server.
     Logger::log("Received DISCONNECT packet", Logger::INFO);
     client->disconnect();
 }
 
-void ClientDisconnectedState::accept(const BeginTransmittingInitialComponentsData& data, const IpAddress& sender) {
+void ClientDisconnectedState::handle(const BeginTransmittingInitialComponentsData* data) {
     //This message to client will put the client in a special "state"
     //where the client will only receive INITIAL_COMPONENTS-packet
     //and END_TRANSMITTING_INITIAL_COMPONENTS. ECS won't update.
@@ -84,7 +104,7 @@ void ClientDisconnectedState::accept(const BeginTransmittingInitialComponentsDat
     //Client may NOT update ECS because it's not guaranteed that the all
     //required entity-components have been received.
     Logger::log("Received BEGIN_TRANSMITTING_INITIAL_COMPONENTS packet", Logger::INFO);
-    auto numberOfInitialSmallContainers = data.data;
+    auto numberOfInitialSmallContainers = data->data;
     client->numberOfInitialSmallContainers = numberOfInitialSmallContainers;
     std::ostringstream oss;
     oss << "Expecting " << numberOfInitialSmallContainers << " INITIAL_COMPONENTS-packets";
@@ -105,28 +125,8 @@ void ClientDisconnectedState::accept(const BeginTransmittingInitialComponentsDat
     changeState(&client->clientReceiveInitialState);
 }
 
-void ClientDisconnectedState::accept(const KeepAliveData&, const IpAddress& sender) {
+void ClientDisconnectedState::handle(const KeepAliveData*) {
     client->keepAlive.start();
-}
-
-void ClientDisconnectedState::accept(const auto& data, const IpAddress& sender) {
-    /** FIXME: Some packets are applied onto disconnected state albeit a state change already occurred
-        this is because we are polling packets in a while-loop and applying packets onto *this instead
-        of clientState pointer. So when the state changes, poll() will keep applying packets to *this
-        instead of to clientState.
-
-        Two potential solutions:
-
-            1. call client->packetManager.poll(client->clientState) instead of call client->packetManager.poll(*this)
-            but then the auto-acceptor stuff break because interface needs to have all accept function virtual which
-            scales linearly with number of packets (times number of states, ugh). I could probably use visitor-pattern
-            to solve this but I am not sure.
-
-            2. Abort polling if change-state packet occured. This is tremendously ugly.
-
-            3. Designate packets for different states. This is not very maintainable at all **/
-
-    Logger::log("Received packet that has no overloaded accept (ClientDisconnectedState)", Logger::WARNING);
 }
 
 void ClientDisconnectedState::onEvent(const KeyEvent& evt) {

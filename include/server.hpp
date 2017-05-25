@@ -35,10 +35,11 @@
 #include "messagetypes.hpp"
 #include "messagetypes.hpp"
 #include "ipaddress.hpp"
+#include "packethandler.hpp"
 
 typedef unsigned int ID;
 
-class Server {
+class Server : public PacketHandler{
 private:
     PacketManager packetManager;
 
@@ -110,13 +111,13 @@ public:
 
     void printGeneralInfo();
 
-    void accept(const OutdatedData&, const IpAddress& sender);
-    void accept(const ConnectToServerData&, const IpAddress& sender);
-    void accept(const DisconnectData&, const IpAddress& sender);
-    void accept(const InputDataData& data, const IpAddress& sender);
-    void accept(const CongestedClientData& data, const IpAddress& sender);
-    void accept(const NotCongestedClientData& data, const IpAddress& sender);
-    void accept(const auto& data, const IpAddress& sender);
+    void handle(IPacket* data) override;
+    void handle(const OutdatedData*);
+    void handle(const ConnectToServerData*);
+    void handle(const DisconnectData*);
+    void handle(const InputDataData* data);
+    void handle(const CongestedClientData* data);
+    void handle(const NotCongestedClientData* data);
 };
 
 

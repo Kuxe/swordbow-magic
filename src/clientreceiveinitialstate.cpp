@@ -10,7 +10,7 @@ void ClientReceiveInitialState::step() {
     client->renderer->pollEvents(this);
 
     //Poll packets (internally applied packets onto *this)
-    client->packetManager.poll(*this);
+    client->packetManager.poll(client->clientState);
 
     client->renderer->hideOverlay(Image::RECEIVING_DATA_OVERLAY);
     const Text text = {
@@ -54,11 +54,15 @@ void ClientReceiveInitialState::onChange(ClientRunningState* state) {
     Logger::log("Client can't change state from ClientRunningState to ClientReceiveInitialState", Logger::WARNING);
 }
 
-void ClientReceiveInitialState::accept(const OutdatedData& data, const IpAddress& sender) {
+void ClientReceiveInitialState::handle(IPacket* data) {
+    Logger::warning("Received packet that has no overloaded handle (ClientReceiveInitialState)");
+}
+
+void ClientReceiveInitialState::handle(const OutdatedData* data) {
     Logger::log("This packet is outdated, to late! Sluggish!", Logger::WARNING);
 }
 
-void ClientReceiveInitialState::accept(InitialComponentsData& data, const IpAddress& sender) {
+void ClientReceiveInitialState::handle(InitialComponentsData* data) {
 	Logger::log("Received INITIAL_COMPONENTS packet", Logger::INFO);
 	client->renderer->hideOverlay(Image::CONNECT_OVERLAY);
 	receivedSmallContainers++;
@@ -68,10 +72,10 @@ void ClientReceiveInitialState::accept(InitialComponentsData& data, const IpAddr
 	};
 	client->renderer->showOverlay(Image::RECEIVING_DATA_OVERLAY, text);
 
-	client->componentManager.moveComponents.sync(data.data.first);
-	client->componentManager.renderComponents.sync(data.data.second);
+	client->componentManager.moveComponents.sync(data->data.first);
+	client->componentManager.renderComponents.sync(data->data.second);
 
-	for(auto& pair : data.data.first) {
+	for(auto& pair : data->data.first) {
 		client->textureHashGridSystem.add(pair.first);
 		client->renderSystem.add(pair.first);
 	}
@@ -88,7 +92,7 @@ void ClientReceiveInitialState::accept(InitialComponentsData& data, const IpAddr
 	}
 }
 
-void ClientReceiveInitialState::accept(const EndTransmittingInitialComponentsData&, const IpAddress& sender) {
+void ClientReceiveInitialState::handle(const EndTransmittingInitialComponentsData*) {
 	Logger::info("Received END_TRANSMITTING_INITIAL_COMPONENTS packet");
 	endPacketReceived = true;
 
@@ -103,11 +107,7 @@ void ClientReceiveInitialState::accept(const EndTransmittingInitialComponentsDat
 	}
 }
 
-void ClientReceiveInitialState::accept(const auto& data, const IpAddress& sender) {
-    Logger::warning("Received packet that has no overloaded accept (ClientReceiveInitialState)");
-}
-
-void ClientReceiveInitialState::accept(const KeepAliveData&, const IpAddress& sender) {
+void ClientReceiveInitialState::handle(const KeepAliveData*) {
 	client->keepAlive.start();
 }
 
