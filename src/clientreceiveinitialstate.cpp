@@ -54,8 +54,8 @@ void ClientReceiveInitialState::onChange(ClientRunningState* state) {
     Logger::log("Client can't change state from ClientRunningState to ClientReceiveInitialState", Logger::WARNING);
 }
 
-void ClientReceiveInitialState::handle(IPacket* data) {
-    Logger::warning("Received packet that has no overloaded handle (ClientReceiveInitialState)");
+void ClientReceiveInitialState::greet(IPacket* packet) {
+    packet->greet(this);
 }
 
 void ClientReceiveInitialState::handle(const OutdatedData* data) {

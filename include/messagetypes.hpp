@@ -39,15 +39,24 @@ enum MESSAGE_TYPE {
 #include "rendercomponent.hpp"
 #include "systemidentifiers.hpp"
 #include "inputdata.hpp"
+#include "ipaddress.hpp"
+
+/** A packet inherits from this if the IpAddress should be accesible from within the packet.
+    Some code within PacketManager (as of 2017-05-29) looks if packet inherits from ContainIP
+    and if so, assign the senders IP to the variable ip within ContainIP struct (such that
+    the packet, which inherits ContainIP, contains the IP) **/
+struct ContainIP {
+    IpAddress ip;
+};
 
 /** This is where messages is tied with the expected datatype on that message **/
 /** These structs are used when doing multiple-dispatch on different client-states **/
 struct UnknownData { bool data; };
 struct OutdatedData { bool data; };
-struct ConnectToServerData { bool data; };
+struct ConnectToServerData : ContainIP { bool data; };
 struct ServerReplyToConnectData { std::pair<ID, System::Identifier> data; };
-struct DisconnectData { bool data; };
-struct InputDataData { InputData data; };
+struct DisconnectData : ContainIP { bool data; };
+struct InputDataData : ContainIP { InputData data; };
 struct BeginTransmittingInitialComponentsData { int data; };
 struct InitialComponentsData { std::pair<Components<MoveComponent>, Components<RenderComponent>> data; };
 struct EndTransmittingInitialComponentsData { bool data; };
@@ -59,8 +68,8 @@ struct RemoveIdData { ID data; };
 struct RemoveIdFromSystemData { std::pair<ID, System::Identifier> data; };
 struct RemoveIdFromSystemsData { bool data; };
 struct ActivateIdData { std::pair<ID, System::Identifier> data; };
-struct CongestedClientData { bool data; };
-struct NotCongestedClientData { bool data; };
+struct CongestedClientData : ContainIP { bool data; };
+struct NotCongestedClientData : ContainIP { bool data; };
 struct KeepAliveData { bool data; };
 
 #endif //MESSAGETYPES_HPP

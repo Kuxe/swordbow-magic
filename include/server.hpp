@@ -111,7 +111,7 @@ public:
 
     void printGeneralInfo();
 
-    void handle(IPacket* data) override;
+    void greet(IPacket* packet) override;
     void handle(const OutdatedData*);
     void handle(const ConnectToServerData*);
     void handle(const DisconnectData*);

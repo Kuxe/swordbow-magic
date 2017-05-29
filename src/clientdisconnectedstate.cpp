@@ -64,24 +64,8 @@ void ClientDisconnectedState::onChange(ClientRunningState* state) {
     forceDisconnect();
 }
 
-void ClientDisconnectedState::handle(IPacket* data) {
-    /** FIXME: Some packets are applied onto disconnected state albeit a state change already occurred
-        this is because we are polling packets in a while-loop and applying packets onto *this instead
-        of clientState pointer. So when the state changes, poll() will keep applying packets to *this
-        instead of to clientState.
-
-        Two potential solutions:
-
-            1. call client->packetManager.poll(client->clientState) instead of call client->packetManager.poll(*this)
-            but then the auto-acceptor stuff break because interface needs to have all accept function virtual which
-            scales linearly with number of packets (times number of states, ugh). I could probably use visitor-pattern
-            to solve this but I am not sure.
-
-            2. Abort polling if change-state packet occured. This is tremendously ugly.
-
-            3. Designate packets for different states. This is not very maintainable at all **/
-
-    Logger::log("Received packet that has no overloaded accept (ClientDisconnectedState)", Logger::WARNING);
+void ClientDisconnectedState::greet(IPacket* packet) {
+    packet->greet(this);
 }
 
 void ClientDisconnectedState::handle(const OutdatedData* data) {

@@ -48,6 +48,12 @@ public:
     constexpr bool operator!=(const IpAddress& other) const {
         return !(*this == other);
     }
+
+    template<class Archive>
+    void serialize(Archive& ar) {
+        ar(address, port);
+    }
+
 };
 
 //Hash method for using IpAddress as key in unordered_map

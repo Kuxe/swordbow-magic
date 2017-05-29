@@ -15,7 +15,7 @@
     such that the PacketHandler will know the underlying type of IPacket
     (the IPacket is telling its type!) **/
 struct IPacket {
-    virtual void telltype(PacketHandler* ph) = 0;
+    virtual void greet(PacketHandler* ph) = 0;
 };
 
 //Representing objects as unsigned int is probably the easiest way
@@ -57,7 +57,9 @@ public:
     constexpr Data& getData() { return data; }
     constexpr unsigned int getDataSize() { return datasize; }
 
-    void telltype(PacketHandler* ph) override { ph->handle(this); }
+    void greet(PacketHandler* ph) override {
+        ph->handle(&data);
+    }
 
 };
 

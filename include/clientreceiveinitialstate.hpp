@@ -20,7 +20,7 @@ public:
 	void onChange(ClientReceiveInitialState* state);
 	void onChange(ClientRunningState* state);
 
-	void handle(IPacket* data) override;
+	void greet(IPacket* packet) override;
 	void handle(const OutdatedData* data);
 	void handle(InitialComponentsData* data);
 	void handle(const EndTransmittingInitialComponentsData*);

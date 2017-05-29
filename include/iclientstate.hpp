@@ -27,10 +27,6 @@ public:
 	virtual void onChange(ClientReceiveInitialState* state) = 0;
 	virtual void onChange(ClientRunningState* state) = 0;
 
-	//Clients must explicitly deal with any packet they may receive
-	//(including just discarding the packet)
-	virtual void handle(IPacket* packet) = 0;
-
 	virtual void onEvent(const KeyEvent& evt) = 0;
 	virtual void onEvent(const MouseEvent& evt) = 0;
 };

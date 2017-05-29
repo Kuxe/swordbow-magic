@@ -60,12 +60,27 @@ public:
 		}
 	}
 
+	/** If the deserializedPacket contains one member whose name is data and
+		of type IpAddress then copy sender into data otherwise do nothing **/
+	void setIpAddressIfPossible(auto* data, const IpAddress& sender) { return; }
+	void setIpAddressIfPossible(ContainIP* cip, const IpAddress& sender) {
+		Logger::verbose("setIpAddressIfPossible ContainIP called! ITS WORKING!");
+		cip->ip = sender;
+	}
+
 	template<MESSAGE_TYPE Message>
 	void accept(PacketHandler* ph, auto message, const std::string& serializedPacket, const IpAddress& sender) {
 		//So get the data that is actually relevant, copy it to the message, then call the overloaded
 		//method of an acceptor (overloaded on message)
 		auto deserializedPacket = deserialize<decltype(message.data), Message>(serializedPacket);
-		deserializedPacket.telltype(ph);
+
+		//If packet inherits from "ContainIP" then assign "sender" to the packet ip
+		setIpAddressIfPossible(&deserializedPacket, sender);
+
+		//FIXME 2017-05-29: ph->greet(&deserializedPacket); will internally call ph.handle(&data) where handle is function defined for auto
+		//or with virtual overloaded non-auto argument, so server will treat any packets it get as IPacket unless there is explicit
+		//virtual handle(MyPacketData) in PacketHandler (in addition to server actually overriding such a method)
+		ph->greet(&deserializedPacket);
 	}
 
 	std::string serialize(const auto& object) {
@@ -87,15 +102,6 @@ public:
 	        		accept<MESSAGE_TYPE::OUTDATED>(ph, OutdatedData(), serializedPacket, sender);
 	        	} break;
 	        	case CONNECT_TO_SERVER: {
-	        		/** TODO 2017-05-25: Since it is hard for client to figure out what WAN-address it has,
-	        			it is simply easier to let the client send a CONNECT_TO_SERVER packet
-	        			which garbage IpAddress-data, but the IpAddress-data which server expects
-	        			is known here so simply set the ipaddress here - effectively giving the
-	        			server the illusion of receiving a packet containing the ipaddress!
-
-	        			I cant do this! Packet is still serialized, the class is only passed so
-	        			Cereal may figure out what type of data to serialize
-	        			(=I cannot simply insert data into the packet here _here_ .. but maybe later?**/
 	        		accept<MESSAGE_TYPE::CONNECT_TO_SERVER>(ph, ConnectToServerData(), serializedPacket, sender);
 	        	} break;
 	        	case SERVER_REPLY_TO_CONNECT: { 

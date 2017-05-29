@@ -24,7 +24,7 @@ public:
 	void onChange(ClientRunningState* state);
 
 	/** Methods handling various packets**/
-	void handle(IPacket* data);
+	void greet(IPacket* packet) override;
 	void handle(const OutdatedData* data);
 	void handle(const ServerReplyToConnectData* data);
 	void handle(MoveComponentsDiffData* data);

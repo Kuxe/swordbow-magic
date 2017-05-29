@@ -364,10 +364,8 @@ void Server::printGeneralInfo() {
 	Logger::log(oss, Logger::INFO);
 }
 
-void Server::handle(IPacket* data) {
-	std::ostringstream oss;
-	oss << "Received packet that has no overloaded accept (server, typeid: " << typeid(data).name() << ")";
-	Logger::log(oss, Logger::WARNING);
+void Server::greet(IPacket* packet) {
+	packet->greet(this);
 }
 
 void Server::handle(const OutdatedData*) {
@@ -376,14 +374,12 @@ void Server::handle(const OutdatedData*) {
 
 void Server::handle(const ConnectToServerData* data) {
 	Logger::log("Received CONNECT packet", Logger::INFO);
-	//FIXME 2017-05-25: SEND SENDER IN PACKET
-	//onConnect(sender);
+	onConnect(data->ip);
 }
 
-void Server::handle(const DisconnectData*) {
+void Server::handle(const DisconnectData* data) {
 	Logger::log("Received DISCONNECT packet", Logger::INFO);
-	//FIXME 2017-05-25: SEND SENDER IN PACKET
-	//onDisconnect(sender);
+	onDisconnect(data->ip);
 }
 
 void Server::handle(const InputDataData* data) {
@@ -398,25 +394,22 @@ void Server::handle(const InputDataData* data) {
 	//case that the id is connected currently, but was just killed but hasnt
 	//been notified of its death so it keeps trying to move. In that case,
 	//its fine to ignore any input trying to steer the deceased entity.
-	//FIXME 2017-05-25: SEND SENDER IN PACKET 
-	/*auto& ics = componentManager.inputComponents;
-	if(clients.find(sender) != clients.end() && ics.find(clients.at(sender).id) != ics.end()) {
-		inputDataToInputComponent(sender, data.data);
-	}*/
+	auto& ics = componentManager.inputComponents;
+	if(clients.find(data->ip) != clients.end() && ics.find(clients.at(data->ip).id) != ics.end()) {
+		inputDataToInputComponent(data->ip, data->data);
+	}
 }
 
 void Server::handle(const CongestedClientData* data) {
 	Logger::log("Received CONGESTED_CLIENT packet", Logger::INFO);
-	//FIXME 2017-05-25: SEND SENDER IN PACKET 
-	/*auto& client = clients.at(sender);
+	auto& client = clients.at(data->ip);
 	client.congested = true;
-	client.congestionTimer.start();*/
+	client.congestionTimer.start();
 }
 
 void Server::handle(const NotCongestedClientData* data) {
 	Logger::log("Received NOT_CONGESTED_CLIENT packet", Logger::INFO);
-	//FIXME 2017-05-25: SEND SENDER IN PACKET 
-	//clients.at(sender).congested = false;
+	clients.at(data->ip).congested = false;
 }
 
 int main(int argc, char** argv) {

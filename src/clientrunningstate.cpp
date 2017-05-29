@@ -93,8 +93,8 @@ void ClientRunningState::onChange(ClientRunningState* state) {
     Logger::log("Client can't change state from ClientRunningState to ClientRunningState", Logger::WARNING);
 }
 
-void ClientRunningState::handle(IPacket* data) {
-    Logger::log("Received packet that has no overloaded handle (ClientRunningState)", Logger::WARNING);
+void ClientRunningState::greet(IPacket* packet) {
+    packet->greet(this);
 }
 
 void ClientRunningState::handle(const OutdatedData* data) {
