@@ -75,9 +75,6 @@ void MoveSystem::update() {
 		}
 
 		//Do something defined by the entity if the entity moved
-
-		//TODO: Aha, this is why I need an "oldPos" member (I realize this as of 2017-03-06)
-		//Ill comment this out and reintroduce oldPos in later stages
 		if(mc.transform != mc.oldTransform) {
 
 			//But only if it has a commandComponent. This "onMove" events

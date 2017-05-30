@@ -6,7 +6,6 @@
 #include "soundidentifiers.hpp"
 #include "musicidentifiers.hpp"
 
-//TODO: Use lowpoly3d
 /** Should probably make this into an interface which can be realized by some 3rd party library
 	Ideally, let MyThirdPartyClass be a class which can play various music and sounds.
 	Then another class MyThirdPartyClassSoundEngine may realize an ISoundEngine interface.

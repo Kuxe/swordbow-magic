@@ -27,7 +27,7 @@ public:
     void insert(const std::pair<const ID, const T&> pair) {
         std::ostringstream oss;
         oss << "Adding " << typeid(T).name() << " to id " << pair.first;
-        Logger::log(oss, Logger::VERBOSE);
+        Logger::verbose(oss);
         container.insert(pair);
     }
 
@@ -54,7 +54,7 @@ public:
         if(container.find(id) == container.end()) {
             std::ostringstream oss;
             oss << "Creating " << typeid(T).name() << " on " << id;
-            Logger::log(oss, Logger::VERBOSE);
+            Logger::verbose(oss);
         }
         return container[id];
     }
@@ -63,7 +63,7 @@ public:
         if(container.find(id) == container.end()) {
             std::ostringstream oss;
             oss << "Creating " << typeid(T).name() << " on " << id;
-            Logger::log(oss, Logger::VERBOSE);
+            Logger::verbose(oss);
         }
         return container[id];
     }
@@ -75,7 +75,7 @@ public:
         } catch (std::out_of_range oor) {
             std::ostringstream oss;
             oss << "Tried accesing absent " << typeid(T).name() << " on id " << id;
-            Logger::log(oss, Logger::ERROR);
+            Logger::verbose(oss);
             throw oor;
         }
     }
@@ -87,7 +87,7 @@ public:
         } catch (std::out_of_range oor) {
             std::ostringstream oss;
             oss << "Tried accesing absent " << typeid(T).name() << " on id " << id;
-            Logger::log(oss, Logger::ERROR);
+            Logger::error(oss);
             throw oor;
         }
     }
@@ -111,7 +111,7 @@ public:
     auto erase(const ID id) {
         std::ostringstream oss;
         oss << "Erasing " << typeid(T).name() << " from id " << id;
-        Logger::log(oss, Logger::VERBOSE);
+        Logger::verbose(oss);
         return container.erase(id);
     }
 

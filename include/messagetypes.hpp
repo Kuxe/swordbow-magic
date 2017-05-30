@@ -126,13 +126,14 @@ struct ConnectToServerData : WithIP {
     }
 };
 struct ServerReplyToConnectData : WoutIP {
-    std::pair<ID, System::Identifier> data;
+    ID id;
+    System::Identifier sysid;
 
-    ServerReplyToConnectData(const std::pair<ID, System::Identifier>& data = std::pair<ID, System::Identifier>()) : data(data) { }
+    ServerReplyToConnectData(const ID id = -1, const System::Identifier sysid = System::Identifier::UNDEFINED) : id(id), sysid(sysid) { }
 
     template<class Archive>
     void serialize(Archive& archive) {
-        archive(data);
+        archive(id, sysid);
     }
 };
 struct DisconnectData : WithIP {
@@ -219,13 +220,14 @@ struct PlaySoundData : WoutIP {
     }
 };
 struct RegisterIdToSystemData : WoutIP {
-    std::pair<ID, System::Identifier> data;
+    ID id;
+    System::Identifier sysid;
 
-    RegisterIdToSystemData(std::pair<ID, System::Identifier> data = std::pair<ID, System::Identifier>()) : data(data) { }
+    RegisterIdToSystemData(ID id = -1, System::Identifier sysid = System::Identifier::UNDEFINED) : id(id), sysid(sysid) { }
 
     template<class Archive>
     void serialize(Archive& archive) {
-        archive(data);
+        archive(id, sysid);
     }
 };
 struct RemoveIdData : WoutIP {
@@ -239,33 +241,35 @@ struct RemoveIdData : WoutIP {
     }
 };
 struct RemoveIdFromSystemData : WoutIP {
-    std::pair<ID, System::Identifier> data;
+    ID id;
+    System::Identifier sysid;
 
-    RemoveIdFromSystemData(std::pair<ID, System::Identifier> data = std::pair<ID, System::Identifier>()) : data(data) { }
+    RemoveIdFromSystemData(ID id = -1, System::Identifier sysid = System::Identifier::UNDEFINED) : id(id), sysid(sysid) { }
 
     template<class Archive>
     void serialize(Archive& archive) {
-        archive(data);
+        archive(id, sysid);
     }
 };
 struct RemoveIdFromSystemsData : WoutIP {
-    bool data;
+    ID id;
 
-    RemoveIdFromSystemsData(bool data = true) : data(data) { }
+    RemoveIdFromSystemsData(ID id = -1) : id(id) { }
 
     template<class Archive>
     void serialize(Archive& archive) {
-        archive(data);
+        archive(id);
     }
 };
 struct ActivateIdData : WoutIP {
-    std::pair<ID, System::Identifier> data;
+    ID id;
+    System::Identifier sysid;
 
-    ActivateIdData(std::pair<ID, System::Identifier> data = std::pair<ID, System::Identifier>()) : data(data) { }
+    ActivateIdData(ID id = -1, System::Identifier sysid = System::Identifier::UNDEFINED) : id(id), sysid(sysid) { }
 
     template<class Archive>
     void serialize(Archive& archive) {
-        archive(data);
+        archive(id, sysid);
     }
 };
 struct CongestedClientData : WithIP {

@@ -126,7 +126,7 @@ void Server::onConnect(const IpAddress& ipAddress) {
 	sendInitial(ipAddress);
 
 	//Make the client aware of its ID and register the ID to client camerasytem
-	send<ServerReplyToConnectData, MESSAGE_TYPE::SERVER_REPLY_TO_CONNECT>(ipAddress, {{playerId, System::CAMERA}});
+	send<ServerReplyToConnectData, MESSAGE_TYPE::SERVER_REPLY_TO_CONNECT>(ipAddress, {playerId, System::CAMERA});
 }
 
 void Server::onDisconnect(const IpAddress& ipAddress) {
@@ -173,10 +173,7 @@ void Server::sendInitial(const IpAddress& ipAddress) {
 
 	using namespace std::literals;
 	for(int i = 0; i < smallerMcs.size(); i++) {
-		InitialComponentsData data;
-		data.mcs = smallerMcs[i];
-		data.rcs = smallerRcs[i];
-		send<InitialComponentsData, MESSAGE_TYPE::INITIAL_COMPONENTS>(ipAddress, data);
+		send<InitialComponentsData, MESSAGE_TYPE::INITIAL_COMPONENTS>(ipAddress, {smallerMcs[i], smallerRcs[i]});
 		std::this_thread::sleep_for(1ms);
 	}
 

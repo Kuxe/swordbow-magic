@@ -111,10 +111,8 @@ void ClientRunningState::handle(const ServerReplyToConnectData* data) {
     Logger::log("Got camera ID from server", Logger::INFO);
 
     //Got my id. Tell camerasystem to follow that id.t
-    const auto& pair = data->data;
-    const auto& id = pair.first;
-    client->systemManager.getSystem(pair.second)->add(id);
-    client->playerId = id;
+    client->systemManager.getSystem(data->sysid)->add(data->id);
+    client->playerId = data->id;
 }
 
 void ClientRunningState::handle(const MoveComponentsDiffData* data) {
@@ -174,9 +172,7 @@ void ClientRunningState::handle(const PlaySoundData* data) {
 
 void ClientRunningState::handle(const RegisterIdToSystemData* data) {
     Logger::log("Received REGISTER_ID_TO_SYSTEM packet", Logger::INFO);
-    const auto& id = data->data.first;
-    const auto& systemIdentifier = data->data.second;
-    client->systemManager.getSystem(systemIdentifier)->add(id);
+    client->systemManager.getSystem(data->sysid)->add(data->id);
 }
 
 void ClientRunningState::handle(const RemoveIdData* data) {
@@ -196,23 +192,18 @@ void ClientRunningState::handle(const RemoveIdData* data) {
 
 void ClientRunningState::handle(const RemoveIdFromSystemData* data) {
     Logger::log("Received REMOVE_ID_FROM_SYSTEM packet", Logger::INFO);
-    const auto& id = data->data.first;
-    const auto& systemIdentifier = data->data.second;
-    client->systemManager.getSystem(systemIdentifier)->remove(id);
+    client->systemManager.getSystem(data->sysid)->remove(data->id);
 }
 
 void ClientRunningState::handle(const RemoveIdFromSystemsData* data) {
     Logger::log("Received REMOVE_ID_FROM_SYSTEMS packet", Logger::INFO);
-    const auto& id = data->data;
-    client->systemManager.getSystem(System::RENDER)->remove(id);
-    client->systemManager.getSystem(System::HASHGRID_TEXTURE)->remove(id);
+    client->systemManager.getSystem(System::RENDER)->remove(data->id);
+    client->systemManager.getSystem(System::HASHGRID_TEXTURE)->remove(data->id);
 }
 
 void ClientRunningState::handle(const ActivateIdData* data) {
     Logger::log("Received ACTIVATE_ID packet", Logger::INFO);
-    const auto& id = data->data.first;
-    const auto& systemIdentifier = data->data.second;
-    client->systemManager.getSystem(systemIdentifier)->activateId(id);
+    client->systemManager.getSystem(data->sysid)->activateId(data->id);
 }
 
 void ClientRunningState::handle(const KeepAliveData* data) {
