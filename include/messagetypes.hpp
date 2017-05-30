@@ -11,15 +11,18 @@
         This will make sure the Data-struct can be serialized and received without
         worrying about big-endian vs little-endian etc.
 
-    3.  Head into PacketManager and declare a virtual method similarily to other
+    3.  Implement a switch-case in PacketManger.hpp similarily to the other switch-cases
+        for your MESSAGE_TYPE and your Data-struct
+
+    4.  Head into PacketManager and declare a virtual method similarily to other
         virtual methods there but with your Data-struct instead. Only then may
         PacketHandlers actually override the virtual method and thus implement
         concrete behaviour for the packet
 
-    4.  Head into your PacketHandler and override the virtual method in PacketManager,
+    5.  Head into your PacketHandler and override the virtual method in PacketManager,
         use the data within your Data-struct as you wish!
 
-    5.  Done!
+    6.  Done!
 
 **/
 
