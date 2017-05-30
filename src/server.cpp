@@ -125,9 +125,7 @@ void Server::onConnect(const IpAddress& ipAddress) {
 	sendInitial(ipAddress);
 
 	//Make the client aware of its ID and register the ID to client camerasytem
-	using DataType = std::pair<ID, System::Identifier>;
-	const DataType data {playerId, System::CAMERA};
-	send<DataType, MESSAGE_TYPE::SERVER_REPLY_TO_CONNECT>(ipAddress, data);
+	send<ServerReplyToConnectData, MESSAGE_TYPE::SERVER_REPLY_TO_CONNECT>(ipAddress, {{playerId, System::CAMERA}});
 }
 
 void Server::onDisconnect(const IpAddress& ipAddress) {
@@ -153,36 +151,38 @@ void Server::onDisconnect(const IpAddress& ipAddress) {
 
 void Server::sendInitial(const IpAddress& ipAddress) {
 
-	const auto& initialComponents = initialComponentsSystem.getInitialComponents();
+	std::pair<Components<MoveComponent>, Components<RenderComponent>> initialComponents = initialComponentsSystem.getInitialComponents();
 	const ID componentsPerContainer = 64;
 	const auto size = initialComponents.first.size();
 	const int numContainers = (size / componentsPerContainer) + ((size % componentsPerContainer) > 0 ? 1 : 0);
-	send<int, MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS>(ipAddress, numContainers);
+	send<BeginTransmittingInitialComponentsData, MESSAGE_TYPE::BEGIN_TRANSMITTING_INITIAL_COMPONENTS>(ipAddress, {numContainers});
 
 	std::ostringstream oss1;
 	oss1 << "Sending BEGIN_TRANSMITTING_INITIAL_COMPONENTS-packet to " << ipAddress;
 	Logger::log(oss1, Logger::VERBOSE);
 
-	const auto& initialMcs = initialComponents.first;
-	const auto& initialRcs = initialComponents.second;
-	const auto& smallerMcs = initialMcs.split(componentsPerContainer);
-	const auto& smallerRcs = initialRcs.split(componentsPerContainer);
+	Components<MoveComponent> initialMcs = initialComponents.first;
+	Components<RenderComponent> initialRcs = initialComponents.second;
+	std::vector<Components<MoveComponent>> smallerMcs = initialMcs.split(componentsPerContainer);
+	std::vector<Components<RenderComponent>> smallerRcs = initialRcs.split(componentsPerContainer);
 
 	std::ostringstream oss;
 	oss << "About to send #" << smallerMcs.size() << " small containers to client";
 	Logger::log(oss, Logger::VERBOSE);
 
 	using namespace std::literals;
-	using DataType = const std::pair<const Components<const MoveComponent&>, const Components<const RenderComponent&>>;
 	for(int i = 0; i < smallerMcs.size(); i++) {
-		send<DataType, MESSAGE_TYPE::INITIAL_COMPONENTS>(ipAddress, {smallerMcs[i], smallerRcs[i]});
+		InitialComponentsData data;
+		data.mcs = smallerMcs[i];
+		data.rcs = smallerRcs[i];
+		send<InitialComponentsData, MESSAGE_TYPE::INITIAL_COMPONENTS>(ipAddress, data);
 		std::this_thread::sleep_for(1ms);
 	}
 
 	std::ostringstream oss2;
 	oss2 << "Sending END_TRANSMITTING_INITIAL_COMPONENTS-packet to " << ipAddress;
 	Logger::log(oss2, Logger::VERBOSE);
-	send<bool, MESSAGE_TYPE::END_TRANSMITTING_INITIAL_COMPONENTS>(ipAddress, true);
+	send<EndTransmittingInitialComponentsData, MESSAGE_TYPE::END_TRANSMITTING_INITIAL_COMPONENTS>(ipAddress, {true});
 }
 
 void Server::sendInitial() {
@@ -201,7 +201,7 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 	}
 
 	if(!movediffs.empty()) {
-		send<Components<MoveComponent>, MESSAGE_TYPE::MOVECOMPONENTSDIFF>(ipAddress, movediffs);
+		send<MoveComponentsDiffData, MESSAGE_TYPE::MOVECOMPONENTSDIFF>(ipAddress, {movediffs});
 		std::ostringstream oss;
 		oss << "Sending MOVECOMPONENTSDIFF-packet containing ids: ";
 		for(auto pair : movediffs) {
@@ -218,7 +218,7 @@ void Server::sendDiff(const IpAddress& ipAddress) {
 	}
 
 	if(!renderdiffs.empty()) {
-		send<Components<RenderComponent>, MESSAGE_TYPE::RENDERCOMPONENTSDIFF>(ipAddress, renderdiffs);
+		send<RenderComponentsDiffData, MESSAGE_TYPE::RENDERCOMPONENTSDIFF>(ipAddress, {renderdiffs});
 		std::ostringstream oss;
 		oss << "Sending RENDERCOMPONENTSDIFF-packet containing ids: ";
 		for(auto pair : renderdiffs) {
@@ -255,7 +255,7 @@ void Server::sendKeepAlive() {
 		for(auto it : clients) {
 			const auto& client(it.second);
 			const auto& ipAddress = it.first;
-			send<bool, MESSAGE_TYPE::KEEP_ALIVE>(ipAddress, true);
+			send<KeepAliveData, MESSAGE_TYPE::KEEP_ALIVE>(ipAddress, {true});
 			Logger::log("Sending KEEP_ALIVE-packet", Logger::VERBOSE);
 		}
 	}

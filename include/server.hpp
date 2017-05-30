@@ -112,12 +112,12 @@ public:
     void printGeneralInfo();
 
     void greet(IPacket* packet) override;
-    void handle(const OutdatedData*);
-    void handle(const ConnectToServerData*);
-    void handle(const DisconnectData*);
-    void handle(const InputDataData* data);
-    void handle(const CongestedClientData* data);
-    void handle(const NotCongestedClientData* data);
+    void handle(const OutdatedData*) override;
+    void handle(const ConnectToServerData*) override;
+    void handle(const DisconnectData*) override;
+    void handle(const InputDataData* data) override;
+    void handle(const CongestedClientData* data) override;
+    void handle(const NotCongestedClientData* data) override;
 };
 
 

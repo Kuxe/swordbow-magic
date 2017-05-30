@@ -61,8 +61,9 @@ void Client::connect(const IpAddress& server) {
     this->server = server;
 
     //Connect-request packet
-    //TODO: Send IpAddress instead of bool=true
-    send<bool, MESSAGE_TYPE::CONNECT_TO_SERVER>(true);
+    ConnectToServerData data;
+    data.data = true;
+    send<ConnectToServerData, MESSAGE_TYPE::CONNECT_TO_SERVER>(data);
     keepAlive.start();
     std::ostringstream oss;
     oss << "Sent connect request to " << server;
@@ -84,7 +85,9 @@ void Client::disconnect() {
         Logger::verbose("Joined recieveThread in Client::disconnect()");
 
         //Disconnect-request packet
-        send<bool, MESSAGE_TYPE::DISCONNECT>(true);
+        DisconnectData data;
+        data.data = true;
+        send<DisconnectData, MESSAGE_TYPE::DISCONNECT>(data);
 
         keepAlive.stop();
 

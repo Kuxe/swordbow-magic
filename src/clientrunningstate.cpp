@@ -20,7 +20,9 @@ void ClientRunningState::step() {
     //If user either pressed or released a key
     //then send keystrokes to server
     if(mouseIsMoving || !(presses.empty() && releases.empty())) {
-        client->send<InputData, MESSAGE_TYPE::INPUTDATA>({presses, releases, mousePos});
+        InputDataData data;
+        data.data = {presses, releases, mousePos};
+        client->send<InputDataData, MESSAGE_TYPE::INPUTDATA>(data);
     }
     presses.clear();
     releases.clear();

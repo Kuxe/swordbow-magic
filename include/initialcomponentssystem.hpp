@@ -14,7 +14,7 @@
 class InitialComponentsSystem : public ISystem {
 private:
 	std::unordered_set<ID> ids;
-	std::pair<Components<const MoveComponent&>, Components<const RenderComponent&>> initialComponents;
+	std::pair<Components<MoveComponent>, Components<RenderComponent>> initialComponents;
 
 public:
 	void add(ID id);

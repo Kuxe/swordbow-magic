@@ -138,8 +138,27 @@ public:
                     Logger::error("Can't send packet, error ENOMEM (Out of memory)");
                 } break;
                 default: {
+
+                    #if PLATFORM == PLATFORM_WINDOWS
+                    {
+                        std::wstringstream wss;
+                        wchar_t *s = NULL;
+                        FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, 
+                            NULL, WSAGetLastError(),
+                            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                            (LPWSTR)&s, 0, NULL);
+                        std::wstring ws(s);
+                        std::string str(ws.begin(), ws.end()-1);
+                        std::ostringstream oss;
+                        oss << "Can't send packet, windows-specific error: " << str;
+                        Logger::error(oss);
+                        LocalFree(s);
+                    }
+                    #endif //PLATFORM == PLATFORM_WINDOWS
+
+
                     std::ostringstream oss;
-                    oss << "Failed to send packet for unknown reason (errorcode: " << errno << ")";
+                    oss << "Failed to send packet for unknown reason. Sent " << sendBytes << " bytes but should've sent " << size << " bytes (errorcode: " << errno << ")";
                     Logger::error(oss);
                 } break;
             }

@@ -72,10 +72,13 @@ void ClientReceiveInitialState::handle(InitialComponentsData* data) {
 	};
 	client->renderer->showOverlay(Image::RECEIVING_DATA_OVERLAY, text);
 
-	client->componentManager.moveComponents.sync(data->data.first);
-	client->componentManager.renderComponents.sync(data->data.second);
+	client->componentManager.moveComponents.sync(data->mcs);
+	client->componentManager.renderComponents.sync(data->rcs);
 
-	for(auto& pair : data->data.first) {
+    /** TODO:   Should it really be mcs here? It seems odd that ids of mcs are added
+                to textureHashGridSystem and renderSystem when we got a set of rendercomponents.
+                maybe pair.first for all pairs in data->mcs is equivalent to pair.first for all pairs in data->rcs? **/
+	for(auto& pair : data->mcs) {
 		client->textureHashGridSystem.add(pair.first);
 		client->renderSystem.add(pair.first);
 	}

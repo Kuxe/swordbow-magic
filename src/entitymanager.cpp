@@ -549,13 +549,13 @@ void EntityManager::remove(ID id) {
 	for(auto& pair : *clients) {
 		auto& clientData = pair.second;
 
-		auto packet = Packet<ID, MESSAGE_TYPE::REMOVE_ID> {
+		 Packet<RemoveIdData, MESSAGE_TYPE::REMOVE_ID> packet = {
 			stringhash("swordbow-magic"),
 			clientData.sequence++,
-			id,
-			sizeof(id)
+			RemoveIdData(id),
+			sizeof(RemoveIdData)
 		};
-		packetManager->send<ID>(pair.first, packet);
+		packetManager->send<RemoveIdData>(pair.first, packet);
 	}
 
 	//3. Remove from componentManager

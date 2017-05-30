@@ -40,36 +40,238 @@ enum MESSAGE_TYPE {
 #include "systemidentifiers.hpp"
 #include "inputdata.hpp"
 #include "ipaddress.hpp"
-
+#include "cereal/archives/portable_binary.hpp"
 /** A packet inherits from this if the IpAddress should be accesible from within the packet.
     Some code within PacketManager (as of 2017-05-29) looks if packet inherits from ContainIP
     and if so, assign the senders IP to the variable ip within ContainIP struct (such that
     the packet, which inherits ContainIP, contains the IP) **/
-struct ContainIP {
-    IpAddress ip;
+
+
+/** Interface with two concrete classes realizing it. A packet
+    inherits either from WithIP if the packet should contain the senders IP address
+    (handy for server when server wanna know who sent what input!) or from WoutIP
+    if the IP address should not be part of the packet (which is really what you should default to) **/
+struct WithWoutIP {
+    virtual void setIPIfPossible(const IpAddress& ip) { };
+    virtual ~WithWoutIP() { }
 };
+
+struct WithIP : WithWoutIP {
+    IpAddress ip;
+    WithIP(const IpAddress& ip = IpAddress()) : ip(ip) { }
+    void setIPIfPossible(const IpAddress& ip) override {
+        this->ip = ip;
+    }
+    virtual ~WithIP() { }
+};
+
+struct WoutIP : WithWoutIP { };
 
 /** This is where messages is tied with the expected datatype on that message **/
 /** These structs are used when doing multiple-dispatch on different client-states **/
-struct UnknownData { bool data; };
-struct OutdatedData { bool data; };
-struct ConnectToServerData : ContainIP { bool data; };
-struct ServerReplyToConnectData { std::pair<ID, System::Identifier> data; };
-struct DisconnectData : ContainIP { bool data; };
-struct InputDataData : ContainIP { InputData data; };
-struct BeginTransmittingInitialComponentsData { int data; };
-struct InitialComponentsData { std::pair<Components<MoveComponent>, Components<RenderComponent>> data; };
-struct EndTransmittingInitialComponentsData { bool data; };
-struct MoveComponentsDiffData { Components<MoveComponent> data; };
-struct RenderComponentsDiffData { Components<RenderComponent> data; };
-struct PlaySoundData { SoundData data; };
-struct RegisterIdToSystemData { std::pair<ID, System::Identifier> data; };
-struct RemoveIdData { ID data; };
-struct RemoveIdFromSystemData { std::pair<ID, System::Identifier> data; };
-struct RemoveIdFromSystemsData { bool data; };
-struct ActivateIdData { std::pair<ID, System::Identifier> data; };
-struct CongestedClientData : ContainIP { bool data; };
-struct NotCongestedClientData : ContainIP { bool data; };
-struct KeepAliveData { bool data; };
+struct UnknownData : WoutIP {
+    bool data;
+
+    UnknownData(bool data = true) : data(data) { }
+
+    template<class Archive>
+    void serialize(Archive& archive) {
+        archive(data);
+    }
+};
+
+struct OutdatedData : WoutIP {
+    bool data;
+
+    OutdatedData(bool data = true) : data(data) { }
+
+    template<class Archive>
+    void serialize(Archive& archive) {
+        archive(data);
+    }
+};
+struct ConnectToServerData : WithIP {
+    bool data;
+
+    ConnectToServerData(bool data = true) : data(data) { }
+
+    template<class Archive>
+    void serialize(Archive& archive) {
+        archive(data);
+    }
+};
+struct ServerReplyToConnectData : WoutIP {
+    std::pair<ID, System::Identifier> data;
+
+    ServerReplyToConnectData(const std::pair<ID, System::Identifier>& data = std::pair<ID, System::Identifier>()) : data(data) { }
+
+    template<class Archive>
+    void serialize(Archive& archive) {
+        archive(data);
+    }
+};
+struct DisconnectData : WithIP {
+    bool data;
+
+    DisconnectData(bool data = true) : data(data) { }
+
+    template<class Archive>
+    void serialize(Archive& archive) {
+        archive(data);
+    }
+};
+struct InputDataData : WithIP {
+    InputData data;
+
+    InputDataData(InputData data = InputData()) : data(data) { }
+
+    template<class Archive>
+    void serialize(Archive& archive) {
+        archive(data);
+    }
+};
+struct BeginTransmittingInitialComponentsData : WoutIP {
+    int data;
+
+    BeginTransmittingInitialComponentsData(bool data = true) : data(data) { }
+
+    template<class Archive>
+    void serialize(Archive& archive) {
+        archive(data);
+    }
+};
+struct InitialComponentsData : WoutIP {
+   Components<MoveComponent> mcs;
+   Components<RenderComponent> rcs;
+
+   InitialComponentsData(
+    const Components<MoveComponent>& mcs = Components<MoveComponent>(),
+    const Components<RenderComponent>& rcs = Components<RenderComponent>()) : mcs(mcs), rcs(rcs) { }
+
+    template<class Archive>
+    void serialize(Archive& archive) {
+        archive(mcs, rcs);
+    }
+};
+struct EndTransmittingInitialComponentsData : WoutIP {
+    bool data;
+
+    EndTransmittingInitialComponentsData(bool data = true) : data(data) { }
+
+    template<class Archive>
+    void serialize(Archive& archive) {
+        archive(data);
+    }
+};
+struct MoveComponentsDiffData : WoutIP {
+    Components<MoveComponent> data;
+
+    MoveComponentsDiffData(Components<MoveComponent> data = Components<MoveComponent>()) : data(data) { }
+
+    template<class Archive>
+    void serialize(Archive& archive) {
+        archive(data);
+    }
+};
+struct RenderComponentsDiffData : WoutIP {
+    Components<RenderComponent> data;
+
+    RenderComponentsDiffData(Components<RenderComponent> data = Components<RenderComponent>()) : data(data) { }
+
+    template<class Archive>
+    void serialize(Archive& archive) {
+        archive(data);
+    }
+};
+struct PlaySoundData : WoutIP {
+    SoundData data;
+
+    PlaySoundData(SoundData data = SoundData()) : data(data) { }
+
+    template<class Archive>
+    void serialize(Archive& archive) {
+        archive(data);
+    }
+};
+struct RegisterIdToSystemData : WoutIP {
+    std::pair<ID, System::Identifier> data;
+
+    RegisterIdToSystemData(std::pair<ID, System::Identifier> data = std::pair<ID, System::Identifier>()) : data(data) { }
+
+    template<class Archive>
+    void serialize(Archive& archive) {
+        archive(data);
+    }
+};
+struct RemoveIdData : WoutIP {
+    ID data;
+
+    RemoveIdData(ID data = -1) : data(data) { }
+
+    template<class Archive>
+    void serialize(Archive& archive) {
+        archive(data);
+    }
+};
+struct RemoveIdFromSystemData : WoutIP {
+    std::pair<ID, System::Identifier> data;
+
+    RemoveIdFromSystemData(std::pair<ID, System::Identifier> data = std::pair<ID, System::Identifier>()) : data(data) { }
+
+    template<class Archive>
+    void serialize(Archive& archive) {
+        archive(data);
+    }
+};
+struct RemoveIdFromSystemsData : WoutIP {
+    bool data;
+
+    RemoveIdFromSystemsData(bool data = true) : data(data) { }
+
+    template<class Archive>
+    void serialize(Archive& archive) {
+        archive(data);
+    }
+};
+struct ActivateIdData : WoutIP {
+    std::pair<ID, System::Identifier> data;
+
+    ActivateIdData(std::pair<ID, System::Identifier> data = std::pair<ID, System::Identifier>()) : data(data) { }
+
+    template<class Archive>
+    void serialize(Archive& archive) {
+        archive(data);
+    }
+};
+struct CongestedClientData : WithIP {
+    bool data;
+
+    CongestedClientData(bool data = true) : data(data) { }
+
+    template<class Archive>
+    void serialize(Archive& archive) {
+        archive(data);
+    }
+};
+struct NotCongestedClientData : WithIP {
+    bool data;
+
+    NotCongestedClientData(bool data = true) : data(data) { }
+
+    template<class Archive>
+    void serialize(Archive& archive) {
+        archive(data);
+    }
+};
+struct KeepAliveData : WoutIP {
+    bool data;
+
+    KeepAliveData(bool data = true) : data(data) { }
+
+    template<class Archive>
+    void serialize(Archive& archive) {
+        archive(data);
+    }
+};
 
 #endif //MESSAGETYPES_HPP

@@ -60,22 +60,14 @@ public:
 		}
 	}
 
-	/** If the deserializedPacket contains one member whose name is data and
-		of type IpAddress then copy sender into data otherwise do nothing **/
-	void setIpAddressIfPossible(auto* data, const IpAddress& sender) { return; }
-	void setIpAddressIfPossible(ContainIP* cip, const IpAddress& sender) {
-		Logger::verbose("setIpAddressIfPossible ContainIP called! ITS WORKING!");
-		cip->ip = sender;
-	}
-
 	template<MESSAGE_TYPE Message>
 	void accept(PacketHandler* ph, auto message, const std::string& serializedPacket, const IpAddress& sender) {
 		//So get the data that is actually relevant, copy it to the message, then call the overloaded
 		//method of an acceptor (overloaded on message)
-		auto deserializedPacket = deserialize<decltype(message.data), Message>(serializedPacket);
+		auto deserializedPacket = deserialize<decltype(message), Message>(serializedPacket);
 
-		//If packet inherits from "ContainIP" then assign "sender" to the packet ip
-		setIpAddressIfPossible(&deserializedPacket, sender);
+		//If packet inherits from "WithIP" then assign "sender" to the packet ip
+		deserializedPacket.getData().setIPIfPossible(sender);
 
 		//FIXME 2017-05-29: ph->greet(&deserializedPacket); will internally call ph.handle(&data) where handle is function defined for auto
 		//or with virtual overloaded non-auto argument, so server will treat any packets it get as IPacket unless there is explicit
@@ -94,10 +86,10 @@ public:
 		it is, cast the untyped packet into a typed packet and pass the typed packet to the
 		packet acceptor (which likely is something like "ClientRunningState", who defines behaviour
 		for each packet **/
-	void apply(PacketHandler* ph, const IpAddress& sender, const std::string& serializedPacket, const Packet<bool, MESSAGE_TYPE::UNKNOWN>& untypedPacket) {
+	void apply(PacketHandler* ph, const IpAddress& sender, const std::string& serializedPacket, MESSAGE_TYPE type) {
 		try {
 	        //1. Check type of packet
-	        switch(untypedPacket.getType()) {
+	        switch(type) {
 	        	case OUTDATED: { 
 	        		accept<MESSAGE_TYPE::OUTDATED>(ph, OutdatedData(), serializedPacket, sender);
 	        	} break;
@@ -191,16 +183,16 @@ public:
 	void poll(PacketHandler* ph) {
 		while(!q.empty()) {
 			const std::pair<IpAddress, std::string> p = q.take();
-			const auto untypedPacket = deserialize<bool, MESSAGE_TYPE::UNKNOWN>(p.second);
+			const auto untypedPacket = deserialize<UnknownData, MESSAGE_TYPE::UNKNOWN>(p.second);
 			if(validatePacket(p.first, untypedPacket)) {
-				apply(ph, p.first, p.second, untypedPacket);
+				apply(ph, p.first, p.second, untypedPacket.getType());
 			} else {
 				Logger::warning("PacketManager::poll() validation failed");
 			}
 		}
 	}
 
-	bool validatePacket(const IpAddress& sender, const auto& untypedPacket) {
+	bool validatePacket(const IpAddress& sender, const Packet<UnknownData, MESSAGE_TYPE::UNKNOWN>& untypedPacket) {
 		auto protocol = untypedPacket.getProtocol();
 		auto sequence = untypedPacket.getSequence();
 		//TODO: Figure out what 'ack(knowledge)' is and implement congestion control

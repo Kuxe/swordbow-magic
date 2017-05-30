@@ -21,6 +21,9 @@ public:
     constexpr Components(const size_t size) :
         container(size) { }
 
+    //Copy constructor
+    constexpr Components(const Components<T, Container>& components) : container(components.container) { }
+
     void insert(const std::pair<const ID, const T&> pair) {
         std::ostringstream oss;
         oss << "Adding " << typeid(T).name() << " to id " << pair.first;
@@ -119,9 +122,9 @@ public:
     /** Split the component into several containers no more components than componentsPerContainer
         but there may be less components in each container. There can never be more components in
         a container than there are IDs, hence the type of parameter is ID **/
-    std::vector<Components<T>> split(ID componentsPerContainer) {
+    std::vector<Components<T, Container>> split(ID componentsPerContainer) const {
         const int numContainers = (size() / componentsPerContainer) + ((size() % componentsPerContainer) > 0 ? 1 : 0);
-        std::vector<Components<T>> containers(numContainers, Components<T>());
+        std::vector<Components<T>> containers(numContainers, Components<T, Container>());
         auto it(begin());
         for(auto& smallerContainer : containers) {
             for(int i = 0; i < componentsPerContainer && it != end(); i++) {
@@ -131,9 +134,9 @@ public:
         return containers;
     }
 
-    const std::vector<Components<const T&>> split(ID componentsPerContainer) const {
+    /*const std::vector<Components<const T&>> split(ID componentsPerContainer) const {
         const int numContainers = (size() / componentsPerContainer) + ((size() % componentsPerContainer) > 0 ? 1 : 0);
-        std::vector<Components<T>> containers(numContainers, Components<T>());
+        std::vector<Components<T, Container>> containers(numContainers, Components<T, Container>());
         auto it(begin());
         for(auto& smallerContainer : containers) {
             for(int i = 0; i < componentsPerContainer && it != end(); i++) {
@@ -141,7 +144,7 @@ public:
             }
         }
         return containers;
-    }
+    }*/
 
     template<class Archive>
     constexpr void serialize(Archive& ar) {

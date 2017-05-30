@@ -57,7 +57,10 @@ public:
     constexpr Data& getData() { return data; }
     constexpr unsigned int getDataSize() { return datasize; }
 
+    /** FIXME: This cant ever work because PacketHandlers expect "ConnectToServerData" or such,
+        which is never available from here (only the enum "MESSAGE_TYPE" or actual raw-data is available here **/ 
     void greet(PacketHandler* ph) override {
+        static_assert(!std::is_same<decltype(data), bool>::value, "Packet: data is wrongly of type bool, you want data to be of type found in messagetypes.hpp");
         ph->handle(&data);
     }
 
