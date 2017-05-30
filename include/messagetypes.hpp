@@ -1,6 +1,28 @@
 #ifndef MESSAGETYPES_HPP
 #define MESSAGETYPES_HPP
 
+/** So you want to add a messaage for swordbow-magic? Tutorial incoming:
+
+    1.  Define an element in MESSAGE_TYPE suitable for your message.
+        This enum is used to figure out what packet was sent on the receiving side.
+
+    2.  Create some "Data" struct which contains the data you want to send.
+        Implement an "Archive" method similarily to how other structs have done it.
+        This will make sure the Data-struct can be serialized and received without
+        worrying about big-endian vs little-endian etc.
+
+    3.  Head into PacketManager and declare a virtual method similarily to other
+        virtual methods there but with your Data-struct instead. Only then may
+        PacketHandlers actually override the virtual method and thus implement
+        concrete behaviour for the packet
+
+    4.  Head into your PacketHandler and override the virtual method in PacketManager,
+        use the data within your Data-struct as you wish!
+
+    5.  Done!
+
+**/
+
 /** This is really just a labeled list of ints
     [UNKNOWN=0, OUTDATED=1, CONNECT=2, ...]
     These labels are stored in each packet
