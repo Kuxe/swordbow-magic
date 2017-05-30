@@ -26,7 +26,7 @@ void ClientDisconnectedState::step() {
     client->renderer->renderOnlyOverlays();
 
     //Poll packets (internally applied packets onto *this)
-    client->packetManager.poll(client->clientState);
+    client->packetManager.poll((PacketHandler**)&client->clientState);
 
     //Receivethread can force client to disconnect (from state-transitions usually)
     //In that case, this thread (main-thread) must poll that variable to see if it is set
@@ -62,6 +62,10 @@ void ClientDisconnectedState::onChange(ClientRunningState* state) {
     client->soundEngine->stopMusic(Music::NATURE_SOUNDS);
     client->renderer->showOverlay(Image::CONNECT_OVERLAY, {"Disconnected from server", glm::ivec2{150, client->renderer->getWindowResolution().y / 2 - 10}, glm::vec3(1.0)});
     forceDisconnect();
+}
+
+std::string ClientDisconnectedState::name() const {
+    return "ClientDisconnectedState";
 }
 
 void ClientDisconnectedState::greet(IPacket* packet) {

@@ -10,7 +10,7 @@ void ClientReceiveInitialState::step() {
     client->renderer->pollEvents(this);
 
     //Poll packets (internally applied packets onto *this)
-    client->packetManager.poll(client->clientState);
+    client->packetManager.poll((PacketHandler**)&client->clientState);
 
     client->renderer->hideOverlay(Image::RECEIVING_DATA_OVERLAY);
     const Text text = {
@@ -54,6 +54,10 @@ void ClientReceiveInitialState::onChange(ClientRunningState* state) {
     Logger::log("Client can't change state from ClientRunningState to ClientReceiveInitialState", Logger::WARNING);
 }
 
+std::string ClientReceiveInitialState::name() const {
+    return "ClientReceiveInitialState";
+}
+
 void ClientReceiveInitialState::greet(IPacket* packet) {
     packet->greet(this);
 }
@@ -62,7 +66,7 @@ void ClientReceiveInitialState::handle(const OutdatedData* data) {
     Logger::log("This packet is outdated, to late! Sluggish!", Logger::WARNING);
 }
 
-void ClientReceiveInitialState::handle(InitialComponentsData* data) {
+void ClientReceiveInitialState::handle(const InitialComponentsData* data) {
 	Logger::log("Received INITIAL_COMPONENTS packet", Logger::INFO);
 	client->renderer->hideOverlay(Image::CONNECT_OVERLAY);
 	receivedSmallContainers++;

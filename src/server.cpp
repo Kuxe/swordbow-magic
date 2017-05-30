@@ -95,7 +95,8 @@ void Server::step() {
 
 	//Receive data from clients...
     packetManager.receive();
-    packetManager.poll(this);
+    decltype(this) thisptr = this;
+    packetManager.poll((PacketHandler**)&thisptr);
 
 	//Limit server-speed to 60fps (rather 60 tick per second)
 	//Check the elapsed time for the current step, if it is lower than
@@ -362,6 +363,10 @@ void Server::printGeneralInfo() {
 	oss << "bytes (" << allEntitiesMegabyteSize;
 	oss << "MB)";
 	Logger::log(oss, Logger::INFO);
+}
+
+std::string Server::name() const {
+	return "Server";
 }
 
 void Server::greet(IPacket* packet) {

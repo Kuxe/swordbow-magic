@@ -68,10 +68,6 @@ public:
 
 		//If packet inherits from "WithIP" then assign "sender" to the packet ip
 		deserializedPacket.getData().setIPIfPossible(sender);
-
-		//FIXME 2017-05-29: ph->greet(&deserializedPacket); will internally call ph.handle(&data) where handle is function defined for auto
-		//or with virtual overloaded non-auto argument, so server will treat any packets it get as IPacket unless there is explicit
-		//virtual handle(MyPacketData) in PacketHandler (in addition to server actually overriding such a method)
 		ph->greet(&deserializedPacket);
 	}
 
@@ -180,12 +176,12 @@ public:
 	}
 
 	/** Loop through all received serialized packets, deserialize the packet and give it to the PacketHandler **/
-	void poll(PacketHandler* ph) {
+	void poll(PacketHandler** ph) {
 		while(!q.empty()) {
 			const std::pair<IpAddress, std::string> p = q.take();
 			const auto untypedPacket = deserialize<UnknownData, MESSAGE_TYPE::UNKNOWN>(p.second);
 			if(validatePacket(p.first, untypedPacket)) {
-				apply(ph, p.first, p.second, untypedPacket.getType());
+				apply(*ph, p.first, p.second, untypedPacket.getType());
 			} else {
 				Logger::warning("PacketManager::poll() validation failed");
 			}

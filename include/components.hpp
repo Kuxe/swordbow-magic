@@ -31,10 +31,18 @@ public:
         container.insert(pair);
     }
 
-    void sync(Components<T>& components) {
-        for(auto it : components) {
-            container[it.first] = components[it.first];
+    void sync(const Components<T>& components) {
+        try {
+            for(const auto& it : components) {
+                container[it.first] = components.get(it.first);
+            }
+        } catch(const std::exception& e) {
+            Logger::error("Could not sync components");
         }
+    }
+
+    const T& get(const ID id) const {
+        return container.at(id);
     }
 
     Components<T, Container>& operator=(Components<T, Container> components) {

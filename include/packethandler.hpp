@@ -7,6 +7,7 @@
 /** A PacketHandlar is someone who is able to poll packets out of the PacketManager **/
 struct IPacket;
 struct PacketHandler {
+	virtual std::string name() const = 0; 
 	virtual void greet(IPacket* packet) = 0;
 	virtual void handle(const UnknownData* data) {
 		Logger::warning("PacketHandler got packet UnknownData without overriden method to handle it");

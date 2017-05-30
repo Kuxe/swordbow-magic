@@ -15,7 +15,7 @@ void ClientRunningState::step() {
     client->renderer->pollEvents(this);
 
     //Poll packets (internally applied packets onto *this)
-    client->packetManager.poll(client->clientState);
+    client->packetManager.poll((PacketHandler**)&client->clientState);
 
     //If user either pressed or released a key
     //then send keystrokes to server
@@ -95,6 +95,10 @@ void ClientRunningState::onChange(ClientRunningState* state) {
     Logger::log("Client can't change state from ClientRunningState to ClientRunningState", Logger::WARNING);
 }
 
+std::string ClientRunningState::name() const {
+    return "ClientRunningState";
+}
+
 void ClientRunningState::greet(IPacket* packet) {
     packet->greet(this);
 }
@@ -113,7 +117,7 @@ void ClientRunningState::handle(const ServerReplyToConnectData* data) {
     client->playerId = id;
 }
 
-void ClientRunningState::handle(MoveComponentsDiffData* data) {
+void ClientRunningState::handle(const MoveComponentsDiffData* data) {
     Logger::log("Received MOVECOMPONENTSDIFF packet", Logger::VERBOSE);
 
     //Diff movecomponents were received - handle it
@@ -140,7 +144,7 @@ void ClientRunningState::handle(MoveComponentsDiffData* data) {
     }
 }
 
-void ClientRunningState::handle(RenderComponentsDiffData* data) {
+void ClientRunningState::handle(const RenderComponentsDiffData* data) {
     Logger::log("Received RENDERCOMPONENTSDIFF packet", Logger::VERBOSE);
 
     //Diff rendercomponents were received - handle it
@@ -162,9 +166,10 @@ void ClientRunningState::handle(RenderComponentsDiffData* data) {
     }
 }
 
-void ClientRunningState::handle(PlaySoundData* data) {
+void ClientRunningState::handle(const PlaySoundData* data) {
     Logger::log("Received PLAY_SOUND packet", Logger::VERBOSE);
-    client->soundEngine->playSound(data->data);
+    SoundData sd = data->data; //Copy sounddata such that the const qualifier is removed
+    client->soundEngine->playSound(sd);
 }
 
 void ClientRunningState::handle(const RegisterIdToSystemData* data) {

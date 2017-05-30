@@ -111,6 +111,7 @@ public:
 
     void printGeneralInfo();
 
+    std::string name() const override;
     void greet(IPacket* packet) override;
     void handle(const OutdatedData*) override;
     void handle(const ConnectToServerData*) override;

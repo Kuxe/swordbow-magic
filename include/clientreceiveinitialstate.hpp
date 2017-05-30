@@ -20,11 +20,12 @@ public:
 	void onChange(ClientReceiveInitialState* state);
 	void onChange(ClientRunningState* state);
 
+	std::string name() const override;
 	void greet(IPacket* packet) override;
-	void handle(const OutdatedData* data);
-	void handle(InitialComponentsData* data);
-	void handle(const EndTransmittingInitialComponentsData*);
-	void handle(const KeepAliveData*);
+	void handle(const OutdatedData* data) override;
+	void handle(const InitialComponentsData* data) override;
+	void handle(const EndTransmittingInitialComponentsData*) override;
+	void handle(const KeepAliveData*) override;
 
 	void onEvent(const KeyEvent& evt);
 	void onEvent(const MouseEvent& evt);
