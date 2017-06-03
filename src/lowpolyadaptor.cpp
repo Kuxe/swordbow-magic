@@ -27,7 +27,7 @@ void LowpolyAdaptor::run() {
 	TerrainGenerator terrainGenerator;
 	renderer.loadModel("sphere", sphereGenerator.generate());
 	renderer.loadModel("terrain", terrainGenerator.generate());
-	if(!renderer.render(*this)) {
+	if(!renderer.run()) {
 		Logger::error("Lowpoly3d renderer failed");
 	}
 }
@@ -50,7 +50,7 @@ void LowpolyAdaptor::render(const std::vector<ID>& activeIds, const ComponentMan
 
 	this->view = view;
 
-	signalRenderer();
+	renderer.setScene({rds, view, 0.0f}); //
 }
 
 void LowpolyAdaptor::renderOnlyOverlays() {

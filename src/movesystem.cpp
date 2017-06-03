@@ -8,6 +8,8 @@
 
 #include <glm/gtc/matrix_transform.hpp> //glm::translate
 #include <glm/gtc/matrix_access.hpp> //glm::column
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/string_cast.hpp> //glm::to_string
 
 /** For logging **/
 #include "logger.hpp"
@@ -28,8 +30,6 @@ void MoveSystem::update() {
 	for(auto id : ids) {
 		auto& mc = componentManager->moveComponents.at(id);
 
-		glm::vec3 direction = {0.0f, 0.0f, 0.0f};
-
 		//If this entity has an inputComponent,
 		//check if buttons are pressed in order to move entity.
 		//This should probably be a system of its own that's being
@@ -43,21 +43,17 @@ void MoveSystem::update() {
 
 			//Set velocity to work in the direction of WASD movement
 			//holding two opposite keys ie A and D will cancel out
-			direction = {ic.a - ic.d, ic.q - ic.e, ic.w - ic.s};
+			//ic.s - ic.w since moving forward corresponds to moving in negative z
+			mc.velocity = {ic.d - ic.a, ic.e - ic.q, ic.s - ic.w};
 
 			//If entity has moved its mouse, rotate the view transform matrix
 			const glm::vec2 MOUSE_SENSITIVITY(0.01f, 0.003f);
 			const float horizontalMouseMovement = MOUSE_SENSITIVITY.x*(ic.mousePos.x - ic.oldMousePos.x);
 			const float verticalMouseMovement = MOUSE_SENSITIVITY.y*(ic.mousePos.y - ic.oldMousePos.y);
 			mc.transform = glm::rotate(mc.transform, horizontalMouseMovement, glm::vec3(0.0f, 1.0f, 0.0f));
-			//FIXME: Figure out to rotate camera around x-axis mc.transform = glm::rotate(mc.transform, verticalMouseMovement, glm::vec3(glm::column(mc.transform, 2)));
 			//Finally update oldMousePos
 			ic.oldMousePos = ic.mousePos;
 		}
-
-		/** Change direction into basis of entity so that pressing 'w' actually makes
-			player go forward as opposed to going in {0.0f, 0.0f, 1.0f} direction**/
-		mc.velocity = glm::inverse(glm::mat3(mc.transform)) * direction;
 
 		//If some input was recieved which caused a move (mc.vel isn't of length 0)
 		if(glm::length(mc.velocity) > 0) {

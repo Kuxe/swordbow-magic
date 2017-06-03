@@ -20,6 +20,8 @@ struct MoveComponent {
     	const glm::mat4& transform = glm::mat4(),
     	const float maxVelLength = {100.0f}) :
     	transform(transform),
+        oldTransform(transform),
+        velocity(0.0f, 0.0f, 0.0f),
     	maxVelLength(maxVelLength) { }
 
     template<class Archive>

@@ -26,12 +26,16 @@ void CameraSystem::update() {
         //whatever entity pointed to by cameraSource
         const auto& mc = componentManager->moveComponents.at(cameraSource);
 
-        //1. I need to provide side, up, forward and eye.
-        //2. Each entity look in some direction. This is available of transform in movecomponent.
-        //3. I could extract forward, up, side and eye from transform in movecomponent and then translate with posoff
-        /**4. No I should not translate with constant vector posoff. I should translate in terms of side, up, forward.
-                otherwise it the translation wont work with rotations **/
-        view = mc.transform;
+        //Use a simple "follow" camera
+        const glm::vec3 center = glm::vec3(glm::column(mc.transform, 3));
+        //Direciton is negated since we're looking in negative Z
+        const glm::vec3 direction = -glm::vec3(glm::column(mc.transform, 2));
+        const glm::vec3 up = {0.0f, 1.0f, 0.0f};
+        const float upMultipler = 0.4f;
+        const float distanceToEntityMultiplier = 10.0f;
+
+        const glm::vec3 eye = center - ((direction-up*upMultipler)*distanceToEntityMultiplier);
+        view = glm::lookAt(eye, center, up);
     }
 }
 

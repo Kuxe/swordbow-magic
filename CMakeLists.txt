@@ -149,21 +149,21 @@ SET(LOWPOLY3D_SHADERS_DIR ${LOWPOLY3D_INSTALL_DIR}/shaders)
 
 IF(UNIX AND NOT APPLE)
     EXTERNALPROJECT_ADD(lp3d
-        DOWNLOAD_COMMAND wget https://github.com/Kuxe/lowpoly3d/releases/download/0.0.16/lowpoly3d-0.0.16-Linux.tar.gz && tar xvzf lowpoly3d-0.0.16-Linux.tar.gz -C ${LOWPOLY3D_INSTALL_DIR}
+        DOWNLOAD_COMMAND wget https://github.com/Kuxe/lowpoly3d/releases/download/v0.0.17/lowpoly3d-0.0.17-Linux.tar.gz && tar xvzf lowpoly3d-0.0.17-Linux.tar.gz -C ${LOWPOLY3D_INSTALL_DIR}
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
     )
 ELSEIF(APPLE)
     EXTERNALPROJECT_ADD(lp3d
-        URL https://github.com/Kuxe/lowpoly3d/releases/download/0.0.16/lowpoly3d-0.0.16-Darwin.tar.gz
+        URL https://github.com/Kuxe/lowpoly3d/releases/download/v0.0.17/lowpoly3d-0.0.17-Darwin.tar.gz
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
     )
 ELSEIF(WIN32)
     EXTERNALPROJECT_ADD(lp3d
-        URL https://github.com/Kuxe/lowpoly3d/releases/download/0.0.16/lowpoly3d-0.0.16-win64.zip
+        URL https://github.com/Kuxe/lowpoly3d/releases/download/v0.0.17/lowpoly3d-0.0.17-win64.zip
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""

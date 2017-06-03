@@ -11,7 +11,6 @@
 #include "overlay.hpp"
 #include "irenderer.hpp"
 #include "lowpoly3d.hpp"
-#include "renderquerier.hpp"
 #include "ilowpolyinput.hpp"
 
 #include "events.hpp" //Events which swordbow-magic (IClientState) can handle
@@ -25,7 +24,6 @@
 
 class LowpolyAdaptor :
     public IRenderer,
-    public lowpoly3d::RenderQuerier,
     public lowpoly3d::ILowpolyInput {
 private:
     std::queue<Text> texts;
